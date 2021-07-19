@@ -1,7 +1,7 @@
-<?php /* Smarty version 2.6.18, created on 2020-11-13 19:26:06
+<?php /* Smarty version 2.6.18, created on 2020-12-21 15:16:28
          compiled from Dataface_Main_Template.html */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
-smarty_core_load_plugins(array('plugins' => array(array('block', 'define_slot', 'Dataface_Main_Template.html', 2, false),array('block', 'if_allowed', 'Dataface_Main_Template.html', 120, false),array('block', 'translate', 'Dataface_Main_Template.html', 158, false),array('modifier', 'escape', 'Dataface_Main_Template.html', 2, false),array('modifier', 'count', 'Dataface_Main_Template.html', 130, false),array('modifier', 'nl2br', 'Dataface_Main_Template.html', 194, false),array('function', 'block', 'Dataface_Main_Template.html', 18, false),array('function', 'actions_menu', 'Dataface_Main_Template.html', 56, false),array('function', 'language_selector', 'Dataface_Main_Template.html', 71, false),array('function', 'form_context', 'Dataface_Main_Template.html', 126, false),array('function', 'actions', 'Dataface_Main_Template.html', 129, false),)), $this); ?>
+smarty_core_load_plugins(array('plugins' => array(array('block', 'define_slot', 'Dataface_Main_Template.html', 2, false),array('block', 'if_allowed', 'Dataface_Main_Template.html', 121, false),array('block', 'translate', 'Dataface_Main_Template.html', 159, false),array('modifier', 'escape', 'Dataface_Main_Template.html', 2, false),array('modifier', 'count', 'Dataface_Main_Template.html', 131, false),array('modifier', 'nl2br', 'Dataface_Main_Template.html', 195, false),array('function', 'block', 'Dataface_Main_Template.html', 18, false),array('function', 'actions_menu', 'Dataface_Main_Template.html', 57, false),array('function', 'language_selector', 'Dataface_Main_Template.html', 72, false),array('function', 'form_context', 'Dataface_Main_Template.html', 127, false),array('function', 'actions', 'Dataface_Main_Template.html', 130, false),)), $this); ?>
 <!doctype html>
 <?php $this->_tag_stack[] = array('define_slot', array('name' => 'html_tag')); $_block_repeat=true;$this->_plugins['block']['define_slot'][0][0]->define_slot($this->_tag_stack[count($this->_tag_stack)-1][1], null, $this, $_block_repeat);while ($_block_repeat) { ob_start(); ?><html lang="<?php echo ((is_array($_tmp=$this->_tpl_vars['ENV']['language'])) ? $this->_run_mod_handler('escape', true, $_tmp) : smarty_modifier_escape($_tmp)); ?>
 "><?php $_block_content = ob_get_contents(); ob_end_clean(); $_block_repeat=false;echo $this->_plugins['block']['define_slot'][0][0]->define_slot($this->_tag_stack[count($this->_tag_stack)-1][1], $_block_content, $this, $_block_repeat); }  array_pop($this->_tag_stack); ?>
@@ -33,6 +33,7 @@ smarty_core_load_plugins(array('plugins' => array(array('block', 'define_slot', 
 					DATAFACE_SITE_HREF = '<?php echo ((is_array($_tmp=$this->_tpl_vars['ENV']['DATAFACE_SITE_HREF'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'javascript') : smarty_modifier_escape($_tmp, 'javascript')); ?>
 ';
 				</script>
+				
 				<script src="<?php echo $this->_tpl_vars['G2']->getBaseURL(); ?>
 /js/xataface-global.js"></script>
 			<?php $_block_content = ob_get_contents(); ob_end_clean(); $_block_repeat=false;echo $this->_plugins['block']['define_slot'][0][0]->define_slot($this->_tag_stack[count($this->_tag_stack)-1][1], $_block_content, $this, $_block_repeat); }  array_pop($this->_tag_stack); ?>
@@ -120,7 +121,7 @@ unset($_smarty_tpl_vars);
 							<?php echo $this->_plugins['function']['block'][0][0]->block(array('name' => 'before_xf_logo'), $this);?>
 
 							<?php $this->_tag_stack[] = array('define_slot', array('name' => 'xf_logo')); $_block_repeat=true;$this->_plugins['block']['define_slot'][0][0]->define_slot($this->_tag_stack[count($this->_tag_stack)-1][1], null, $this, $_block_repeat);while ($_block_repeat) { ob_start(); ?>
-								<div id="xf-logo"><span>Xataface</span></div>
+								<div id="xf-logo" onload="buildLogo('#xf-logo','ffff00')"><span>Xataface</span></div>
 							<?php $_block_content = ob_get_contents(); ob_end_clean(); $_block_repeat=false;echo $this->_plugins['block']['define_slot'][0][0]->define_slot($this->_tag_stack[count($this->_tag_stack)-1][1], $_block_content, $this, $_block_repeat); }  array_pop($this->_tag_stack); ?>
 							<?php echo $this->_plugins['function']['block'][0][0]->block(array('name' => 'after_xf_logo'), $this);?>
 
@@ -357,4 +358,4 @@ unset($_smarty_tpl_vars);
 		<?php echo $this->_plugins['function']['block'][0][0]->block(array('name' => 'javascript_tool_includes'), $this);?>
 
 	</body>
-</html>
+</html>
