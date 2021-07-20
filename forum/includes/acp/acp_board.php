@@ -574,7 +574,7 @@ class acp_board
 				}
 				else
 				{
-				$config->set($config_name, $config_value);
+					$config->set($config_name, $config_value);
 				}
 
 				if ($config_name == 'allow_quick_reply' && isset($_POST['allow_quick_reply_enable']))
@@ -682,8 +682,8 @@ class acp_board
 				$messenger->set_addresses($user->data);
 				$messenger->anti_abuse_headers($config, $user);
 				$messenger->assign_vars(array(
-					'USERNAME'	=> htmlspecialchars_decode($user->data['username']),
-					'MESSAGE'	=> htmlspecialchars_decode($request->variable('send_test_email_text', '', true)),
+					'USERNAME'	=> htmlspecialchars_decode($user->data['username'], ENT_COMPAT),
+					'MESSAGE'	=> htmlspecialchars_decode($request->variable('send_test_email_text', '', true), ENT_COMPAT),
 				));
 				$messenger->send(NOTIFY_EMAIL);
 

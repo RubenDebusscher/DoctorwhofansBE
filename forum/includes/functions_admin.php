@@ -2882,18 +2882,18 @@ function get_database_size()
 			$db_name		= $db->get_db_name();
 			$database_size	= 0;
 
-					$sql = 'SHOW TABLE STATUS
-						FROM ' . $db_name;
-					$result = $db->sql_query($sql, 7200);
+			$sql = 'SHOW TABLE STATUS
+				FROM ' . $db->sql_quote($db_name);
+			$result = $db->sql_query($sql, 7200);
 
-					while ($row = $db->sql_fetchrow($result))
-					{
+			while ($row = $db->sql_fetchrow($result))
+			{
 				if (isset($row['Engine']) && in_array($row['Engine'], $mysql_engine))
-								{
-									$database_size += $row['Data_length'] + $row['Index_length'];
-						}
-					}
-					$db->sql_freeresult($result);
+				{
+					$database_size += $row['Data_length'] + $row['Index_length'];
+				}
+			}
+			$db->sql_freeresult($result);
 
 			$database_size = $database_size ? $database_size : false;
 
@@ -2935,37 +2935,18 @@ function get_database_size()
 		break;
 
 		case 'postgres':
-			$sql = "SELECT proname
-				FROM pg_proc
-				WHERE proname = 'pg_database_size'";
-			$result = $db->sql_query($sql);
-			$row = $db->sql_fetchrow($result);
-			$db->sql_freeresult($result);
+			$database = $db->get_db_name();
 
-			if ($row['proname'] == 'pg_database_size')
-			{
-				$database = $db->get_db_name();
 				if (strpos($database, '.') !== false)
 				{
-					list($database, ) = explode('.', $database);
+				$database = explode('.', $database)[0];
 				}
 
-				$sql = "SELECT oid
-					FROM pg_database
-					WHERE datname = '$database'";
-				$result = $db->sql_query($sql);
+			$sql = "SELECT pg_database_size('" . $database . "') AS dbsize";
+			$result = $db->sql_query($sql, 7200);
 				$row = $db->sql_fetchrow($result);
+			$database_size = !empty($row['dbsize']) ? $row['dbsize'] : false;
 				$db->sql_freeresult($result);
-
-				$oid = $row['oid'];
-
-				$sql = 'SELECT pg_database_size(' . $oid . ') as size';
-				$result = $db->sql_query($sql);
-				$row = $db->sql_fetchrow($result);
-				$db->sql_freeresult($result);
-
-				$database_size = $row['size'];
-			}
 		break;
 
 		case 'oracle':
