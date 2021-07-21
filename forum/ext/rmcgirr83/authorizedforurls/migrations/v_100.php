@@ -17,7 +17,7 @@ class v_100 extends \phpbb\db\migration\migration
 {
 	static public function depends_on()
 	{
-		return array('\phpbb\db\migration\data\v310\gold');
+		return ['\phpbb\db\migration\data\v310\gold'];
 	}
 
 	/**
@@ -28,46 +28,48 @@ class v_100 extends \phpbb\db\migration\migration
 	*/
 	public function update_data()
 	{
-		return array(
-			// Add permission
-			array('permission.add', array('u_post_url')),
 
-			// Set permissions
-			array('permission.permission_set',array('REGISTERED','u_post_url','group')),
-			array('permission.permission_set',array('NEWLY_REGISTERED','u_post_url','group', false)),
-			array('permission.permission_set',array('ROLE_USER_NEW_MEMBER','u_post_url','role',false)),
-			array('permission.permission_set',array('ROLE_USER_STANDARD','u_post_url','role')),
-			array('permission.permission_set',array('ROLE_USER_FULL','u_post_url','role')),
-			array('permission.permission_set',array('ROLE_ADMIN_STANDARD','u_post_url','role')),
-			array('permission.permission_set',array('ROLE_ADMIN_FORUM','u_post_url','role')),
-			array('permission.permission_set',array('ROLE_ADMIN_FULL','u_post_url','role')),
-			array('permission.permission_set',array('ROLE_MOD_STANDARD','u_post_url','role')),
-			array('permission.permission_set',array('ROLE_MOD_FULL','u_post_url','role')),
+		$data[] = ['permission.add', ['u_post_url']];
 
-			array('config_text.add', array('authforurl_tlds', $this->tlds())),
-			array('config.add', array('authforurl_img_bbcode', true)),
-			array('config.add', array('authforurl_email', true)),
-			array('module.add', array(
-				'acp',
-				'ACP_CAT_DOT_MODS',
-				'AFU_ACP_TITLE'
-			)),
+		$data[] = ['permission.permission_set',['REGISTERED','u_post_url','group']];
 
-			array('module.add', array(
-				'acp',
-				'AFU_ACP_TITLE',
-				array(
-					'module_basename'	=> '\rmcgirr83\authorizedforurls\acp\authforurl_module',
-					'modes'				=> array('settings'),
-				),
-			)),
-		);
+		$data[] = ['permission.permission_set',['NEWLY_REGISTERED','u_post_url','group', false]];
+
+		$data[] = ['if', [
+			['permission.role_exists', ['ROLE_USER_NEW_MEMBER']],
+			['permission.permission_set', ['ROLE_USER_NEW_MEMBER', 'u_post_url', 'role', false]],
+		]];
+
+		$role_array = ['ROLE_USER_STANDARD', 'ROLE_USER_FULL', 'ROLE_ADMIN_STANDARD', 'ROLE_ADMIN_FORUM', 'ROLE_ADMIN_FULL', 'ROLE_MOD_STANDARD', 'ROLE_MOD_FULL'];
+
+		foreach ($role_array as $key => $value)
+		{
+			$data[] = ['if', [
+				['permission.role_exists', [$value]],
+				['permission.permission_set', [$value,'u_post_url']],
+			]];
+		}
+
+		$data[] = ['config_text.add', ['authforurl_tlds', $this->tlds()]];
+		$data[] = ['config.add', ['authforurl_img_bbcode', true]];
+		$data[] = ['config.add', ['authforurl_email', true]];
+		$data[] = ['module.add', ['acp', 'ACP_CAT_DOT_MODS', 'AFU_ACP_TITLE']];
+		$data[] = ['module.add', [
+			'acp',
+			'AFU_ACP_TITLE',
+			[
+				'module_basename'	=> '\rmcgirr83\authorizedforurls\acp\authforurl_module',
+				'modes'				=> ['settings'],
+			],
+		]];
+
+		return $data;
 	}
 
 	private function tlds()
 	{
 		// our TLD array..add to or subtract from to suit your needs
-		$tlds = array(
+		$tlds = [
 			'ac','ad','ae','aero','af','ag','ai','al',
 			'am','an','ao','aq','ar','arpa','arts','as',
 			'at','au','aw','az','ba','bb','bd','be',
@@ -102,7 +104,8 @@ class v_100 extends \phpbb\db\migration\migration
 			'uy','uz','va','vc','ve','vg','vi','vn',
 			'vu','web','wf','ws','ye','yt','yu','za',
 			'zm','zr','zw',
-		);
+		];
+
 		$tlds = implode(",", $tlds);
 
 		return $tlds;

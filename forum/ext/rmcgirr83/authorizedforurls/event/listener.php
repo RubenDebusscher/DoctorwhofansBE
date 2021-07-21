@@ -25,19 +25,19 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 */
 class listener implements EventSubscriberInterface
 {
-	/** @var \phpbb\auth\auth */
+	/** @var auth $auth */
 	protected $auth;
 
-	/** @var \phpbb\config\config */
+	/** @var config $config */
 	protected $config;
 
-	/** @var \phpbb\config\db_text */
+	/** @var config_text  $config_text */
 	protected $config_text;
 
-	/** @var \phpbb\language\language */
+	/** @var language $language */
 	protected $language;
 
-	/** @var template */
+	/** @var template $template*/
 	protected $template;
 
 	/* @var \rmcgirr83\topicdescription\event\listener */
@@ -203,7 +203,7 @@ class listener implements EventSubscriberInterface
 		}
 	}
 
-	public function check_text($check_text)
+	public function check_text($check_text, $return_lang_args = false)
 	{
 		if (!$this->auth->acl_get('u_post_url'))
 		{
@@ -243,11 +243,11 @@ class listener implements EventSubscriberInterface
 			// check the whole darn thang now for any TLD's
 			// at least those that >seem< to match from the array
 			// and have not been excluded above
-			preg_match("#(([a-z0-9\-_]+)@)?([a-z]{3,6}://)?(((?:www.)?\b[a-z0-9\-_]+)\.($tld_list)(\.($tld_list))?\b)#i", $check_text, $match);
+			preg_match_all("#(([a-z0-9\-_]+)@)?([a-z]{3,6}://)?(((?:www.)?\b[a-z0-9\-_]+)\.($tld_list)(\.($tld_list))?\b)#i", $check_text, $match);
 
 			// we have a match..uhoh, someone's being naughty
 			// time to slap 'em up side the head
-			if (sizeof($match))
+			if (!empty(array_keys($match[0])))
 			{
 				$this->language->add_lang('common', 'rmcgirr83/authorizedforurls');
 
@@ -262,7 +262,33 @@ class listener implements EventSubscriberInterface
 				}
 				$type .= (!empty($type)) ? ' ' . $this->language->lang('AUTHED_OR') . ' ' . $this->language->lang('AUTHED_URL') : $this->language->lang('AUTHED_URL');
 
-				return $this->language->lang('URL_UNAUTHED', $type, $match[0]);
+				$matched_url = '';
+				$last_key = array_key_last($match[0]);
+				$first_key = array_key_first($match[0]);
+				$match_count = count($match[0]);
+
+				foreach ($match[0] as $key => $value)
+				{
+					if ($key == $first_key)
+					{
+						$matched_url .= $value;
+					}
+					else if ($match_count > 2 && $key != $last_key)
+					{
+						$matched_url .= $this->language->lang('COMMA_SEPARATOR') . $value;
+					}
+					else if ($key == $last_key)
+					{
+						$matched_url .= $this->language->lang('AUTHED_AND') . $value;
+					}
+				}
+
+				if ($return_lang_args)
+				{
+					return array('URL_UNAUTHED', $type, $matched_url);
+				}
+
+				return $this->language->lang('URL_UNAUTHED', $type, $matched_url);
 			}
 		}
 
