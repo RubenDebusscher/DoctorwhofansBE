@@ -13,6 +13,16 @@ namespace rmcgirr83\activationjustification\event;
 /**
 * @ignore
 */
+use phpbb\auth\auth;
+use phpbb\config\config;
+use phpbb\db\driver\driver_interface as db;
+use phpbb\language\language;
+use phpbb\log\log;
+use phpbb\notification\manager as notification_manager;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -25,62 +35,62 @@ class listener implements EventSubscriberInterface
 	 */
 	private $data = array();
 
-	/**
-	 * Target user id
-	 */
-	private $user_id = 0;
-
-	/** @var \phpbb\auth\auth */
+	/** @var auth $auth */
 	protected $auth;
 
-	/** @var \phpbb\config\config */
+	/** @var config $config */
 	protected $config;
 
-	/** @var \phpbb\db\driver\driver */
+	/** @var db $db */
 	protected $db;
 
-	/** @var \phpbb\log\log */
+	/** @var language $language */
+	protected $language;
+
+	/** @var log $log */
 	protected $log;
 
-	/** @var \phpbb\notification\manager */
+	/** @var notification_manager $notification_manager */
 	protected $notification_manager;
 
-	/** @var \phpbb\request\request */
+	/** @var request $request */
 	protected $request;
 
-	/** @var \phpbb\template\template */
+	/** @var template $template */
 	protected $template;
 
-	/** @var \phpbb\user */
+	/** @var user $user*/
 	protected $user;
 
-	/** @var string phpBB root path */
-	protected $phpbb_root_path;
+	/** @var string root_path $root_path */
+	protected $root_path;
 
-	/** @var string phpEx */
+	/** @var string php_ext $php_ext */
 	protected $php_ext;
 
 	public function __construct(
-		\phpbb\auth\auth $auth,
-		\phpbb\config\config $config,
-		\phpbb\db\driver\driver_interface $db,
-		\phpbb\log\log $log,
-		\phpbb\notification\manager $notification_manager,
-		\phpbb\request\request $request,
-		\phpbb\template\template $template,
-		\phpbb\user $user,
-		$phpbb_root_path,
-		$php_ext)
+		auth $auth,
+		config $config,
+		db $db,
+		language $language,
+		log $log,
+		notification_manager $notification_manager,
+		request $request,
+		template $template,
+		user $user,
+		string $root_path,
+		string $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->db = $db;
+		$this->language = $language;
 		$this->log = $log;
 		$this->notification_manager = $notification_manager;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		$this->root_path = $phpbb_root_path;
+		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}
 
@@ -118,7 +128,7 @@ class listener implements EventSubscriberInterface
 		$this->data		= $event['member'];
 		$this->user_id	= (int) $this->data['user_id'];
 
-		$this->user->add_lang_ext('rmcgirr83/activationjustification', 'common');
+		$this->language->add_lang('common', 'rmcgirr83/activationjustification');
 
 		if ($this->data['user_type'] != USER_INACTIVE && $this->data['user_inactive_reason'] != INACTIVE_REGISTER)
 		{
@@ -127,7 +137,7 @@ class listener implements EventSubscriberInterface
 			{
 				if ($aj_result == 'success')
 				{
-					$aj_message = $this->user->lang('ACTIVATED_SUCCESS');
+					$aj_message = $this->language->lang('ACTIVATED_SUCCESS');
 
 					$this->template->assign_vars(array(
 						'AJ_MESSAGE'		=> $aj_message,
@@ -146,7 +156,7 @@ class listener implements EventSubscriberInterface
 			);
 
 			$this->template->assign_vars(array(
-				'JUSTIFICATION'		=> empty($this->data['user_justification']) ? $this->user->lang('NO_JUSTIFICATION') : $this->data['user_justification'],
+				'JUSTIFICATION'		=> empty($this->data['user_justification']) ? $this->language->lang('NO_JUSTIFICATION') : $this->data['user_justification'],
 				'U_ACTIVATE'		=> append_sid($this->root_path . 'memberlist.' . $this->php_ext, $params),
 				'S_JUSTIFY'			=> true,
 			));
@@ -159,7 +169,7 @@ class listener implements EventSubscriberInterface
 			$hidden_fields = array(
 				'mode'				=> 'viewprofile',
 			);
-			$message = $this->user->lang('SURE_ACTIVATE', $this->data['username']);
+			$message = $this->language->lang('SURE_ACTIVATE', $this->data['username']);
 			confirm_box(false, $message, build_hidden_fields($hidden_fields));
 		}
 		$this->user_justification_activate();
@@ -192,7 +202,7 @@ class listener implements EventSubscriberInterface
 			'user_justification'	=> $this->request->variable('justify', '', true),
 		));
 
-		$this->user->add_lang_ext('rmcgirr83/activationjustification', 'common');
+		$this->language->add_lang('common', 'rmcgirr83/activationjustification');
 
 		$this->template->assign_vars(array(
 			'JUSTIFICATION'		=> $event['data']['user_justification'],
@@ -212,7 +222,7 @@ class listener implements EventSubscriberInterface
 		if ($event['submit'] && empty($event['data']['user_justification']) && $this->config['require_activation'] == USER_ACTIVATION_ADMIN)
 		{
 			$error_array = $event['error'];
-			$error_array[] = $this->user->lang('TOO_SHORT_JUSTIFICATION');
+			$error_array[] = $this->language->lang('TOO_SHORT_JUSTIFICATION');
 			$event['error'] = $error_array;
 		}
 	}
@@ -240,10 +250,10 @@ class listener implements EventSubscriberInterface
 	*/
 	public function acp_user_justification_display($event)
 	{
-		$this->user->add_lang_ext('rmcgirr83/activationjustification', 'common');
+		$this->language->add_lang('common', 'rmcgirr83/activationjustification');
 
 		$this->template->assign_vars(array(
-			'USER_JUSTIFICATION'		=> empty($event['user_row']['user_justification']) ? $this->user->lang('NO_JUSTIFICATION') : $event['user_row']['user_justification'],
+			'USER_JUSTIFICATION'		=> empty($event['user_row']['user_justification']) ? $this->language->lang('NO_JUSTIFICATION') : $event['user_row']['user_justification'],
 		));
 	}
 
@@ -287,11 +297,10 @@ class listener implements EventSubscriberInterface
 
 		$sql = 'UPDATE ' . USERS_TABLE . "
 			SET user_actkey = ''
-			WHERE user_id = {$user['user_id']}";
+			WHERE user_id = " . (int) $user['user_id'];
 		$this->db->sql_query($sql);
 
 		// Create the correct logs
-
 		$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_ACTIVE_USER', false, array('reportee_id' => $user['user_id']));
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_ACTIVE', false, array($user['username']));
 	}

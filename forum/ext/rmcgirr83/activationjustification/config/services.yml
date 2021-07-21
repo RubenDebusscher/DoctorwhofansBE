@@ -4,7 +4,8 @@ services:
         arguments:
             - '@auth'
             - '@config'
-            - '@dbal.conn'           
+            - '@dbal.conn'
+            - '@language'
             - '@log'
             - '@notification_manager'
             - '@request'
