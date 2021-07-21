@@ -1,8 +1,10 @@
 .lastpostavatar img {
-	border: 1px solid #fff;
-	display: inline-block;
+	display: block;
 	margin-right: 4px;
 	float: left;
+	width: 4.2em;
+	margin-top: auto;
+	margin-bottom: auto;
 }
 
 .rtl .lastpostavatar img { 

@@ -213,7 +213,7 @@ dl.row-item dt li {
 }
 
 dd.lastpost, dd.redirect, dd.moderation, dd.time, dd.info {
-	width: 250px;
+	width: 20em;
 	font-size: 1.1em;
 }
 
