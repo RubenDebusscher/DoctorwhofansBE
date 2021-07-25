@@ -26,12 +26,12 @@ class main extends base
 	const MIN_PRUNE_AGE = 86400;
 
 	/**
-	 * @var \phpbb\config\config
+	 * @var config
 	 */
 	protected $config;
 
 	/**
-	 * @var \phpbb\db\driver\driver_interface
+	 * @var driver_interface
 	 */
 	protected $db;
 
@@ -43,10 +43,9 @@ class main extends base
 	protected $table_name;
 
 	/**
-	 * @param \phpbb\config\config              $config
-	 * @param \phpbb\db\driver\driver_interface $db
-	 * @param string                            $table_name The name of the database table storing
-	 *                                                      Steam profiles
+	 * @param config           $config
+	 * @param driver_interface $db
+	 * @param string           $table_name The name of the database table storing Steam profiles
 	 */
 	public function __construct(config $config, driver_interface $db, $table_name)
 	{
@@ -55,6 +54,9 @@ class main extends base
 		$this->table_name = $table_name;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function run()
 	{
 		$cache_ids = array();
@@ -90,6 +92,9 @@ class main extends base
 		$this->config->set('stevotvr_steamstatus_cron_last_run', time());
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function should_run()
 	{
 		return (time() - (int) $this->config['stevotvr_steamstatus_cron_last_run']) > self::INTERVAL;

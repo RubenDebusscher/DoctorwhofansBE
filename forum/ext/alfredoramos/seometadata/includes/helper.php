@@ -23,37 +23,37 @@ use FastImageSize\FastImageSize;
 
 class helper
 {
-	/** @var \phpbb\db\driver\factory */
+	/** @var database */
 	protected $db;
 
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
-	/** @var \phpbb\user */
+	/** @var user */
 	protected $user;
 
-	/** @var \phpbb\request\request */
+	/** @var request */
 	protected $request;
 
-	/** @var \phpbb\template\template */
+	/** @var template */
 	protected $template;
 
-	/** @var \phpbb\language\language */
+	/** @var language */
 	protected $language;
 
-	/** @var \phpbb\filesystem\filesystem */
+	/** @var filesystem */
 	protected $filesystem;
 
-	/** @var \phpbb\cache\driver\driver_interface */
+	/** @var cache */
 	protected $cache;
 
-	/** @var \phpbb\controller\helper */
+	/** @var controller_helper */
 	protected $controller_helper;
 
-	/** @var \phpbb\event\dispatcher_interface */
+	/** @var dispatcher */
 	protected $dispatcher;
 
-	/** @var \FastImageSize\FastImageSize */
+	/** @var FastImageSize */
 	protected $imagesize;
 
 	/** @var string */
@@ -71,21 +71,21 @@ class helper
 	/**
 	 * Helper constructor.
 	 *
-	 * @param \phpbb\db\driver\factory				$db
-	 * @param \phpbb\config\config					$config
-	 * @param \phpbb\user							$user
-	 * @param \phpbb\request\request				$request
-	 * @param \phpbb\template\template				$template
-	 * @param \phpbb\language\language				$language
-	 * @param \phpbb\filesystem\filesystem			$filesystem
-	 * @param \phpbb\cache\driver\driver_interface	$cache
-	 * @param \phpbb\controller\helper				$controller_helper
-	 * @param \phpbb\event\dispatcher_interface		$dispatcher
-	 * @param \FastImageSize\FastImageSize			$imagesize
-	 * @param string								$root_path
-	 * @param string								$php_ext
-	 * @param string								$posts_table
-	 * @param string								$attachments_table
+	 * @param database			$db
+	 * @param config			$config
+	 * @param user				$user
+	 * @param request			$request
+	 * @param template			$template
+	 * @param language			$language
+	 * @param filesystem		$filesystem
+	 * @param cache				$cache
+	 * @param controller_helper	$controller_helper
+	 * @param dispatcher		$dispatcher
+	 * @param FastImageSize		$imagesize
+	 * @param string			$root_path
+	 * @param string			$php_ext
+	 * @param string			$posts_table
+	 * @param string			$attachments_table
 	 *
 	 * @return void
 	 */
@@ -169,9 +169,9 @@ class helper
 					'article:publisher' => trim($this->config['seo_metadata_facebook_publisher'])
 				],
 				'json_ld' => [
-					'@context' => 'http://schema.org',
+					'@context' => 'https://schema.org',
 					'@type' => 'DiscussionForumPosting',
-					'@id' => $default['url'],
+					'url' => $default['url'],
 					'headline' => '',
 					'description' => $default['description'],
 					'image' => $default['image']['url'],
@@ -180,6 +180,7 @@ class helper
 						'name' => ''
 					],
 					'datePublished' => '',
+					'articleSection' => '',
 					'publisher' => [
 						'@type' => 'Organization',
 						'name' => trim($this->config['sitename']),
@@ -219,6 +220,7 @@ class helper
 				break;
 
 				case 'description':
+					$value = $this->clean_description($value);
 					$this->metadata['meta_description']['description'] = $value;
 					$this->metadata['open_graph']['og:description'] = $value;
 					$this->metadata['twitter_cards']['twitter:description'] = $value;
@@ -228,6 +230,7 @@ class helper
 				case 'image':
 					if (isset($value['url']))
 					{
+						$value['url'] = $this->clean_image($value['url']);
 						$this->metadata['open_graph']['og:image'] = $value['url'];
 						$this->metadata['twitter_cards']['twitter:image'] = $value['url'];
 						$this->metadata['json_ld']['image'] = $value['url'];
@@ -242,7 +245,6 @@ class helper
 					{
 						$value['width'] = (int) $value['width'];
 						$value['height'] = (int) $value['height'];
-
 						$this->metadata['open_graph']['og:image:width'] = $value['width'];
 						$this->metadata['open_graph']['og:image:height'] = $value['height'];
 						$this->metadata['twitter_cards']['twitter:card'] = $this->is_wide_image(
@@ -260,6 +262,7 @@ class helper
 
 				case 'section':
 					$this->metadata['open_graph']['article:section'] = $value;
+					$this->metadata['json_ld']['articleSection'] = $value;
 				break;
 
 				case 'author':
@@ -336,6 +339,12 @@ class helper
 		if (empty($data['json_ld']['author']['name']))
 		{
 			unset($data['json_ld']['author']);
+		}
+
+		// JSON-LD article section
+		if (empty($data['json_ld']['datePublished']))
+		{
+			unset($data['json_ld']['articleSection']);
 		}
 
 		// JSON-LD logo
@@ -568,16 +577,7 @@ class helper
 		// Image must exist inside the phpBB's images path
 		$base_path = $this->filesystem->realpath($this->root_path . $dir);
 
-		// \phpbb\filesystem\filesystem::resolve_path() throws warnings when called from
-		// \phpbb\filesystem\filesystem::realpath() and open_basedir is set.
-		//
-		// It passes directories not allowed (like the web server root directory) as parameter
-		// to is_link(), is_dir() and is_file()
-		//
-		// https://tracker.phpbb.com/browse/PHPBB3-15643
-		// https://github.com/phpbb/phpbb/pull/5673
-		//
-		//$image_path = $this->filesystem->realpath($base_path . '/' . $uri);
+		// Canonicalized absolute path
 		$image_path = $this->filesystem->clean_path($base_path . '/' . $uri);
 
 		// Avoid path traversal attack
@@ -621,18 +621,17 @@ class helper
 			return '';
 		}
 
+		// Escape ampersand
+		$url = htmlspecialchars($url, ENT_COMPAT, 'UTF-8', false);
+
 		// Remove app.php/ from URL
 		if ((int) $this->config['enable_mod_rewrite'] === 1)
 		{
 			$url = preg_replace('#app\.' . $this->php_ext . '/(.+)$#', '\1', $url);
 		}
 
-		// Escape ampersand
-		$url = htmlspecialchars($url, ENT_COMPAT, 'UTF-8', false);
-
 		// Remove SID from URL
-		$url = str_replace($this->user->session_id, '', $url);
-		$url = preg_replace('#(?:&amp;|\?)?sid=#', '', $url);
+		$url = preg_replace('#(?:&amp;)?sid=\w{0,128}#', '', $url);
 		$url = str_replace('?&amp;', '?', $url);
 
 		// Remove index.php without parameters

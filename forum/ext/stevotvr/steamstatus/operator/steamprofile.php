@@ -38,22 +38,22 @@ class steamprofile implements steamprofile_interface
 	);
 
 	/**
-	 * @var \phpbb\config\config
+	 * @var config
 	 */
 	protected $config;
 
 	/**
-	 * @var \Symfony\Component\DependencyInjection\ContainerInterface
+	 * @var ContainerInterface
 	 */
 	protected $container;
 
 	/**
-	 * @var \phpbb\db\driver\driver_interface
+	 * @var driver_interface
 	 */
 	protected $db;
 
 	/**
-	 * @var \stevotvr\steamstatus\operator\http_helper_interface
+	 * @var http_helper_interface
 	 */
 	protected $http_helper;
 
@@ -65,11 +65,11 @@ class steamprofile implements steamprofile_interface
 	protected $table_name;
 
 	/**
-	 * @param \phpbb\config\config                                 $config
-	 * @param ContainerInterface                                   $container
-	 * @param \phpbb\db\driver\driver_interface                    $db
-	 * @param \stevotvr\steamstatus\operator\http_helper_interface $http_helper
-	 * @param string                                               $table_name The name of the database table storing Steam profiles
+	 * @param config                $config
+	 * @param ContainerInterface    $container
+	 * @param driver_interface      $db
+	 * @param http_helper_interface $http_helper
+	 * @param string                $table_name The name of the database table storing Steam profiles
 	 */
 	public function __construct(config $config, ContainerInterface $container, driver_interface $db, http_helper_interface $http_helper, $table_name)
 	{
@@ -80,16 +80,25 @@ class steamprofile implements steamprofile_interface
 		$this->table_name = $table_name;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get_table_name()
 	{
 		return $this->table_name;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get()
 	{
 		return $this->container->get('stevotvr.steamstatus.entity');
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get_from_api(array $steamids)
 	{
 		$profiles = array();
@@ -132,7 +141,7 @@ class steamprofile implements steamprofile_interface
 							'steam_avatarurl'	=> str_replace('http://', 'https://', $player->avatar),
 							'steam_state'		=> self::get_profile_state($player),
 							'steam_status'		=> self::get_profile_status($player),
-							'steam_lastlogoff'	=> $player->lastlogoff,
+							'steam_lastlogoff'	=> $player->lastlogoff ? $player->lastlogoff : 0,
 						);
 						$profiles[] = $this->container->get('stevotvr.steamstatus.entity')->import($data)->save();
 					}
@@ -143,6 +152,9 @@ class steamprofile implements steamprofile_interface
 		return $profiles;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get_from_cache($steamid)
 	{
 		try

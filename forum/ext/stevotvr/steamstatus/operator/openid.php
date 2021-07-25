@@ -23,12 +23,12 @@ class openid implements openid_interface
 	const OPENID_URL = 'https://steamcommunity.com/openid/';
 
 	/**
-	 * @var \stevotvr\steamstatus\operator\http_helper_interface
+	 * @var http_helper_interface
 	 */
 	protected $http_helper;
 
 	/**
-	 * @var \phpbb\request\request_interface
+	 * @var request_interface
 	 */
 	protected $request;
 
@@ -54,9 +54,9 @@ class openid implements openid_interface
 	protected $return_url;
 
 	/**
-	 * @param \stevotvr\steamstatus\operator\http_helper_interface $http_helper
-	 * @param \phpbb\request\request_interface                     $request
-	 * @param \phpbb\user                                          $user
+	 * @param http_helper_interface $http_helper
+	 * @param request_interface     $request
+	 * @param user                  $user
 	 */
 	public function __construct(http_helper_interface $http_helper, request_interface $request, user $user)
 	{
@@ -67,16 +67,25 @@ class openid implements openid_interface
 		$this->return_url = generate_board_url() . '/' .  $user->page['page'];
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function set_return_url($url)
 	{
 		$this->return_url = $url;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get_mode()
 	{
 		return $this->request->variable('openid_mode', '');
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get_url()
 	{
 		$params = http_build_query(array(
@@ -91,6 +100,9 @@ class openid implements openid_interface
 		return self::OPENID_URL . 'login?' . $params;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function validate()
 	{
 		$this->identity = null;
@@ -119,6 +131,9 @@ class openid implements openid_interface
 		return $valid;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get_id()
 	{
 		if (!$this->identity)
@@ -134,6 +149,9 @@ class openid implements openid_interface
 		return '';
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function get_error()
 	{
 		return $this->request->variable('openid_error', '');

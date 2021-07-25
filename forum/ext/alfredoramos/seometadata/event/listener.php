@@ -14,13 +14,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class listener implements EventSubscriberInterface
 {
-	/** @var \alfredoramos\seometadata\includes\helper */
+	/** @var helper */
 	protected $helper;
 
 	/**
 	 * Listener constructor.
 	 *
-	 * @param \alfredoramos\seometadata\includes\helper $helper
+	 * @param helper $helper
 	 *
 	 * @return void
 	 */
@@ -70,7 +70,7 @@ class listener implements EventSubscriberInterface
 	{
 		// Meta data helper
 		$data = [
-			'description' => $this->helper->clean_description($event['forum_data']['forum_desc']),
+			'description' => $event['forum_data']['forum_desc'],
 			'image' => $this->helper->forum_image(
 				$event['forum_data']['forum_image'],
 				$event['forum_data']['forum_id']
@@ -120,10 +120,6 @@ class listener implements EventSubscriberInterface
 			$post_id,
 			$event['topic_data']['forum_id']
 		);
-
-		// Clean helpers
-		$data['description'] = $this->helper->clean_description($data['description']);
-		$data['image']['url'] = $this->helper->clean_image($data['image']['url']);
 
 		$this->helper->set_metadata($data);
 	}
