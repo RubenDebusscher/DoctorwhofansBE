@@ -653,7 +653,7 @@ function DownloadsForEpisode(Downloads) {
 }
 
 function CreateWikiDetails() {
-  $('main article').prepend("<aside id='WikiDetails'><img src='https://www.doctorwhofans.be/images/gallifreyan_black.png'/></aside>");
+  $('main article').prepend("<aside id='WikiDetails' class='bordered DarkBlueBackground '><img src='https://www.doctorwhofans.be/images/gallifreyan_black.png'/></aside>");
 
 }
 
@@ -947,3 +947,46 @@ $(document).ready(
     $('#font-select select option[value="'+selectedOption+'"]').prop("disabled",true);
     setCookie("Font",selectedOption,30);
   }
+
+  function getSizesfromCookie(){
+    $('#size').text(getCookie("size"));
+    $("main,.under,footer").children().each(function() {
+      var size = parseInt($(this).css("font-size"));
+      size = size + parseInt(getCookie("size")) + "px";
+      $(this).css({
+        'font-size': size
+      });
+    });
+  }
+
+  $(function() {
+    $("#increase").click(function() {
+      siz = parseInt($('#size').text());
+      siz+=1;
+      $('#size').text(siz);
+      setCookie("size",siz,30);
+      $("main,.under,footer").children().each(function() {
+        var size = parseInt($(this).css("font-size"));
+        size = size + 1 + "px";
+        $(this).css({
+          'font-size': size
+        });
+      });
+    });
+
+  });
+  $(function() {
+    $("#decrease").click(function() {
+      siz = parseInt($('#size').text());
+      siz-=1;
+      $('#size').text(siz);
+      setCookie("size",siz,30);
+      $("main,.under,footer").children().each(function() {
+        var size = parseInt($(this).css("font-size"));
+        size = size - 1 + "px";
+        $(this).css({
+          'font-size': size
+        });
+      });
+    });
+  });

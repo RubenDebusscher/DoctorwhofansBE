@@ -16,16 +16,18 @@
     --font-color-darkblue-white: white;
     --nav-hover-color: #EED06E;
     --height-for-main: 80vh;
-    --border-color: #DECE3E
+    --border-color: #DECE3E;
     font-family: 'Courier Prime', monospace;
-font-family: 'Hahmlet', serif;
-font-family: 'Inconsolata', monospace;
-font-family: 'Lato', sans-serif;
-font-family: 'MonteCarlo', cursive;
-font-family: 'Open Sans', sans-serif;
-font-family: 'PT Sans', sans-serif;
-font-family: 'Ubuntu', sans-serif;
+    font-family: 'Hahmlet', serif;
+    font-family: 'Inconsolata', monospace;
+    font-family: 'Lato', sans-serif;
+    font-family: 'MonteCarlo', cursive;
+    font-family: 'Open Sans', sans-serif;
+    font-family: 'PT Sans', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
+
 }
+
 
 /* width */
 ::-webkit-scrollbar {
@@ -3070,10 +3072,10 @@ h1 {
     float: right;
     min-width: 15%;
     max-width: 19%;
-    background-color: var(--bg-color-darkBlue);
+    /*background-color: var(--bg-color-darkBlue);*/
     padding: 1%;
-    border: 5px solid var(--border-color);
-    border-radius: 3%;
+    /*border: 5px solid var(--border-color);
+    border-radius: 3%;*/
     color: var(--font-color-darkblue-white)
 }
 

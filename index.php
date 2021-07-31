@@ -98,6 +98,9 @@ truepush.push(function(){
 <script>
         setDarkmodefromCookie();
         setFontFromCookie();
+        if (getCookie("size") != "") {
+            getSizesfromCookie();
+        }
         var menu = "<?php echo $menu?>";
         var id=Number("<?php echo $id?>");
         if (menu==""){
