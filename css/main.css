@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans&display=swap);
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Hahmlet:wght@400;600&family=Inconsolata:wght@400;600&family=Lato:wght@400;700&family=MonteCarlo&family=Open+Sans:wght@400;600&family=PT+Sans:wght@400;700&family=Ubuntu:wght@400;700&display=swap');
 
 @font-face {
     font-family: FontAwesome;
@@ -16,6 +17,14 @@
     --nav-hover-color: #EED06E;
     --height-for-main: 80vh;
     --border-color: #DECE3E
+    font-family: 'Courier Prime', monospace;
+font-family: 'Hahmlet', serif;
+font-family: 'Inconsolata', monospace;
+font-family: 'Lato', sans-serif;
+font-family: 'MonteCarlo', cursive;
+font-family: 'Open Sans', sans-serif;
+font-family: 'PT Sans', sans-serif;
+font-family: 'Ubuntu', sans-serif;
 }
 
 /* width */

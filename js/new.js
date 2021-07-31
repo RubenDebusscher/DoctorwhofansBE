@@ -925,3 +925,25 @@ function setDarkmodefromCookie() {
     $('#NightMode i').addClass("fa-moon-o")
   }
 }
+
+
+$(document).ready(
+  function()
+  {
+      $('#font-select').on( 'change',
+          function()
+          {
+            var selectedOption = $('#font-select').val()
+              $('body').css( 'font-family', selectedOption );
+              setCookie("Font",selectedOption,30);
+          });
+  });
+
+  function setFontFromCookie(){
+    
+    var selectedOption = getCookie("Font")
+    $('body').css( 'font-family', selectedOption );
+    $('#font-select select option[value="'+selectedOption+'"]').prop("selected",true);
+    $('#font-select select option[value="'+selectedOption+'"]').prop("disabled",true);
+    setCookie("Font",selectedOption,30);
+  }
