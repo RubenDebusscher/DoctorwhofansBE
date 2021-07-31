@@ -244,7 +244,7 @@ function getAvailableLangcodes() {
   }).done(
     function (resultaat) {
       AvailableLangCodes = resultaat;
-      checkCookie();
+      checkLangCookie();
     }).fail(function (response, statusText, xhr) {}).always(function () {});
 }
 
@@ -264,7 +264,7 @@ function getCookie(cname) {
   return "";
 }
 
-function checkCookie() {
+function checkLangCookie() {
 
   var lang = getCookie("lang");
   if (lang == "") {
@@ -858,4 +858,38 @@ function HideNotificationButton() {
     $('.custom-button').hide();
 
   }
+}
+
+window.addEventListener("afterprint", Closeprint);
+
+function Closeprint(){
+  $('nav').show();
+  $('.path').show();
+  $('.access').show();
+  $('footer').show();
+  $('.back-to-top').show();
+  $('#WikiDetails').css("width","26%");
+  $('#WikiDetails').css("margin-top","-5em");
+  $('#Inhoud').css("width","max-content");
+  $('body').removeClass('print');
+
+
+}
+
+window.onbeforeprint = function() {printContent()};
+function printContent(){
+  $('nav').hide();
+  $('.path').hide();
+  $('.access').hide();
+  $('footer').hide();
+  $('.back-to-top').hide();
+  $('#WikiDetails').css("width","100%");
+  $('#WikiDetails').css("margin-top","1em");
+  $('#Inhoud').css("width","100%");
+  $('body').addClass('print');
+
+
+
+
+
 }

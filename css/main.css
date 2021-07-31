@@ -3473,3 +3473,8 @@ main article a:focus {
 .timelines h2 {
     text-align: center
 }
+
+
+.print{font-family: 'Times New Roman', Times, serif;}
+
+.print #WikiDetails { width:45% !important;}
