@@ -96,6 +96,7 @@ truepush.push(function(){
 
 
 <script>
+        setDarkmodefromCookie()
         var menu = "<?php echo $menu?>";
         var id=Number("<?php echo $id?>");
         if (menu==""){

@@ -3052,6 +3052,11 @@ h1 {
     z-index: 0 !important;
 }
 
+.dark-mode, #WikiDetails .dark-mode {
+    background-color: black !important;
+    color: white !important;
+  }
+
 #WikiDetails {
     float: right;
     min-width: 15%;
@@ -3478,3 +3483,4 @@ main article a:focus {
 .print{font-family: 'Times New Roman', Times, serif;}
 
 .print #WikiDetails { width:45% !important;}
+

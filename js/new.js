@@ -323,6 +323,7 @@ function GetContent(menu, id) {
   if (getCookie("lang") == "") {
     setCookie("lang", "nl", 30);
   }
+  
   if (menu != "") {
 
     var form = new FormData();
@@ -402,6 +403,7 @@ function GetContent(menu, id) {
         });
         $("#Inhoud").append(varlist);
       }
+      
     });
   }
 }
@@ -889,7 +891,37 @@ function printContent(){
   $('body').addClass('print');
 
 
+}
+
+function ToggleNightMode() {
+  
+  if (getCookie("Theme")=="Dark"){
+    setCookie("Theme","Light",30)
+    setDarkmodefromCookie()
+  }else {
+    setCookie("Theme","Dark",30)
+    setDarkmodefromCookie()
+  }
+}
 
 
-
+function setDarkmodefromCookie() {
+  var element = document.body;
+  
+  if (getCookie("Theme")=="Dark"){
+    element.classList.add("dark-mode");
+    $("*").addClass("dark-mode");
+    $('::-webkit-scrollbar-thumb').addClass("dark-mode")
+    $('#NightMode i').removeClass("fa-moon-o")
+    $('#NightMode i').addClass("fa-sun-o")
+    
+  }else{
+    element.classList.remove("dark-mode");
+  $("*").removeClass("dark-mode");
+  $('::-webkit-scrollbar-thumb').removeClass("dark-mode")
+ 
+  
+  $('#NightMode i').removeClass("fa-sun-o")
+    $('#NightMode i').addClass("fa-moon-o")
+  }
 }
