@@ -244,10 +244,24 @@ function getAvailableLangcodes() {
   }).done(
     function (resultaat) {
       AvailableLangCodes = resultaat;
+      
       checkLangCookie();
+      populateLangChoice(resultaat);
     }).fail(function (response, statusText, xhr) {}).always(function () {});
 }
 
+
+function populateLangChoice(Choices){
+  for (var i = 0; i < Choices.data.length; i++) {
+    var option= document.createElement("option");
+    option.value=Choices.data[i].language_Name;
+    option.innerText=Choices.data[i].language_LongName;
+    $("#lang-select").append(option)
+  }
+  var currentLang=getCookie("lang")
+  $("#lang-select option[value='"+currentLang+"']").attr("disabled","disabled");
+  $("#lang-select option[value='"+currentLang+"']").attr("selected","selected");
+}
 function getCookie(cname) {
   var name = cname + "=";
   var decodedCookie = decodeURIComponent(document.cookie);
@@ -268,7 +282,7 @@ function checkLangCookie() {
 
   var lang = getCookie("lang");
   if (lang == "") {
-    if (AvailableLangCodes.data.includes(navigator.language) === true) {
+    if (AvailableLangCodes.data.language_Name.includes(navigator.language) === true) {
       setCookie("lang", navigator.language, 30);
     } else {
       setCookie("lang", "nl", 30);
@@ -379,10 +393,9 @@ function GetContent(menu, id) {
           case "Contact":
             break;
           case "Quotes":
-          //  TODO: #56 Add Quotes in Front End (Already added in Request)
+          //// #56 Add Quotes in Front End (Already added in Request)
           AddMainQuoteToDom(response.MainQuote);
           AddQuoteSelectionToDom(response.Quotes);
-            console.log("Quotes");
             break;
           case "Sitemap":
             $('main article').append('<ul id="Sitemap"></ul>');
@@ -930,12 +943,31 @@ function setDarkmodefromCookie() {
 $(document).ready(
   function()
   {
+
+    $('#lang-select').on('change', function (e) {
+      var optionSelected = $("#lang-select option:selected", this);
+      var valueSelected = this.value;
+      setCookie("lang",this.value,30);
+      $(".main__path,#Tags,#SiteContent article").html('');
+      GetContent(menu, id);
+
+
+      $("#lang-select option").attr("disabled",false);
+      $("#lang-select option").attr("selected",false);
+      $("#lang-select option[value='"+this.value+"']").attr("disabled","disabled");
+      $("#lang-select option[value='"+this.value+"']").attr("selected","selected");
+  });
+
       $('#font-select').on( 'change',
           function()
           {
-            var selectedOption = $('#font-select').val()
+            var selectedOption = $('#font-select').val();
               $('body').css( 'font-family', selectedOption );
               setCookie("Font",selectedOption,30);
+              $("#font-select option").attr("disabled",false);
+              $("#font-select option").attr("selected",false);
+              $("#font-select option[value='"+selectedOption+"']").attr("disabled","disabled");
+              $("#font-select option[value='"+selectedOption+"']").attr("selected","selected");
           });
   });
 
@@ -943,9 +975,12 @@ $(document).ready(
     
     var selectedOption = getCookie("Font")
     $('body').css( 'font-family', selectedOption );
-    $('#font-select select option[value="'+selectedOption+'"]').prop("selected",true);
-    $('#font-select select option[value="'+selectedOption+'"]').prop("disabled",true);
+    
     setCookie("Font",selectedOption,30);
+    console.log(selectedOption)
+    $("#font-select option[value='"+selectedOption+"']").attr("disabled","disabled");
+    $("#font-select option[value='"+selectedOption+"']").attr("selected","selected");
+
   }
 
   function getSizesfromCookie(){

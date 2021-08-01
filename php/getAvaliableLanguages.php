@@ -7,7 +7,7 @@
   $antwoord = [];
   $antwoord['data'] = "Geen resultaten gevonden.";
   mysqli_set_charset($conn,'utf8');
-  $stmt1 = $conn->prepare("select language_Name from management__languages");
+  $stmt1 = $conn->prepare("select language_Name,language_LongName from management__languages order by language_LongName");
   if(!$stmt1){
       die("Statement preparing failed: " . $conn->error);
   }
