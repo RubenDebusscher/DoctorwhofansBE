@@ -22,17 +22,17 @@ use dark1\memberavatarstatus\core\status;
  */
 class support_listener implements EventSubscriberInterface
 {
-	/** @var \dark1\memberavatarstatus\core\avatar*/
+	/** @var avatar*/
 	protected $avatar;
 
-	/** @var \dark1\memberavatarstatus\core\status*/
+	/** @var status*/
 	protected $status;
 
 	/**
 	 * Constructor for listener
 	 *
-	 * @param \dark1\memberavatarstatus\core\avatar		$avatar		dark1 avatar
-	 * @param \dark1\memberavatarstatus\core\status		$status		dark1 status
+	 * @param avatar	$avatar		dark1 avatar
+	 * @param status	$status		dark1 status
 	 * @access public
 	 */
 	public function __construct(avatar $avatar, status $status)
@@ -106,15 +106,12 @@ class support_listener implements EventSubscriberInterface
 		$online_last_poster = $this->status->mas_get_online('dark1_mas_vf_lp', 'topic_last_poster', $row);
 
 		// Add Both of Avatar & Online Status to tpl_ary
-		$tpl_ary = array_merge(
-			$tpl_ary,
-			[
-				'TOPIC_AUTHOR_AVATAR_IMG'		=> $avatar_first_poster,
-				'TOPIC_AUTHOR_S_ONLINE'			=> $online_first_poster,
-				'LAST_POST_AUTHOR_AVATAR_IMG'	=> $avatar_last_poster,
-				'LAST_POST_AUTHOR_S_ONLINE'		=> $online_last_poster,
-			]
-		);
+		$tpl_ary = array_merge($tpl_ary, [
+			'TOPIC_AUTHOR_AVATAR_IMG'		=> $avatar_first_poster,
+			'TOPIC_AUTHOR_S_ONLINE'			=> $online_first_poster,
+			'LAST_POST_AUTHOR_AVATAR_IMG'	=> $avatar_last_poster,
+			'LAST_POST_AUTHOR_S_ONLINE'		=> $online_last_poster,
+		]);
 
 		// Assign tpl_ary to event -> tpl_ary
 		$event['tpl_ary'] = $tpl_ary;
@@ -168,15 +165,12 @@ class support_listener implements EventSubscriberInterface
 		$online_last_poster = $this->status->mas_get_online('dark1_mas_sh_lp', 'topic_last_poster', $row);
 
 		// Add Both of Avatar & Online Status to topic_row
-		$topic_row = array_merge(
-			$topic_row,
-			[
-				'TOPIC_AUTHOR_AVATAR_IMG'		=> $avatar_first_poster,
-				'TOPIC_AUTHOR_S_ONLINE'			=> $online_first_poster,
-				'LAST_POST_AUTHOR_AVATAR_IMG'	=> $avatar_last_poster,
-				'LAST_POST_AUTHOR_S_ONLINE'		=> $online_last_poster,
-			]
-		);
+		$topic_row = array_merge($topic_row, [
+			'TOPIC_AUTHOR_AVATAR_IMG'		=> $avatar_first_poster,
+			'TOPIC_AUTHOR_S_ONLINE'			=> $online_first_poster,
+			'LAST_POST_AUTHOR_AVATAR_IMG'	=> $avatar_last_poster,
+			'LAST_POST_AUTHOR_S_ONLINE'		=> $online_last_poster,
+		]);
 
 		// Assign topic_row to event -> topic_row
 		$event['topic_row'] = $topic_row;

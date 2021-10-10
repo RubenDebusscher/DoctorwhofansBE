@@ -22,17 +22,17 @@ use dark1\memberavatarstatus\core\status;
  */
 class review_listener implements EventSubscriberInterface
 {
-	/** @var \dark1\memberavatarstatus\core\avatar*/
+	/** @var avatar*/
 	protected $avatar;
 
-	/** @var \dark1\memberavatarstatus\core\status*/
+	/** @var status*/
 	protected $status;
 
 	/**
 	 * Constructor for listener
 	 *
-	 * @param \dark1\memberavatarstatus\core\avatar		$avatar		dark1 avatar
-	 * @param \dark1\memberavatarstatus\core\status		$status		dark1 status
+	 * @param avatar	$avatar		dark1 avatar
+	 * @param status	$status		dark1 status
 	 * @access public
 	 */
 	public function __construct(avatar $avatar, status $status)
@@ -105,13 +105,10 @@ class review_listener implements EventSubscriberInterface
 		$online = $this->status->mas_get_online('dark1_mas_rv', 'user', $row);
 
 		// Add Avatar & Online Status to post_row
-		$post_row = array_merge(
-			$post_row,
-			[
-				'AVATAR_IMG'	=> $avatar,
-				'S_ONLINE'		=> $online,
-			]
-		);
+		$post_row = array_merge($post_row, [
+			'AVATAR_IMG'	=> $avatar,
+			'S_ONLINE'		=> $online,
+		]);
 
 		// Assign post_row to event -> post_row
 		$event['post_row'] = $post_row;
@@ -160,13 +157,10 @@ class review_listener implements EventSubscriberInterface
 		$online = $this->status->mas_get_online('dark1_mas_rv', 'user', $row);
 
 		// Add Avatar & Online Status to template_vars
-		$template_vars = array_merge(
-			$template_vars,
-			[
-				'AVATAR_IMG'	=> $avatar,
-				'S_ONLINE'		=> $online,
-			]
-		);
+		$template_vars = array_merge($template_vars, [
+			'AVATAR_IMG'	=> $avatar,
+			'S_ONLINE'		=> $online,
+		]);
 
 		// Assign template_vars to event -> template_vars
 		$event['template_vars'] = $template_vars;
@@ -217,13 +211,10 @@ class review_listener implements EventSubscriberInterface
 		$online = $this->status->mas_get_online('dark1_mas_rv', 'user', $row);
 
 		// Add Avatar & Online Status to post_row
-		$post_row = array_merge(
-			$post_row,
-			[
-				'AVATAR_IMG'	=> $avatar,
-				'S_ONLINE'		=> $online,
-			]
-		);
+		$post_row = array_merge($post_row, [
+			'AVATAR_IMG'	=> $avatar,
+			'S_ONLINE'		=> $online,
+		]);
 
 		// Assign post_row to event -> post_row
 		$event['post_row'] = $post_row;

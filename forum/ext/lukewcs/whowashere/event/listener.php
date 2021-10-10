@@ -25,22 +25,22 @@ class listener implements EventSubscriberInterface
 		$this->wwh = $wwh;
 	}
 
-	static public function getSubscribedEvents()
+	public static function getSubscribedEvents()
 	{
-		return array(
+		return [
 			'core.page_header_after'		=> 'update_session',
 			'core.page_footer'				=> 'display',
 			'core.permissions'				=> 'add_permissions',
 			'core.delete_user_after'		=> 'clear_up',
-		);
+		];
 	}
 
-	public function update_session($event)
+	public function update_session()
 	{
 		$this->wwh->update_session();
 	}
 
-	public function display($event)
+	public function display()
 	{
 		$this->wwh->display();
 	}

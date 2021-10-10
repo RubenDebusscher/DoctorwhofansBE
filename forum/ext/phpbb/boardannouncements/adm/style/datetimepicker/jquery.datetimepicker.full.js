@@ -1246,7 +1246,7 @@ var DateFormatter;
 		window.getComputedStyle = function (el, pseudo) {
 			this.el = el;
 			this.getPropertyValue = function (prop) {
-				var re = /(\-([a-z]){1})/g;
+				var re = /(\-([a-z])[1])/g;
 				if (prop === 'float') {
 					prop = 'styleFloat';
 				}
@@ -2708,11 +2708,11 @@ var DateFormatter;
 
 				var isValidValue = function (mask, value) {
 					var reg = mask
-						.replace(/([\[\]\/\{\}\(\)\-\.\+]{1})/g, '\\$1')
+						.replace(/([\[\]\/\{\}\(\)\-\.\+][1])/g, '\\$1')
 						.replace(/_/g, '{digit+}')
-						.replace(/([0-9]{1})/g, '{digit$1}')
-						.replace(/\{digit([0-9]{1})\}/g, '[0-$1_]{1}')
-						.replace(/\{digit[\+]\}/g, '[0-9_]{1}');
+						.replace(/([0-9][1])/g, '{digit$1}')
+						.replace(/\{digit([0-9][1])\}/g, '[0-$1_][1]')
+						.replace(/\{digit[\+]\}/g, '[0-9_][1]');
 					return (new RegExp(reg)).test(value);
 				},
 				getCaretPos = function (input) {

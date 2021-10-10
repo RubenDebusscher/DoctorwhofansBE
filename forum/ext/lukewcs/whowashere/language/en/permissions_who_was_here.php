@@ -8,10 +8,6 @@
 * @copyright (c) 2013, nickvergessen, http://www.flying-bits.org/
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
-* Lang_iso     : en
-* Lang_ext_ver : 2.0.0
-* Lang_author  : LukeWCS
-*
 */
 
 /**
@@ -24,14 +20,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
-}
-
-$t1 = $t2 = '';
-if (!$GLOBALS['config']['lfwwh_use_permissions'] || $GLOBALS['config']['lfwwh_admin_mode'])
-{
-	$t1 = '<span style="opacity: 0.5;">';
-	$t2 = '</span>';
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -49,8 +38,7 @@ if (!$GLOBALS['config']['lfwwh_use_permissions'] || $GLOBALS['config']['lfwwh_ad
 // Some characters you may want to copy&paste:
 // ’ « » “ ” … „ “
 //
-
-$lang = array_merge($lang, array(
-	'ACL_U_LFWWH_SHOW_STATS'	=> $t1 . 'Who was here (2.x): Can view statistics' . $t2,
-	'ACL_U_LFWWH_SHOW_USERS'	=> $t1 . 'Who was here (2.x): Can view members' . $t2,
-));
+$lang = array_merge($lang, [
+	'ACL_U_LFWWH_SHOW_STATS'	=> 'Who was here (2.x): Can view statistics',
+	'ACL_U_LFWWH_SHOW_USERS'	=> 'Who was here (2.x): Can view members',
+]);

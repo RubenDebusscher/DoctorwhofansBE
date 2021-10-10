@@ -1,16 +1,17 @@
 <?php
 /**
-*
-* @package phpBB Extension - Ultimate Points
-* @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
+ *
+ * @package phpBB Extension - Ultimate Points
+ * @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
 
 namespace dmzx\ultimatepoints\notification;
 
 use phpbb\notification\type\base;
 use phpbb\controller\helper;
+use phpbb\user_loader;
 
 class points extends base
 {
@@ -18,7 +19,7 @@ class points extends base
 
 	protected $helper;
 
-	public function set_user_loader(\phpbb\user_loader $user_loader)
+	public function set_user_loader(user_loader $user_loader)
 	{
 		$this->user_loader = $user_loader;
 	}
@@ -33,10 +34,10 @@ class points extends base
 		return 'dmzx.ultimatepoints.notification.type.points';
 	}
 
-	public static $notification_option = array(
-		'lang'		=> 'NOTIFICATION_POINTS_UCP',
-		'group'		=> 'NOTIFICATION_GROUP_MISCELLANEOUS',
-	);
+	public static $notification_option = [
+		'lang' => 'NOTIFICATION_POINTS_UCP',
+		'group' => 'NOTIFICATION_GROUP_MISCELLANEOUS',
+	];
 
 	public function is_available()
 	{
@@ -53,10 +54,10 @@ class points extends base
 		return 0;
 	}
 
-	public function find_users_for_notification($data, $options = array())
+	public function find_users_for_notification($data, $options = [])
 	{
-		$users = array();
-		$users[$data['receiver']] = array('');
+		$users = [];
+		$users[$data['receiver']] = [''];
 		$this->user_loader->load_users(array_keys($users));
 
 		return $this->check_user_notification_options(array_keys($users), $options);
@@ -64,7 +65,7 @@ class points extends base
 
 	public function users_to_query()
 	{
-		return array();
+		return [];
 	}
 
 	public function get_avatar()
@@ -74,8 +75,8 @@ class points extends base
 
 	public function get_title()
 	{
-		$users = array();
-		$users = array($this->get_data('sender'));
+		$users = [];
+		$users = [$this->get_data('sender')];
 		$this->user_loader->load_users($users);
 		$username = $this->user_loader->get_username($this->get_data('sender'), 'no_profile');
 
@@ -84,7 +85,7 @@ class points extends base
 
 	public function get_url()
 	{
-		return $this->helper->route('dmzx_ultimatepoints_controller', array('mode' => $this->get_data('mode')));
+		return $this->helper->route('dmzx_ultimatepoints_controller', ['mode' => $this->get_data('mode')]);
 	}
 
 	public function get_email_template()
@@ -94,10 +95,10 @@ class points extends base
 
 	public function get_email_template_variables()
 	{
-		return array();
+		return [];
 	}
 
-	public function create_insert_array($data, $pre_create_data = array())
+	public function create_insert_array($data, $pre_create_data = [])
 	{
 		$this->set_data('points_notify_id', $data['points_notify_id']);
 		$this->set_data('points_notify_msg', $data['points_notify_msg']);

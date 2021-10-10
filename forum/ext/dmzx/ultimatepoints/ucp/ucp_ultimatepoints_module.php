@@ -1,11 +1,11 @@
 <?php
 /**
-*
-* @package phpBB Extension - Ultimate Points
-* @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
+ *
+ * @package phpBB Extension - Ultimate Points
+ * @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
 
 namespace dmzx\ultimatepoints\ucp;
 
@@ -18,11 +18,11 @@ class ucp_ultimatepoints_module
 		global $phpbb_container, $config, $template;
 
 		$this->points_lottery_history_table = $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.lottery.history');
-		$this->points_bank_table 			= $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.bank');
-		$this->points_log_table 			= $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.log');
-		$this->points_config_table 			= $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.config');
-		$this->points_values_table 			= $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.values');
-		$this->functions_points 			= $phpbb_container->get('dmzx.ultimatepoints.core.functions.points');
+		$this->points_bank_table = $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.bank');
+		$this->points_log_table = $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.log');
+		$this->points_config_table = $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.config');
+		$this->points_values_table = $phpbb_container->getParameter('dmzx.ultimatepoints.table.points.values');
+		$this->functions_points = $phpbb_container->get('dmzx.ultimatepoints.core.functions.points');
 
 		$points_config = $this->config_info();
 
@@ -34,22 +34,21 @@ class ucp_ultimatepoints_module
 			{
 				case 'lottery':
 					$this->lottery_info();
-				break;
+					break;
 
 				case 'bank':
 					$this->bank_info();
-				break;
+					break;
 
 				case 'robbery':
 					$this->robbery_info();
-				break;
+					break;
 
 				case 'transfer':
 					$this->transfer_info();
-				break;
+					break;
 			}
-		}
-		else
+		} else
 		{
 			trigger_error($points_config['points_disablemsg']);
 		}
@@ -68,28 +67,28 @@ class ucp_ultimatepoints_module
 			FROM ' . $this->points_lottery_history_table . ' p
 				LEFT JOIN ' . USERS_TABLE . ' u
 				ON p.user_name = u.username
-			WHERE p.user_id = ' . $user->data['user_id'] . '
+			WHERE p.user_id = ' . (int) $user->data['user_id'] . '
 			ORDER BY p.amount DESC';
 		$result = $db->sql_query($sql);
 
 		while ($row = $db->sql_fetchrow())
 		{
-			$template->assign_block_vars('ucp_ultimatepoints_lottery', array(
-				'LOTTERY_USERNAME'			=> get_username_string('full', $row['user_id'], $row['user_name'], $row['user_colour']),
-				'LOTTERY_AMOUNT'			=> $row['amount'],
-				'LOTTERY_TIME'				=> $user->format_date($row['time']),
-			));
+			$template->assign_block_vars('ucp_ultimatepoints_lottery', [
+				'LOTTERY_USERNAME' => get_username_string('full', $row['user_id'], $row['user_name'], $row['user_colour']),
+				'LOTTERY_AMOUNT' => $row['amount'],
+				'LOTTERY_TIME' => $user->format_date($row['time']),
+			]);
 		}
 		$db->sql_freeresult($result);
 
 		$this->tpl_name = 'points/ucp_ultimatepoints';
 		$this->page_title = $user->lang['UCP_ULTIMATEPOINTS_TITLE'];
 
-		$template->assign_vars(array(
-			'S_LOTTERY_INFO'			=> true,
-			'LOTTERY_NAME'				=> $points_values['lottery_name'],
-			'S_LOTTERY_ENABLE'			=> $points_config['lottery_enable'],
-		));
+		$template->assign_vars([
+			'S_LOTTERY_INFO' => true,
+			'LOTTERY_NAME' => $points_values['lottery_name'],
+			'S_LOTTERY_ENABLE' => $points_config['lottery_enable'],
+		]);
 	}
 
 	public function bank_info()
@@ -103,31 +102,31 @@ class ucp_ultimatepoints_module
 			FROM ' . $this->points_bank_table . ' b
 				LEFT JOIN ' . USERS_TABLE . ' u
 				ON b.user_id = u.user_id
-			WHERE b.user_id = ' . $user->data['user_id'] . '
+			WHERE b.user_id = ' . (int) $user->data['user_id'] . '
 			ORDER BY b.holding DESC';
 		$result = $db->sql_query($sql);
 
 		while ($row = $db->sql_fetchrow())
 		{
-			$template->assign_block_vars('ucp_ultimatepoints_bank', array(
-				'BANK_USERNAME'			=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-				'BANK_AMOUNT'			=> $row['holding'],
-				'BANK_TIME'				=> $user->format_date($row['opentime']),
-			));
+			$template->assign_block_vars('ucp_ultimatepoints_bank', [
+				'BANK_USERNAME' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+				'BANK_AMOUNT' => $row['holding'],
+				'BANK_TIME' => $user->format_date($row['opentime']),
+			]);
 		}
 		$db->sql_freeresult($result);
 
 		$this->tpl_name = 'points/ucp_ultimatepoints';
 		$this->page_title = $user->lang['UCP_ULTIMATEPOINTS_TITLE'];
 
-		$template->assign_vars(array(
-			'S_BANK_INFO'			=> true,
-			'BANK_NAME'				=> $points_values['bank_name'],
-			'BANK_BALANCE'			=> sprintf($user->lang['BANK_INFO'], $points_values['bank_name']),
-			'BANK_ACCOUNT_OPENED'	=> sprintf($user->lang['BANK_ACCOUNT_OPENED'], $points_values['bank_name']),
-			'BANK_TO_ACCOUNT'		=> sprintf($user->lang['BANK_TO_ACCOUNT'], $points_values['bank_name']),
-			'S_BANK_ENABLE'			=> $points_config['bank_enable'],
-		));
+		$template->assign_vars([
+			'S_BANK_INFO' => true,
+			'BANK_NAME' => $points_values['bank_name'],
+			'BANK_BALANCE' => sprintf($user->lang['BANK_INFO'], $points_values['bank_name']),
+			'BANK_ACCOUNT_OPENED' => sprintf($user->lang['BANK_ACCOUNT_OPENED'], $points_values['bank_name']),
+			'BANK_TO_ACCOUNT' => sprintf($user->lang['BANK_TO_ACCOUNT'], $points_values['bank_name']),
+			'S_BANK_ENABLE' => $points_config['bank_enable'],
+		]);
 	}
 
 	public function robbery_info()
@@ -140,28 +139,28 @@ class ucp_ultimatepoints_module
 			FROM ' . $this->points_log_table . ' l
 				LEFT JOIN ' . USERS_TABLE . ' u
 				ON l.point_send = u.user_id
-			WHERE l.point_recv = ' . $user->data['user_id'] . '
+			WHERE l.point_recv = ' . (int) $user->data['user_id'] . '
 			AND l.point_type = 3
 			ORDER BY l.point_date DESC';
 		$result = $db->sql_query($sql);
 
 		while ($row = $db->sql_fetchrow())
 		{
-			$template->assign_block_vars('ucp_ultimatepoints_robbery', array(
-				'ROBBERY_USERNAME'			=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-				'ROBBERY_AMOUNT'			=> $row['point_amount'],
-				'ROBBERY_TIME'				=> $user->format_date($row['point_date']),
-			));
+			$template->assign_block_vars('ucp_ultimatepoints_robbery', [
+				'ROBBERY_USERNAME' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+				'ROBBERY_AMOUNT' => $row['point_amount'],
+				'ROBBERY_TIME' => $user->format_date($row['point_date']),
+			]);
 		}
 		$db->sql_freeresult($result);
 
 		$this->tpl_name = 'points/ucp_ultimatepoints';
 		$this->page_title = $user->lang['UCP_ULTIMATEPOINTS_TITLE'];
 
-		$template->assign_vars(array(
-			'S_ROBBERY_INFO'			=> true,
-			'S_ROBBERY_ENABLE'			=> $points_config['robbery_enable'],
-		));
+		$template->assign_vars([
+			'S_ROBBERY_INFO' => true,
+			'S_ROBBERY_ENABLE' => $points_config['robbery_enable'],
+		]);
 	}
 
 	public function transfer_info()
@@ -174,29 +173,29 @@ class ucp_ultimatepoints_module
 			FROM ' . $this->points_log_table . ' l
 				LEFT JOIN ' . USERS_TABLE . ' u
 				ON l.point_send = u.user_id
-			WHERE l.point_recv = ' . $user->data['user_id'] . '
+			WHERE l.point_recv = ' . (int) $user->data['user_id'] . '
 			AND l.point_type = 1
 			ORDER BY l.point_date DESC';
 		$result = $db->sql_query($sql);
 
 		while ($row = $db->sql_fetchrow())
 		{
-			$template->assign_block_vars('ucp_ultimatepoints_transfer', array(
-				'TRANSFER_USERNAME'			=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-				'TRANSFER_AMOUNT'			=> $row['point_amount'],
-				'TRANSFER_TIME'				=> $user->format_date($row['point_date']),
-			));
+			$template->assign_block_vars('ucp_ultimatepoints_transfer', [
+				'TRANSFER_USERNAME' => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+				'TRANSFER_AMOUNT' => $row['point_amount'],
+				'TRANSFER_TIME' => $user->format_date($row['point_date']),
+			]);
 		}
 		$db->sql_freeresult($result);
 
 		$this->tpl_name = 'points/ucp_ultimatepoints';
 		$this->page_title = $user->lang['UCP_ULTIMATEPOINTS_TITLE'];
 
-		$template->assign_vars(array(
-			'S_TRANSFER_INFO'			=> true,
-			'S_TRANSFER_ENABLE'			=> $points_config['transfer_enable'],
-			'L_TRANSFER_RECEIVED'		=> sprintf($user->lang['TRANSFER_RECEIVED'], $config['points_name'])
-		));
+		$template->assign_vars([
+			'S_TRANSFER_INFO' => true,
+			'S_TRANSFER_ENABLE' => $points_config['transfer_enable'],
+			'L_TRANSFER_RECEIVED' => sprintf($user->lang['TRANSFER_RECEIVED'], $config['points_name'])
+		]);
 	}
 
 	public function config_info()
@@ -204,12 +203,12 @@ class ucp_ultimatepoints_module
 		global $db;
 
 		// Read out config data
-		$sql_array = array(
-			'SELECT'	=> 'config_name, config_value',
-			'FROM'		=> array(
+		$sql_array = [
+			'SELECT' => 'config_name, config_value',
+			'FROM' => [
 				$this->points_config_table => 'c',
-			),
-		);
+			],
+		];
 		$sql = $db->sql_build_query('SELECT', $sql_array);
 		$result = $db->sql_query($sql);
 		while ($row = $db->sql_fetchrow($result))

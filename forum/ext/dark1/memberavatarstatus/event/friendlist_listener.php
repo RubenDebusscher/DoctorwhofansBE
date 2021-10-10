@@ -21,13 +21,13 @@ use dark1\memberavatarstatus\core\avatar;
  */
 class friendlist_listener implements EventSubscriberInterface
 {
-	/** @var \dark1\memberavatarstatus\core\avatar*/
+	/** @var avatar*/
 	protected $avatar;
 
 	/**
 	 * Constructor for listener
 	 *
-	 * @param \dark1\memberavatarstatus\core\avatar		$avatar		dark1 avatar
+	 * @param avatar	$avatar		dark1 avatar
 	 * @access public
 	 */
 	public function __construct(avatar $avatar)
@@ -94,13 +94,10 @@ class friendlist_listener implements EventSubscriberInterface
 		$online = ($which === 'online') ? true : false ;
 
 		// Add Avatar & Online Status to tpl_ary
-		$tpl_ary = array_merge(
-			$tpl_ary,
-			[
-				'AVATAR_IMG'	=> $avatar,
-				'S_ONLINE'		=> $online,
-			]
-		);
+		$tpl_ary = array_merge($tpl_ary, [
+			'AVATAR_IMG'	=> $avatar,
+			'S_ONLINE'		=> $online,
+		]);
 
 		// Assign tpl_ary to event -> tpl_ary
 		$event['tpl_ary'] = $tpl_ary;

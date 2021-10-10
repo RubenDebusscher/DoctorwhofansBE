@@ -66,10 +66,10 @@ class ui
 	public function handle()
 	{
 
-		$display_name = $this->language->lang('SMARTFEED_TITLE');
-
 		// Load language variable specifically for this class
 		$this->language->add_lang(array('ui'), 'phpbbservices/smartfeed');
+
+		$display_name = $this->language->lang('SMARTFEED_TITLE');
 
 		// Smartfeed cannot be used with Apache authentication unless the .htaccess file is modified to allow smartfeed.php to bypass
 		// Apache authentication. If you have made these changes then set the constant SMARTFEED_APACHE_HTACCESS_ENABLED to true in the ACP interface.
@@ -83,8 +83,8 @@ class ui
 		$required_forum_ids = (isset($this->config['phpbbservices_smartfeed_include_forums']) && strlen(trim($this->config['phpbbservices_smartfeed_include_forums'])) > 0) ? explode(',', $this->config['phpbbservices_smartfeed_include_forums']) : array();
 		$excluded_forum_ids = (isset($this->config['phpbbservices_smartfeed_exclude_forums']) && strlen(trim($this->config['phpbbservices_smartfeed_exclude_forums'])) > 0) ? explode(',', $this->config['phpbbservices_smartfeed_exclude_forums']) : array();
 
-		// Pass encryption tokens to the user interface for generating URLs, unless the user is not registered, openssl is not supported or OAuth authentication is used
-		$is_guest = !$this->user->data['is_registered'] || !extension_loaded('openssl') || $this->config['auth_method'] == 'oauth';
+		// Pass encryption tokens to the user interface for generating URLs, unless the user is not registered or openssl is not supported
+		$is_guest = !$this->user->data['is_registered'] || !extension_loaded('openssl');
 		
 		if (!$is_guest)
 		{
@@ -192,7 +192,7 @@ class ui
 
 		$no_forums = false;
 		
-		if (sizeof($allowed_forum_ids) > 0)
+		if (count($allowed_forum_ids) > 0)
 		{
 			
 			$sql = 'SELECT forum_name, forum_id, parent_id, forum_type
@@ -294,15 +294,19 @@ class ui
 			$this->db->sql_freeresult($result);
 			
 			// Now out of the loop, it is important to remember to close any open <div> tags. Typically there is at least one.
-			while ((int) $row['parent_id'] != (int) end($parent_stack))
+			if (isset($row) && is_array($row))
 			{
-				array_pop($parent_stack);
-				$current_level--;
-				// Need to close the <div> tag
-				$this->template->assign_block_vars('forums', array( 
-					'S_SMARTFEED_DIV_OPEN' => false,
-					'S_SMARTFEED_PRINT' => false));
+				while ((int) $row['parent_id'] != (int) end($parent_stack))
+				{
+					array_pop($parent_stack);
+					$current_level--;
+					// Need to close the <div> tag
+					$this->template->assign_block_vars('forums', array(
+						'S_SMARTFEED_DIV_OPEN' => false,
+						'S_SMARTFEED_PRINT' => false));
+				}
 			}
+
 			
 		}
 		else
@@ -320,7 +324,7 @@ class ui
 
 		// Set the template variables needed to generate a URL for Smartfeed. Note: most can be handled by template language variable substitution.
 		$this->template->assign_vars(array(
-		
+
 			'L_POWERED_BY'						=> $this->language->lang('POWERED_BY', '<a href="' . $this->config['phpbbservices_smartfeed_url'] . '" class="postlink" onclick="window.open(this.href);return false;">' . $this->language->lang('SMARTFEED_POWERED_BY') . '</a>'),
 			'L_SMARTFEED_EXCLUDED_FORUMS'		=> implode(",", $excluded_forum_ids),
 			'L_SMARTFEED_IGNORED_FORUMS'		=> implode(",", array_merge($required_forum_ids, $excluded_forum_ids)),
@@ -375,7 +379,7 @@ class ui
 			'S_SMARTFEED_PWD'					=> $encrypted_password, 
 			'S_SMARTFEED_PWD_WITH_IP'			=> $encrypted_password_with_ip, 
 			'S_SMARTFEED_REMOVE_MINE' 			=> constants::SMARTFEED_REMOVE_MINE,
-			'S_SMARTFEED_REQUIRED_FORUMS'		=> (sizeof($required_forum_ids) > 0) ? 'true' : 'false',
+			'S_SMARTFEED_REQUIRED_FORUMS'		=> (count($required_forum_ids) > 0) ? 'true' : 'false',
 			'S_SMARTFEED_REQUIRED_IP_AUTHENTICATION'	=> $this->config['phpbbservices_smartfeed_require_ip_authentication'],
 			'S_SMARTFEED_RSS_10_VALUE'			=> constants::SMARTFEED_RSS1,
 			'S_SMARTFEED_RSS_20_VALUE'			=> constants::SMARTFEED_RSS2,
@@ -392,7 +396,7 @@ class ui
 			'S_SMARTFEED_USER_ID' 				=> constants::SMARTFEED_USER_ID,
 			'S_SMARTFEED_USERNAMES' 			=> constants::SMARTFEED_USERNAMES,
 			'U_SMARTFEED_IMAGE_PATH'         	=> generate_board_url() . $this->ext_root_path . 'styles/all/theme/images/',
-			'UA_SMARTFEED_SITE_URL'				=> generate_board_url(),
+			'UA_SMARTFEED_SITE_URL'				=> $this->helper->route('phpbbservices_smartfeed_feed_controller', array(), true, false, \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL),
 			'UA_SMARTFEED_USER_ID'				=> $smartfeed_user_id,
 
 			)
@@ -414,7 +418,7 @@ class ui
 		// Encrypt the data using the random IV.
 		$encrypted_string = openssl_encrypt($data_input, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
 
-		// Thanks to phpBB forum user klapray for this logic for creating a "urlsafe" fix for base64_encode and _decode.
+		// Thanks to phpBB forums user klapray for this logic for creating a "urlsafe" fix for base64_encode and _decode.
 		$encrypted_data = strtr(base64_encode($iv . $encrypted_string), '+/=', '-_.');
 		return $encrypted_data;
 

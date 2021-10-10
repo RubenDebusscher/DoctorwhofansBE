@@ -36,6 +36,9 @@ services:
             - '@filesystem'
             - '@log'
             - '@user'
+            - '%core.php_ext%'
+            - '@config'
+            - '@dbal.conn'
     phpbbservices.digests.cron.task.cron_task:
         class: phpbbservices\digests\cron\task\digests
         arguments:
@@ -54,9 +57,25 @@ services:
             - '@filesystem'
             - '@phpbbservices.digests.common'
             - '@profilefields.manager'
+            - '@dispatcher'
         calls:
             - [set_name, [phpbbservices.digests.cron.task.cron_task]]
         tags:
             - { name: cron.task }
+    phpbbservices.digests.controller.unsubscribe:
+        class: phpbbservices\digests\controller\unsubscribe
+        arguments:
+            - '@request'
+            - '@user'
+            - '@dbal.conn'
+            - '@controller.helper'
+            - '@language'
+    phpbbservices.digests.includes.html_messenger:
+        class: phpbbservices\digests\includes\html_messenger
+        arguments:
+            - '@config'
+            - '@user'
+            - '@dispatcher'
+            - '@language'
     _defaults:
         public: true

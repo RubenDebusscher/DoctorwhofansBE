@@ -1,15 +1,17 @@
 <?php
 /**
-*
-* @package phpBB Extension - Ultimate Points
-* @copyright (c) 2021 dmzx https://www.dmzx-web.net
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
+ *
+ * @package phpBB Extension - Ultimate Points
+ * @copyright (c) 2021 dmzx https://www.dmzx-web.net
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
 
 namespace dmzx\ultimatepoints\migrations;
 
-class ultimatepoints_1_2_6 extends \phpbb\db\migration\migration
+use phpbb\db\migration\migration;
+
+class ultimatepoints_1_2_6 extends migration
 {
 	static public function depends_on()
 	{

@@ -1,43 +1,53 @@
 <?php
 /**
-*
-* @package phpBB Extension - Ultimate Points
-* @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
+ *
+ * @package phpBB Extension - Ultimate Points
+ * @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
 
 namespace dmzx\ultimatepoints\core;
 
+use parse_message;
+use phpbb\cache\service;
+use phpbb\config\config;
+use phpbb\controller\helper;
+use phpbb\db\driver\driver_interface;
+use phpbb\extension\manager;
+use phpbb\log\log;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
 use Symfony\Component\DependencyInjection\Container;
 
 class functions_points
 {
-	/** @var \phpbb\template\template */
+	/** @var template */
 	protected $template;
 
-	/** @var \phpbb\user */
+	/** @var user */
 	protected $user;
 
-	/** @var \phpbb\db\driver\driver_interface */
+	/** @var driver_interface */
 	protected $db;
 
-	/** @var \phpbb\controller\helper */
+	/** @var helper */
 	protected $helper;
 
 	/** @var \phpbb\notification\manager */
 	protected $notification_manager;
 
-	/** @var \phpbb\log\log */
+	/** @var log */
 	protected $log;
 
-	/** @var \phpbb\cache\service */
+	/** @var service */
 	protected $cache;
 
-	/** @var \phpbb\request\request */
+	/** @var request */
 	protected $request;
 
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
 	/** @var manager */
@@ -53,10 +63,10 @@ class functions_points
 	protected $root_path;
 
 	/**
-	* The database tables
-	*
-	* @var string
-	*/
+	 * The database tables
+	 *
+	 * @var string
+	 */
 	protected $points_bank_table;
 
 	protected $points_config_table;
@@ -68,39 +78,39 @@ class functions_points
 	protected $points_values_table;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template		 	$template
-	* @param \phpbb\user						$user
-	* @param \phpbb\db\driver\driver_interface	$db
-	* @param \phpbb\controller\helper		 	$helper
-	* @param \phpbb\notification\manager		$notification_manager
-	* @param \phpbb\log\log					 	$log
-	* @param \phpbb\cache\service		 		$cache
-	* @param \phpbb\request\request		 		$request
-	* @param \phpbb\config\config				$config
-	* @param \phpbb\extension\manager 			$extension_manager
-	* @param Container							$phpbb_container
-	* @param string								$php_ext
-	* @param string								$root_path
-	* @param string 							$points_bank_table
-	* @param string 							$points_config_table
-	* @param string 							$points_lottery_history_table
-	* @param string 							$points_lottery_tickets_table
-	* @param string 							$points_values_table
-	*
-	*/
+	 * Constructor
+	 *
+	 * @param template $template
+	 * @param user $user
+	 * @param driver_interface $db
+	 * @param helper $helper
+	 * @param \phpbb\notification\manager $notification_manager
+	 * @param log $log
+	 * @param service $cache
+	 * @param request $request
+	 * @param config $config
+	 * @param manager $extension_manager
+	 * @param Container $phpbb_container
+	 * @param string $php_ext
+	 * @param string $root_path
+	 * @param string $points_bank_table
+	 * @param string $points_config_table
+	 * @param string $points_lottery_history_table
+	 * @param string $points_lottery_tickets_table
+	 * @param string $points_values_table
+	 *
+	 */
 	public function __construct(
-		\phpbb\template\template $template,
-		\phpbb\user $user,
-		\phpbb\db\driver\driver_interface $db,
-		\phpbb\controller\helper $helper,
+		template $template,
+		user $user,
+		driver_interface $db,
+		helper $helper,
 		\phpbb\notification\manager $notification_manager,
-		\phpbb\log\log $log,
-		\phpbb\cache\service $cache,
-		\phpbb\request\request $request,
-		\phpbb\config\config $config,
-		\phpbb\extension\manager $extension_manager,
+		log $log,
+		service $cache,
+		request $request,
+		config $config,
+		manager $extension_manager,
 		Container $phpbb_container,
 		$php_ext,
 		$root_path,
@@ -111,29 +121,29 @@ class functions_points
 		$points_values_table
 	)
 	{
-		$this->template 						= $template;
-		$this->user 							= $user;
-		$this->db 								= $db;
-		$this->helper 							= $helper;
-		$this->notification_manager 			= $notification_manager;
-		$this->log 								= $log;
-		$this->cache 							= $cache;
-		$this->request 							= $request;
-		$this->config 							= $config;
-		$this->extension_manager				= $extension_manager;
-		$this->phpbb_container 					= $phpbb_container;
-		$this->php_ext 							= $php_ext;
-		$this->root_path 						= $root_path;
-		$this->points_bank_table 				= $points_bank_table;
-		$this->points_config_table 				= $points_config_table;
-		$this->points_lottery_history_table 	= $points_lottery_history_table;
-		$this->points_lottery_tickets_table 	= $points_lottery_tickets_table;
-		$this->points_values_table 				= $points_values_table;
+		$this->template = $template;
+		$this->user = $user;
+		$this->db = $db;
+		$this->helper = $helper;
+		$this->notification_manager = $notification_manager;
+		$this->log = $log;
+		$this->cache = $cache;
+		$this->request = $request;
+		$this->config = $config;
+		$this->extension_manager = $extension_manager;
+		$this->phpbb_container = $phpbb_container;
+		$this->php_ext = $php_ext;
+		$this->root_path = $root_path;
+		$this->points_bank_table = $points_bank_table;
+		$this->points_config_table = $points_config_table;
+		$this->points_lottery_history_table = $points_lottery_history_table;
+		$this->points_lottery_tickets_table = $points_lottery_tickets_table;
+		$this->points_values_table = $points_values_table;
 	}
 
 	/**
-	* Strip text
-	*/
+	 * Strip text
+	 */
 	function strip_text($text)
 	{
 		//remove quotes
@@ -148,7 +158,7 @@ class functions_points
 				continue;
 			}
 
-			$item = explode('[/quote' , $text[$i]);
+			$item = explode('[/quote', $text[$i]);
 			$last_frame = sizeof($item) - 1; //only last frame is valid text
 			$new_text .= trim(substr($item[$last_frame], 10)); //remove bbcode uid
 		}
@@ -166,7 +176,7 @@ class functions_points
 				continue;
 			}
 
-			$item = explode('[/code' , $text[$i]);
+			$item = explode('[/code', $text[$i]);
 			$last_frame = sizeof($item) - 1; //only last frame is valid text
 			$new_text .= trim(substr($item[$last_frame], 10)); //remove bbcode uid
 		}
@@ -183,7 +193,7 @@ class functions_points
 			{
 				continue;
 			}
-			$item = explode('[/url' , $text[$i]);
+			$item = explode('[/url', $text[$i]);
 			$last_frame = sizeof($item) - 1; //only last frame is valid text
 			$new_text .= trim(substr($item[$last_frame], 10)); //remove bbcode uid
 		}
@@ -196,7 +206,7 @@ class functions_points
 
 		for ($i = 1, $size = sizeof($text); $i < $size; $i++)
 		{
-			$item = explode(']' , $text[$i]);
+			$item = explode(']', $text[$i]);
 			if (sizeof($item) > 1) // if any part of text remains :-D
 			{
 				$new_text .= $item[1];
@@ -212,8 +222,7 @@ class functions_points
 			if (trim($new_text[$i]) == '' || trim($new_text[$i]) == '&nbsp;')
 			{
 				unset($new_text[$i]);
-			}
-			else
+			} else
 			{
 				$new_text[$i] = trim($new_text[$i]);
 			}
@@ -223,27 +232,27 @@ class functions_points
 	}
 
 	/**
-	* Add points to user
-	*/
+	 * Add points to user
+	 */
 	function add_points($user_id, $amount)
 	{
 		// Select users current points
-		$sql_array = array(
-			'SELECT'	=> 'user_points',
-			'FROM'		=> array(
+		$sql_array = [
+			'SELECT' => 'user_points',
+			'FROM' => [
 				USERS_TABLE => 'u',
-			),
-			'WHERE'		=> 'user_id = ' . (int) $user_id,
-		);
+			],
+			'WHERE' => 'user_id = ' . (int) $user_id,
+		];
 		$sql = $this->db->sql_build_query('SELECT', $sql_array);
 		$result = $this->db->sql_query($sql);
 		$user_points = $this->db->sql_fetchfield('user_points');
 		$this->db->sql_freeresult($result);
 
 		// Add the points
-		$data = array(
-			'user_points'	=> $user_points + $amount
-		);
+		$data = [
+			'user_points' => $user_points + $amount
+		];
 
 		$sql = 'UPDATE ' . USERS_TABLE . '
 			SET ' . $this->db->sql_build_array('UPDATE', $data) . '
@@ -254,27 +263,27 @@ class functions_points
 	}
 
 	/**
-	* Substract points from user
-	*/
+	 * Substract points from user
+	 */
 	function substract_points($user_id, $amount)
 	{
 		// Select users current points
-		$sql_array = array(
-			'SELECT'	=> 'user_points',
-			'FROM'		=> array(
+		$sql_array = [
+			'SELECT' => 'user_points',
+			'FROM' => [
 				USERS_TABLE => 'u',
-			),
-			'WHERE'		=> 'user_id = ' . (int) $user_id,
-		);
+			],
+			'WHERE' => 'user_id = ' . (int) $user_id,
+		];
 		$sql = $this->db->sql_build_query('SELECT', $sql_array);
 		$result = $this->db->sql_query($sql);
 		$user_points = $this->db->sql_fetchfield('user_points');
 		$this->db->sql_freeresult($result);
 
 		// Update the points
-		$data = array(
-			'user_points'	=> $user_points - $amount
-		);
+		$data = [
+			'user_points' => $user_points - $amount
+		];
 
 		$sql = 'UPDATE ' . USERS_TABLE . '
 			SET ' . $this->db->sql_build_array('UPDATE', $data) . '
@@ -285,14 +294,14 @@ class functions_points
 	}
 
 	/**
-	* Set the amount of points to user
-	*/
+	 * Set the amount of points to user
+	 */
 	function set_points($user_id, $amount)
 	{
 		// Set users new points
-		$data = array(
-			'user_points'	=> $amount
-		);
+		$data = [
+			'user_points' => $amount
+		];
 
 		$sql = 'UPDATE ' . USERS_TABLE . '
 			SET ' . $this->db->sql_build_array('UPDATE', $data) . '
@@ -303,14 +312,14 @@ class functions_points
 	}
 
 	/**
-	* Set the amount of bank points to user
-	*/
+	 * Set the amount of bank points to user
+	 */
 	function set_bank($user_id, $amount)
 	{
 		// Set users new holding
-		$data = array(
-			'holding'	=> $amount
-		);
+		$data = [
+			'holding' => $amount
+		];
 
 		$sql = 'UPDATE ' . $this->points_bank_table . '
 			SET ' . $this->db->sql_build_array('UPDATE', $data) . '
@@ -321,8 +330,8 @@ class functions_points
 	}
 
 	/**
-	* Preformat numbers
-	*/
+	 * Preformat numbers
+	 */
 	function number_format_points($num)
 	{
 		$decimals = 2;
@@ -331,8 +340,8 @@ class functions_points
 	}
 
 	/**
-	* Run Bank
-	*/
+	 * Run Bank
+	 */
 	function run_bank()
 	{
 		// Get all values
@@ -345,23 +354,23 @@ class functions_points
 		// Pay the users
 		$sql = 'UPDATE ' . $this->points_bank_table . '
 			SET holding = holding + round((holding / 100) * ' . $points_values['bank_interest'] . ')
-			WHERE holding < ' . $points_values['bank_interestcut'] . '
-				OR ' . $points_values['bank_interestcut'] . ' = 0';
+			WHERE holding < ' . (int) $points_values['bank_interestcut'] . '
+				OR ' . (int) $points_values['bank_interestcut'] . ' = 0';
 		$this->db->sql_query($sql);
 
 		// Maintain the bank costs
 		if ($points_values['bank_cost'] <> '0')
 		{
 			$sql = 'UPDATE ' . $this->points_bank_table . '
-				SET holding = holding - ' . $points_values['bank_cost'] . '
-				WHERE holding >= ' . $points_values['bank_cost'] . '';
+				SET holding = holding - ' . (int) $points_values['bank_cost'] . '
+				WHERE holding >= ' . (int) $points_values['bank_cost'] . '';
 			$this->db->sql_query($sql);
 		}
 	}
 
 	/**
-	* Run Lottery
-	*/
+	 * Run Lottery
+	 */
 	function run_lottery()
 	{
 		$current_time = time();
@@ -370,12 +379,12 @@ class functions_points
 		$points_values = $this->points_all_values();
 
 		// Count number of tickets
-		$sql_array = array(
-			'SELECT'	=> 'COUNT(ticket_id) AS num_tickets',
-			'FROM'		=> array(
+		$sql_array = [
+			'SELECT' => 'COUNT(ticket_id) AS num_tickets',
+			'FROM' => [
 				$this->points_lottery_tickets_table => 'l',
-			),
-		);
+			],
+		];
 		$sql = $this->db->sql_build_query('SELECT', $sql_array);
 		$result = $this->db->sql_query($sql);
 		$total_tickets = (int) $this->db->sql_fetchfield('num_tickets');
@@ -388,34 +397,34 @@ class functions_points
 		{
 			case 'postgres':
 				$order_by = 'RANDOM()';
-			break;
+				break;
 
 			case 'mssql':
 			case 'mssql_odbc':
 				$order_by = 'NEWID()';
-			break;
+				break;
 
 			default:
 				$order_by = 'RAND()';
-			break;
+				break;
 		}
 
-		$sql_array = array(
-			'SELECT'	=> '*',
-			'FROM'		=> array(
+		$sql_array = [
+			'SELECT' => '*',
+			'FROM' => [
 				$this->points_lottery_tickets_table => 'l',
-			),
-			'ORDER_BY'	=> $order_by,
-		);
+			],
+			'ORDER_BY' => $order_by,
+		];
 		$sql = $this->db->sql_build_query('SELECT', $sql_array);
 		$result = $this->db->sql_query_limit($sql, 1);
-		$random_user_by_tickets = (int) $this->db->sql_fetchfield('user_id');
+		$random_user_by_tickets = $this->db->sql_fetchfield('user_id');
 		$this->db->sql_freeresult($result);
 
 		if ($total_tickets > 0)
 		{
 			// Generate a random number
-			$rand_base 	= $points_values['lottery_chance'];
+			$rand_base = $points_values['lottery_chance'];
 			$rand_value = rand(0, 100);
 
 			// Decide, if the user really wins
@@ -424,13 +433,13 @@ class functions_points
 				$winning_number = $random_user_by_tickets;
 
 				// Select a winner from ticket table
-				$sql_array = array(
-					'SELECT'	=> '*',
-					'FROM'		=> array(
+				$sql_array = [
+					'SELECT' => '*',
+					'FROM' => [
 						USERS_TABLE => 'u',
-					),
-					'WHERE'		=> 'user_id = ' . $winning_number,
-				);
+					],
+					'WHERE' => 'user_id = ' . (int) $winning_number,
+				];
 				$sql = $this->db->sql_build_query('SELECT', $sql_array);
 				$result = $this->db->sql_query($sql);
 				$winner = $this->db->sql_fetchrow($result);
@@ -463,55 +472,55 @@ class functions_points
 				// Check, if user wants to be informed by PM
 				if ($winner['user_allow_pm'] == 1)
 				{
-					$sql_array = array(
-						'SELECT'	=> '*',
-						'FROM'		=> array(
+					$sql_array = [
+						'SELECT' => '*',
+						'FROM' => [
 							USERS_TABLE => 'u',
-						),
-						'WHERE'		=> 'user_id = ' . $points_values['lottery_pm_from'],
-					);
+						],
+						'WHERE' => 'user_id = ' . (int) $points_values['lottery_pm_from'],
+					];
 					$sql = $this->db->sql_build_query('SELECT', $sql_array);
 					$result = $this->db->sql_query($sql);
 					$pm_sender = $this->db->sql_fetchrow($result);
 					$this->db->sql_freeresult($result);
 
 					// Notify the lucky winner by PM
-					$pm_subject	= $this->user->lang['LOTTERY_PM_SUBJECT'];
-					$pm_text	= sprintf($this->user->lang['LOTTERY_PM_BODY'], $winner_notification, $winner_deposit);
+					$pm_subject = $this->user->lang['LOTTERY_PM_SUBJECT'];
+					$pm_text = sprintf($this->user->lang['LOTTERY_PM_BODY'], $winner_notification, $winner_deposit);
 
 					include_once($this->root_path . 'includes/message_parser.' . $this->php_ext);
 
-					$message_parser = new \parse_message();
+					$message_parser = new parse_message();
 					$message_parser->message = $pm_text;
 					$message_parser->parse(true, true, true, false, false, true, true);
 
-					$pm_data = array(
-						'address_list'		=> array ('u' => array($winner['user_id'] => 'to')),
-						'from_user_id'		=> ($points_values['lottery_pm_from'] == 0) ? $winner['user_id'] : $pm_sender['user_id'],
-						'from_username'		=> ($points_values['lottery_pm_from'] == 0) ? $this->user->lang['LOTTERY_PM_COMMISION'] : $pm_sender['username'],
-						'icon_id'			=> 0,
-						'from_user_ip'		=> '',
+					$pm_data = [
+						'address_list' => ['u' => [$winner['user_id'] => 'to']],
+						'from_user_id' => ($points_values['lottery_pm_from'] == 0) ? $winner['user_id'] : $pm_sender['user_id'],
+						'from_username' => ($points_values['lottery_pm_from'] == 0) ? $this->user->lang['LOTTERY_PM_COMMISION'] : $pm_sender['username'],
+						'icon_id' => 0,
+						'from_user_ip' => '',
 
-						'enable_bbcode'		=> true,
-						'enable_smilies'	=> true,
-						'enable_urls'		=> true,
-						'enable_sig'		=> true,
+						'enable_bbcode' => true,
+						'enable_smilies' => true,
+						'enable_urls' => true,
+						'enable_sig' => true,
 
-						'message'		 	=> $message_parser->message,
-						'bbcode_bitfield' 	=> $message_parser->bbcode_bitfield,
-						'bbcode_uid'		=> $message_parser->bbcode_uid,
-					);
+						'message' => $message_parser->message,
+						'bbcode_bitfield' => $message_parser->bbcode_bitfield,
+						'bbcode_uid' => $message_parser->bbcode_uid,
+					];
 
 					submit_pm('post', $pm_subject, $pm_data, false);
 				}
 
 				// Add new winner to lottery history
-				$sql = 'INSERT INTO ' . $this->points_lottery_history_table . ' ' . $this->db->sql_build_array('INSERT', array(
-					'user_id'			=> (int) $winner['user_id'],
-					'user_name'			=> $winner['username'],
-					'time'				=> $current_time,
-					'amount'			=> $points_values['lottery_jackpot'],
-				));
+				$sql = 'INSERT INTO ' . $this->points_lottery_history_table . ' ' . $this->db->sql_build_array('INSERT', [
+						'user_id' => (int) $winner['user_id'],
+						'user_name' => $winner['username'],
+						'time' => $current_time,
+						'amount' => $points_values['lottery_jackpot'],
+					]);
 				$this->db->sql_query($sql);
 
 				// Update mChat with lottery winner
@@ -538,12 +547,12 @@ class functions_points
 
 				$no_winner = 0;
 
-				$sql = 'INSERT INTO ' . $this->points_lottery_history_table . ' ' . $this->db->sql_build_array('INSERT', array(
-					'user_id'			=> 0,
-					'user_name'			=> $no_winner,
-					'time'				=> $current_time,
-					'amount'			=> 0,
-				));
+				$sql = 'INSERT INTO ' . $this->points_lottery_history_table . ' ' . $this->db->sql_build_array('INSERT', [
+						'user_id' => 0,
+						'user_name' => $no_winner,
+						'time' => $current_time,
+						'amount' => 0,
+					]);
 				$this->db->sql_query($sql);
 
 				// Update previous winner information
@@ -574,16 +583,15 @@ class functions_points
 				$check_time = $check_time - $points_values['lottery_draw_period'];
 				$this->set_points_values('lottery_last_draw_time', $check_time);
 			}
-		}
-		else
+		} else
 		{
 			$this->set_points_values('lottery_last_draw_time', ($points_values['lottery_last_draw_time'] + $points_values['lottery_draw_period']));
 		}
 	}
 
 	/**
-	* Set points config value. Creates missing config entry.
-	*/
+	 * Set points config value. Creates missing config entry.
+	 */
 	function set_points_config($config_name, $config_value, $is_dynamic = false)
 	{
 		$sql = 'UPDATE ' . $this->points_config_table . "
@@ -593,10 +601,10 @@ class functions_points
 
 		if (!$this->db->sql_affectedrows() && !isset($points_config[$config_name]))
 		{
-			$sql = 'INSERT INTO ' . $this->points_config_table . ' ' . $this->db->sql_build_array('INSERT', array(
-				'config_name'	=> $config_name,
-				'config_value'	=> $config_value,
-				'is_dynamic'	=> ($is_dynamic) ? 1 : 0));
+			$sql = 'INSERT INTO ' . $this->points_config_table . ' ' . $this->db->sql_build_array('INSERT', [
+					'config_name' => $config_name,
+					'config_value' => $config_value,
+					'is_dynamic' => ($is_dynamic) ? 1 : 0]);
 			$this->db->sql_query($sql);
 		}
 
@@ -609,8 +617,8 @@ class functions_points
 	}
 
 	/**
-	* Set points values
-	*/
+	 * Set points values
+	 */
 	function set_points_values($field, $value)
 	{
 		$sql = "UPDATE " . $this->points_values_table . "
@@ -623,8 +631,8 @@ class functions_points
 	function points_values($config_name)
 	{
 		/**
-		* Read out config values
-		*/
+		 * Read out config values
+		 */
 		$sql = 'SELECT ' . $config_name . '
 			FROM ' . $this->points_values_table;
 		$result = $this->db->sql_query($sql);
@@ -637,8 +645,8 @@ class functions_points
 	function points_all_values()
 	{
 		/**
-		* Read out config values
-		*/
+		 * Read out config values
+		 */
 		// Get all values
 		$sql = 'SELECT *
 			FROM ' . $this->points_values_table;
@@ -667,12 +675,12 @@ class functions_points
 
 	function add_points_to_table($post_id, $points, $mode, $attachments, $poll)
 	{
-		$sql_ary = array(
-			'points_' . $mode . '_received'	=> $points,
-			'points_attachment_received'	=> $attachments,
-			'points_poll_received'			=> $poll,
-			'points_received'				=> $points
-		);
+		$sql_ary = [
+			'points_' . $mode . '_received' => $points,
+			'points_attachment_received' => $attachments,
+			'points_poll_received' => $poll,
+			'points_received' => $points
+		];
 
 		$sql = 'UPDATE ' . POSTS_TABLE . '
 			SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
@@ -700,8 +708,7 @@ class functions_points
 			if ($points_values['points_bonus_min'] == $points_values['points_bonus_max'])
 			{
 				$bonus_value = $points_values['points_bonus_min'];
-			}
-			else
+			} else
 			{
 				// Create the bonus value, between the set minimum and maximum
 				// Following numbers are 'times 100' to get rid of commas, as mt_rand doesn't get comma numbers.
@@ -720,28 +727,28 @@ class functions_points
 			$this->config->increment('points_notification_id', 1);
 
 			// Store the notification data we will use in an array
-			$data = array(
-				'points_notify_id'		=> (int) $this->config['points_notification_id'],
-				'points_notify_msg'		=> sprintf($this->user->lang['NOTIFICATION_RANDOM_BONUS'], $bonus_value, $this->config['points_name']),
-				'sender'				=> (int) $this->user->data['user_id'],
-				'receiver'				=> (int) $user_id,
-				'mode'					=> 'logs', // The mode where the notification sends the user to
-			);
+			$data = [
+				'points_notify_id' => (int) $this->config['points_notification_id'],
+				'points_notify_msg' => sprintf($this->user->lang['NOTIFICATION_RANDOM_BONUS'], $bonus_value, $this->config['points_name']),
+				'sender' => (int) $this->user->data['user_id'],
+				'receiver' => (int) $user_id,
+				'mode' => 'logs', // The mode where the notification sends the user to
+			];
 			$this->notification_manager->add_notifications('dmzx.ultimatepoints.notification.type.points', $data);
 
-			$sql_array = array(
-					'SELECT'	=> 'username',
-					'FROM'		=> array(
-						USERS_TABLE => 'u',
-					),
-					'WHERE'		=> 'user_id = ' . (int) $user_id,
-				);
+			$sql_array = [
+				'SELECT' => 'username',
+				'FROM' => [
+					USERS_TABLE => 'u',
+				],
+				'WHERE' => 'user_id = ' . (int) $user_id,
+			];
 			$sql = $this->db->sql_build_query('SELECT', $sql_array);
 			$result = $this->db->sql_query($sql);
 			$points_user = $this->db->sql_fetchrow($result);
 
 			// Add logs
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_MOD_POINTS_RANDOM', false, array($points_user['username']));
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_MOD_POINTS_RANDOM', false, [$points_user['username']]);
 		}
 	}
 
@@ -750,20 +757,20 @@ class functions_points
 		$md_manager = $this->extension_manager->create_extension_metadata_manager('dmzx/ultimatepoints', $this->template);
 		$meta = $md_manager->get_metadata();
 
-		$author_names = array();
-		$author_homepages = array();
+		$author_names = [];
+		$author_homepages = [];
 
 		foreach (array_slice($meta['authors'], 0, 2) as $author)
 		{
 			$author_names[] = $author['name'];
 			$author_homepages[] = sprintf('<a href="%1$s" title="%2$s">%2$s</a>', $author['homepage'], $author['name']);
 		}
-		$this->template->assign_vars(array(
-			'ULTIMATEPOINTS_DISPLAY_NAME'		=> $meta['extra']['display-name'],
-			'ULTIMATEPOINTS_AUTHOR_NAMES'		=> implode(' &amp; ', $author_names),
-			'ULTIMATEPOINTS_AUTHOR_HOMEPAGES'	=> implode(' &amp; ', $author_homepages),
-			'ULTIMATEPOINTS_VERSION'			=> $this->config['ultimate_points_version'],
-		));
+		$this->template->assign_vars([
+			'ULTIMATEPOINTS_DISPLAY_NAME' => $meta['extra']['display-name'],
+			'ULTIMATEPOINTS_AUTHOR_NAMES' => implode(' &amp; ', $author_names),
+			'ULTIMATEPOINTS_AUTHOR_HOMEPAGES' => implode(' &amp; ', $author_homepages),
+			'ULTIMATEPOINTS_VERSION' => $this->config['ultimate_points_version'],
+		]);
 		return;
 	}
 
@@ -777,22 +784,22 @@ class functions_points
 
 			$board_url = generate_board_url() . '/';
 
-			$usercolour = get_username_string('colour',	$this->user->data['user_id'],	$this->user->data['username'],	$this->user->data['user_colour']);
-			$user_name_mchat = $usercolour ? '[url= ' . $board_url . 'memberlist.' . $this->php_ext . '?mode=viewprofile&u='. $this->user->data['user_id'] . '][b][color=' . $usercolour . ']' . $this->user->data['username'] . '[/color][/b][/url]' : '[b]' . $this->user->data['username'] . '[/b]';
+			$usercolour = get_username_string('colour', $this->user->data['user_id'], $this->user->data['username'], $this->user->data['user_colour']);
+			$user_name_mchat = $usercolour ? '[url= ' . $board_url . 'memberlist.' . $this->php_ext . '?mode=viewprofile&u=' . $this->user->data['user_id'] . '][b][color=' . $usercolour . ']' . $this->user->data['username'] . '[/color][/b][/url]' : '[b]' . $this->user->data['username'] . '[/b]';
 
-			$sql_arys = array(
-				'user_id'			=> (int) $user_id,
-				'user_ip'			=> $this->user->ip,
-				'message'			=> sprintf($message, $user_name_mchat, $amount, $name),
-				'bbcode_bitfield'	=> '',
-				'bbcode_uid'		=> '',
-				'message_time'		=> time()
-			);
+			$sql_arys = [
+				'user_id' => (int) $user_id,
+				'user_ip' => $this->user->ip,
+				'message' => sprintf($message, $user_name_mchat, $amount, $name),
+				'bbcode_bitfield' => '',
+				'bbcode_uid' => '',
+				'message_time' => time()
+			];
 
 			$options = 0;
 			generate_text_for_storage($sql_arys['message'], $sql_arys['bbcode_uid'], $sql_arys['bbcode_bitfield'], $options, $enable_bbcode, $enable_urls, $enable_smilies);
 
-			$this->db->sql_query('INSERT INTO ' . $table_prefix . 'mchat'	. ' ' . $this->db->sql_build_array('INSERT', $sql_arys));
+			$this->db->sql_query('INSERT INTO ' . $table_prefix . 'mchat' . ' ' . $this->db->sql_build_array('INSERT', $sql_arys));
 		}
 	}
 

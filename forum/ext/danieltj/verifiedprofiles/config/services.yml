@@ -1,0 +1,11 @@
+services:
+    danieltj.verifiedprofiles.listener:
+        class: danieltj\verifiedprofiles\event\listener
+        arguments:
+            - '@controller.helper'
+            - '@language'
+            - '@request'
+            - '@template'
+            - '@user'
+        tags:
+            - { name: event.listener }

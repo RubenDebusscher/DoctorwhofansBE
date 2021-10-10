@@ -1,0 +1,31 @@
+{
+    "name": "danieltj/verifiedprofiles",
+    "type": "phpbb-extension",
+    "description": "Adds a setting to verify profiles and show a verified mark.",
+    "version": "1.0.0",
+    "time": "2021-01-27",
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "Daniel James",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "composer/installers": "~1.0.0",
+        "phpbb/phpbb": ">=3.2.0,<3.4.0@dev"
+    },
+    "extra": {
+        "display-name": "Verified Profiles",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.2.0,<3.4.0@dev"
+        },
+        "version-check": {
+            "host": "www.phpbb.com",
+            "directory": "/customise/db/extension/verified_profiles",
+            "filename": "version_check",
+            "ssl": true
+        }
+    }
+}

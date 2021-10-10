@@ -39,10 +39,10 @@ class avatar
 	/** @var int Avatar Maximum Size Big */
 	const AV_MAX_SZ_BIG = 999;
 
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
-	/** @var \phpbb\language\language */
+	/** @var language */
 	protected $language;
 
 	/** @var string phpBB root path */
@@ -51,9 +51,9 @@ class avatar
 	/**
 	 * Constructor for Member Avatar & Status Core Avatar Class.
 	 *
-	 * @param \phpbb\config\config			$config				phpBB config
-	 * @param \phpbb\language\language		$language			phpBB language
-	 * @param string						$phpbb_root_path	phpBB root path
+	 * @param config		$config				phpBB config
+	 * @param language		$language			phpBB language
+	 * @param string		$phpbb_root_path	phpBB root path
 	 * @access public
 	 */
 	public function __construct(config $config, language $language, $phpbb_root_path)
@@ -75,11 +75,11 @@ class avatar
 	public function mas_get_no_avatar_img()
 	{
 		$avatar_row = [
-				'avatar'		=> append_sid($this->phpbb_root_path . 'ext/dark1/memberavatarstatus/image/avatar.png'),
-				'avatar_type'	=> AVATAR_REMOTE,
-				'avatar_width'	=> self::NO_AVATAR_SIZE,
-				'avatar_height'	=> self::NO_AVATAR_SIZE,
-			];
+			'avatar'		=> $this->phpbb_root_path . 'ext/dark1/memberavatarstatus/image/avatar.png',
+			'avatar_type'	=> AVATAR_REMOTE,
+			'avatar_width'	=> self::NO_AVATAR_SIZE,
+			'avatar_height'	=> self::NO_AVATAR_SIZE,
+		];
 		return str_replace(
 			'" />',
 			'" title="' . $this->language->lang('MAS_NO_AVATAR_TEXT') . '" />',
@@ -92,14 +92,14 @@ class avatar
 	/**
 	 * MAS Get Config Avatar
 	 *
-	 * @param string $config_key takes Config Key String
+	 * @param string|bool $config_key takes Config Key String
 	 * @return bool Bool with Avatar Enable
 	 * @access public
 	 */
-	public function mas_get_config_avatar($config_key)
+	public function mas_get_config_avatar($config_key = false)
 	{
 		// Check if Avatar is Enabled.
-		return (bool) ($this->config['allow_avatar'] && $this->config['dark1_mas_avatar'] && $this->config[$config_key]);
+		return (bool) ($this->config['allow_avatar'] && $this->config['dark1_mas_avatar'] && ($config_key !== false ? $this->config[$config_key] : true));
 	}
 
 
@@ -125,9 +125,9 @@ class avatar
 		{
 			$sql_ary['SELECT'] .= ', ' . $sql_obj . '.user_avatar as ' . $prefix . 'avatar, ' . $sql_obj . '.user_avatar_type as ' . $prefix . 'avatar_type, ' . $sql_obj . '.user_avatar_width as ' . $prefix . 'avatar_width, ' . $sql_obj . '.user_avatar_height as ' . $prefix . 'avatar_height';
 			$sql_ary['LEFT_JOIN'][] = [
-					'FROM'	=> [USERS_TABLE => $sql_obj],
-					'ON'	=> $sql_uid . ' = ' . $sql_obj . '.user_id' . $lj_on_ex,
-				];
+				'FROM'	=> [USERS_TABLE => $sql_obj],
+				'ON'	=> $sql_uid . ' = ' . $sql_obj . '.user_id' . $lj_on_ex,
+			];
 		}
 
 		return $sql_ary;
@@ -200,11 +200,11 @@ class avatar
 		{
 			// $avatar_row
 			$avatar_row = [
-					'avatar'		=> $row[$prefix . 'avatar'],
-					'avatar_type'	=> $row[$prefix . 'avatar_type'],
-					'avatar_width'	=> $row[$prefix . 'avatar_width'],
-					'avatar_height'	=> $row[$prefix . 'avatar_height'],
-				];
+				'avatar'		=> $row[$prefix . 'avatar'],
+				'avatar_type'	=> $row[$prefix . 'avatar_type'],
+				'avatar_width'	=> $row[$prefix . 'avatar_width'],
+				'avatar_height'	=> $row[$prefix . 'avatar_height'],
+			];
 			$avatar = phpbb_get_user_avatar($avatar_row);
 		}
 

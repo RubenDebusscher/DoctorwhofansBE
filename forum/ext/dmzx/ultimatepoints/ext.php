@@ -1,31 +1,33 @@
 <?php
 /**
-*
-* @package phpBB Extension - Ultimate Points
-* @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
-*
-*/
+ *
+ * @package phpBB Extension - Ultimate Points
+ * @copyright (c) 2016 dmzx & posey - https://www.dmzx-web.net
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
 
 namespace dmzx\ultimatepoints;
 
-class ext extends \phpbb\extension\base
+use phpbb\extension\base;
+
+class ext extends base
 {
 	/**
-	* Enable extension if phpBB version requirement is met
-	*
-	* @return bool
-	* @access public
-	*/
+	 * Enable extension if phpBB version requirement is met
+	 *
+	 * @return bool
+	 * @access public
+	 */
 	public function is_enableable()
 	{
 		$config = $this->container->get('config');
 		return version_compare($config['version'], '3.2.0', '>=');
 	}
 
-	protected static $notification_types = array(
-			'dmzx.ultimatepoints.notification.type.points',
-	);
+	protected static $notification_types = [
+		'dmzx.ultimatepoints.notification.type.points',
+	];
 
 	/**
 	 * Enable our notifications.
@@ -39,20 +41,21 @@ class ext extends \phpbb\extension\base
 		switch ($old_state)
 		{
 			case '': // Empty means nothing has run yet
-				/* @var $phpbb_notifications \phpbb\notification\manager */
+				/* @var $phpbb_notifications manager */
 				$phpbb_notifications = $this->container->get('notification_manager');
 				foreach (self::$notification_types as $type)
 				{
 					$phpbb_notifications->enable_notifications($type);
 				}
 				return 'notifications';
-			break;
+				break;
 			default:
 				// Run parent enable step method
 				return parent::enable_step($old_state);
-			break;
+				break;
 		}
 	}
+
 	/**
 	 * Disable our notifications.
 	 *
@@ -65,20 +68,21 @@ class ext extends \phpbb\extension\base
 		switch ($old_state)
 		{
 			case '': // Empty means nothing has run yet
-				/* @var $phpbb_notifications \phpbb\notification\manager */
+				/* @var $phpbb_notifications manager */
 				$phpbb_notifications = $this->container->get('notification_manager');
 				foreach (self::$notification_types as $type)
 				{
 					$phpbb_notifications->disable_notifications($type);
 				}
 				return 'notifications';
-			break;
+				break;
 			default:
 				// Run parent disable step method
 				return parent::disable_step($old_state);
-			break;
+				break;
 		}
 	}
+
 	/**
 	 * Purge our notifications
 	 *
@@ -91,18 +95,18 @@ class ext extends \phpbb\extension\base
 		switch ($old_state)
 		{
 			case '': // Empty means nothing has run yet
-				/* @var $phpbb_notifications \phpbb\notification\manager */
+				/* @var $phpbb_notifications manager */
 				$phpbb_notifications = $this->container->get('notification_manager');
 				foreach (self::$notification_types as $type)
 				{
 					$phpbb_notifications->purge_notifications($type);
 				}
 				return 'notifications';
-			break;
+				break;
 			default:
 				// Run parent purge step method
 				return parent::purge_step($old_state);
-			break;
+				break;
 		}
 	}
 }

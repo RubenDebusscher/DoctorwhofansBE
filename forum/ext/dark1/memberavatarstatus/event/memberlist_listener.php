@@ -22,17 +22,17 @@ use dark1\memberavatarstatus\core\status;
  */
 class memberlist_listener implements EventSubscriberInterface
 {
-	/** @var \dark1\memberavatarstatus\core\avatar*/
+	/** @var avatar*/
 	protected $avatar;
 
-	/** @var \dark1\memberavatarstatus\core\status*/
+	/** @var status*/
 	protected $status;
 
 	/**
 	 * Constructor for listener
 	 *
-	 * @param \dark1\memberavatarstatus\core\avatar		$avatar		dark1 avatar
-	 * @param \dark1\memberavatarstatus\core\status		$status		dark1 status
+	 * @param avatar	$avatar		dark1 avatar
+	 * @param status	$status		dark1 status
 	 * @access public
 	 */
 	public function __construct(avatar $avatar, status $status)
@@ -72,7 +72,7 @@ class memberlist_listener implements EventSubscriberInterface
 
 		// Add Query Details
 		$sql_ary['SELECT'] = $this->avatar->mas_avatar_sql_query($sql_ary, 'dark1_mas_ml', '', 'u', 'user', '')['SELECT'];
-		$sql_ary = $this->status->mas_online_sql_query($sql_ary, 'dark1_mas_ml', 'u.user_id', 's', '', '', 'u.user_id, g.group_id');
+		$sql_ary = $this->status->mas_online_sql_query($sql_ary, 'dark1_mas_ml', 'u.user_id', 's', 'user', '', 'u.user_id, g.group_id');
 
 		// Assign sql_ary to event -> sql_ary
 		$event['sql_ary'] = $sql_ary;
@@ -97,16 +97,13 @@ class memberlist_listener implements EventSubscriberInterface
 		$avatar = $this->avatar->mas_get_avatar('dark1_mas_ml', 'user', $row);
 
 		// Get Online Status
-		$online = (!($row['user_type'] == USER_INACTIVE)) ? $this->status->mas_get_online('dark1_mas_ml', '', $row) : '';
+		$online = (!($row['user_type'] == USER_INACTIVE)) ? $this->status->mas_get_online('dark1_mas_ml', 'user', $row) : '';
 
 		// Add Avatar & Online Status to template_vars
-		$template_vars = array_merge(
-			$template_vars,
-			[
-				'AVATAR_IMG'	=> $avatar,
-				'S_ONLINE'		=> $online,
-			]
-		);
+		$template_vars = array_merge($template_vars, [
+			'AVATAR_IMG'	=> $avatar,
+			'S_ONLINE'		=> $online,
+		]);
 
 		// Assign template_vars to event -> template_vars
 		$event['template_vars'] = $template_vars;

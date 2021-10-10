@@ -8,10 +8,6 @@
 * @copyright (c) 2013, nickvergessen, http://www.flying-bits.org/
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
-* Lang_iso     : de
-* Lang_ext_ver : 2.0.0
-* Lang_author  : LukeWCS
-*
 */
 
 /**
@@ -24,7 +20,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 $t1 = isset($lang['USER_DELETED']) ? $lang['USER_DELETED'] . '<br /><br />' : '';
@@ -45,8 +41,7 @@ $t2 = isset($lang['USER_DELETE_SUCCESS']) ? $lang['USER_DELETE_SUCCESS'] . '<br 
 // Some characters you may want to copy&paste:
 // ’ « » “ ” … „ “
 //
-
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'USER_DELETED'			=> $t1 . 'Wer war da: Anzeige wurde bereinigt.',
 	'USER_DELETE_SUCCESS'	=> $t2 . 'Wer war da: Anzeige wurde bereinigt.',
-));
+]);

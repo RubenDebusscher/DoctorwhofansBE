@@ -27,23 +27,23 @@ class status
 	/** @var int Color Default Online */
 	const COL_DEF_ON = '00FF00';
 
-	/** @var \phpbb\auth\auth */
+	/** @var auth */
 	protected $auth;
 
-	/** @var \phpbb\config\config */
+	/** @var config */
 	protected $config;
 
 	/**
 	 * Constructor for Member Avatar & Status Core Status Class.
 	 *
-	 * @param \phpbb\auth\auth				$auth				phpBB auth
-	 * @param \phpbb\config\config			$config				phpBB config
+	 * @param auth		$auth				phpBB auth
+	 * @param config	$config				phpBB config
 	 * @access public
 	 */
 	public function __construct(auth $auth, config $config)
 	{
-		$this->auth				= $auth;
-		$this->config			= $config;
+		$this->auth		= $auth;
+		$this->config	= $config;
 	}
 
 
@@ -51,14 +51,14 @@ class status
 	/**
 	 * MAS Get Config Online
 	 *
-	 * @param string $config_key takes Config Key String
+	 * @param string|bool $config_key takes Config Key String
 	 * @return bool Bool with Online Enable
 	 * @access public
 	 */
-	public function mas_get_config_online($config_key)
+	public function mas_get_config_online($config_key = false)
 	{
 		// Check if Online is Enabled.
-		return (bool) ($this->config['load_onlinetrack'] && $this->config['dark1_mas_online'] && $this->config[$config_key]);
+		return (bool) ($this->config['load_onlinetrack'] && $this->config['dark1_mas_online'] && ($config_key !== false ? $this->config[$config_key] : true));
 	}
 
 
@@ -129,9 +129,9 @@ class status
 		{
 			$sql_ary['SELECT'] .= ', MAX(' . $sql_obj . '.session_time) as ' . $prefix . 'session_time, MIN(' . $sql_obj . '.session_viewonline) as ' . $prefix . 'session_viewonline';
 			$sql_ary['LEFT_JOIN'][] = [
-					'FROM'	=> [SESSIONS_TABLE => $sql_obj],
-					'ON'	=> $sql_uid . ' = ' . $sql_obj . '.session_user_id AND ' . $sql_obj . '.session_time >= ' . (time() - ($this->config['load_online_time'] * 60)) . ' AND ' . $sql_obj . '.session_user_id <> ' . ANONYMOUS . $lj_on_ex,
-				];
+				'FROM'	=> [SESSIONS_TABLE => $sql_obj],
+				'ON'	=> $sql_uid . ' = ' . $sql_obj . '.session_user_id AND ' . $sql_obj . '.session_time >= ' . (time() - ($this->config['load_online_time'] * 60)) . ' AND ' . $sql_obj . '.session_user_id <> ' . ANONYMOUS . $lj_on_ex,
+			];
 
 			if ($group_by != '')
 			{
@@ -155,7 +155,7 @@ class status
 	{
 		$online = false;
 
-		if ($this->mas_get_config_online('dark1_mas_online'))
+		if ($this->mas_get_config_online())
 		{
 			$online = (time() - ($this->config['load_online_time'] * 60) < $online_row['session_time'] && ((isset($online_row['session_viewonline']) && $online_row['session_viewonline']) || $this->auth->acl_get('u_viewonline'))) ? true : false;
 		}
@@ -183,9 +183,9 @@ class status
 		if ($this->mas_get_config_online($config_key))
 		{
 			$online_row = [
-					'session_time'			=> $row[$prefix . 'session_time'],
-					'session_viewonline'	=> $row[$prefix . 'session_viewonline'],
-				];
+				'session_time'			=> $row[$prefix . 'session_time'],
+				'session_viewonline'	=> $row[$prefix . 'session_viewonline'],
+			];
 			$online = $this->mas_get_online_status($online_row);
 		}
 
