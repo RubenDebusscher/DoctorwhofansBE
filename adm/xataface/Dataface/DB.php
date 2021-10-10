@@ -28,9 +28,9 @@
  * xf_db_query calls because it analyzes queries first to make sure that Blobs are
  * not loaded unnecessarily.  [To do] 
  */
-import( 'Dataface/Application.php'); 
-import('Dataface/Table.php');
-import('Dataface/AuthenticationTool.php');
+import( XFROOT.'Dataface/Application.php'); 
+import(XFROOT.'Dataface/Table.php');
+import(XFROOT.'Dataface/AuthenticationTool.php');
 
 class Dataface_DB {
 	var $_db;
@@ -59,10 +59,10 @@ class Dataface_DB {
 		}
 		$this->_db = $db;
 		if ( @$this->app->_conf['cache_queries'] and !$this->_fcache_base_path ){
-			if ( is_writable(DATAFACE_SITE_PATH.'/templates_c') ){
-				$this->_fcache_base_path = DATAFACE_SITE_PATH.'/templates_c/query_results';
+			if ( is_writable(XFTEMPLATES_C) ){
+				$this->_fcache_base_path = XFTEMPLATES_C.'query_results';
 			} else {
-				$this->_fcache_base_path = DATAFACE_PATH.'/Dataface/templates_c/query_results';
+				$this->_fcache_base_path = XFTEMPLATES_C.'query_results';
 			}
 
 			if ( !file_exists($this->_fcache_base_path) ){
@@ -89,7 +89,7 @@ class Dataface_DB {
 			$filepath = DATAFACE_CACHE_PATH.'/Dataface_DB.cache';
 			//echo "Checking cache... $filepath";
 			
-			if ( is_readable($filepath) and filemtime($filepath) > time()-1 ){
+			if ( xf_is_readable($filepath) and filemtime($filepath) > time()-1 ){
 				//echo "Cache is readable";
 				include DATAFACE_CACHE_PATH.'/Dataface_DB.cache';
 
@@ -123,7 +123,7 @@ class Dataface_DB {
 	function &_getParser(){
 		
 		if ( !isset($this->_parser)){
-			import('SQL/Parser.php');
+			import(XFLIB.'SQL/Parser.php');
 			$this->_parser = new SQL_Parser(null, 'MySQL');
 		}
 		return $this->_parser;
@@ -134,7 +134,7 @@ class Dataface_DB {
 	 */
 	function &_getCompiler(){
 		if ( !isset($this->_compiler) ){
-			import('SQL/Compiler.php');
+			import(XFLIB.'SQL/Compiler.php');
 			$this->_compiler = SQL_Compiler::newInstance('mysql');
 		}
 		return $this->_compiler;
@@ -162,7 +162,7 @@ class Dataface_DB {
 		$count = 0;
 		for ($i=0;$i<$len;$i++){
 			$skip = false;
-			switch ($query{$i}){
+			switch ($query[$i]){
 				case '\\': 	$escaped = !$escaped;	
 							break;
 				case '"' :	if ( !$escaped && !$sglquoted ){
@@ -195,12 +195,12 @@ class Dataface_DB {
 				
 			}
 			
-			if ( $query{$i} != '\\' ) $escaped = false;
+			if ( $query[$i] != '\\' ) $escaped = false;
 			if ( $skip ) continue;
 			if (  $dblquoted || $sglquoted) {
-				$buffer .= $query{$i};
+				$buffer .= $query[$i];
 			}
-			else $output_query .= $query{$i};
+			else $output_query .= $query[$i];
 		}
 		
 		// Now to replace all numbers
@@ -285,7 +285,7 @@ class Dataface_DB {
 		}
 		
 		$query = $prepared_query[0];
-		import('Dataface/QueryTranslator.php');
+		import(XFROOT.'Dataface/QueryTranslator.php');
 		$translator = new Dataface_QueryTranslator($lang);
 		$output = $translator->translateQuery($prepared_query[0]);
 		if (PEAR::isError($output) ){
@@ -650,7 +650,7 @@ class Dataface_DB {
 		}
 		// We actually need to calculate the dependencies, so we will
 		// parse the SQL query.
-		import('SQL/Parser.php');
+		import(XFLIB.'SQL/Parser.php');
 		$parser = new SQL_Parser( null, 'MySQL');
 		$data = $parser->parse($sql);
 		if ( PEAR::isError($data) ){

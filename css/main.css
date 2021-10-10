@@ -15,7 +15,7 @@
     --bg-color-red: red;
     --font-color-darkblue-white: white;
     --nav-hover-color: #EED06E;
-    --height-for-main: 80vh;
+    --height-for-main: 72vh;
     --border-color: #DECE3E;
     font-family: 'Courier Prime', monospace;
     font-family: 'Hahmlet', serif;
@@ -3176,9 +3176,9 @@ table tr {
 
 .Overzicht a {
     display: inline-flex;
-    /* width: 23%; */
+    width: 23%;
     text-align: center;
-    /* margin-left: 9em; */
+    margin-left: 9em;
     margin-right: 3em;
     min-width: 14em;
 

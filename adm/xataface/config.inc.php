@@ -27,9 +27,39 @@
  *  
  *  Initializes configuration information for Dataface.
  */
+if (version_compare(PHP_VERSION, '8.0.0') >= 0) {
+    define('XF_PHP8', true);
+}
 if ( !defined('XATAFACE_INI_EXTENSION') ){
 	define('XATAFACE_INI_EXTENSION', '');
 }
+if (!defined('XFTEMPLATES_C')) {
+    $tmpDir = sys_get_temp_dir();
+    if ($tmpDir) {
+        $included_files = get_included_files();
+        if (!empty($included_files)) {
+            $entryScript = $included_files[0];
+            
+            $templates_c = dirname($entryScript) . DIRECTORY_SEPARATOR . 'templates_c';
+            if (!is_dir($templates_c)) {
+                $templates_c = $tmpDir . $templates_c;
+                if (mkdir($templates_c, 0777, true)) {
+                    define('XFTEMPLATES_C', $templates_c.DIRECTORY_SEPARATOR);
+                } else {
+                    define('XFTEMPLATES_C', XFAPPROOT.'templates_c'.DIRECTORY_SEPARATOR);
+                }
+            } else {
+                define('XFTEMPLATES_C', $templates_c.DIRECTORY_SEPARATOR);
+            }    
+        } else {
+            define('XFTEMPLATES_C', XFAPPROOT.'templates_c'.DIRECTORY_SEPARATOR);
+        }
+    } else {
+        define('XFTEMPLATES_C', XFAPPROOT.'templates_c'.DIRECTORY_SEPARATOR);
+    }
+}
+
+
 //Prevent Magic Quotes from affecting scripts, regardless of server settings
 
 //Make sure when reading file data,
@@ -55,7 +85,7 @@ function stripslashes_array($data) {
    }
 }
 
-if (get_magic_quotes_gpc()) {
+if (version_compare(PHP_VERSION, '7.4') < 0 and get_magic_quotes_gpc()) {
 	define('MAGIC_QUOTES_STRIPPED_SLASHES',1);
    /*
    All these global variables are slash-encoded by default,
@@ -214,7 +244,7 @@ if ( !defined('DATAFACE_EXTENSION_LOADED_MEMCACHE' ) ){
 
 
 function import($file){
-	
+  
 	static $imports = 0;
 	if ( !$imports ){
 		$imports = array();
@@ -224,7 +254,10 @@ function import($file){
 	//$class = substr($class, 0, strpos($class,'.'));
 	if ( !isset($imports[$file]) ){
 		$imports[$file] = true;
-		//error_log("importing ".$file);
+    //error_log("importing ".$file);
+    //if (!file_exists($file)) {
+    //  throw new Exception("File not found $file in ".ini_get('include_path'));
+    //}
 		require_once $file;
 	}
 }

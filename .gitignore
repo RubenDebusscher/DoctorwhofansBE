@@ -28,3 +28,4 @@ Adminold
 admin
 ftp-sync.json
 push.js
+.env

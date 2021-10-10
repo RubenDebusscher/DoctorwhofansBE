@@ -67,8 +67,8 @@ class dataface_actions_export_csv {
         }
     
 	function handle(&$params){
-		//set_time_limit(0);
-		import('Dataface/RecordReader.php');
+		set_time_limit(0);
+		import(XFROOT.'Dataface/RecordReader.php');
 		$app =& Dataface_Application::getInstance();
                 
                 $this->csv_delimiter = @$app->_conf['export_csv']['delimiter'];     //get delimiter key from conf.ini

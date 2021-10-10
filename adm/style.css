@@ -1,4 +1,4 @@
-html,
+/* html,
 body {
   max-width: 100% !important;
 }
@@ -21,7 +21,19 @@ tr[id$='_form_row']{
 }
 #xf-master-detail{
   min-height:100% !important;
-  margin:0 !important; padding:0 !important
+  margin:0 !important; padding:0 !important;
+  height:72vh !important;display: flex;
+}
+
+#xf-master-detail-n {
+  padding-left: 30px;
+  height:100% !important; width: 50% !important;
+}
+
+#xf-master-detail-s {
+  height: auto !important;
+  overflow: hidden !important; width: 50% !important;float:right
+
 }
 
 .floatHeader{position: initial !important;}
@@ -78,16 +90,12 @@ tr[id$='_form_row']{
 
   #xf-master-detail-n {
     padding-left: 30px;
-    min-height: 29vh !important;
-    max-height: 32vh !important;
-    height:auto !important
+    height:100% !important; width: 50% !important;
   }
 
   #xf-master-detail-s {
-    min-height: 29vh !important;
-    max-height: 32vh !important;
     height: auto !important;
-    overflow: hidden !important;
+    overflow: hidden !important; width: 50% !important;float:right
 
   }
   .master-detail-iframe{min-height: 27vh;}
@@ -95,3 +103,4 @@ tr[id$='_form_row']{
   .table-headings{display: none;}
 }
 
+ */

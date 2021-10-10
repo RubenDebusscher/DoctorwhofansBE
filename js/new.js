@@ -657,7 +657,7 @@ function DownloadsForEpisode(Downloads) {
   var downList = "<ul>";
   for (var down = 0; down < Downloads.length; down++) {
     if (Downloads[down].download_Type == "Subtitle") {
-      downList += "<li> Subtitle: <a download href='" + window.location.origin + "/" + Downloads[down].download_File + "'>" + Downloads[down].download_Name + "</a> (" + Downloads[down].language_Name.toUpperCase() + ")</li>";
+      downList += "<li> Subtitle: <a download href='" + window.location.origin + "/downloads/" + Downloads[down].download_File + "'>" + Downloads[down].download_Name + "</a> (" + Downloads[down].language_Name.toUpperCase() + ")</li>";
 
     }
   }
@@ -977,7 +977,6 @@ $(document).ready(
     $('body').css( 'font-family', selectedOption );
     
     setCookie("Font",selectedOption,30);
-    console.log(selectedOption)
     $("#font-select option[value='"+selectedOption+"']").attr("disabled","disabled");
     $("#font-select option[value='"+selectedOption+"']").attr("selected","selected");
 

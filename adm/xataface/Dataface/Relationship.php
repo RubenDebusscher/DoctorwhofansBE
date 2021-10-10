@@ -122,6 +122,7 @@ class Dataface_Relationship {
 	}
 		function Dataface_Relationship($tablename, $relationshipName, &$values) { self::__construct($tablename, $relationshipName, $values); }
 	
+	
 	function &getFieldDefOverride($field_name, $default=array()){
 		if ( strpos($field_name,'.') !== false	){
 			list($rname,$field_name) = explode('.', $field_name);
@@ -140,6 +141,10 @@ class Dataface_Relationship {
 		}
 		$this->_field_def_overrides[$field_name] = $field_def;
 	}
+    
+    function isLinkToDomainRecord() {
+        return !empty($this->_schema['list']['link_to_domain_record']) and $this->_schema['list']['link_to_domain_record'];
+    }
 	
 	/**
 	 * Returns an array of names of fields in this relationship.
@@ -308,10 +313,17 @@ class Dataface_Relationship {
 			
 			$select = '*';
 				// Default selection to all columns
-				
+			$customSelect = false;
+			$selectArr = null;
 			if ( array_key_exists( '__select__', $rel_values ) ){
 				// __select__ should be comma-delimited list of column names.
 				$select = $rel_values['__select__'];
+				$customSelect = true;
+				$selectArr = array_map('trim', explode(',', $select));
+				$len = count($selectArr);
+				for ($i=0; $i<$len; $i++) {
+					$selectArr[$i] = str_replace('`', '', $selectArr[$i]);
+				}
 			}
 			
 			$tables = array();
@@ -354,13 +366,16 @@ class Dataface_Relationship {
 				if ( !in_array( $p1[0], $tables ) && $p1[0] != $this->_sourceTable->tablename) $tables[] = $p1[0];
 				if ( !in_array( $p2[0], $tables ) && $p2[0] != $this->_sourceTable->tablename) $tables[] = $p2[0];
 				
+				$lhsConstant = true;
 				// Simplify references to current table to be replaced by variable value
 				if( $p1[0] == $this->_sourceTable->tablename ){
 					$lhs = "'\$$p1[1]'";
 				} else {
 					$lhs = "$p1[0].$p1[1]";
+					$lhsConstant = false;
 				}
 				
+				$rhsConstant = true;
 				if ( $p2[0] == $this->_sourceTable->tablename ){
 					if ( strpos($p2[1], '$')===0){
 						$var = '';
@@ -370,17 +385,32 @@ class Dataface_Relationship {
 					$rhs = "'".$var.$p2[1]."'";
 				} else {
 					$rhs = "$p2[0].$p2[1]";
+					$rhsConstant = false;
 				}
 				
 				// append condition to where clause
 				$where .= strlen($where) > 6 ? ' and ' : '';
 				$where .= "$lhs=$rhs";
+				if ($customSelect) {
+					// There was a custom __select__ directive
+					// so they may have omitted 
+					if (!$lhsConstant) {
+						if (!in_array($lhs, $selectArr) and !in_array($p1[1], $selectArr)) {
+							$select .= ", ".$lhs;
+						}
+					}
+					if (!$rhsConstant) {
+						if (!in_array($rhs, $selectArr) and !in_array($p2[1], $selectArr)) {
+							$select .= ", ".$rhs;
+						}
+					}
+				}
 			}
 			
 			
 			
 			foreach ($tables as $table){
-				$from .= $table.', ';
+				$from .= '`'.$table.'`, ';
 			}
 			
 			$from = substr( $from, 0, strlen($from)-2);
@@ -421,7 +451,10 @@ class Dataface_Relationship {
 	
 	}
 	
-	
+	function getLogoField() {
+	    $domainTable = Dataface_Table::loadTable($this->getDomainTable());
+        return $domainTable->getLogoField();
+	}
 	
 	/**
 	 * Scans the columns of a relationship and resolves wildcards and unqualified 
@@ -576,7 +609,90 @@ class Dataface_Relationship {
 	    return $out2;
 	}
 	
+    
+    function where($query) {
+        $app = Dataface_Application::getInstance();
+        if (isset($query['-related:search'])) {
+            $rwhere = array();
+            foreach ($this->fields(true) as $rfield) {
+                $rwhere[] = '`' . str_replace('.', '`.`', $rfield) . '` LIKE \'%' . addslashes($query['-related:search']) . '%\'';
+            }
+            $rwhere = implode(' OR ', $rwhere);
+        } else {
+            $rwhere = 0;
+        }
+        //echo $rwhere;
+        $column_search_keys = preg_grep('/^-related:s:[a-zA-Z_0-9]+$/', array_keys($query));
+        $terms = array();
+        $filters = [];
+        foreach ( $column_search_keys as $search_key ){
+            $field_name = substr($search_key, strrpos($search_key, ':')+1);
+            if ( $this->hasField($field_name, true) ){
+                $field = $this->getField($field_name);
+                $field_table = Dataface_Table::loadTable($field['tablename']);
+                $fval = $query[$search_key];
+                $exact = false;
+                if ($fval and $fval[0] == '=') {
+                    $exact = true;
+                    $fval = substr($fval,1);
+                }
+                if ( !is_numeric($query[$search_key]) and ($field_table->isChar($field['name']) or $field_table->isText($field['name'])) ){
+                    if ($exact) {
+                        $terms[] = '`'.$field['tablename'].'`.`'.$field_name.'` LIKE \''.addslashes($fval).'\'';
+                    } else {
+                        $terms[] = '`'.$field['tablename'].'`.`'.$field_name.'` LIKE \'%'.addslashes($fval).'%\'';
+                    }
+                    
+                } else {
+                    $terms[] = '`'.$field['tablename'].'`.`'.$field_name.'`=\''.addslashes($fval).'\'';
+                }
+
+                $filter_info = array(
+                    'field_name' => $field_name,
+                    'field_label' => $field['widget']['label'],
+                    'field_value' => $query[$search_key],
+                    'field_display_value' => $query[$search_key],
+                    'url' => $app->url('-related:s:'.$field_name.'=')
+                );
+                if ( @$field['vocabulary'] ){
+                    $vlkey = $filter_info['field_value'];
+                    if ( preg_match('/^\,(\d+)\,$/', $vlkey, $matches) ){
+                        $vlkey = $matches[1];
+                    }
+                    $valuelist =& $field_table->getValuelist($field['vocabulary']);
+                    if ( isset($valuelist[$vlkey]) ){
+                        $filter_info['field_display_value'] = $valuelist[$vlkey];
+
+                    }
+                    unset($valuelist);
+                    unset($field_table);
+                } else if ($field_table->getDisplayField($field_name) !== $field_name){
+                    $dummyRecord = df_get_record($field['tablename'], array($field_name=>'='.$query[$search_key]));
+                    if ($dummyRecord){
+                        $filter_info['field_display_value'] = $dummyRecord->display($field_name);
+                    }
+                    unset($dummyRecord);
+                }
+                $filters[] = $filter_info;
+            }
+        }
+        if ( $terms ){
+            if ( $rwhere === 0 ){
+                $rwhere = implode(' AND ', $terms);
+            } else {
+                $rwhere = '('.$rwhere.') AND '.implode(' AND ', $terms);
+            }
+        }
+        //echo $rwhere;exit;
+        return [
+            'where' => $rwhere,
+            'filters' => $filters
+        ];
+
+    }
 	
+    
+    
 	/**
 	 *
 	 * Returns the SQL query that can be used to obtain the related records of this 
@@ -591,11 +707,65 @@ class Dataface_Relationship {
 	 * @type string
 	 */
 	function getSQL($getBlobs=false, $where=0, $sort=0, $preview=1){
+        $nocache = false;
+        $override_columns = null;
+        
+        if (is_array($getBlobs)) {
+            $nocache = true;
+            $override_columns = @$getBlobs['override_columns'];
+            $getBlobs = false;
+        }
 		$start = microtime_float();
-		import('SQL/Compiler.php');
-		import( 'SQL/Parser/wrapper.php');
+		import(XFLIB.'SQL/Compiler.php');
+		import( XFROOT.'SQL/Parser/wrapper.php');
 		$loadParserTime = microtime_float() - $start;
-		if ( isset($this->_sql_generated[$where][$sort][$preview]) and $this->_sql_generated[$where][$sort][$preview] ){
+        
+        if (is_array($where)) {
+            
+            $where = $this->where($where);
+            $where = $where['where'];
+        }
+        
+        if (is_array($sort)) {
+            $query = $sort;
+            if (isset($query['-related:sort'])) {
+                $sortcols = explode(',', trim($query['-related:sort']));
+                $sort_columns = array();
+                foreach ($sortcols as $sortcol) {
+                    $sortcol = trim($sortcol);
+                    if (strlen($sortcol) === 0)
+                        continue;
+                    $sortcol = explode(' ', $sortcol);
+                    if (count($sortcol) > 1) {
+                        $sort_columns[$sortcol[0]] = strtolower($sortcol[1]);
+                    } else {
+                        $sort_columns[$sortcol[0]] = 'asc';
+                    }
+                    break;
+                }
+                unset($sortcols); 
+            } else {
+                $sort_columns = array();
+            }
+        
+            $sort_columns_arr = array();
+            foreach ($sort_columns as $colkey => $colorder) {
+                $sort_columns_arr[] = '`' . $colkey . '`' . $colorder;
+            }
+            if (count($sort_columns_arr) > 0) {
+                $sort_columns_str = implode(', ', $sort_columns_arr);
+            } else {
+                $sort_columns_str = 0;
+            }
+
+            $sort = $sort_columns_str;
+            unset($sort_columns_str);
+            unset($sort_columns_arr);
+
+            
+        }
+        
+		if ( !$nocache and isset($this->_sql_generated[$where][$sort][$preview]) and $this->_sql_generated[$where][$sort][$preview] ){
 			/*
 			 * The SQL has already been generated and stored.  We can just return it.
 			 */
@@ -610,19 +780,22 @@ class Dataface_Relationship {
 			/*
 			 * The SQL has not been generated yet.  We will generate it.
 			 */
-			$this->_sql_generated[$where][$sort][$preview] = true;
-			if ( !isset( $this->_schema['sql_without_blobs'] ) ){
-				$this->_schema['sql_without_blobs'] = array();
-			}
-			if ( !isset($this->_schema['sql_with_blobs']) ){
-				$this->_schema['sql_with_blobs'] = array();
-			}
+            if (!$nocache) {
+    			$this->_sql_generated[$where][$sort][$preview] = true;
+    			if ( !isset( $this->_schema['sql_without_blobs'] ) ){
+    				$this->_schema['sql_without_blobs'] = array();
+    			}
+    			if ( !isset($this->_schema['sql_with_blobs']) ){
+    				$this->_schema['sql_with_blobs'] = array();
+    			}
+            }
 			
-			if ( defined('DATAFACE_USE_CACHE') and DATAFACE_USE_CACHE ){
+			
+			if ( !$nocache and defined('DATAFACE_USE_CACHE') and DATAFACE_USE_CACHE ){
 				$cache_key_blobs = 'tables/'.$this->_sourceTable->tablename.'/relationships/'.$this->_name.'/sql/withblobs';
 				$cache_key_noblobs = 'tables/'.$this->_sourceTable->tablename.'/relationships/'.$this->_name.'/sql/withoutblobs';
 				// we are using the APC cache
-				import( 'Dataface/Cache.php');
+				import( XFROOT.'Dataface/Cache.php');
 				$cache =& Dataface_Cache::getInstance();
 				$this->_schema['sql_with_blobs'] = $cache->get($cache_key_blobs);
 				$this->_schema['sql_without_blobs'] = $cache->get($cache_key_noblobs);
@@ -631,7 +804,7 @@ class Dataface_Relationship {
 
 
 			
-			if ( !isset($this->_schema['sql_without_blobs'][$where][$sort][$preview]) or !isset($this->_schema['sql_with_blobs'][$where][$sort][$preview])){
+			if ( $nocache or !isset($this->_schema['sql_without_blobs'][$where][$sort][$preview]) or !isset($this->_schema['sql_with_blobs'][$where][$sort][$preview])){
 				//if ( !$this->_schema['sql_without_blobs'][$where][$sort] ) $this->_schema['sql_without_blobs'] = array();
 				//if ( !$this->_schema['sql_with_blobs'] ) $this->_schema['sql_with_blobs'] = array();
 				
@@ -766,20 +939,48 @@ class Dataface_Relationship {
 				//$compiler = new SQL_Compiler(null, 'mysql');
 				$compiler =& SQL_Compiler::newInstance('mysql');
 				$compiler->version = 2;
-				$this->_schema['sql_with_blobs'][$where][$sort][$preview] = $compiler->compile($parsed);
+                $sql_with_blobs = null;
+                
+                if ($nocache and $override_columns) {
+                    
+                    $wrapper->removeAllColumns();
+                    
+                    foreach ($override_columns as $override_column) {
+                        $wrapper->addColumn($override_column, null);
+                    }
+                }
+                
+                if (!$nocache) {
+                    $this->_schema['sql_with_blobs'][$where][$sort][$preview] = $sql_with_blobs = $compiler->compile($parsed);
+                } else if ($getBlobs) {
+                    $sql_with_blobs = $compiler->compile($parsed);
+                }
+				
 				
 				
 				foreach ($blobCols as $blobCol){
 					$wrapper->removeColumn($blobCol);
 				}
-				$this->_schema['sql_without_blobs'][$where][$sort][$preview] = $compiler->compile($parsed);
+                if (!$nocache) {
+                    $this->_schema['sql_without_blobs'][$where][$sort][$preview] = $sql_without_blobs = $compiler->compile($parsed);
+                } else if (!$getBlobs) {
+                    $sql_without_blobs = $compiler->compile($parsed);
+                }
+				
 
-				if ( defined('DATAFACE_USE_CACHE') and DATAFACE_USE_CACHE){
+				if ( !$nocache and defined('DATAFACE_USE_CACHE') and DATAFACE_USE_CACHE){
 					$cache->set($cache_key_blobs, $this->_schema['sql_with_blobs']);
 					$cache->set($cache_key_noblobs, $this->_schema['sql_without_blobs']);
 				
 				}
 				
+                if ($nocache) {
+                    if ($getBlobs) {
+                        return $sql_with_blobs;
+                    } else {
+                        return $sql_without_blobs;
+                    }
+                }
 
 			}
 			
@@ -1098,9 +1299,9 @@ class Dataface_Relationship {
 		// in the ini file using the __domain__ attribute of a relationship, or it can be parsed
 		// from the existiing 'sql' attribute.
 		if ( !isset( $relationship['domain_sql'] ) ){
-			import( 'SQL/Compiler.php');
+			import( XFLIB.'SQL/Compiler.php');
 				// compiles SQL tree structure into query strings
-			import( 'SQL/Parser/wrapper.php');
+			import( XFROOT.'SQL/Parser/wrapper.php');
 				// utility methods for dealing with SQL structures
 			$compiler = new SQL_Compiler();
 				// the compiler we will use to generate the eventual SQL
@@ -1206,6 +1407,10 @@ class Dataface_Relationship {
 	
 	}
 	
+	function isDomainTable($table) {
+		return $table == $this->getDomainTable();
+	}
+
 	/**
 	 * Returns the name of the "domain table" for this relationship.  The domain table is the main
 	 * table that comprises the data of a related record.  I.e., it is the destination table that is
@@ -1224,6 +1429,37 @@ class Dataface_Relationship {
 		return $this->domainTable;
 	}
 	
+	function isForeignKey($table, $field, $excludeConstrained=false) {
+		$fkvals = $this->getForeignKeyValues();
+		
+		if (!@$fkvals[$table]) {
+			return false;
+		}
+		if (!@$fkvals[$table][$field]) {
+			return false;
+		}
+		
+		if ($excludeConstrained and strpos($fkvals[$table][$field], '$') === 0) {
+			return false;
+		}
+		return true;
+	}
+
+	function isConstrainedForeignKey($table, $field) {
+		$fkvals = $this->getForeignKeyValues();
+		
+		if (!@$fkvals[$table]) {
+			return false;
+		}
+		if (!@$fkvals[$table][$field]) {
+			return false;
+		}
+		
+		if (strpos($fkvals[$table][$field], '$') === 0) {
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * Gets the values of the foreign keys of a particular relationship.  This returns an associative
@@ -1394,7 +1630,7 @@ class Dataface_Relationship {
 		$fkeys = $this->getForeignKeyValues();
 		if ( !isset($fkeys[$table]) ) return 999;
 		foreach ( $fkeys[$table] as $key=>$value ){
-			if ( is_scalar($value) and strlen($value) > 0 and $value{0} == '$' ) return 1;
+			if ( is_scalar($value) and strlen($value) > 0 and $value[0] == '$' ) return 1;
 			
 		}
 		return 2;

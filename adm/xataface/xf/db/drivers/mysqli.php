@@ -10,11 +10,14 @@ function xf_db_connect($host,$user,$pass){
 function xf_db_connect_errno(){ return mysqli_connect_errno();}
 function xf_db_connect_error(){ return mysqli_connect_error();}
 function xf_db_query($sql, $conn=null){
+	if ($conn === null) {
+		$conn = df_db();
+	}
 	return mysqli_query($conn, $sql);
 }
 function xf_db_error($link=null){
 	if ( $link === null ){
-		return mysqli_error();
+		return mysqli_error(df_db());
 	} else {
 		return mysqli_error($link);
 	}
@@ -32,7 +35,9 @@ function xf_db_fetch_assoc($result){ return mysqli_fetch_assoc($result); }
 function xf_db_fetch_object($result){ return mysqli_fetch_object($result); }
 function xf_db_fetch_row($result){ return mysqli_fetch_row($result); }
 function xf_db_select_db($dbname, $link=null){
-
+	if ($link === null) {
+		$link = df_db();
+	}
 	return mysqli_select_db($link, $dbname);
 }
 function xf_db_free_result($result){ return mysqli_free_result($result);}

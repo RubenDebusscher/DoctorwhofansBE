@@ -1,12 +1,27 @@
 <?php
 	// TODO: #59 fetch all strings for a given language, in order to fully localise the site
+/* 
+	* author: @RubenDebusscher
+	* last edited on 2021-08-17
+
+
+		@param $menu 						==>			get The "path" appended to the domain, to check fif that page exists
+		@param $language				==> 		get the language for the content, either set by the user or by the browser
+		@param $id 							==>			get the possible id for Video's or Quotes.
+		@param $ip							==>			the request headers, so they can be logged.
+		@param $session					==>			the php session ID
+	*/
+	// * set cors and make connection
 	require("cors.php");
 	require("connect.php");
+	// * check if connection can be made, else Die
 	if ($conn->connect_error) {
 		die("Connection failed: " . $conn->connect_error);
 	}
 	$antwoord = [];
 	mysqli_set_charset($conn,'utf8');
+	//		? Check if the URL exists, with said language, and log IP (so errors can be backtraced)
+	// 		* Prepare the query, die if it fails
 	$stmt = $conn->prepare("call checkPage(?,?,?)");
 	if(!$stmt){
 		die("Statement prepare failed: " . $conn->connect_error);
@@ -16,13 +31,17 @@
 	$id=$_POST['Itemid'];
 	$ip=json_encode(apache_request_headers());
 	$session=$_COOKIE['PHPSESSID'];
+	//	* bind parameters to query, if it fails, die
 	if(!$stmt->bind_param("sss",$menu,$ip,$session)){
 		die("Statement binding failed: " . $conn->connect_error);
 	}
+	// * voer query uit, if it fails, die
 	if(!$stmt->execute()){
 		die("Statement execution failed: " . $stmt->error);
 	}else{
+		//	* get Results
 		$result = $stmt->get_result();
+		// ? if the URL variable contains "Category", use the automatic title
 		if((stripos($menu,'Category:')!==false)){
 			$antwoord['Page'] = $result->fetch_all(MYSQLI_ASSOC);
 			$current_Page=$antwoord['Page'][0]['page_Link'];
@@ -32,7 +51,9 @@
 			$stmt->close();
 			$conn->close();
 			echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
-		}else if($result->num_rows === 0 & stripos($menu,'Category')==false) {
+		}
+		// ?if there is no existing page, and it is not a category, return false (Javascript will redirect this to 404)
+		else if($result->num_rows === 0 & stripos($menu,'Category')==false) {
 			$antwoord['Page']=false;
 			$conn->close();
 			echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
@@ -312,7 +333,6 @@
 							}
 						}
 						$QuoteIdFromURL=rand(1,$MaxQuoteId[0]['max']);
-
 					}
 					$stmtMainQuote = $conn->prepare('select * from Quotes where quote_Id=?');
 					if(!$stmtMainQuote){
@@ -348,6 +368,61 @@
 							$antwoord['Quotes'] = $result->fetch_all(MYSQLI_ASSOC);
 						}
 					}
+					break;
+				case "Video":
+					$VideoIdFromURL =$_POST['Itemid'];
+					if($VideoIdFromURL==0){
+						$MaxLimit = $conn->prepare('select max(video_Id) as max from content__videos');
+						if(!$MaxLimit){
+							die('Statement preparing failed: ' . $conn->error);
+						}
+						if(!$MaxLimit->execute()){
+							die('Statement execution failed: ' . $MaxLimit->error);
+						}else{
+							$resultMaxVideoId = $MaxLimit->get_result();
+							if($resultMaxVideoId->num_rows === 0){
+								$antwoord['resultMaxVideoId']='No rows';
+							} else{
+								$resultMaxVideoId = $resultMaxVideoId->fetch_all(MYSQLI_ASSOC);
+							}
+						}
+						$VideoIdFromURL=rand(1,$MaxVideoId[0]['max']);
+					}
+					$stmtMainVideo = $conn->prepare('select * from content__videos where video_Id=?');
+					if(!$stmtMainVideo){
+						die('Statement preparing failed: ' . $conn->error);
+					}
+					if(!$stmtMainVideo->bind_param("i",$VideoIdFromURL)){
+						die('Statement binding failed: ' . $conn->connect_error);
+					}
+					if(!$stmtMainVideo->execute()){
+						die('Statement execution failed: ' . $stmtMainVideo->error);
+					}else{
+						$result = $stmtMainVideo->get_result();
+						if($result->num_rows === 0){
+							$antwoord['MainVideo']=$VideoIdFromURL;
+						} else{
+							$antwoord['MainVideo'] = $result->fetch_all(MYSQLI_ASSOC);
+						}
+					}
+					$stmtOtherVideos = $conn->prepare('select * from content__videos where video_Id !=?');
+					if(!$stmtOtherVideos){
+						die('Statement preparing failed: ' . $conn->error);
+					}
+					if(!$stmtOtherVideos->bind_param("i",$id)){
+						die('Statement binding failed: ' . $conn->connect_error);
+					}
+					if(!$stmtOtherVideos->execute()){
+						die('Statement execution failed: ' . $stmtOtherVideos->error);
+					}else{
+						$result = $stmtOtherVideos->get_result();
+						if($result->num_rows === 0){
+							$antwoord['Videos']='No rows';
+						} else{
+							$antwoord['Videos'] = $result->fetch_all(MYSQLI_ASSOC);
+						}
+					}
+					break;
 			}
 			$stmtChildPages = $conn->prepare('SELECT page_Link,page_Name FROM management__pages where page_Parent_Id=? order by page_Order,page_Name');
 			if(!$stmtChildPages){
