@@ -22,7 +22,7 @@ class dataface_actions_ajax_set_preference {
 			$recordid = $recordd->getId();
 		}
 		
-		import(XFROOT.'Dataface/PreferencesTool.php');
+		import('Dataface/PreferencesTool.php');
 		$pt =& Dataface_PreferencesTool::getInstance();
 		
 		$pt->savePreference($recordid, $_POST['--name'], $_POST['--value']);
@@ -32,7 +32,7 @@ class dataface_actions_ajax_set_preference {
 	}
 	
 	function respond($out){
-		import(XFLIB.'Services/JSON.php');
+		import('Services/JSON.php');
 		$json = new Services_JSON;
 		
 		header('Content-type: application/json');

@@ -58,7 +58,7 @@ class Dataface_ImportFilter_xml extends Dataface_ImportFilter {
 		function Dataface_ImportFilter_xml() { self::__construct(); }
 	
 	
-	function import(&$data, $defaultValues=array()){
+	function import(&$data){
 		$arr = GetXMLTree ($data);
 		$arr = $arr['dataface'];
 		

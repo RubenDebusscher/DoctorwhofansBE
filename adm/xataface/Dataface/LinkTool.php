@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *-------------------------------------------------------------------------------
  */
-import(XFROOT. 'Dataface/Application.php');
-import( XFROOT.'Dataface/Table.php');
+import( 'Dataface/Application.php');
+import( 'Dataface/Table.php');
 
 
 /**
@@ -45,7 +45,7 @@ class Dataface_LinkTool {
 			//echo "GET: "; print_r($_GET);
 			foreach ( $query as $key=>$value){
 				//if ( strpos($key,'--')!== 0 ){
-				if ( isset($table->_fields[$key]) or ($key[0] == '-' and $key != '-new')){
+				if ( isset($table->_fields[$key]) or ($key{0} == '-' and $key != '-new')){
 					//echo "Key $key";
 					$mask[$key] = $value;
 					
@@ -96,7 +96,7 @@ class Dataface_LinkTool {
 			// make a whole lot of sense to maintain context.
 			foreach ( $query as $key=>$val) {
 				if ( !$key ) continue;
-				if ( $key[0] != '-' and $query[$key] != @$appQuery[$key] ){
+				if ( $key{0} != '-' and $query[$key] != @$appQuery[$key] ){
 					$useContext = false;
 					break;
 				}
@@ -145,9 +145,6 @@ class Dataface_LinkTool {
 			if ( is_array($value) ){
 				
 				foreach ( $value as $vkey=>$vval ){
-                    if (is_array($vkey) or is_array($vval)) {
-                        continue;
-                    }
 					$str .= urlencode($key.'['.$vkey.']').'='.urlencode($vval).'&';
 				}
 			}

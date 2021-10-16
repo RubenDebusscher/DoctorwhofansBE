@@ -3,7 +3,7 @@ class dataface_actions_xml_list {
 
 	function handle(&$params){
 	
-		import(XFROOT.'Dataface/XMLTool.php');
+		import('Dataface/XMLTool.php');
 		$xml = new Dataface_XMLTool();
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();

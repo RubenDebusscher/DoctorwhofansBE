@@ -47,10 +47,6 @@ class Dataface_ConfigTool {
 		$this->userConfig = new StdClass;
 	}
 	
-	function __construct() {
-	    $this->Dataface_ConfigTool();
-	}
-	
 	/**
 	 * Array to lookup the name of an entity based on its ID.
 	 */
@@ -254,7 +250,7 @@ class Dataface_ConfigTool {
 			if ( !isset( $this->iniLoaded[$path] ) ){
 				$this->iniLoaded[$path] = true;
 				
-				if ( xf_is_readable($path) || strstr($path,'db:') == $path ){
+				if ( is_readable($path) || strstr($path,'db:') == $path ){
 					
 					
 					$config = $this->parse_ini_file($path, true);
@@ -511,17 +507,6 @@ class Dataface_ConfigTool {
 			return $config[$path];
 			
 		} else {
-            if (XF_USE_OPCACHE) {
-                if (xf_opcache_is_script_cached($path)) {
-                    include(xf_opcache_path($path));
-                    $config[$path] = $xf_opcache_export;
-                } else {
-                    $config[$path] = INIParser::parse_ini_file($path, $sections);
-                    if (XF_USE_OPCACHE) {
-                        xf_opcache_cache_array($path, $config[$path]);
-                    }
-                }
-            }
 			if ( @$_GET['--refresh-apc'] or !(DATAFACE_EXTENSION_LOADED_APC && (filemtime($path) < apc_fetch($this->apc_hash().$path.'__mtime')) && ( $config[$path]=apc_fetch($this->apc_hash().$path) ) ) ){
 				
 				
@@ -558,17 +543,17 @@ class Dataface_ConfigTool {
 	
 	
 	function createConfigTable(){
-		import(XFROOT.'Dataface/ConfigTool/createConfigTable.function.php');
+		import('Dataface/ConfigTool/createConfigTable.function.php');
 		return Dataface_ConfigTool_createConfigTable();
 	}
 	
 	function setConfigParam($file, $section, $key, $value, $username=null, $lang=null, $priority=5){
-		import(XFROOT.'Dataface/ConfigTool/setConfigParam.function.php');
+		import('Dataface/ConfigTool/setConfigParam.function.php');
 		return Dataface_ConfigTool_setConfigParam($file, $section, $key, $value, $username, $lang, $priority);
 	}
 	
 	function clearConfigParam($file, $section, $key, $value, $username=null, $lang=null){
-		import(XFROOT.'Dataface/ConfigTool/clearConfigParam.function.php');
+		import('Dataface/ConfigTool/clearConfigParam.function.php');
 		return Dataface_ConfigTool_setConfigParam($file, $section, $key, $value, $username, $lang);
 	}
 

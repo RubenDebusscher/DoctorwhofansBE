@@ -186,7 +186,7 @@ class Dataface_FormTool {
 	 * @see WidgetHandler::pushField()
 	 * @see pullField()
 	 */
-	function pushField($record, &$field, $form, $formFieldName, $new=false, $validate=false){
+	function pushField($record, &$field, $form, $formFieldName, $new=false){
 		if ( !is_array($field) ) throw new Exception("No field passed to pushField");
 		// See if there is a widgethandler registered for this widget type
 		$table =& $record->_table;
@@ -232,19 +232,15 @@ class Dataface_FormTool {
 		}
 
 		$value = $this->pushValue($record, $field, $form, $element, $metaValues);
-		
 
-        
+
+
+
 		$params = array();
-        if ($validate) {
-    		if ( !$record->validate($field['name'], $value, $params) ){
-                if (!@$params['message']) {
-                    $params['message'] = 'Validation failed';
-                }
-    			return Dataface_Error::permissionDenied($params['message']);
-    		}
-        }
-		
+		if ( !$record->validate($field['name'], $value, $params) ){
+
+			return Dataface_Error::permissionDenied($params['message']);
+		}
 
 
 		if ( PEAR::isError($value) ){
@@ -261,6 +257,9 @@ class Dataface_FormTool {
 
 
 		if ( !$table->isMetaField($field['name']) ){
+
+
+
 			/*
 			 *
 			 * A MetaField is a field that should not be updated on its own merit.
@@ -289,11 +288,7 @@ class Dataface_FormTool {
 		 * If this field has any meta fields, then we will set them now.
 		 *
 		 */
-		
 		foreach ($metaValues as $key=>$value){
-			if (!isset($value)) {
-				continue;
-			}
 			$res = $record->setValue($key, $value);
 			if ( PEAR::isError($res) ){
 				$res->addUserInfo(
@@ -307,6 +302,8 @@ class Dataface_FormTool {
 
 			}
 		}
+
+
 
 	}
 
@@ -436,21 +433,6 @@ class Dataface_FormTool {
 
 	}
 
-    private function expandAjaxPreview(&$field) {
-        if (@$field['ajax_preview']) {
-            $preview = $field['ajax_preview'];
-            $prefix = 'field:';
-            $len = strlen($prefix);
-            if (strlen($preview) > $len and substr($preview, 0, $len) == $prefix) {
-                list($pre, $fieldName) = explode(':', $preview);
-                $app = Dataface_Application::getInstance();
-                $url = $app->url('-action=xf_field_preview&-field='.urlencode($fieldName)).'&--trigger={'.$fieldName.'}';
-                $field['ajax_preview'] = $url;
-                //print_r($field['ajax_preview']);
-            }
-        }
-    }
-
 	/**
 	 * @brief Builds a widget that can be added to a form.  This will delegate
 	 * to the WidgetHandler::buildWidget() method if defined for the field's widget
@@ -493,7 +475,6 @@ class Dataface_FormTool {
 		if ( PEAR::isError($el) ){
 			throw new Exception($el->toString(), E_USER_ERROR);
 		}
-        $this->expandAjaxPreview($field);
 		$el->setFieldDef($field);
 		if ( isset( $record ) && $record && $record->_table->hasField($field['name']) ){
 			if ( $link = $record->getLink($field['name']) ){
@@ -514,8 +495,9 @@ class Dataface_FormTool {
 		}
 
 
+
 		$el->setAttributes($atts);
-		if ( $new and !$pt->checkPermission($form->newPermission, $permissions) ){
+		if ( $new and !$pt->checkPermission('new', $permissions) ){
 			$el->freeze();
 		} else if ( !$new and !$pt->checkPermission('edit', $permissions) ){
 			$el->freeze();
@@ -529,6 +511,7 @@ class Dataface_FormTool {
 		}
 		*/
 		$el->record =& $record;
+
 		$form->addElement($el);
 		/*
 		 *
@@ -983,20 +966,15 @@ class Dataface_FormTool {
 	 * @returns void
 	 */
 	function display(&$form, $template=null, $singleField=false, $useTabs=false){
-        xf_script('xataface/FormTool/form.js');
-        xf_script('xataface/widgets/depends.js');
 
-		import(XFROOT.'HTML/QuickForm/Renderer/ArrayDataface.php');
+
+		import('HTML/QuickForm/Renderer/ArrayDataface.php');
 		//$skinTool =& Dataface_SkinTool::getInstance();
 		$renderer = new HTML_QuickForm_Renderer_ArrayDataface(true);
 		$form->accept($renderer);
 		$form_data = $renderer->toArray();
-		$mainSectionLabel = df_translate('scripts.Dataface_FormTool.LABEL_EDIT_DETAILS', 'Edit Details');
-		if (isset($template) and (stripos($template, 'search') !== false or stripos($template, 'find') !== false )) {
-			$mainSectionLabel = 'Advanced Search';
-		}
 		if ( !@$form_data['sections'] ){
-			$form_data['sections'] = array('__global__'=>array('header'=>$mainSectionLabel, 'name'=>'Edit','elements'=>&$form_data['elements']));
+			$form_data['sections'] = array('__global__'=>array('header'=>df_translate('scripts.Dataface_FormTool.LABEL_EDIT_DETAILS', 'Edit Details'), 'name'=>'Edit','elements'=>&$form_data['elements']));
 			unset($form_data['elements']);
 		}
 		//throw new Exception("here");
@@ -1191,67 +1169,37 @@ class Dataface_FormTool {
 	 * @return boolean True if the form validates.
 	 */
 	function validateRecordForm($record, &$form, $new=false, $tab=null){
-        
-		if (!$form->isSubmitted()) return false;
+
+		if ( !$form->validate() ) return false;
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
-        
+
 		$targets = preg_grep('/^--session:target:/', array_keys($query));
-        
+
 		if ( count($targets) > 0 ) return true;
-        
+
 		$tabs = $record->tabs();
-        
-		if ( count($tabs) <= 1 ) return $form->validate();
+
+		if ( count($tabs) <= 1 ) return true;
 			// There is only one tab so we don't have to do anything fancy.
-		$session_data = $this->getSessionData();
-        $tabforms = array();
-        $submittedValues = array();
- 		foreach ($form->_fieldnames as $field){
-            $submittedValues[$field] = $record->val($field);
-		}
-        $clone = new Dataface_Record($record->table()->tablename, $record->vals());
-        foreach ($form->_fieldnames as $field) {
-            $this->pushField($clone, $clone->table()->getField($field), $form, $field, $new, false);
-            $submittedValues[$field] = $clone->val($field);
-        }
-
+		$session_data =& $this->getSessionData();
 		foreach ( array_keys($tabs) as $tabname ){
-			if ( !$session_data or !$session_data['tabs'] or !in_array($tabname, array_keys($session_data['tabs'])) ) {
-                continue;
-            }
-
-			$currForm = $this->createRecordForm($clone, $new, $tabname);
+			if ($tabname == $tab) continue;
+			if ( !$session_data or !$session_data['tabs'] or !in_array($tabname, array_keys($session_data['tabs'])) ) continue;
+			$currForm =& $this->createRecordForm($record, $new, $tabname);
 			$currForm->_build();
-			$this->decorateRecordForm($clone, $currForm, $new, $tabname);
-            $tabforms[$tabname] = $currForm;
-            $currForm->_flagSubmitted = true;
-	 		foreach ($currForm->_fieldnames as $field){
-                $this->pushField($clone, $clone->table()->getField($field), $currForm, $field, $new, false);
-                $submittedValues[$field] = $clone->val($field);
-			}
-        }
-        $currTabName = @$query['--tab'];
-        if ($currTabName and !@$tabforms[$currTabName]) {
-            $tabforms[$currTabName] = $form;
-        }
-        if (count($tabforms) === 0) {
-            $tabforms[] = $form;
-        }
-        foreach ($tabforms as $tabname=>$currForm) {
+
+			//$currForm->setConstants($currForm->_defaultValues);
+			//$_POST = $currForm->exportValues();
+			$this->decorateRecordForm($record, $currForm, $new, $tabname);
+			//$currForm->_submitValues = $currForm->_defaultValues;
 			$currForm->_flagSubmitted = true;
-			if ( !$currForm->validate(($currForm === $form) ? null : $submittedValues) ){
-                if ($currForm !== $form) {
-                    $errorMessage = df_translate('classes.FormTool.errors.ERROR_IN_TAB', 'A validation error occurred in the '.$tabs[$tabname]['label'].' tab.  Please verify that this tab\'s input is correct before saving.', array('tab'=>$tabs[$tabname]['label']));
-                    foreach ($currForm->_errors as $error) {
-                        $errorMessage .= "\n" . $error;
-                    }
-                    $form->setElementError('global.'.$tabname, $errorMessage);
-                }
-				
+			if ( !$currForm->validate() ){
+
+				$form->setElementError('global.'.$tabname, df_translate('classes.FormTool.errors.ERROR_IN_TAB', 'A validation error occurred in the '.$tabs[$tabname]['label'].' tab.  Please verify that this tab\'s input is correct before saving.', array('tab'=>$tabs[$tabname]['label'])));
 
 			}
-
+			unset($currForm);
 		}
 
 
@@ -1447,8 +1395,7 @@ class Dataface_FormTool {
 			return $_SESSION[$session_key];
 
 		} else {
-            $null = null;
-			return $null;
+			return null;
 		}
 	}
 
@@ -1577,7 +1524,7 @@ class Dataface_FormTool {
 
 
 		foreach ( array_keys($session_data['tabs']) as $tabname ){
-			$temp = $this->createRecordForm($record, $new, $tabname);
+			$temp =& $this->createRecordForm($record, $new, $tabname);
 
 				// Note that this form could be a form for the $record object
 				// or it could be a form for one of its join records
@@ -1626,7 +1573,7 @@ class Dataface_FormTool {
 
 }
 
-import(XFLIB.'HTML/QuickForm.php');
+import('HTML/QuickForm.php');
 /**
  * @brief An HTML_QuickForm class that can be used to build widgets that will eventually
  * be added to other forms.  It is the same as any other quickform except that it

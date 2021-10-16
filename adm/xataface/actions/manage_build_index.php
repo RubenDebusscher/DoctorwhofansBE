@@ -4,7 +4,7 @@ class dataface_actions_manage_build_index {
 	function handle(&$params){
 		session_write_close();
 		set_time_limit(0);
-		import(XFROOT.'Dataface/Index.php');
+		import('Dataface/Index.php');
 		$index = new Dataface_Index();
 		if ( @$_POST['--build-index'] ){
 		

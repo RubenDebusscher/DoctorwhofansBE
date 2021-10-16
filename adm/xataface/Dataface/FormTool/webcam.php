@@ -1,7 +1,7 @@
 <?php
 
 
-import(XFROOT.'Dataface/FormTool/file.php');
+import('Dataface/FormTool/file.php');
 /**
  * @ingroup widgetsAPI
  */

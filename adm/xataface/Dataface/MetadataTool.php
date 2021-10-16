@@ -1,5 +1,5 @@
 <?php
-import(XFROOT.'Dataface/Table.php');
+import('Dataface/Table.php');
 
 /**
  * A tool for managing table metadata.  Meta data can be any data that describes
@@ -115,7 +115,7 @@ class Dataface_MetadataTool {
 		if ( !isset($this->fieldDefs) ){
 			
 		
-			import(XFROOT.'Dataface/ConfigTool.php');
+			import('Dataface/ConfigTool.php');
 			$configTool =& Dataface_ConfigTool::getInstance();
 			$this->fieldDefs = $configTool->loadConfig('metadata',$tablename);
 			foreach (array_keys($this->fieldDefs) as $key ){

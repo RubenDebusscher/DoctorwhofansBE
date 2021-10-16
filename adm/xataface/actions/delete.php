@@ -2,9 +2,9 @@
 class dataface_actions_delete {
 
 	function handle(&$params){
-		import( XFROOT.'Dataface/DeleteForm.php');
-		import( XFROOT.'Dataface/LanguageTool.php');
-		import( XFROOT.'Dataface/Record.php');
+		import( 'Dataface/DeleteForm.php');
+		import( 'Dataface/LanguageTool.php');
+		import( 'Dataface/Record.php');
 		
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
@@ -88,11 +88,11 @@ class dataface_actions_delete {
 			        exit;
 			    }
 			
-				import(XFROOT.'Dataface/Utilities.php');
+				import('Dataface/Utilities.php');
 				Dataface_Utilities::fireEvent('after_action_delete', array('record'=>&$record));
 				$append = '';
 				$append .= '&--master-detail-delete-row=1';
-				$app->redirect($_SERVER['HOST_URI'].DATAFACE_SITE_HREF.'?-table='.$query['-table'].$append.'&--msg='.$msg);
+				header('Location: '.$_SERVER['HOST_URI'].DATAFACE_SITE_HREF.'?-table='.$query['-table'].$append.'&--msg='.$msg);
 				exit;
 			} else {
 			    if (@$query['-response'] == 'json') {

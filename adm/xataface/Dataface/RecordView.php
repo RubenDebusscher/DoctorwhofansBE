@@ -1,5 +1,5 @@
 <?php
-import(XFROOT.'Dataface/GlanceList.php');
+import('Dataface/GlanceList.php');
 class Dataface_RecordView {
 	var $record;
 	
@@ -44,7 +44,7 @@ class Dataface_RecordView {
 			$this->status = '';
 		}
 		
-		import(XFROOT.'Dataface/PreferencesTool.php');
+		import('Dataface/PreferencesTool.php');
 		$pt =& Dataface_PreferencesTool::getInstance();
 
 		$prefs =& $pt->getPreferences($record->getId());
@@ -117,7 +117,7 @@ class Dataface_RecordView {
 			}
 			if ( $record->_table->isMetaField($field['name']) ) continue;
 			
-			if ( false and !@$app->prefs['hide_record_view_logo'] ){
+			if ( !@$app->prefs['hide_record_view_logo'] ){
 				if ( ($record->isImage($field['name']) and @$field['logo'] !== '0') or @$field['logo']) {
 					$this->showLogo = true;
 					

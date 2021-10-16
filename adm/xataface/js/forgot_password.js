@@ -54,24 +54,16 @@ jQuery(document).ready(function($){
 			if ( !response.code ) throw "Unknown server error.";
 			if ( response.code == 200 ){
 				setStatus(response.message);
-                $('#reset-password-submit-button').get(0).disabled = false;
 			} else {
 				throw response.message;
 			}
 		} catch (e){
 			setStatus(e);
-            $('#reset-password-submit-button').get(0).disabled = false;
 		}
 	}
 	
 	
-	$('#reset-password-submit-button', formDiv).click(function(){
-        // FOr some reason we're getting this event twice per click, so we need to disable the button 
-        // to prevent the second time around.
-        // Can't seem to find the source of this for a proper fix.
-        if (this.disabled) return;
-        this.disabled = true;
-
+	$('#submit-button', formDiv).click(function(){
 		if ( getUsername() ){
 			submitFormByUsername(serverCallback);
 		} else if ( getEmail() ){
@@ -80,21 +72,5 @@ jQuery(document).ready(function($){
 			alert('Please enter a username or email address.');
 		}
 	});
-    
-    $('#reset-password-by').on('change', function() {
-        $("#email-or-username").focus();
-    });
-
-    
-    (function() {
-        var sideMenu = document.querySelector('.sidemenu.header');
-        if (sideMenu) {
-            sideMenu.style.display = 'none';
-        }
-        var toggle = document.querySelector('.sidebarIconToggle');
-        if (toggle) {
-            toggle.style.display = 'none';
-        }
-    })();
 
 });

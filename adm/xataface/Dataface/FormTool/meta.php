@@ -1,5 +1,5 @@
 <?php
-import(XFROOT.'Dataface/FormTool/hidden.php');
+import('Dataface/FormTool/hidden.php');
 /**
  * @ingroup widgetsAPI
  */

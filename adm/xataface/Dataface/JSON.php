@@ -14,7 +14,7 @@ class JSON {
 	}
 	
 	public static function json($arr){
-		import(XFLIB.'Services/JSON.php');
+		import('Services/JSON.php');
 		$json = new Services_JSON();
 		return $json->encode($arr);
 		/*

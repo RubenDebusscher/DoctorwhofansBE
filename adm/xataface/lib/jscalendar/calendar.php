@@ -100,7 +100,8 @@ class DHTML_Calendar {
 
     function _make_js_hash($array) {
         $jstr = '';
-        foreach ($array as $key=>$val) {
+        reset($array);
+        while (list($key, $val) = each($array)) {
         	if ( is_array($val) ){
         		$val = implode(',',$val);
         	}
@@ -116,7 +117,8 @@ class DHTML_Calendar {
 
     function _make_html_attr($array) {
         $attrstr = '';
-        foreach ($array as $key=>$val) {
+        reset($array);
+        while (list($key, $val) = each($array)) {
             $attrstr .= $key . '="' . $val . '" ';
         }
         return $attrstr;

@@ -44,19 +44,15 @@ class dataface_actions_register {
 		$this->params =& $params['action'];
 		unset($params);
 		$params =& $this->params;
-		
+
 		Dataface_PermissionsTool::getInstance()->setDelegate(new dataface_actions_register_permissions_delegate());
 		
 		
 		$app =& Dataface_Application::getInstance();
 		$auth =& Dataface_AuthenticationTool::getInstance();
-        
-		$app->addBodyCSSClass('no-table-tabs');
-        $app->addBodyCSSClass('no-mobile-header');
-         $app->addBodyCSSClass('no-app-menu');
-        $app->addBodyCSSClass('no-fab');
+
 		
-		import(XFROOT.'Dataface/Ontology.php');
+		import('Dataface/Ontology.php');
 		Dataface_Ontology::registerType('Person', 'Dataface/Ontology/Person.php', 'Dataface_Ontology_Person');
 		$this->ontology =& Dataface_Ontology::newOntology('Person', $app->_conf['_auth']['users_table']);
 		
@@ -91,7 +87,7 @@ class dataface_actions_register {
 		
 		// Create a new record form on the users table
 		$this->form =& df_create_new_record_form($app->_conf['_auth']['users_table']);
-		$this->form->newPermission = 'register';
+		
 		// add the -action element so that the form will direct us back here.
 		$this->form->addElement('hidden','-action');
 		$this->form->setDefaults(array('-action'=>$query['-action']));
@@ -101,7 +97,7 @@ class dataface_actions_register {
 		$validationResults = $this->validateRegistrationForm($_POST);
 		if ( count($_POST) > 0 and PEAR::isError($validationResults) ){
 			$app->addMessage($validationResults->getMessage());
-			//$this->form->_errors[$app->_conf['_auth']['username_column']] = $validationResults->getMessage();
+			$this->form->_errors[$app->_conf['_auth']['username_column']] = $validationResults->getMessage();
 		}
 		if ( !PEAR::isError($validationResults) and $this->form->validate() ){
 			// The form input seems OK.  Let's process the form
@@ -195,7 +191,6 @@ class dataface_actions_register {
 		// We don't want to keep the registration page in history, because we want to
 		// be able to redirect the user back to where he came from before registering.
 		$app->prefs['no_history'] = true;
-        xf_script('xataface/actions/register.js');
 		df_display($context, 'Dataface_Registration.html');
 	
 	}
@@ -204,8 +199,23 @@ class dataface_actions_register {
 	 * Creates a table to hold the temporary user registrations.
 	 */
 	function createRegistrationTable(){
-        import(XFROOT.'xf/registration/createRegistrationTable.func.php');
-        return xf\registration\createRegistrationTable();
+		if ( !Dataface_Table::tableExists('dataface__registrations', false) ){
+			$sql = "create table `dataface__registrations` (
+				registration_code varchar(32) not null,
+				registration_date timestamp not null,
+				registration_data longtext not null,
+				primary key (registration_code)) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+				// registration_code stores an md5 code used to identify the registration
+				// registration_date is the date that the registration was made
+				// registration_data is a serialized array of the data from getValues()
+				// on the record.
+				
+				
+			$res = xf_db_query($sql, df_db());
+			if ( !$res ) throw new Exception(xf_db_error(df_db()), E_USER_ERROR);
+		}
+		return true;
+	
 	}
 	
 	/**
@@ -283,7 +293,7 @@ class dataface_actions_register {
 		return PEAR::raiseError("No delegate method found named '$name'.", DATAFACE_E_REQUEST_NOT_HANDLED);
 	}
 
-
+	
 	
 	function processRegistrationForm($values){
 		
@@ -294,10 +304,42 @@ class dataface_actions_register {
 		
 		if ( @$this->params['email_validation'] ){
 			
-            $values = $this->form->_record->getValues();
-            import(XFROOT.'xf/registration/createActivationLink.func.php');
-            $activation_url = xf\registration\createActivationLink($values);
-            
+			// Let's try to create the registration table if it doesn't already
+			// exist
+			$this->createRegistrationTable();
+			
+			// Now we will store the registration attempt
+			
+			// A unique code to be used as an id
+			$code = null;
+			do {
+				$code = md5(rand());
+			} while ( 
+				xf_db_num_rows(
+					xf_db_query(
+						"select registration_code 
+						from dataface__registrations 
+						where registration_code='".addslashes($code)."'", 
+						df_db()
+						)
+					) 
+				);
+			
+			// Now that we have a unique id, we can insert the value
+			
+			$sql = "insert into dataface__registrations 
+					(registration_code, registration_data) values
+					('".addslashes($code)."',
+					'".addslashes(
+						serialize(
+							$this->form->_record->getValues()
+							)
+						)."')";
+			$res = xf_db_query($sql, df_db());
+			if ( !$res ) throw new Exception(xf_db_error(df_db()), E_USER_ERROR);
+			
+			$activation_url = $_SERVER['HOST_URI'].DATAFACE_SITE_HREF.'?--enable-sessions=1&-action=activate&code='.urlencode($code);
+			
 			// Now that the registration information has been inserted, we need
 			// to send the confirmation email
 			// Let's try to send the email if possible.
@@ -379,7 +421,7 @@ class dataface_actions_register {
 				
 				
 				
-				$info['message'] = array();
+				
 				$msg = <<<END
 Thank you for registering for an account on $site_title .  In order to complete your registration,
 please visit $activation_url .
@@ -387,13 +429,11 @@ please visit $activation_url .
 If you have not registered for an account on this web site and believe that you have received
 this email eroneously, please report this to $admin_email .
 -----------------------------------------------------------
-This message was sent by $site_title version $application_version
-Powered by Xataface version $dataface_version .
+This message was sent by $site_title which is powered by $application_name version $application_version
+$application_name built using Dataface version $dataface_version (http://fas.sfu.ca/dataface).
 END;
 
-
-
-				$info['message']['text/plain'] = df_translate(
+				$info['message'] = df_translate(
 					'actions.register.MESSAGE_REGISTRATION_ACTIVATION_EMAIL_MESSAGE',
 					$msg,
 					array(
@@ -405,71 +445,20 @@ END;
 						'dataface_version'=>$dataface_version
 						)
 					);
-                
-                $msg = <<<END
-<p>Thank you for registering for an account on $site_title .  In order to complete your registration,
-please click <a href="$activation_url">here</a>.</p>
-
-<p>If you have not registered for an account on this web site and believe that you have received
-this email eroneously, please report this to $admin_email </p>
-
-<hr/>
-
-<p style="font-size: 50%">This message was sent by $site_title  version $application_version<br/>
-Powered by Xataface version $dataface_version.</p>
-END;
-                $info['message']['text/html'] = df_translate(
-                	'actions.register.MESSAGE_REGISTRATION_ACTIVATION_EMAIL_MESSAGE_HTML',
-                	$msg,
-                	array(
-                		'site_title'=>$site_title,
-                		'activation_url'=>$activation_url,
-                		'admin_email'=>$admin_email,
-                		'application_name'=>$application_name,
-                		'application_version'=>$application_version,
-                		'dataface_version'=>$dataface_version
-                		)
-                	);
+			
 			
 			}
-            if (is_string($info['message'])) {
-                $info['mesage'] = array('text/plain'=>$info['message']);
-            }
 			
 			// Now that we have all of the information ready to send.  Let's send
 			// the email message.
 			
 			if ( @$conf['_mail']['func'] ) $func = $conf['_mail']['func'];
 			else $func = 'mail';
-            $params = @$info['parameters'] ? $info['parameters'] : '';
-            $headers = @$info['headers'] ? $info['headers'] : '';
-            
-            
-    		$event = new StdClass;
-    		$event->email = $info['to'];
-            $event->subject = $info['subject'];
-            $event->message = $info['message'];
-            $event->headers = $headers;
-            $event->from = $admin_email;
-            if (strpos($admin_email, '<') === false) {
-                $event->from = $application_name.'<'.$admin_email.'>';
-            }
-            $event->parameters = $params;
-    		$event->consumed = false;
-            $app->fireEvent('mail', $event);
-
-            if (@$event->consumed) {
-                $res = $event->out;
-            } else {
-    			$res = $func($info['to'],
-    						$info['subject'],
-    						$info['message'],
-    						$headers,
-    						$params);
-                
-            }
-            
-			
+			$res = $func($info['to'],
+						$info['subject'],
+						$info['message'],
+						@$info['headers'],
+						@$info['parameters']);
 			if ( !$res ){
 				return PEAR::raiseError('Failed to send activation email.  Please try again later.', DATAFACE_E_ERROR);
 			} else {

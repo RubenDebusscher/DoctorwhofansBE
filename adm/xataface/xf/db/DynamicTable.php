@@ -81,7 +81,7 @@ class DynamicTable {
 		if ( $outOfDate ){
 			\df_q("DROP TABLE IF EXISTS `".str_replace('`','', $this->tableName)."`");
 			\df_q($this->sql);
-			import(XFROOT.'Dataface/IO.php');
+			import('Dataface/IO.php');
 			\Dataface_IO::touchTable($this->tableName);
 		}
 		return $outOfDate;

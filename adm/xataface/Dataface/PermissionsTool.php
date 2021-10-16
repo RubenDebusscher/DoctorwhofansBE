@@ -323,7 +323,7 @@ class Dataface_PermissionsTool_Instance {
 	function __construct($conf = null){
 	
 		if ( $conf === null ){
-			import(XFROOT.'Dataface/ConfigTool.php');
+			import('Dataface/ConfigTool.php');
 			$configTool =& Dataface_ConfigTool::getInstance();
 			$conf = $configTool->loadConfig('permissions');
 		
@@ -714,7 +714,8 @@ class Dataface_PermissionsTool_Instance {
 		
 		
 		if ( is_array($perms) ){
-			return (isset( $perms[$permissionName]) and $perms[$permissionName]);
+			
+			return  (isset( $perms[$permissionName]) and $perms[$permissionName]);
 		}
 		
 		if ( PEAR::isError($perms) ){

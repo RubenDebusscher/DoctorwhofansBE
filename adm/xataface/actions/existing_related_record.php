@@ -1,13 +1,13 @@
 <?php
-import(XFROOT.'Dataface/LinkTool.php');
+import('Dataface/LinkTool.php');
 class dataface_actions_existing_related_record {
 	function handle(&$params){
-		import( XFROOT.'Dataface/ExistingRelatedRecordForm.php');
+		import( 'Dataface/ExistingRelatedRecordForm.php');
 		
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
 		$resultSet =& $app->getResultSet();
-		$app->_conf['page_menu_category'] = 'existing_related_record_actions_menu';
+		
 		//$record =& $app->getRecord();	// loads the current record 
 		
 		if ( !isset( $query['-relationship'] ) ){
@@ -91,7 +91,7 @@ class dataface_actions_existing_related_record {
 				$success = true;
 			}
 			if ( $success ){
-				import(XFROOT.'Dataface/Utilities.php');
+				import('Dataface/Utilities.php');
 				Dataface_Utilities::fireEvent('after_action_existing_related_record');
 				$fquery = array('-action'=>'browse');
 				$table = Dataface_Table::loadTable($query['-table']);
@@ -124,12 +124,8 @@ class dataface_actions_existing_related_record {
 		$out = ob_get_contents();
 		ob_end_clean();
 		
-		$addNewLink = null;
-        if ($app->getRelationship() and $app->getRelationship()->supportsAddNew() and $form->_record->checkPermission('add new related record', ['relationship'=>$query['-relationship']])) {
-            $addNewLink = $app->url('-action=new_related_record');
-        }
-        
-		$context = array('form'=>$out, 'addNewLink' => $addNewLink);
+		
+		$context = array('form'=>$out);
 		if ( isset($query['-template']) ) $template = $query['-template'];
 		else if ( isset( $params['action']['template']) ) $template = $params['action']['template'];
 		else $template = 'Dataface_Add_Existing_Related_Record.html';

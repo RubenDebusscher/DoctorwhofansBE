@@ -71,7 +71,7 @@ class Dataface_OutputCache {
 	 * of pages from the database.
 	 */
 	function _buildPageSelect($params=array()){
-		import(XFROOT.'Dataface/AuthenticationTool.php');
+		import('Dataface/AuthenticationTool.php');
 		$query =& $this->app->getQuery();
 		
 		
@@ -475,7 +475,7 @@ class Dataface_OutputCache {
 	
 		if ( @$this->app->_conf['_output_cache']['cachedir'] ){
 			$filename =  DATAFACE_SITE_PATH.'/'.$this->app->_conf['_output_cache']['cachedir'];
-			$dir = $PageID[0];
+			$dir = $PageID{0};
 			$filename = $filename.'/'.$dir;
 			if ( !file_exists($filename)){
 				mkdir($filename, 0777);
