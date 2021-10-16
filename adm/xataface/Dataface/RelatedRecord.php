@@ -629,7 +629,7 @@ class Dataface_RelatedRecord {
 		
 		
 		if ( is_array($value) ){
-			if ( isset($table) and method_exists( $table, $table->getType($fieldname)."_to_string") ){
+			if ( method_exists( $table, $table->getType($fieldname)."_to_string") ){
 				$value = call_user_func( array( &$table, $table->getType($fieldname)."_to_string"), $value );
 			} else {
 				$value = implode(', ', $value);
@@ -1119,49 +1119,6 @@ class Dataface_RelatedRecord {
 			return $out;
 		} else {
 			return $record->getTitle();
-		}
-	}
-    
-    function getByLine() {
-		$method = 'rel_'.$this->_relationshipName.'__getByLine';
-		$del = $this->_record->table()->getDelegate();
-		
-		if ( isset($del) and method_exists($del, $method) ){
-			return $del->$method($this);
-		}
-		
-		
-		$record =& $this->toRecord();
-		if ( $this->checkPermission('view') ){
-			$oldSecureDisplay = $record->secureDisplay;
-			$record->secureDisplay = false;
-			$out = $record->getByLine();
-			$record->secureDisplay = $oldSecureDisplay;
-			return $out;
-		} else {
-			return $record->getByLine();
-		}
-    }
-    
-    
-	function getDescription(){
-		$method = 'rel_'.$this->_relationshipName.'__getDescription';
-		$del = $this->_record->table()->getDelegate();
-		
-		if ( isset($del) and method_exists($del, $method) ){
-			return $del->$method($this);
-		}
-		
-		
-		$record =& $this->toRecord();
-		if ( $this->checkPermission('view') ){
-			$oldSecureDisplay = $record->secureDisplay;
-			$record->secureDisplay = false;
-			$out = $record->getDescription();
-			$record->secureDisplay = $oldSecureDisplay;
-			return $out;
-		} else {
-			return $record->getDescription();
 		}
 	}
 	

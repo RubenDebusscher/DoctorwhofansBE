@@ -15,7 +15,7 @@ class dataface_actions_ajax_sort_sections {
 			
 			$sections = explode(',',$_POST[$section_key]);
 			
-			import(XFROOT.'Dataface/PreferencesTool.php');
+			import('Dataface/PreferencesTool.php');
 			$pt =& Dataface_PreferencesTool::getInstance();
 			
 			$prefs =& $pt->getPreferences($record->getId());

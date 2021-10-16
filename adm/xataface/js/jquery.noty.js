@@ -351,9 +351,8 @@ if (typeof Object.create !== 'function') {
 		}
 
         $.notyRenderer.setLayoutCountFor(notification, +1);
-        try {
-            notification.show();
-        } catch (e){}
+
+        notification.show();
     };
 
     $.notyRenderer.createModalFor = function (notification) {

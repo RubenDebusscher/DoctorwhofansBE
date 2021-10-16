@@ -1,5 +1,5 @@
 <?php
-import(XFROOT.'HTML/QuickForm.php');
+import('HTML/QuickForm.php');
 
 class Dataface_RelationshipCheckboxForm extends HTML_QuickForm {
 	var $record;

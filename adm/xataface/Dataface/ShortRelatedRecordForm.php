@@ -30,8 +30,8 @@
  * A form that allows users to add new records to a relationship.
  *
  */
-import(XFLIB.'HTML/QuickForm.php');
-import(XFROOT.'Dataface/QuickForm.php');
+import('HTML/QuickForm.php');
+import('Dataface/QuickForm.php');
 /**
  * @ingroup formsAPI
  */
@@ -166,7 +166,27 @@ class Dataface_ShortRelatedRecordForm extends HTML_QuickForm {
 	function &getRecord(){
 	    $out = Dataface_Application::getInstance()->getRecord();
 	    return $out;
-	    
+	    /*
+		if ( Dataface_ShortRelatedRecordForm::formSubmitted() ){
+			$record = new Dataface_Record($_POST['-table'], array());
+			$io = new Dataface_IO($_POST['-table']);
+			$query = $_POST['__keys__'];
+			
+			if ( is_array($query) ){
+				foreach ( array_keys($query) as $postKey ){
+					if ( $query[$postKey]{0} != '=' ){
+						$query[$postKey] = '='.$query[$postKey];
+					}
+				}
+			}
+			$io->read($query, $record);
+			return $record;
+		} else {
+			$app =& Dataface_Application::getInstance();
+			$qt =& Dataface_QueryTool::loadResult($app->_currentTable);
+			return $qt->loadCurrent();
+		}
+		*/
 	}
 	
 	/**
@@ -276,6 +296,7 @@ class Dataface_ShortRelatedRecordForm extends HTML_QuickForm {
 			
 			$groupEmpty = true; // A flag to check when the group has at least one element
 			
+			
 			foreach ( $fields as $field){
 				$tablename = $field['tablename'];
 				$fieldname = $field['name'];
@@ -285,12 +306,11 @@ class Dataface_ShortRelatedRecordForm extends HTML_QuickForm {
 				unset($thisTable);
 				$thisTable =& Dataface_Table::loadTable($tablename);
 			
-				if ( isset($r[$thisTable->tablename]['readonly']) ){
-                    continue;
-                }
+				if ( isset($r[$thisTable->tablename]['readonly']) ) continue;
 				if ( !isset($this->_quickForms[$tablename]) ) $this->_quickForms[$tablename] = new Dataface_QuickForm($tablename,'','','',true);
 				if (isset($quickForm) ) unset($quickForm);
 				$quickForm =& $this->_quickForms[$tablename];
+			
 			
 			
 				if ( array_key_exists($tablename, $fkCols) and array_key_exists($fieldname, $fkCols[$tablename]) ){
@@ -555,9 +575,6 @@ class Dataface_ShortRelatedRecordForm extends HTML_QuickForm {
 				// Reference to the table object where this field resides
 			
 			if ( isset($quickForm) ) unset($quickForm);
-            if (!isset($this->_quickForms[$tablename])) {
-                continue;
-            }
 			$quickForm =& $this->_quickForms[$tablename];
 				// QuickForm object for this field's table.
 			

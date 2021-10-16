@@ -23,7 +23,6 @@
  
 /**
  * An action to handle the installation and updating of Dataface applications.
- * This is called from df_update()
  *
  * @author Steve Hannah <steve@weblite.ca>
  * @created Feb. 10, 2008
@@ -35,21 +34,12 @@ class dataface_actions_install {
 	    try {
             $app =& Dataface_Application::getInstance();
             
-            if ( df_get_database_version(df_db(), true) == df_get_file_system_version(true) ){
+            if ( df_get_database_version() == df_get_file_system_version() ){
                 $app->redirect(DATAFACE_SITE_HREF.'?--msg='.urlencode('The application database is up to date at version '.df_get_database_version()));
-                return;
             }
             
-            if ( df_get_database_version(df_db()) > df_get_file_system_version(true) ){
+            if ( df_get_database_version() > df_get_file_system_version() ){
                 $app->redirect(DATAFACE_SITE_HREF.'?--msg='.urlencode('The database version is greater than the file system version.  Please upgrade your application to match the version in the database (version '.df_get_database_version()));
-                return;
-            }
-            df_clear_cache();
-            if (XF_USE_OPCACHE and @$_REQUEST['--update'] !== '2') {
-                
-                $app->redirect($app->url('-action=install').'&--update=2');
-                return;
-                
             }
             
             $res = xf_db_query("select count(*) from dataface__version", df_db());
@@ -63,7 +53,7 @@ class dataface_actions_install {
             }
             
             if ( file_exists('conf/Installer.php') ){
-                import(XFAPPROOT.'conf/Installer.php');
+                import('conf/Installer.php');
                 $installer = new conf_Installer;
                 
                 $methods = get_class_methods('conf_Installer');
@@ -74,7 +64,7 @@ class dataface_actions_install {
                 foreach ($methods as $method){
                     preg_match('/^update_([0-9]+)$/', $method, $matches);
                     $version = intval($matches[1]);
-                    if ( $version > df_get_database_version(df_db(), true) and $version <= df_get_file_system_version(true) ){
+                    if ( $version > df_get_database_version() and $version <= df_get_file_system_version() ){
                         $updates[] = $version;
                     }
                 }
@@ -86,24 +76,27 @@ class dataface_actions_install {
                     $res = $installer->$method();
                     if ( PEAR::isError($res) ) return $res;
                     $res = xf_db_query("update dataface__version set `version`='".addslashes($update)."'", df_db());
-                    if ( !$res ) throw new Exception(xf_db_error(df_db()), E_USER_ERROR);
-                    df_clear_cache();
+                    if ( !$res ) throw new Exception(xf_db_error(df_db()), E_USER_ERROR);	
                 }
                 
                 
                 
             }
             
-            $res = xf_db_query("update dataface__version set `version`='".addslashes(df_get_file_system_version(true))."'", df_db());
+            
+            $res = xf_db_query("update dataface__version set `version`='".addslashes(df_get_file_system_version())."'", df_db());
             if ( !$res ) throw new Exception(xf_db_error(df_db()), E_USER_ERROR);
             
-            
+            if ( function_exists('apc_clear_cache') ){
+                apc_clear_cache('user');
+            }
+            df_clear_views();
             df_clear_cache();
             
-            $msg = 'The database has been successfully updated to version '.df_get_file_system_version(true);
+            $msg = 'The database has been successfully updated to version '.df_get_file_system_version();
             if (@$_GET['--format'] === 'json' or @$_POST['--format'] === 'json') {
                 header('Content-type: application/json');
-                echo json_encode(array('code' => 200, 'message' => $msg, 'version' => df_get_file_system_version(true)));
+                echo json_encode(array('code' => 200, 'message' => $msg, 'version' => df_get_file_system_version()));
                 exit;
             } else if (@$_GET['--redirect-uri']) {
                 $url = $_GET['--redirect-uri'];
@@ -120,7 +113,7 @@ class dataface_actions_install {
             
             if (@$_GET['--format'] === 'json' or @$_POST['--format'] === 'json') {
                 header('Content-type: application/json');
-                echo json_encode(array('code' => 500, 'message' => $ex->getMessage(), 'version' => df_get_file_system_version(true)));
+                echo json_encode(array('code' => 500, 'message' => $ex->getMessage(), 'version' => df_get_file_system_version()));
             } else {
                 throw $ex;
             }
@@ -128,6 +121,4 @@ class dataface_actions_install {
 
 		
 	}
-    
-    
 }

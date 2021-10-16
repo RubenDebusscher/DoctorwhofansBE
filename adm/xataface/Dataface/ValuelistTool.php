@@ -52,7 +52,7 @@ class Dataface_ValuelistTool {
 	 */
 	private function &_loadValuelistsIniFile(){
 		if ( !isset($this->_valuelistsConfig) ){
-			import( XFROOT.'Dataface/ConfigTool.php');
+			import( 'Dataface/ConfigTool.php');
 			$configTool =& Dataface_ConfigTool::getInstance();
 			$this->_valuelistsConfig =& $configTool->loadConfig('valuelists');
 		}
@@ -117,7 +117,54 @@ class Dataface_ValuelistTool {
 	}
 	
 	
-	
+	function _loadValuelistsIniFile_old(){
+		if ( !isset( $this->_valuelists ) ){
+			$this->_valuelists = array();
+		}
+		$valuelists =& $this->_valuelists;
+		
+		if ( $this->_hasValuelistsIniFile() ){
+			
+			
+			$conf = parse_ini_file( $this->_valuelistsIniFilePath(), true);
+			
+			foreach ( $conf as $vlname=>$vllist ){
+				$valuelists[$vlname] = array();
+				if ( is_array( $vllist ) ){
+					foreach ( $vllist as $key=>$value ){
+						
+						if ( $key == '__sql__' ) {
+							// we perform the sql query specified to produce our valuelist.
+							// the sql query should return two columns only.  If more are 
+							// returned, only the first two will be used.   If one is returned
+							// it will be used as both the key and value.
+							$res = df_query($value, null, true, true);
+							if ( is_array($res) ){
+								//while ($row = xf_db_fetch_row($res) ){
+								foreach ($res as $row){
+									$valuekey = $row[0];
+									$valuevalue = count($row)>1 ? $row[1] : $row[0];
+									$valuelists[$vlname][$valuekey] = $valuevalue;
+									
+									if ( count($row)>2 ){
+										$valuelists[$vlname.'__meta'][$valuekey] = $row[2];
+									}
+								}
+							} else {
+								throw new Exception('Valuelist sql query failed: '.$value.': '.xf_db_error(), E_USER_NOTICE);
+							}
+						
+						} else {
+							$valuelists[$vlname][$key] = $value;
+						}
+					}
+				}
+				
+				
+			}
+			
+		} 
+	}
 	
 	
 	public static function &getInstance(){
@@ -182,7 +229,7 @@ class Dataface_ValuelistTool {
 	 */
 	function addValueToValuelist(&$table, $valuelistName,  $value, $key=null, $checkPerms=false){
 
-		import( XFROOT.'Dataface/ConfigTool.php');
+		import( 'Dataface/ConfigTool.php');
 		$configTool =& Dataface_ConfigTool::getInstance();
 		$conf = $configTool->loadConfig('valuelists', $table->tablename);
 		
@@ -212,7 +259,7 @@ class Dataface_ValuelistTool {
 			}
 			$rrecord->setValue($keyfield, $key);
 		}
-		import(XFROOT.'Dataface/IO.php');
+		import('Dataface/IO.php');
 		$io = new Dataface_IO($table->tablename);
 		$res = $io->addRelatedRecord($rrecord);
 		if ( PEAR::isError($res) ) return $res;
@@ -230,7 +277,7 @@ class Dataface_ValuelistTool {
 	 * @return PEAR_Error If there is a problem generating the relationship.
 	 */
 	function &asRelationship(&$table, $valuelistName){
-		import( XFROOT.'Dataface/ConfigTool.php');
+		import( 'Dataface/ConfigTool.php');
 		$configTool =& Dataface_ConfigTool::getInstance();
 		$conf = $configTool->loadConfig('valuelists', $table->tablename);
 		if (!@$conf[$valuelistName] or !@$conf[$valuelistName]['__sql__'] ){

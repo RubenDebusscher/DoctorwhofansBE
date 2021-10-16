@@ -29,7 +29,7 @@ class XFException extends \Exception {
         throw new XFException($err->getMessage(), $err->getCode());
     }
 
-    public static function throwValidationFailure($message = "Validation failed") {
+    public static function throwValidationFailure($message) {
         throw new XFException(
             $message, 
             DATAFACE_E_VALIDATION_CONSTRAINT_FAILED, 
@@ -38,19 +38,11 @@ class XFException extends \Exception {
 
     }
 
-    public static function throwPermissionDenied($message = "Permission denied") {
+    public static function throwPermissionDenied() {
         throw new XFException(
             $message, 
             401, 
             new \Exception($message, 401)
-        );
-    }
-    
-    public static function throwBadRequest($message = "Bad Request") {
-        throw new XFException(
-            $message, 
-            500, 
-            new \Exception($message, 500)
         );
     }
 }

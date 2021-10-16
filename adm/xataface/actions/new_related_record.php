@@ -6,11 +6,10 @@ class dataface_actions_new_related_record {
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
 		$resultSet =& $app->getResultSet();
-        $app->_conf['page_menu_category'] = 'new_related_record_actions_menu';
 		
 		//$record =& $app->getRecord();	// loads the current record 
 		
-		import( XFROOT.'Dataface/ShortRelatedRecordForm.php');
+		import( 'Dataface/ShortRelatedRecordForm.php');
 		if ( !isset( $query['-relationship'])){
 			return PEAR::raiseError(Dataface_LanguageTool::translate(
 				'No relationship specified in new related record',
@@ -87,7 +86,7 @@ class dataface_actions_new_related_record {
 			}
 				
 			if ( $success ){
-				import(XFROOT.'Dataface/Utilities.php');
+				import('Dataface/Utilities.php');
 				Dataface_Utilities::fireEvent('after_action_new_related_record');
 				$fquery = array('-action'=>'browse');
 				$table = Dataface_Table::loadTable($query['-table']);

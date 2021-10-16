@@ -234,9 +234,8 @@ class Dataface_JavascriptTool {
 	
 	public function whereis($script){
 		$out = array();
-        
 		foreach ($this->getPaths() as $path=>$url){
-			if ( xf_is_readable($path.DIRECTORY_SEPARATOR.$script) ){
+			if ( is_readable($path.DIRECTORY_SEPARATOR.$script) ){
 				$out[] = $path.DIRECTORY_SEPARATOR.$script;
 			}
 		}
@@ -246,7 +245,7 @@ class Dataface_JavascriptTool {
 	
 	public function which($script){
 		foreach ($this->getPaths() as $path=>$url){
-			if ( xf_is_readable($path.DIRECTORY_SEPARATOR.$script) ){
+			if ( is_readable($path.DIRECTORY_SEPARATOR.$script) ){
 				return $path.DIRECTORY_SEPARATOR.$script;
 			}
 		}
@@ -260,10 +259,7 @@ class Dataface_JavascriptTool {
 	 */
 	public function getURL(){
 		$this->compile();
-        $app = Dataface_Application::getInstance();
-		return DATAFACE_SITE_HREF . 
-            '?v='.$app->getApplicationVersion().'&-action=js&--id=' . 
-                $this->generateCacheKeyForScripts(array_keys($this->scripts));
+		return DATAFACE_SITE_HREF.'?-action=js&--id='.$this->generateCacheKeyForScripts(array_keys($this->scripts));
 	}
 	
 	/**
@@ -271,19 +267,7 @@ class Dataface_JavascriptTool {
 	 */
 	public function getContents(){
 		$this->compile();
-        $path = $this->getJavascriptCachePath(array_keys($this->scripts));
-        if (XF_USE_OPCACHE and xf_opcache_is_script_cached($path)) {
-            include(xf_opcache_path($path));
-            list($out) = $xf_opcache_export;
-            return $out;
-        } else {
-            $out = file_get_contents($path);
-            if (XF_USE_OPCACHE) {
-                xf_opcache_cache_array($path, [$out]);
-            }
-            return $out;
-        }
-		
+		return file_get_contents($this->getJavascriptCachePath(array_keys($this->scripts)));
 	}
 	
 	public function getHtml(){
@@ -329,7 +313,7 @@ class Dataface_JavascriptTool {
 	 * Returns the cache path to the compiled javascript file.
 	 */
 	private function getJavascriptCachePath(){
-		return XFTEMPLATES_C.$this->generateCacheKeyForScripts().'.js';
+		return DATAFACE_SITE_PATH.'/templates_c/'.$this->generateCacheKeyForScripts().'.js';
 	}
 	
 	
@@ -337,7 +321,7 @@ class Dataface_JavascriptTool {
 	 * Gets the manifest path for the manifest file for these scripts.
 	 */
 	private function getManifestPath(){
-		return XFTEMPLATES_C.$this->generateCacheKeyForScripts().'.manifest.js';
+		return DATAFACE_SITE_PATH.'/templates_c/'.$this->generateCacheKeyForScripts().'.manifest.js';
 	}
 	
 	
@@ -350,7 +334,7 @@ class Dataface_JavascriptTool {
 	 */
 	private function getManifestData(){
 		$path = $this->getManifestPath();
-		if ( xf_is_readable($path) ){
+		if ( is_readable($path) ){
 			return json_decode(file_get_contents($path), true);
 		} else {
 			return array();
@@ -399,14 +383,7 @@ class Dataface_JavascriptTool {
 	private function isCacheDirty(){
 		$jspath = $this->getJavascriptCachePath();
 		$manifest = $this->getManifestData();
-		if (XF_USE_OPCACHE) {
-		    if (xf_opcache_is_script_cached($jsPath) and xf_opcache_is_script_cached($mfpath)) {
-                // If we're using an opcache and the CSS file is cached
-                // then we're good.  We don't check for mod time.
-		        return false;
-            }
-            
-		}
+		
 		if ( !file_exists($jspath) ) return true;
 		if ( !$manifest ) return true;
 		if ( !$manifest['dependencyContents'] ) return true;
@@ -555,7 +532,7 @@ class Dataface_JavascriptTool {
 			foreach ($this->includePath as $path=>$url){
 				$filepath = $path.DIRECTORY_SEPARATOR.$script;
 				//echo "\nChecking $filepath\n";
-				if ( xf_is_readable($filepath) ){
+				if ( is_readable($filepath) ){
 					$contents = file_get_contents($filepath);
 					if ( !$passthru ){
 						$contents = $this->decorateContents($contents, $script);
@@ -631,11 +608,11 @@ class Dataface_JavascriptTool {
 	}
 	
 	public function clearCache(){
-		$files = glob(XFTEMPLATES_C.'*.js');
+		$files = glob(DATAFACE_SITE_PATH.'/templates_c/*.js');
 		foreach($files as $f){
 			unlink($f);
 		}
-		$files = glob(XFTEMPLATES_C.'*.manifest.js');
+		$files = glob(DATAFACE_SITE_PATH.'/templates_c/*.manifest.js');
 		foreach($files as $f){
 			unlink($f);
 		}

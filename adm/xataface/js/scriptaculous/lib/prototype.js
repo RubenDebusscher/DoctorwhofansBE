@@ -799,7 +799,6 @@ var Enumerable = {
   }
 };
 
-/*
 Object.extend(Enumerable, {
   map:     Enumerable.collect,
   find:    Enumerable.detect,
@@ -810,7 +809,6 @@ Object.extend(Enumerable, {
   every:   Enumerable.all,
   some:    Enumerable.any
 });
-*
 function $A(iterable) {
   if (!iterable) return [];
   if (iterable.toArray) return iterable.toArray();

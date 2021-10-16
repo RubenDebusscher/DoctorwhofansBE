@@ -31,24 +31,16 @@
  */
 class dataface_actions_edit {
 	function handle(&$params){
-		import( XFROOT.'Dataface/FormTool.php');
-		import( XFROOT.'Dataface/QuickForm.php');
+		import( 'Dataface/FormTool.php');
+		import( 'Dataface/QuickForm.php');
 		$formTool =& Dataface_FormTool::getInstance();
-        		
+		
+				
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
 		$resultSet =& $app->getResultSet();
 		
 		$currentRecord =& $app->getRecord();
-        
-        $app->addBodyCSSClass('no-app-menu');
-        $app->addBodyCSSClass('no-table-tabs');
-        $app->addBodyCSSClass('no-mobile-header');
-        $app->addBodyCSSClass('no-fab');
-        $app->addBodyCSSClass('no-record-heading');
-        $app->_conf['page_menu_category'] = 'edit_record_actions_menu';
-		
-        
 		if (!$currentRecord) {
 		    if (@$query['--recordid']) {
 		        $currentRecord = df_get_record_by_id($query['--recordid']);
@@ -77,7 +69,6 @@ class dataface_actions_edit {
 		 */
 		//$form = new Dataface_QuickForm($query['-table'], $app->db(),  $query);
 		if ($currentRecord){
-            $app->setPageTitle($currentRecord->getTitle());
 		//if ($resultSet->found()> @$query['-cursor']){
 
 			$form = $formTool->createRecordForm($currentRecord, false, @$query['--tab'], $query, $includedFields);
@@ -116,6 +107,7 @@ class dataface_actions_edit {
 			 */
 			$form->addElement('hidden', '-query');
 			$form->setDefaults( array( '-action'=>$query['-action'],'-query'=>$_SERVER['QUERY_STRING']) );
+			
 			
 			/*
 			 * 
@@ -191,7 +183,7 @@ class dataface_actions_edit {
 					//$response['--msg'] = @$response['--msg'] ."\n".$result->getMessage();
 					$success = false;
 					if (@$query['-response'] == 'json') {
-						import(XFROOT.'xf/core/XFException.php');
+						import('xf/core/XFException.php');
 						throw new xf\core\XFException('Failed to insert record', $result->getCode(), new Exception($result->getMessage(), $result->getCode()));
 					}
 				}
@@ -212,7 +204,7 @@ class dataface_actions_edit {
 						return;
 					}
 					
-					import(XFROOT.'Dataface/Utilities.php');
+					import('Dataface/Utilities.php');
 					Dataface_Utilities::fireEvent('after_action_edit', array('record'=>$form->_record));
 					/*
 					 *
@@ -221,9 +213,6 @@ class dataface_actions_edit {
 					 *
 					 */
 					$vals = $form->exportValues();
-                    if (@$vals['-query'] and $vals['-query'][0] != '?') {
-                        $vals['-query'] = '?' . $vals['-query'];
-                    }
 					$vals['-query'] = preg_replace('/[&\?]-new=[^&]+/i', '', $vals['-query']);
 					
 					$_SESSION['--last_modified_record_url'] = $form->_record->getURL();
@@ -239,31 +228,20 @@ class dataface_actions_edit {
 							"Record successfully saved.<br>"
 						).$msg
 					);
-
-                    $editAction = Dataface_ActionTool::getInstance()->getAction(array('name'=>'edit'));
-                    if (@$editAction['after_action.'.$query['-table']]) {
-						$vals['-query'] = preg_replace('/([&\?])-action=[^&]+/', '$1-action='.$editAction['after_action.'.$query['-table']], $vals['-query']);
-					} else if (@$editAction['after_action']) {
-						$vals['-query'] = preg_replace('/([&\?])-action=[^&]+/', '$1-action='.$editAction['after_action'], $vals['-query']);
-                        
-					}
-                    
+					
 					if ( preg_match('/[&\?]-action=edit&/', $vals['-query']) and !$form->_record->checkPermission('edit') ){
 						$vals['-query'] = preg_replace('/([&\?])-action=edit&/', '$1-action=view&', $vals['-query']);
 					} else if ( preg_match('/[&\?]-action=edit$/', $vals['-query']) and !$form->_record->checkPermission('edit') ){
 						$vals['-query'] = preg_replace('/([&\?])-action=edit$/', '$1-action=view', $vals['-query']);
 					}
 					$vals['-query'] = preg_replace('/&?--msg=[^&]*/', '', $vals['-query']);
-                    if ( @$query['--lang'] ){
-                        $vals['-query'] .= '&--lang='.$query['--lang'];
-                    }
-                    if ($vals['-query'] and $vals['-query'][0] == '?') {
-                        $vals['-query'] = substr($vals['-query'], 1);
-                    }
-                                        
+                                        if ( @$query['--lang'] ){
+                                            $vals['-query'] .= '&--lang='.$query['--lang'];
+                                        }
+					
 					$link = $_SERVER['HOST_URI'].DATAFACE_SITE_HREF.'?'.$vals['-query'].'&--saved=1&--msg='.$msg;
 					
-
+					
 					/*
 					 *
 					 * Redirect the user to the appropriate record.

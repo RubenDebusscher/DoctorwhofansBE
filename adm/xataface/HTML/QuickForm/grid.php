@@ -129,7 +129,7 @@ class HTML_QuickForm_grid extends HTML_QuickForm_input {
     function toHtml(){
 
         //print_r($this->getProperties());
-        import(XFROOT.'Dataface/JavascriptTool.php');
+        import('Dataface/JavascriptTool.php');
         $jt = Dataface_JavascriptTool::getInstance();
         $jt->import('xataface/widgets/grid.js');
 

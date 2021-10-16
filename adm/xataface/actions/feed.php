@@ -15,7 +15,7 @@ class dataface_actions_feed {
 	 * @ingroup actions
 	 */
 	function handle(&$params){
-		import(XFROOT.'Dataface/FeedTool.php');
+		import('Dataface/FeedTool.php');
 		$app =& Dataface_Application::getInstance();
 		$ft = new Dataface_FeedTool();
 		

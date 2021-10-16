@@ -1,5 +1,4 @@
 //require <jquery-ui.min.js>
-//require-css <jquery-ui/jquery-ui.css>
 //require-css <xataface/actions/view_related_records.css>
 (function(){
 	var $ = jQuery;
@@ -27,12 +26,9 @@
 						
 						$(this.contentWindow.document.body)
 							.addClass('no-main-border')
-							.addClass('edit-in-iframe')
 							.addClass('hide-button-bars');
-
 						$(this).attr('height', this.contentWindow.document.body.offsetHeight+'px');
-						
-						
+
 						
 					}
 				)

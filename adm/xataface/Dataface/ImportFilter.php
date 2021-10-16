@@ -75,9 +75,8 @@ class Dataface_ImportFilter {
 	function import(&$data, $defaultValues=array()){
 	
 		$delegate =& $this->_table->getDelegate();
-		$methodName = '__import__'.$this->name;
-		if ( $delegate !== null and method_exists($delegate, $methodName) ){
-			return $delegate->$methodName($data, $defaultValues);
+		if ( $delegate !== null and method_exists($delegate, '__import__'.$this->name) ){
+			return call_user_func(array(&$delegate,'__import__'.$this->name), $data, $defaultValues);
 		}
 	
 	}

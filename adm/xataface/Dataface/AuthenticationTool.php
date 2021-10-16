@@ -26,10 +26,8 @@
  * Description:
  *	Handles authentication for Dataface application.
  */
-import(XFROOT.'Dataface/Table.php');
+import('Dataface/Table.php');
 class Dataface_AuthenticationTool {
-    
-    const TOKEN_TABLE = 'dataface__login_tokens_v2';
 
 	var $authType = 'basic';
 
@@ -87,39 +85,7 @@ class Dataface_AuthenticationTool {
 		
 		$this->setAuthType(@$params['auth_type']); 
 	}
-	function Dataface_AuthenticationTool($params=array()) { self::__construct($params); }
-	
-	public function getUsersTable() {
-		if (!$this->usersTable) return null;
-		return Dataface_Table::loadTable($this->usersTable);
-	}
-    
-    /**
-     * Checks if email authentication is allowed.  Email auth is where the user enters email address
-     * and presses "Email Login Link".  This sends an email to the user with a single-use login link.
-     * The user clicks on this link in their email, and they are logged in.  They are never asked for a 
-     * password.
-     *
-     * This is enabled via the allow_email_login directive in the _auth section of the conf.ini file.
-     *
-     * @return boolean
-     * @since 3.0
-     */
-    public function isEmailLoginAllowed() {
-        return @$this->conf['allow_email_login'];
-    }
-    
-    /**
-     * Checks if password login is allowed.  Password login is allowed by default but can be disabled 
-     * via the allow_password_login directive (set to 0 or false) of the _auth section of the conf.ini
-     * file.
-     *
-     * @return boolean
-     * @since 3.0
-     */
-    public function isPasswordLoginAllowed() {
-        return !$this->isEmailLoginAllowed() or (isset($this->conf['allow_password_login']) and $this->conf['allow_password_login']);
-    }
+		function Dataface_AuthenticationTool($params=array()) { self::__construct($params); }
 	
 	function setAuthType($type){
 		if ( isset( $type ) and $type != $this->authType ){
@@ -133,7 +99,7 @@ class Dataface_AuthenticationTool {
 				DATAFACE_PATH.'/modules/Auth/'.$module.'/'.$module.'.php'
 				);
 			foreach ( $module_path as $path ){
-				if ( xf_is_readable($path) ){
+				if ( is_readable($path) ){
 					import($path);
 					$classname = 'dataface_modules_'.$module;
 					$this->delegate = new $classname;
@@ -227,173 +193,16 @@ class Dataface_AuthenticationTool {
 	    return $this->groups;
 	}
 	
-    private $_credentials = null;
-    
-    
-    /**
-     * Creates a login token that is valid for 10 minutes.
-     * @param string $username The username or email that this login token is for.  
-     * @param string $redirectUrl The URL that the user should be redirected to after logging in with this token.
-     * @return string The token or false if there is no account with the provided username/email address.
-     * @since 3.0
-     */
-    function createLoginToken($username, $redirectUrl = null) {
-        if (!$redirectUrl) {
-            $redirectUrl = DATAFACE_SITE_HREF;
-        }
-        $allowEmailLoginAndAutoRegister = $this->getEmailColumn() and $this->usernameColumn and @$this->conf['allow_register'] and @$this->conf['auto_register'] and $this->isEmailLoginAllowed();
-        
-        // We need to verify the username
-        if ($this->usernameColumn) {
-            $res = xf_db_query("select count(*) from `".$this->usersTable."` where `".$this->usernameColumn."` = '".addslashes($username)."'", df_db());
-            if (!$res) {
-                $id = df_error_log("SQL error: ".xf_db_error(df_db()));
-                throw new Exception("SQL error checking users table: ".$id);
-            }
-            
-            list($num) = xf_db_fetch_row($res);
-            
-            xf_db_free_result($res);
-            if (intval($num) !== 1) {
-                if (!$this->getEmailColumn()) {
-                    return false;
-                }
-                $res = xf_db_query("select count(*) from `".$this->usersTable."` where `".$this->getEmailColumn()."` = '".addslashes($username)."'", df_db());
-                list($num) = xf_db_fetch_row($res);
-                xf_db_free_result($res);
-                if (intval($num) !== 1) {
-                    if (!$allowEmailLoginAndAutoRegister) {
-                        return false;
-                    }
-                    
-                }
-            }
-        }
-        
-        
-        if (!self::table_exists(self::TOKEN_TABLE)) {
-            $sql = "CREATE TABLE `".self::TOKEN_TABLE."` ( `token_id` BIGINT(20) NOT NULL AUTO_INCREMENT , `username` VARCHAR(100) NOT NULL , `token` CHAR(36) NOT NULL , `expires` DATETIME NOT NULL, `redirect_url` TEXT, `autologin` TINYINT(1), PRIMARY KEY (`token_id`)) ENGINE = MyISAM;";
-            $res = xf_db_query($sql, df_db());
-            if (!$res) {
-                throw new Exception("SQL error creating tokens table: ".xf_db_error(df_db()));
-            }
-            
-        }
-        
-        
-        
-        $tok = df_uuid();
-        $autologin = (@$this->conf['autologin'] and @$_REQUEST['--remember-me']) ? 1 : 0;
-        
-        $res = xf_db_query("INSERT INTO `".self::TOKEN_TABLE."` (`username`, `token`, `expires`, `redirect_url`, `autologin`) VALUES ('".addslashes($username)."', '".addslashes($tok)."', NOW() + INTERVAL 10 MINUTE, '".addslashes($redirectUrl)."', $autologin)", df_db());
-        if (!$res) {
-            $id = df_error_log(xf_db_error(df_db()));
-            throw new Exception("SQL error inserting token: ".$id);
-        }
-        
-        return $tok;
-    }
-    
-    
 	function getCredentials(){
-	    if (isset($this->_credentials)) {
-	        return $this->_credentials;
-	    }
+	
 		if ( isset($this->delegate) and method_exists($this->delegate, 'getCredentials') ){
-			$this->_credentials = $this->delegate->getCredentials();
-            return $this->_credentials;
+			return $this->delegate->getCredentials();
 		} else {
 			$username = (isset($_REQUEST['UserName']) ? $_REQUEST['UserName'] : null);
 			$password = (isset($_REQUEST['Password']) ? $_REQUEST['Password'] : null);
-            $token = (isset($_REQUEST['--token']) ? $_REQUEST['--token'] : null);
-            if (isset($token)) {
-                $tokenTable = self::TOKEN_TABLE;
-                if (self::table_exists($tokenTable)) {
-                    $res = xf_db_query("delete from `".$tokenTable."` where expires < NOW()", df_db());
-                    if (!empty($this->conf['short_token_length']) and intval($this->conf['short_token_length']) === strlen($token)) {
-                        $tokLen = strlen($token);
-                        $res = xf_db_query("select `username`, `autologin`, `token` from `".$tokenTable."` where SUBSTRING(MD5(`token`), 1, $tokLen)  = '".addslashes($token)."'",df_db());
-                    } else {
-                        $res = xf_db_query("select `username`, `autologin`, `token` from `".$tokenTable."` where `token` = '".addslashes($token)."'",df_db());
-                    }
-                     
-                    if (!$res) {
-                        throw new Exception("SQL error checking token");
-                    }
-                    if (xf_db_num_rows($res) > 0) {
-                        
-                    
-                        list($username, $autologin, $token) = xf_db_fetch_row($res);
-                        if ($autologin and @$this->conf['autologin']) {
-                            $_REQUEST['--remember-me'] = 1;
-                        }
-                        
-                    }
-                    xf_db_free_result($res);
-                    
-                    
-                } 
-            }
-            if ($username and self::is_email_address($username) and $this->usersTable and $this->getEmailColumn()) {
-                // The username could be an email address
-                // If the username doesn't exist, then we can check the email column
-                $res = xf_db_query("select count(*) from `".$this->usersTable."` where `".$this->usernameColumn."` = '".addslashes($username)."'", df_db());
-                if (!$res) {
-                    throw new Exception("SQL failure checking for username");
-                }
-                list($numUsernames) = xf_db_fetch_row($res);
-                xf_db_free_result($res);
-                if ($numUsernames == 0) {
-                    
-                    
-                    
-                    
-                    // No usernames found
-                    // Let's try to find an email address.
-                    $res = xf_db_query("select `".$this->usernameColumn."` from `".$this->usersTable."` where `".$this->getEmailColumn()."` = '".addslashes($username)."'", df_db());
-                    if (!$res) {
-                        throw new Exception("SQL failure checking email address");
-                    }
-                    if (xf_db_num_rows($res) > 1) {
-                        df_error_log("WARNING: There is more than one username with email address ".$username.".  These users cannot login using their email address.");
-                    } else if (xf_db_num_rows($res) == 1) {
-                        // One to one match
-                        list($username) = xf_db_fetch_row($res);
-                    } else {
-                        if ($this->getEmailColumn() and $this->usernameColumn and @$this->conf['allow_register'] and @$this->conf['auto_register'] and $this->isEmailLoginAllowed()) {
-                            $values = [];
-                            $values[$this->getEmailColumn()] = $username;
-                            $values[$this->usernameColumn] = $username;
-                            $record = new Dataface_Record($this->usersTable, array());
-                    		$record->setValues($values);
-                    		$res2 = $record->save();
-                    		if ( PEAR::isError($res2) ){
-                                xf_db_free_result($res);
-                    			throw new Exception("Failed to save user record: " . $res->getMessage());
-                    		} 
-		
-                        }
-                    }
-                    xf_db_free_result($res);
-                }
-            }
-			$this->_credentials = array('UserName'=>$username, 'Password'=>$password, 'Token' => $token);
-            return $this->_credentials;
+			return array('UserName'=>$username, 'Password'=>$password);
 		}
 	}
-    
-    private static function is_email_address($email) {
-        return filter_var($email, FILTER_VALIDATE_EMAIL);
-    }
-    
-    private static function table_exists($tablename) {
-        $res = xf_db_query("SELECT 1 from `".$tablename."` LIMIT 1", df_db());
-        if ($res !== FALSE) {
-            xf_db_free_result($res);
-            return true;
-        }
-        return false;
-    }
 	
 	function checkCredentials(){
 		$app =& Dataface_Application::getInstance();
@@ -403,34 +212,12 @@ class Dataface_AuthenticationTool {
 		} else {
 			// The user is attempting to log in.
 			$creds = $this->getCredentials();
-            if (@$creds['Token']) {
-                
-                // A token was supplied.  Let's check against that
-                $tokenTable = self::TOKEN_TABLE;
-                if (self::table_exists($tokenTable)) {
-                    $res = xf_db_query("delete from `".$tokenTable."` where expires < NOW()", df_db());
-                    
-                    $res = xf_db_query("select COUNT(*) from `".$tokenTable."` where `token` = '".addslashes($creds['Token'])."'", df_db());
-                    if (!$res) {
-                        throw new Exception("SQL error checking token");
-                    }
-                    list($numTokens) = xf_db_fetch_row($res);
-                    xf_db_free_result($res);
-                    
-                    xf_db_query("delete from `".$tokenTable."` where `token` = '".addslashes($creds['Token'])."'", df_db());
-                    if (intval($numTokens) === 1) {
-                        return true;
-                    }
-
-                }
-            }
-            
 			if ( !isset( $creds['UserName'] ) || !isset($creds['Password']) ){
 				// The user did not submit a username of password for login.. trigger error.
 				//throw new Exception("Username or Password Not specified", E_USER_ERROR);
 				return false;
 			}
-			import(XFROOT.'Dataface/Serializer.php');
+			import('Dataface/Serializer.php');
 			$serializer = new Dataface_Serializer($this->usersTable);
 			//$res = xf_db_query(
 			$sql =	"SELECT `".$this->usernameColumn."` FROM `".$this->usersTable."`
@@ -482,41 +269,6 @@ class Dataface_AuthenticationTool {
 			return true;
 		}
 	}
-    
-    /**
-     * Checks if the user has a password set.  Users might not have a password set if they 
-     * have never used password login - e.g. if they use email login or CAS login or some 
-     * other mechanism that doesn't require username/password comparison.
-     * @return boolean True ifthe user has a password.
-     */
-    function userHasPassword() {
-        $user = $this->getLoggedInUser();
-        if ($user) {
-            return $user->getLength($this->passwordColumn) > 0;
-        }
-        return false;
-    }
-
-    
-
-    /**
-     * Creates a session token.
-     */
-	function createToken($addToDatabase = false) {
-		if (session_id() == '') {
-			return null;
-		}
-        $tok = md5('sessid').'.'.base64_encode(session_id());
-        if ($addToDatabase) {
-            Dataface_Application::getInstance()->updateBearerTokensTables();
-            $res = xf_db_query("replace into dataface__tokens (`token`, `hashed_token`) values ('".addslashes($tok)."', '".addslashes(sha1($tok))."')", df_db());
-            if (!$res) {
-                error_log("Failed ot add token to database: " . xf_db_error(df_db()));
-                throw new Exception("Failed to add token to database");
-            }
-        }
-		return $tok;
-	}
 
 	function authenticate(){
 		$app =& Dataface_Application::getInstance();
@@ -526,9 +278,6 @@ class Dataface_AuthenticationTool {
 		if ( $app->sessionEnabled() or $app->autoSession ){
 			$app->startSession($this->conf);
 		}
-		
-		
-		
 		$appdel =& $app->getDelegate();
 		
 		// Fire a trigger before we authenticate
@@ -538,11 +287,7 @@ class Dataface_AuthenticationTool {
 		
 		if ( isset( $_REQUEST['-action'] ) and $_REQUEST['-action'] == 'logout' ){
 			$app->startSession();
-			// the user has invoked a logout request.'
-            if (@$this->conf['autologin']) {
-                $app->clearAutologinCookie();
-            }
-            
+			// the user has invoked a logout request.
 			
 			if ( isset($appdel) and method_exists($appdel, 'before_action_logout' ) ){
 				$res = $appdel->before_action_logout();
@@ -559,7 +304,7 @@ class Dataface_AuthenticationTool {
 			    exit;
 			}
 			
-			import(XFROOT.'Dataface/Utilities.php');
+			import('Dataface/Utilities.php');
 				
 			Dataface_Utilities::fireEvent('after_action_logout', array('UserName'=>$username));
 			
@@ -582,71 +327,33 @@ class Dataface_AuthenticationTool {
 		}
 		
 		if ( isset( $_REQUEST['-action'] ) and $_REQUEST['-action'] == 'login' ){
-			
-			$json = @$_REQUEST['--no-prompt'];
 			$app->startSession();
-            
-            
-            
 			if ( $this->isLoggedIn() ){
-				if ($json) {
-					df_write_json(array(
-						'code' => 200,
-						'token' => $this->createToken(true),
-						'message' => 'Logged in'
-					));
-					exit;
-				} else {
-					$app->redirect(DATAFACE_SITE_HREF.'?--msg='.urlencode("You are logged in"));
-				}
+				$app->redirect(DATAFACE_SITE_HREF.'?--msg='.urlencode("You are logged in"));
+
 			}
 			
 			if ( $this->isLockedOut() ){
-				if ($json) {
-					df_write_json(array(
-						'code' => '400',
-						'message' => 'Too many failed attempts.  Locked out.'
-					));
-					exit;
-				} else {
-					$app->redirect(DATAFACE_SITE_HREF.'?--msg='.urlencode("Sorry, you are currently locked out of the site due to failed login attempts.  Please try again later, or contact a system administrator for help."));
-				}
+				$app->redirect(DATAFACE_SITE_HREF.'?--msg='.urlencode("Sorry, you are currently locked out of the site due to failed login attempts.  Please try again later, or contact a system administrator for help."));
 
 			}
-            
 			// The user is attempting to log in.
 			$creds = $this->getCredentials();
 			$approved = $this->checkCredentials();
+			
 			if ( isset($creds['UserName']) and !$approved ){
 				
 				$this->flagFailedAttempt($creds);
-				if ($json) {
-					df_write_json(array(
-						'code' => 400,
-						'message' => df_translate('Incorrect Password',
-								'Sorry, you have entered an incorrect username /password combination.  Please try again.'
-								)
-					));
-					exit;
-				} else {
-					return PEAR::raiseError(
-						df_translate('Incorrect Password',
-								'Sorry, you have entered an incorrect username /password combination.  Please try again.'
-								),
-						DATAFACE_E_LOGIN_FAILURE
+				
+				return PEAR::raiseError(
+					df_translate('Incorrect Password',
+							'Sorry, you have entered an incorrect username /password combination.  Please try again.'
+							),
+					DATAFACE_E_LOGIN_FAILURE
 					);
-				}
-				
 			} else if ( !$approved ){
-				if ($json) {
-					df_write_json(array(
-						'code' => 500,
-						'message' => 'No UserName provided.'
-					));
-				} else {
-					$this->showLoginPrompt();
-				}
 				
+				$this->showLoginPrompt();
 				exit;
 			}
 			
@@ -655,27 +362,8 @@ class Dataface_AuthenticationTool {
 			// If we are this far, then the login worked..  We will store the 
 			// userid in the session.
 			$_SESSION['UserName'] = $creds['UserName'];
-            
-            
-            if (@$_SESSION['UserName'] and @$this->conf['autologin'] and @$_REQUEST['--remember-me']) {
-                // User is logged in, and autologin is enabled in the app.
-                // We should check if the token is currently set
-                $token = df_uuid();
-                $app->insertAutologinToken($token);
-                setcookie($app->getAutologinCookieName(), $token, time() + (10 * 365 * 24 * 60 * 60)); // 10 years
-                
-            }
 			
-			if ($json) {
-				df_write_json(array(
-					'code' => 200,
-					'token' => $this->createToken(true),
-					'message' => 'Logged in'
-				));
-				exit;
-			}
-			
-			import(XFROOT.'Dataface/Utilities.php');
+			import('Dataface/Utilities.php');
 				
 			Dataface_Utilities::fireEvent('after_action_login', array('UserName'=>$_SESSION['UserName']));
 			$msg = df_translate('You are now logged in','You are now logged in');
@@ -785,7 +473,7 @@ class Dataface_AuthenticationTool {
 				$_SESSION['-redirect'] = $referer;
 			}
 		}
-		$app->redirect("$url");
+		header("Location: $url");
 		exit;
 		//df_display(array('msg'=>$msg, 'redirect'=>@$_REQUEST['-redirect']), 'Dataface_Login_Prompt.html');
 	
@@ -805,10 +493,6 @@ class Dataface_AuthenticationTool {
 		if ( !$this->isLoggedIn() ) return $null;
 		static $user = 0;
 		if ( $user === 0 ){
-            if (!$this->usersTable) {
-                $user = null;
-                return $user;
-            }
 			$user = df_get_record($this->usersTable, array($this->usernameColumn => '='.$_SESSION['UserName']));
 			if ( !$user ){
 				$user = new Dataface_Record($this->usersTable, array($this->usernameColumn => $_SESSION['UserName']));
@@ -880,7 +564,7 @@ class Dataface_AuthenticationTool {
 	
 	function getEmailColumn(){
 		if ( !isset($this->emailColumn) ){
-			import(XFROOT.'Dataface/Ontology.php');
+			import('Dataface/Ontology.php');
 			Dataface_Ontology::registerType('Person', 'Dataface/Ontology/Person.php', 'Dataface_Ontology_Person');
 			$ontology = Dataface_Ontology::newOntology('Person', $this->usersTable);
 			if ( isset($this->conf['email_column']) ) $this->emailColumn = $this->conf['email_column'];
@@ -888,21 +572,6 @@ class Dataface_AuthenticationTool {
 		}
 		return $this->emailColumn;
 	}
-	
-	function findUser($query) {
-        return df_get_record($this->usersTable, $query);
-    }
-
-    function findUserByUsername($username) {
-        return $this->findUser(array($this->usernameColumn => '='.$username));
-    }
-
-    function findUserByEmail($email) {
-        $emailColumn = $this->getEmailColumn();
-        if (isset($emailColumn)) {
-            return $this->findUser(array($emailColumn => "=".$email));
-        }
-    }
 	
 	function getUserGroupNames(){
 	    return array("FOO","BAR");

@@ -6,8 +6,8 @@ function xj_json_response($data){
 	echo json_encode($data);
 }
 
-import(XFROOT.'Dataface/JavascriptTool.php');
-import(XFROOT.'Dataface/CSSTool.php');
+import('Dataface/JavascriptTool.php');
+import('Dataface/CSSTool.php');
 class modules_XataJax {
 	
 	private $scriptsSent = false;
@@ -19,7 +19,7 @@ class modules_XataJax {
 	
 		$type = null;
 		if ( @$_GET['-xatadoc'] ){
-			import(XFROOT.'modules/XataJax/classes/JavascriptDocumentor.php');
+			import('modules/XataJax/classes/JavascriptDocumentor.php');
 			$type = 'JavascriptDocumentor';
 		}
 		$js = Dataface_JavascriptTool::getInstance($type);

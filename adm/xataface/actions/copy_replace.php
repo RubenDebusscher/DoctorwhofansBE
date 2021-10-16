@@ -26,7 +26,7 @@
  * @created February 9, 2007
  *
  */
-import(XFROOT.'Dataface/QuickForm.php');
+import('Dataface/QuickForm.php');
 class dataface_actions_copy_replace {
 	var $message = "";
 	var $renderer = null;
@@ -50,10 +50,6 @@ class dataface_actions_copy_replace {
 			$q['-start'] = 0;
 			$q['-limit'] = 9999;
 			$records =& df_get_records_array($query['-table'], $q);
-		}
-		
-		if (count($records) == 0) {
-			throw new Exception("You cannot copy or update an empty result set", DATAFACE_E_NOTICE);
 		}
 		
 		
@@ -265,7 +261,7 @@ END
 	
 	function process($values){
 		$app =& Dataface_Application::getInstance();
-		import(XFROOT.'Dataface/CopyTool.php');
+		import('Dataface/CopyTool.php');
 		$copyTool =& Dataface_CopyTool::getInstance();
 		$query =& $app->getQuery();
 		//if ( @$values['-copy_replace:copy'] ){

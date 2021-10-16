@@ -25,10 +25,10 @@
  * Description:
  * 	Encapsulates query results from a table.
  ******************************************************************************/
-import( XFROOT.'Dataface/QueryBuilder.php');
-import( XFROOT.'Dataface/Table.php');
-import( XFROOT.'Dataface/Record.php');
-import( XFROOT.'Dataface/DB.php');
+import( 'Dataface/QueryBuilder.php');
+import( 'Dataface/Table.php');
+import( 'Dataface/Record.php');
+import( 'Dataface/DB.php');
 
 
 $GLOBALS['Dataface_QueryTool_limit'] = 30;
@@ -67,7 +67,7 @@ class Dataface_QueryTool {
 	 * @param $db The database handle.
 	 * @param $query Associative array of query parameters.
 	 */
-	function __construct($tablename, $db=null, $query=null){
+	function Dataface_QueryTool($tablename, $db=null, $query=null){
 		$this->dbObj =& Dataface_DB::getInstance();
 		$this->_tablename = $tablename;
 		if ( !is_array($query) ) $query= array();
@@ -164,7 +164,7 @@ class Dataface_QueryTool {
 					);
 			}
 			$len = strlen($titleColumn);
-			if ( $titleColumn[$len-1] != ')' and $titleColumn[$len-1] != '`') $titleColumn = '`'.$titleColumn.'`';
+			if ( $titleColumn{$len-1} != ')' and $titleColumn{$len-1} != '`') $titleColumn = '`'.$titleColumn.'`';
 			
 			$builder = new Dataface_QueryBuilder( $this->_tablename, $this->_query);
 			$builder->action = 'select';
@@ -608,15 +608,7 @@ class Dataface_QueryTool {
 	
 	function &iterator(){
 	    self::$lastIterated = $this;
-        $data = $this->data();
-        if ($data == null) {
-            $this->loadSet();
-            $data = $this->data();
-        }
-        if ($data == null) {
-            $data = array();
-        }
-		$it = new Dataface_RecordIterator($this->_tablename, $data);
+		$it = new Dataface_RecordIterator($this->_tablename, $this->data());
 		return $it;
 	}
 	

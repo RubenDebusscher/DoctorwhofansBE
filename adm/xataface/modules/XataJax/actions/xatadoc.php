@@ -1,5 +1,5 @@
 <?php
-import(XFROOT.'Dataface/JavascriptTool.php');
+import('Dataface/JavascriptTool.php');
 class actions_xatadoc {
 	function handle($params){
 		$app = Dataface_Application::getInstance();

@@ -32,9 +32,7 @@ class SQL_Parser_wrapper {
 		$this->_tableLookup = array();
 		$this->_parser = new SQL_Parser(null, $dialect);
 	}
-	function SQL_Parser_wrapper(&$data, $dialect='MySQL') { 
-        self::__construct($data, $dialect); 
-    }
+		function SQL_Parser_wrapper(&$data, $dialect='MySQL') { self::__construct($data, $dialect); }
 	
 	/**
 	 * Extracts the tablename from a requested column name.  This will resolve aliases.
@@ -183,7 +181,6 @@ class SQL_Parser_wrapper {
 		$columnNames =& $this->_data['column_names'];
 		$index = array_search($columnname, $columnNames);
 		if ( $index !== false ){
-            array_splice($this->_data['columns'], $index, 1);
 			array_splice($columnNames, $index, 1);
 			if ( isset( $this->_data['column_aliases'] ) ){
 				array_splice($this->_data['column_aliases'], $index, 1);
@@ -194,13 +191,6 @@ class SQL_Parser_wrapper {
 		}
 	}
 	
-    function removeAllColumns() {
-
-        $this->_data['column_names'] = [];
-        $this->_data['columns'] = [];
-        $this->_data['column_aliases'] = [];
-
-    }
 	
 	/**
 	 * Removes all columns from the query belonging to the given tablename.
@@ -224,12 +214,6 @@ class SQL_Parser_wrapper {
 	function addColumn($columnname, $columnalias){
 		$this->_data['column_names'][] = $columnname;
 		$this->_data['column_aliases'][] = $columnalias;
-        $this->_data['columns'][] = [
-            'type' => 'ident',
-            'table' => null,
-            'value' => $columnname,
-            'alias' => $columnalias
-        ];
 	
 	}
 	

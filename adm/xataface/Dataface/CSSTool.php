@@ -51,9 +51,8 @@ class Dataface_CSSTool {
 	
 	
 	public function getURL(){
-        $app = Dataface_Application::getInstance();
 		$this->compile();
-		return DATAFACE_SITE_HREF.'?v='.$app->getApplicationVersion().'&-action=css&--id='.$this->generateCacheKeyForScripts(array_keys($this->stylesheets));
+		return DATAFACE_SITE_HREF.'?-action=css&--id='.$this->generateCacheKeyForScripts(array_keys($this->stylesheets));
 	}
 	
 	public function getIncluded(){
@@ -62,19 +61,7 @@ class Dataface_CSSTool {
 	
 	public function getContents(){
 		$this->compile();
-        $path = $this->getCSSCachePath(array_keys($this->stylesheets));
-        if (XF_USE_OPCACHE and xf_opcache_is_script_cached($path)) {
-            include(xf_opcache_path($path));
-            list($out) = $xf_opcache_export;
-            return $out;
-        } else {
-            $out = file_get_contents($path);
-            if (XF_USE_OPCACHE) {
-                xf_opcache_cache_array($path, [$out]);
-            }
-            return $out;
-        }
-		
+		return file_get_contents($this->getCSSCachePath(array_keys($this->stylesheets)));
 	}
 	
 	private function generateCacheKeyForScripts($stylesheets){
@@ -91,11 +78,11 @@ class Dataface_CSSTool {
 	}
 	
 	private function getCSSCachePath($stylesheets){
-		return XFTEMPLATES_C.$this->generateCacheKeyForScripts($stylesheets).'.css';
+		return DATAFACE_SITE_PATH.'/templates_c/'.$this->generateCacheKeyForScripts($stylesheets).'.css';
 	}
 	
 	private function getManifestPath($stylesheets){
-		return XFTEMPLATES_C.$this->generateCacheKeyForScripts($stylesheets).'.manifest.css';
+		return DATAFACE_SITE_PATH.'/templates_c/'.$this->generateCacheKeyForScripts($stylesheets).'.manifest.css';
 	}
 	
 	private function writeManifest($stylesheets, $included){
@@ -106,14 +93,7 @@ class Dataface_CSSTool {
 	private function isCacheDirty($stylesheets){
 		$jspath = $this->getCSSCachePath($stylesheets);
 		$mfpath = $this->getManifestPath($stylesheets);
-		if (XF_USE_OPCACHE) {
-		    if (xf_opcache_is_script_cached($jsPath) and xf_opcache_is_script_cached($mfpath)) {
-                // If we're using an opcache and the CSS file is cached
-                // then we're good.  We don't check for mod time.
-		        return false;
-            }
-            
-		}
+		
 		if ( !file_exists($jspath) ) return true;
 		if ( !file_exists($mfpath) ) return true;
 		$mtime = filemtime($jspath);
@@ -183,42 +163,19 @@ class Dataface_CSSTool {
 		foreach ($stylesheets as $script){
 			$contents = null;
 			if ( isset($included[$script]) ) continue;
-			if (XF_USE_OPCACHE) {
-    			foreach ($this->includePath as $path=>$url){
-    				$filepath = $path.DIRECTORY_SEPARATOR.$script;
-    				$dirname = dirname($script);
-    				if ( $dirname ) $url .= '/'.$dirname;
-    				//echo "\nChecking $filepath\n";
-                    if (xf_opcache_is_script_cached($filepath)) {
-                        include(xf_opcache_path($filepath));
-                        list($contents) = $xf_opcache_export;
-                        $contents = preg_replace('/url\(\s*[\'"]?\/?(.+?)[\'"]?\s*\)/i', 'url('.$url.'/$1)', $contents);
-                        $included[$script] = $filepath;
-                        break;
-                    }
-    				
-    			}
-			}
-            if (!isset($contents)) {
-    			foreach ($this->includePath as $path=>$url){
-    				$filepath = $path.DIRECTORY_SEPARATOR.$script;
-    				$dirname = dirname($script);
-    				if ( $dirname ) $url .= '/'.$dirname;
-    				//echo "\nChecking $filepath\n";
-                    if ( xf_is_readable($filepath) ){
-    					$contents = file_get_contents($filepath);
-    					$contents = preg_replace('/url\(\s*[\'"]?\/?(.+?)[\'"]?\s*\)/i', 'url('.$url.'/$1)', $contents);
-    					$included[$script] = $filepath;
-                        
-                        if (XF_USE_OPCACHE and isset($contents)) {
-                            xf_opcache_cache_array($filepath, [$contents]);
-                        }
-    					break;
-    				}
-    			}
-                
 			
-            }
+			foreach ($this->includePath as $path=>$url){
+				$filepath = $path.DIRECTORY_SEPARATOR.$script;
+				$dirname = dirname($script);
+				if ( $dirname ) $url .= '/'.$dirname;
+				//echo "\nChecking $filepath\n";
+				if ( is_readable($filepath) ){
+					$contents = file_get_contents($filepath);
+					$contents = preg_replace('/url\(\s*[\'"]?\/?(.+?)[\'"]?\s*\)/i', 'url('.$url.'/$1)', $contents);
+					$included[$script] = $filepath;
+					break;
+				}
+			}
 			
 			if ( !isset($contents) ) throw new Exception(sprintf("Could not find script %s", $script));
 			
@@ -234,11 +191,11 @@ class Dataface_CSSTool {
 	
 	
 	public function clearCache(){
-		$files = glob(XFTEMPLATES_C.'*.css');
+		$files = glob(DATAFACE_SITE_PATH.'/templates_c/*.css');
 		foreach($files as $f){
 			unlink($f);
 		}
-		$files = glob(XFTEMPLATES_C.'*.manifest.css');
+		$files = glob(DATAFACE_SITE_PATH.'/templates_c/*.manifest.css');
 		foreach($files as $f){
 			unlink($f);
 		}

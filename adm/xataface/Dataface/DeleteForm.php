@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *-------------------------------------------------------------------------------
  */
-import( XFLIB.'HTML/QuickForm.php');
-import(XFLIB.'Smarty/Smarty.class.php');
-import(XFROOT.'Dataface/Globals.php');
-import(XFROOT.'Dataface/QueryBuilder.php');
+import( 'HTML/QuickForm.php');
+import('Smarty/Smarty.class.php');
+import('Dataface/Globals.php');
+import('Dataface/QueryBuilder.php');
 
 
 /**
@@ -158,7 +158,7 @@ class Dataface_DeleteForm extends HTML_QuickForm {
 		}
 		
 		$context = array('msg'=>$msg, 'form'=>$form);
-		import(XFROOT.'Dataface/SkinTool.php');
+		import('Dataface/SkinTool.php');
 		$skinTool =& Dataface_SkinTool::getInstance();
 		//$smarty = new Smarty;
 		//$smarty->template_dir = $GLOBALS['Dataface_Globals_Templates'];
@@ -224,7 +224,7 @@ class Dataface_DeleteForm extends HTML_QuickForm {
 				}
 				$val = $values[$key];
 				
-				if ( $val[0] != '=' ) $val = '='.$val;
+				if ( $val{0} != '=' ) $val = '='.$val;
 				$query[$key] = $val;
 			}
 		} else {
@@ -253,8 +253,8 @@ class Dataface_DeleteForm extends HTML_QuickForm {
 		$errors = array();
 		if ( $this->isSubmitted() ){
 			$errCounter = 1;
-			import(XFROOT.'Dataface/PermissionsTool.php');
-			import(XFROOT.'dataface-public-api.php');
+			import('Dataface/PermissionsTool.php');
+			import('dataface-public-api.php');
 			$query = $this->_buildDeleteQuery($this->exportValues());
 			if ( PEAR::isError($query) ){
 				$errors[$errCounter++] = $query->getMessage();

@@ -3,7 +3,7 @@
 class dataface_actions_translate {
 
 	function handle(&$params){
-		import(XFROOT.'Dataface/TranslationForm.php');
+		import('Dataface/TranslationForm.php');
 				
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
@@ -101,9 +101,7 @@ class dataface_actions_translate {
 					 *
 					 */
 					$vals = $form->exportValues();
-                    
-					$vals['-query'] = substr(preg_replace('/[&\?]-new=[^&]+/i', '', '?'.$vals['-query']), 1);
-                    
+					$vals['-query'] = preg_replace('/[&\?]-new=[^&]+/i', '', $vals['-query']);
 					
 					$msg = implode("\n", $app->getMessages());
 					//$msg =@$response['--msg'];

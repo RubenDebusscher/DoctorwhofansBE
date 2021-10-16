@@ -105,7 +105,7 @@ class dataface_actions_delete_file {
 		
 		// Now that we have been successful, let's return a success reply.
 		if ( @$query['--format'] == 'json' ){
-			import(XFLIB.'Services/JSON.php');
+			import('Services/JSON.php');
 			$json = new Services_JSON;
 			header('Content-type: application/json; charset='.$app->_conf['oe']);
 			echo $json->encode(

@@ -10,7 +10,7 @@
  */
 class dataface_actions_remove_related_record {
 	function handle(&$params){
-		import( XFROOT.'Dataface/RemoveRelatedRecordForm.php');
+		import( 'Dataface/RemoveRelatedRecordForm.php');
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
 		
