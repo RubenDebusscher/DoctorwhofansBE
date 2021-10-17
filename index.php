@@ -36,14 +36,14 @@ $_SESSION["Menu"]="";?>
                 console.log(sw);
             })
         }
-        /* async function subscribe(){
+         async function subscribe(){
             let sw = await navigator.serviceWorker.ready;
             let push = await sw.pushManager.subscribe({
                 userVisibleOnly:true,
                 applicationServerKey:'BAZuh0JHL2M50rX6FSoS-YIRVP6MG1px1f33YAFfxeAEAm40F1xq-Fk8jRe8qV-sJwkCWCux0YWD-acG-HAoWIc'
             })
             console.log(JSON.stringify(push));
-        } */
+        } 
         </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107369097-3"></script>
@@ -79,16 +79,17 @@ $_SESSION["Menu"]="";?>
         include_once 'includes/overlays.html';
         include_once 'includes/footer.html';
     ?>
-    <script type="application/javascript" src="https://sdki.truepush.com/sdk/v2.0.2/app.js" async></script>
+   <script type="application/javascript" 
+    src="https://sdki.truepush.com/sdk/v2.0.3/app.js" async></script>
 <script>
 var truepush = window.truepush || [];
 truepush.push(function(){
     truepush.Init({
         id: "5fee1993ac24647e216e7ad2"
-        }, function(error){
-          if(error) console.error(error);
-        })
+    }, function(error){
+            if(error) console.error(error);
     })
+})
 </script>
 </body>
 

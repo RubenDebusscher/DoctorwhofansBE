@@ -228,6 +228,23 @@
 								}
 							}
 						}
+						$stmtEpisodeQuote = $conn->prepare('select * from Quotes where Serial_Id=?');
+						if(!$stmtEpisodeQuote){
+							die('Statement preparing failed: ' . $conn->error);
+						}
+						if(!$stmtEpisodeQuote->bind_param("i",$API_Item)){
+							die('Statement binding failed: ' . $conn->connect_error);
+						}
+						if(!$stmtEpisodeQuote->execute()){
+							die('Statement execution failed: ' . $stmtEpisodeQuote->error);
+						}else{
+							$result = $stmtEpisodeQuote->get_result();
+							if($result->num_rows === 0){
+								$antwoord['Serial']['EpisodeQuotes']=$API_Item;
+							} else{
+								$antwoord['Serial']['EpisodeQuotes'] = $result->fetch_all(MYSQLI_ASSOC);
+							}
+						}
 					}
 					break;
 				case "Doctor":

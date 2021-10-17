@@ -84,8 +84,7 @@ self.addEventListener('activate', function (event) {
 
 function showInstallPromotion(){
   $('.installButton').show();
-}
-/* self.addEventListener('push', function(e) {
+}self.addEventListener('push', function(e) {
   var options = {
     body: event.data.body,
     icon: 'https://www.doctorwhofans.be/images/logo/logo.png',
@@ -105,7 +104,7 @@ function showInstallPromotion(){
   e.waitUntil(
     self.registration.showNotification('Hello world!', options)
   );
-}); */
+});
 
 
 var version = "v2.0.2";

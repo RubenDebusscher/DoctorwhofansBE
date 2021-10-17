@@ -394,7 +394,7 @@ function GetContent(menu, id) {
             break;
           case "Quotes":
           //// #56 Add Quotes in Front End (Already added in Request)
-          AddMainQuoteToDom(response.MainQuote);
+          AddMainQuoteToDom(response.MainQuote,".MainQuote","replace");
           AddQuoteSelectionToDom(response.Quotes);
             break;
           case "Sitemap":
@@ -422,16 +422,26 @@ function GetContent(menu, id) {
 }
 
 
-function AddMainQuoteToDom(mainQuote){
+function AddMainQuoteToDom(mainQuote,Parentelem,replace){
   var MainQuoteElem = "";
   var MainQuoteImage="";
-  MainQuoteImage="<img src='https://www.doctorwhofans.be/images/content__quotes/"+mainQuote[0].quote_Image+"'/>";
-  MainQuoteElem +="<h2>"+mainQuote[0].Episode_Link+"</h2>";
-  MainQuoteElem += MainQuoteImage;
-  MainQuoteElem +="<p>"+mainQuote[0].quote_Item+"</p>";
-  MainQuoteElem += mainQuote[0].Character_Links;
+  
 
-  $('.MainQuote').html(MainQuoteElem);
+  if(replace=="replace"){
+    MainQuoteImage="<img src='https://www.doctorwhofans.be/images/content__quotes/"+mainQuote[0].quote_Image+"'/>";
+    MainQuoteElem +="<h2>"+mainQuote[0].Episode_Link+"</h2>";
+    MainQuoteElem += MainQuoteImage;
+    MainQuoteElem +="<p>"+mainQuote[0].quote_Item+"</p>";
+    MainQuoteElem += mainQuote[0].Character_Links;
+    $(Parentelem).html(MainQuoteElem);
+  }else{
+    MainQuoteImage="<img src='https://www.doctorwhofans.be/images/content__quotes/"+mainQuote.quote_Image+"'/>";
+    MainQuoteElem +="<div class='MainQuote bordered DarkBlueBackground'><h2>"+mainQuote.Episode_Link+"</h2>";
+    MainQuoteElem += MainQuoteImage;
+    MainQuoteElem +="<p>"+mainQuote.quote_Item+"</p>";
+    MainQuoteElem += mainQuote.Character_Links+"</div>";
+    $(Parentelem).append(MainQuoteElem);
+  }
 }
 function AddQuoteSelectionToDom(quotes){
   let Quoteselection = "";
@@ -551,11 +561,12 @@ function Character(CharacterData){
 function Serial(EpisodeData) {
   //$('main article h1').html(EpisodeData.Serial[0].serial_Title);
   CreateWikiDetails();
-  var episodeKeys = ['Doctors', 'Companions', 'First_Aired_on', 'Last_Aired_On', 'Total_Runtime', 'Production_code', 'Order', ];
-  var episodestrings = ['Doctors', 'Companions', 'First episode aired on', 'Last episode aired on', 'Total Runtime', 'Production Code', 'Order'];
+  var episodeKeys = ['Overall_Story_Number','Doctors', 'Companions', 'First_Aired_on', 'Last_Aired_On', 'Total_Runtime','Average_UK','Average_AI','Production_code', 'Order', ];
+  var episodestrings = ['Overall Story Number','Doctors', 'Companions', 'First episode aired on', 'Last episode aired on', 'Total Runtime','Average UK viewers','Average AI', 'Production Code', 'Order'];
 
   PopulateWikiDetailsStatic(episodeKeys, episodestrings);
   WikiImage(EpisodeData.Serial[0].serial_Image, 'api__serials');
+  $('#WikiOverall_Story_Number p').html(EpisodeData.Serial[0].serial_Story);
   $('#WikiDoctors p').html(DoctorsForEpisode(EpisodeData.Serial.Characters));
   $('#WikiCompanions p').html(CompanionsForEpisode(EpisodeData.Serial.Characters));
   $('#WikiCompanions').append("<hr>");
@@ -572,13 +583,26 @@ function Serial(EpisodeData) {
   }
   $('#WikiProduction_code p').html(EpisodeData.Serial[0].serial_Production_code);
   $('#WikiTotal_Runtime p').html(EpisodeData.Serial[0]["Total Runtime"].substring(0, EpisodeData.Serial[0]["Total Runtime"].indexOf('.')));
+  if(EpisodeData.Serial[0]["average UK viewership"]!=null) {
+    $('#WikiAverage_UK p').html(new Intl.NumberFormat(getCookie('lang')).format(EpisodeData.Serial[0]["average UK viewership"]));
+  }
+  if(EpisodeData.Serial[0]["average AI"]!=null) {
+    $('#WikiAverage_AI p').html(EpisodeData.Serial[0]["average AI"].substring(0, EpisodeData.Serial[0]["average AI"].indexOf('.')));
+
+  }
   $('#Previous p').html(PreviousNextLink(EpisodeData.Serial[0].Previous_Episode, EpisodeData.Serial[0].Previous_Link));
   $('#Next p').html(PreviousNextLink(EpisodeData.Serial[0].Next_Episode, EpisodeData.Serial[0].Next_Link));
 
   Episodes(EpisodeData.Serial.Episodes);
   $('#Downloads').html(DownloadsForEpisode(EpisodeData.Downloads));
+  for(var i=0;i<=EpisodeData.Serial.EpisodeQuotes.length;i++){
+    AddMainQuoteToDom(EpisodeData.Serial.EpisodeQuotes[i],"#Quotes","add");
+
+  }
+  //DumpInfo("#Quotes",EpisodeData.Serial.EpisodeQuotes[i]);
 
   //DumpInfo(EpisodeData);
+
 }
 
 function populatePath(Path) {
@@ -708,8 +732,8 @@ function LocalDate(original) {
   return newdate;
 }
 
-function DumpInfo(data) {
-  $('main article').append("<p>" + JSON.stringify(data) + "</p>");
+function DumpInfo(elem,data) {
+  $(elem).append("<p>" + JSON.stringify(data) + "</p>");
 }
 
 function PreviousNextLink(EpisodeText, EpisodeLink) {
@@ -731,12 +755,12 @@ function Episodes(episodes) {
     } else {
       tableRow = '<tr>';
     }
-    tableRow += '<td>' + episodes[i].episode_Order + '</td>';
+    tableRow += '<td>' + Number(i+1) + '</td>';
     tableRow += '<td>' + episodes[i].episode_Title + '</td>';
     tableRow += '<td>' + episodes[i].Runtime + '</td>';
     tableRow += '<td>' + LocalDate(episodes[i].episode_Original_airdate) + '</td>';
     tableRow += '<td>' + episodes[i].episode_Original_Network + '</td>';
-    tableRow += '<td>' + episodes[i].episode_UK_viewers + '</td>';
+    tableRow += '<td>' + new Intl.NumberFormat(getCookie('lang')).format(episodes[i].episode_UK_viewers) + '</td>';
     tableRow += '<td>' + episodes[i].episode_Appreciation_index + '</td>';
     var statesObject = JSON.parse(episodes[i].state);
     var stateString = '<ul>';
