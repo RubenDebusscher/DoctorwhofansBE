@@ -30,18 +30,18 @@ class common
 	/**
 	 * Constructor.
 	 *
-	 * @param \phpbb\config\config 		$config 			The config
-	 * @param \phpbb\db\driver\factory 	$db 				The database factory object
-	 * @param \phpbb\filesystem		 	$filesystem			Filesystem object
-	 * @param \phpbb\language\language 	$language 			Language object
-	 * @param \phpbb\log\log 			$phpbb_log 			phpBB log object
-	 * @param string					$phpbb_root_path	Relative path to phpBB root
-	 * @param string 					$php_ext 			PHP file suffix
-	 * @param \phpbb\user 				$user 				The user object
+	 * @param \phpbb\config\config 			$config 			The config
+	 * @param \phpbb\db\driver\factory 		$db 				The database factory object
+	 * @param \phpbb\filesystem\filesystem	$filesystem			Filesystem object
+	 * @param \phpbb\language\language 		$language 			Language object
+	 * @param \phpbb\log\log 				$phpbb_log 			phpBB log object
+	 * @param string						$phpbb_root_path	Relative path to phpBB root
+	 * @param string 						$php_ext 			PHP file suffix
+	 * @param \phpbb\user 					$user 				The user object
 	 *
 	 */
 
-	public function __construct(\phpbb\language\language $language, $phpbb_root_path, \phpbb\filesystem\filesystem $filesystem, \phpbb\log\log $phpbb_log, \phpbb\user $user, $php_ext, \phpbb\config\config $config, \phpbb\db\driver\factory $db)
+	public function __construct(\phpbb\language\language $language, string $phpbb_root_path, \phpbb\filesystem\filesystem $filesystem, \phpbb\log\log $phpbb_log, \phpbb\user $user, string $php_ext, \phpbb\config\config $config, \phpbb\db\driver\factory $db)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -189,7 +189,6 @@ class common
 
 		// This function parses $digest_notify_list, an array of user_ids that represent users that had their digest subscriptions changed, and sends them an email
 		// letting them know an action has occurred.
-
 		$emails_sent = 0;
 
 		if (isset($digest_notify_list) && (count($digest_notify_list) > 0))

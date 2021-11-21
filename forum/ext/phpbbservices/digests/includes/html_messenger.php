@@ -19,7 +19,6 @@ namespace phpbbservices\digests\includes;
 class html_messenger extends \messenger
 {
 
-	protected $config;
 	protected $user;
 	protected $phpbb_dispatcher;
 	protected $language;
@@ -27,16 +26,24 @@ class html_messenger extends \messenger
 	/**
 	 * Constructor.
 	 *
-	 * @param string					$use_queue			Whether to use phpBB's queue (true|false)
-	 * @param \phpbb\config\config		$config				Config object
 	 * @param \phpbb\language\language	$language			Language object
 	 * @param \phpbb\event\dispatcher	$phpbb_dispatcher	Dispatcher object
+	 * @param bool						$use_queue			Whether to use phpBB's queue (true|false)
 	 * @param \phpbb\user				$user				User object
 	 *
 	 */
-	function __construct($use_queue = true, \phpbb\config\config $config, \phpbb\user $user, \phpbb\event\dispatcher $phpbb_dispatcher, \phpbb\language\language $language)
+	function __construct(\phpbb\user $user, \phpbb\event\dispatcher $phpbb_dispatcher, \phpbb\language\language $language, $use_queue = true)
 	{
-		$this->config 			= $config;
+
+		// Since this class overwrites the messenger class, and the $config service in the messenger class is in a global
+		// variable, we need to reference it here as a global variable instead of injecting it. This avoids a
+		// The "config" service is private error triggered in Container.php. Thanks to 3Di for figuring this out!
+
+		global $config;
+		$this->config = $config;
+		
+		parent::__construct($use_queue);
+
 		$this->language 		= $language;
 		$this->phpbb_dispatcher = $phpbb_dispatcher;
 		$this->user 			= $user;
@@ -112,12 +119,12 @@ class html_messenger extends \messenger
 		$match = array();
 		if (!$is_digest && preg_match('#^(Subject:(.*?))$#m', $this->msg, $match))
 		{
-			$this->subject = (trim($match[2]) != '') ? trim($match[2]) : (($this->subject != '') ? $this->subject : $this->language->lang['NO_EMAIL_SUBJECT']);
+			$this->subject = (trim($match[2]) != '') ? trim($match[2]) : (($this->subject != '') ? $this->subject : $this->language->lang('NO_EMAIL_SUBJECT'));
 			$drop_header .= '[\r\n]*?' . preg_quote($match[1], '#');
 		}
 		else
 		{
-			$this->subject = (($this->subject != '') ? $this->subject : $this->language->lang['NO_EMAIL_SUBJECT']);
+			$this->subject = (($this->subject != '') ? $this->subject : $this->language->lang('NO_EMAIL_SUBJECT'));
 		}
 
 		if (preg_match('#^(List-Unsubscribe:(.*?))$#m', $this->msg, $match))
@@ -331,7 +338,6 @@ class html_messenger extends \messenger
 				'headers'		=> $headers)
 			);
 		}
-
 
 		return true;
 	}
