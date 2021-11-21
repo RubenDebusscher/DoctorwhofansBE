@@ -2566,7 +2566,7 @@ class Dataface_Record {
 
 		$field =& $this->_table->getField($fieldname);
 		if ( $this->_table->isBlob($fieldname) or ($this->_table->isContainer($fieldname) and @$field['secure'])  ){
-			if ($this->val($fieldname)) {
+			if ($this->getLength($fieldname) > 0) {
 				unset($table);
 				$table =& Dataface_Table::loadTable($field['tablename']);
 				$keys = array_keys($table->keys());
@@ -2756,7 +2756,7 @@ class Dataface_Record {
 			return $parent->htmlValue($fieldname, $index, $where, $sort, $params);
 		}
 		$val = $this->display($fieldname, $index, $where, $sort);
-                $strval = $this->strval($fieldname, $index, $where, $sort);
+        $strval = $this->strval($fieldname, $index, $where, $sort);
 		$field = $this->_table->getField($fieldname);
 		if ( !@$field['passthru'] and $this->escapeOutput) {
 		    if (@$field['allowable_tags']) {
@@ -2795,7 +2795,7 @@ class Dataface_Record {
 						$this->getMimetype($fieldname,$index,$where,$sort).' file icon',
 						df_absolute_url(DATAFACE_URL).'/images/document_icon.gif'
 						);
-					$val = '<img src="'.df_escape($file_icon).'"/><a href="'.$val.'" target="_blank"';
+					$val = '<img src="'.df_escape($file_icon).'"/><a href="'.ltrim($val,"/main//").'" target="_blank"';
 					foreach ($params as $pkey=>$pval){
 						$val .= ' '.df_escape($pkey).'="'.df_escape($pval).'"';
 					}

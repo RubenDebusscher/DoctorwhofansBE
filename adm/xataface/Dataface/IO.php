@@ -2257,7 +2257,7 @@ class Dataface_IO {
 				'rows' => array()
 				);
 			if ( isset($record) ) $importData['record'] = $record->getId();
-
+			//print_r($importData);
 			foreach ($records as $r){
 				if ( is_a($r, 'Dataface_ImportRecord') ){
 					// The current record is actually an ImportRecord

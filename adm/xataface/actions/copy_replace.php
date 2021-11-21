@@ -433,11 +433,8 @@ END
 			$warning_msgs = array();
 		}	
 		//print_r($warning_msgs);
-		$this->message .= '<br>'.implode('<br>', $warning_msgs);
+		$this->message .=  $warning_msgs;
 		return true;
-		
-		
-		
 	}
 
 }

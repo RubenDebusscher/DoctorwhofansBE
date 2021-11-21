@@ -162,7 +162,7 @@
 				//$filebase = $filename;
 
 			}
-			if ( $filebase[strlen($filebase)-1] == '-' ) $filebase = substr($filebase,0, strlen($filebase)-1);
+			if ( $filebase{strlen($filebase)-1} == '-' ) $filebase = substr($filebase,0, strlen($filebase)-1);
 			$fileindex++;
 			$filebase = $filebase.'-'.$fileindex;
 			$destFileName = $filebase.'.'.$extension;
