@@ -3067,17 +3067,19 @@ h1 {
 .dark-mode, #WikiDetails .dark-mode {
     background-color: black !important;
     color: white !important;
+    border-color:black !important;
   }
 
 #WikiDetails {
     float: right;
     min-width: 15%;
-    max-width: 19%;
+    max-width: 21%;
     /*background-color: var(--bg-color-darkBlue);*/
     padding: 1%;
     /*border: 5px solid var(--border-color);
     border-radius: 3%;*/
-    color: var(--font-color-darkblue-white)
+    color: var(--font-color-darkblue-white);
+    margin-right:-4em;
 }
 
 #WikiDetails img {
@@ -3308,7 +3310,11 @@ span hr {
 }
 
 #WikiOrder p {
-    float: left
+    float: left;
+    margin:0;
+    padding:0;
+    width:100%
+    
 }
 
 #WikiOrder p hr {
