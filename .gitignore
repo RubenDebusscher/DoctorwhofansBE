@@ -31,3 +31,5 @@ push.js
 .env
 xataface_new
 templates_c
+adm/templates_c
+debug.log
