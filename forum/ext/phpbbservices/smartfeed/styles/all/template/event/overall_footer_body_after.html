@@ -66,9 +66,9 @@
 
 		// Initialise the URL
 		var url = "{{ UA_SMARTFEED_SITE_URL }}";
-
+		console.log(url)
 		// If user logged in, add the specific variables
-		if (loggedIn) {
+		<!-- if (loggedIn) {
 			// Add user ID
 			var append = (url.indexOf('?') === -1) ? '?' : '&';
 			url = url + append + "{{ S_SMARTFEED_USER_ID }}={{ UA_SMARTFEED_USER_ID }}";
@@ -223,7 +223,7 @@
 			append = (url.indexOf('?') === -1) ? '?' : '&';
 			url = url + append + "{{ S_SMARTFEED_USERNAMES }}=1";
 		}
-		{% endif %}
+		{% endif %} -->
 
 		// Place the url in the field
 		$("#url").val(encodeURI(url));
