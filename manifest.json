@@ -36,6 +36,6 @@
     "start_url": "/",
     "background_color": "#306090",
     "display": "standalone",
-    "scope": "/",
+    "scope": "https://*.doctorwhofans.be/",
     "theme_color": "#306090"
   }

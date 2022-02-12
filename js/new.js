@@ -436,7 +436,7 @@ function AddMainQuoteToDom(mainQuote,Parentelem,replace){
     $(Parentelem).html(MainQuoteElem);
   }else{
     MainQuoteImage="<img src='https://www.doctorwhofans.be/images/content__quotes/"+mainQuote.quote_Image+"'/>";
-    MainQuoteElem +="<div class='MainQuote bordered DarkBlueBackground'><h2>"+mainQuote.Episode_Link+"</h2>";
+    MainQuoteElem +="<div class='MainQuote bordered DarkBlueBackground'><b>"+mainQuote.Episode_Link+"</b>";
     MainQuoteElem += MainQuoteImage;
     MainQuoteElem +="<p>"+mainQuote.quote_Item+"</p>";
     MainQuoteElem += mainQuote.Character_Links+"</div>";
@@ -595,7 +595,7 @@ function Serial(EpisodeData) {
 
   Episodes(EpisodeData.Serial.Episodes);
   $('#Downloads').html(DownloadsForEpisode(EpisodeData.Downloads));
-  for(var i=0;i<=EpisodeData.Serial.EpisodeQuotes.length;i++){
+  for(var i=0;i<EpisodeData.Serial.EpisodeQuotes.length;i++){
     AddMainQuoteToDom(EpisodeData.Serial.EpisodeQuotes[i],"#Quotes","add");
 
   }
@@ -763,6 +763,7 @@ function Episodes(episodes) {
     tableRow += '<td>' + new Intl.NumberFormat(getCookie('lang')).format(episodes[i].episode_UK_viewers) + '</td>';
     tableRow += '<td>' + episodes[i].episode_Appreciation_index + '</td>';
     var statesObject = JSON.parse(episodes[i].state);
+    statesObject = statesObject.toString().split(",");
     var stateString = '<ul>';
     for (var j = 0; j < statesObject.length; j++) {
       stateString += '<li>' + statesObject[j] + '</li>';

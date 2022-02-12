@@ -79,23 +79,7 @@ $_SESSION["Menu"]="";?>
         include_once 'includes/overlays.html';
         include_once 'includes/footer.html';
     ?>
-   <script type="application/javascript" 
-    src="https://sdki.truepush.com/sdk/v2.0.3/app.js" async></script>
-<script>
-var truepush = window.truepush || [];
-truepush.push(function(){
-    truepush.Init({
-        id: "5fee1993ac24647e216e7ad2"
-    }, function(error){
-            if(error) console.error(error);
-    })
-})
-</script>
-</body>
-
-</html>
-
-
+   
 <script>
         setDarkmodefromCookie();
         setFontFromCookie();
@@ -111,3 +95,6 @@ truepush.push(function(){
         //getAvailableLangcodes();
         //checkCookie()
     </script>
+</body>
+
+</html>

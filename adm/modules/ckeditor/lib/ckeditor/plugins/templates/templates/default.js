@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
@@ -22,7 +22,7 @@ CKEDITOR.addTemplates('default', {
     html: '<div style="width: 80%"><h3>Title goes here</h3><table style="width:150px;float: right" cellspacing="0" cellpadding="0" border="1"><caption style="border:solid 1px black"><strong>Table title</strong></caption></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><p>Type the text here</p></div>'
   },
   {
-    title: 'Episode',
+    title: 'EpisodeTabel',
     image: 'template3.gif',
     description: 'Default voor een episode tabel. Voeg deze toe aan een bestaande pagina.  Dit voeg de ondertitel Episodes toe en de tabel met koppen, die dan door de applicatie aangevuld kunnen worden.',
     html: '<h2>Episodes</h2><div style="overflow-x:auto"><table align="left" border="1" cellpadding="0" cellspacing="0" id="EpisodeTable"><thead><tr><th scope="col">Episode</th><th scope="col">Title</th><th scope="col">Run Time</th><th scope="col">Original Air date</th><th scope="col">Original Network</th><th scope="col">UK viewers</th><th scope="col">Appreciation Index</th><th scope="col">Status</th></tr></thead><tbody></tbody></table></div>'
@@ -41,17 +41,22 @@ CKEDITOR.addTemplates('default', {
     title: 'Timeline Default',
     image: 'template3.gif',
     description: 'Default voor een Timeline. Bevat 1 Timelines div, 1 container en 2 contents (1 links 1 rechts, aan te passen door de classes om te switchen) en elk bevat standaard content',
-    html: '<div class="timeline"><div class="container right"><div class="content">  <h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3> <h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4> <p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p>  </div></div><div class="container left">  <div class="content"> <h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3> <h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4> <p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p>  </div></div></div>'
+    html: '<div class="timeline"><div class="container right"><div class="content">  <h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3> <h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4> <p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p>  </div></div><div class="container left">  <div class="content"> <h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3> <h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4> <p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p>  </div></div><hr></div>'
   },{
     title: 'Timeline Left',
     image: 'template3.gif',
     description: 'Voeg een Left item toe aan een bestaande tijdslijn',
-    html: '<div class="container left"><div class="content"><h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3><h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4><p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p></div></div>'
+    html: '<div class="container left"><div class="content"><h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3><h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4><p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p></div></div><hr>'
   },{
     title: 'Timeline Right',
     image: 'template3.gif',
     description: 'Voeg een Right item toe aan een bestaande tijdslijn',
-    html: '<div class="container right"><div class="content"><h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3><h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4><p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p></div></div>'
+    html: '<div class="container right"><div class="content"><h3>Qui ad mollit commodo officia in et consequat elit dolor eiusmod in est adipisicing proident.</h3><h4>Magna deserunt enim commodo irure aliqua sint reprehenderit sit fugiat.</h4><p>Exercitation irure eiusmod do magna tempor proident est in ipsum magna reprehenderit cillum.</p></div></div><hr>'
+  },{
+    title: 'Inhoudstafel',
+    image: 'template3.gif',
+    description: 'Voeg een inhoudstafel toe',
+    html: '<div class="bordered DarkBlueBackground" id="Inhoud"><span>Inhoud<span> </span></span></div>'
   }
 ]
 });

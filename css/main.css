@@ -3373,6 +3373,10 @@ span hr {
     box-sizing: border-box
 }
 
+.timeline hr {
+    display: none;
+}
+
 .timeline {
     position: relative;
     max-width: 1200px;
