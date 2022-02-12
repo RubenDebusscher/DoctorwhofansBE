@@ -29,7 +29,7 @@ admin
 ftp-sync.json
 push.js
 .env
-xataface_new
-templates_c
-adm/templates_c
+**/xataface_new
+**/templates_c
 debug.log
+MC
