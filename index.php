@@ -34,6 +34,7 @@ $_SESSION["Menu"]="";?>
             window.addEventListener('load', async ()=> {
                 let sw = await navigator.serviceWorker.register('https://www.doctorwhofans.be/sw.js');
                 console.log(sw);
+                
             })
         }
          async function subscribe(){
@@ -43,6 +44,7 @@ $_SESSION["Menu"]="";?>
                 applicationServerKey:'BAZuh0JHL2M50rX6FSoS-YIRVP6MG1px1f33YAFfxeAEAm40F1xq-Fk8jRe8qV-sJwkCWCux0YWD-acG-HAoWIc'
             })
             console.log(JSON.stringify(push));
+            console.log(sw);
         } 
         </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->

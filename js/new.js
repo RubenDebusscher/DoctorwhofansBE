@@ -364,7 +364,8 @@ function GetContent(menu, id) {
         myHeaders.set('Status Code', '404');
         // @ts-ignore
         window.location = "http://www.doctorwhofans.be/notfound.html";
-      }else if(menu.startsWith('Category:')){
+      }
+      if(menu.startsWith('Category:')){
         console.log("This is a Category, WIP");
         populateEpisodesOfTheDay(response.EpisodesOf_The_day);
         footerAlign();
@@ -621,11 +622,12 @@ function populateEpisodesOfTheDay(Episodes) {
   var Episodelist = "";
   if (Episodes.length > 0) {
     for (var i = 0; i < Episodes.length; i++) {
+
       var Titles = Episodes[i].Title.split(': ');
       if (Titles[0] == Titles[Titles.length - 1]) {
-        Episodelist += "<li>" + Titles[0] + " (" + getYear(Episodes[i].episode_Original_airdate) + ")</li>";
+        Episodelist += "<li><a href='../"+Episodes[i].page_Link +".html'>" + Titles[0] + " (" + getYear(Episodes[i].episode_Original_airdate) + ")</a></li>";
       } else {
-        Episodelist += "<li>" + Episodes[i].Title + " (" + getYear(Episodes[i].episode_Original_airdate) + ")</li>";
+        Episodelist += "<li><a href='../"+Episodes[i].page_Link +".html'>" + Episodes[i].Title + " (" + getYear(Episodes[i].episode_Original_airdate) + ")</a></li>";
       }
     }
     $(".footer__EpisodesOfTheDay ol").html(Episodelist);
@@ -794,7 +796,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Stash the event so it can be triggered later.
   deferredPrompt = e;
   // Update UI notify the user they can install the PWA
-  console.log("Ik kan geïnstalleerd worden!!");
+  //console.log("Ik kan geïnstalleerd worden!!");
   $('.installButton').css('display', 'block');
 
   //showInstallPromotion();
@@ -809,16 +811,16 @@ function A2HS() {
   // Wait for the user to respond to the prompt
   deferredPrompt.userChoice.then((choiceResult) => {
     if (choiceResult.outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+      //console.log('User accepted the install prompt');
     } else {
-      console.log('User dismissed the install prompt');
+      //console.log('User dismissed the install prompt');
     }
   });
 }
 
 window.addEventListener('appinstalled', (evt) => {
   $('.installButton').css('display', 'none');
-  console.log('INSTALL: Success');
+  //console.log('INSTALL: Success');
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -830,7 +832,7 @@ window.addEventListener('DOMContentLoaded', () => {
     displayMode = 'standalone';
   }
   // Log launch display mode to analytics
-  console.log('DISPLAY_MODE_LAUNCH:', displayMode);
+  //console.log('DISPLAY_MODE_LAUNCH:', displayMode);
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -840,7 +842,7 @@ window.addEventListener('DOMContentLoaded', () => {
       displayMode = 'standalone';
     }
     // Log display mode change to analytics
-    console.log('DISPLAY_MODE_CHANGED', displayMode);
+    //console.log('DISPLAY_MODE_CHANGED', displayMode);
   });
 });
 

@@ -33,7 +33,7 @@
           "purpose": "any maskable"
         }  
       ],
-    "start_url": "/",
+    "start_url": "https://*.doctorwhofans.be/Home.html",
     "background_color": "#306090",
     "display": "standalone",
     "scope": "https://*.doctorwhofans.be/",

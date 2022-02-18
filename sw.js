@@ -84,9 +84,10 @@ self.addEventListener('activate', function (event) {
 
 function showInstallPromotion(){
   $('.installButton').show();
-}self.addEventListener('push', function(e) {
+}
+self.addEventListener('push', function(e) {
   var options = {
-    body: event.data.body,
+    body: 'This notification was generated from a push!',
     icon: 'https://www.doctorwhofans.be/images/logo/logo.png',
     badge:'https://www.doctorwhofans.be/images/logo/logo.png',
     vibrate: [100, 50, 100],
@@ -105,29 +106,3 @@ function showInstallPromotion(){
     self.registration.showNotification('Hello world!', options)
   );
 });
-
-
-var version = "v2.0.2";
-var swPath;
-var urlObject = new URL(location);
-var host;
-if (urlObject.searchParams.get("swPath")) {
-    swPath = urlObject.searchParams.get("swPath");
-}
-else {
-    if (urlObject.searchParams.get("version")) {
-        version = urlObject.searchParams.get("version");
-    }
-    if (urlObject.searchParams.get("swJSHost")) {
-        host = "https://" + urlObject.searchParams.get("swJSHost");
-    }
-
-
-
-
-    else {
-        host = "https://sdki.truepush.com/sdk/";
-    }
-    swPath = host + version + "/sw.js";
-}
-importScripts(swPath);
