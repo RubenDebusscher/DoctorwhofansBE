@@ -30,6 +30,7 @@ if(!$stmt1->execute()){
 }
 $stmt1->close();
 // TODO: #58 add API, Quotes and Videos to the search
+
 $conn->close();
 ?>
 

@@ -80,6 +80,14 @@ $_SESSION["Menu"]="";?>
         include_once 'includes/main.html';
         include_once 'includes/overlays.html';
         include_once 'includes/footer.html';
+
+        //TODO #66 add fist and last pepisode (both regular and departure/regeneration)
+        //TODO #67 add books/magazines/comics to DB
+        //TODO #68 add audio (big finish,...)
+        //TODO #69 create list of episodes by characteristics
+        //TODO #70 create list of cast per episode
+        //TODO #71 create list of crew per episode
+        //TODO #72 add different kinds of episodes (minisodes, spin offs,...)
     ?>
    
 <script>
@@ -100,3 +108,4 @@ $_SESSION["Menu"]="";?>
 </body>
 
 </html>
+

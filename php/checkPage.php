@@ -88,9 +88,12 @@ function getRichContent(&$conn,&$prefix,&$API_Item,&$antwoord){
 			break;
 		case "Doctor":
 			getDoctor($conn,$API_Item,$antwoord);
+			getFirstAndLastEpisodeForCharacter($conn,$API_Item,$antwoord);
 			break;
 		case "Character":
 			getCharacter($conn,$API_Item,$antwoord);
+			getFirstAndLastEpisodeForCharacter($conn,$API_Item,$antwoord);
+
 			break;
 		case "Book":
 			echo "Zoek de data van een Book: ".$prefix;
@@ -184,6 +187,54 @@ function getDoctor(&$conn,&$API_Item,&$resultset){
 		}
 	}
 
+}
+
+function getFirstAndLastEpisodeForCharacter(&$conn, &$API_Item, &$resultset)
+{
+    $stmtFALEpisode = $conn->prepare("call GetFirstAndLastRegularEpisode(?)");
+    if (!$stmtFALEpisode) {
+        die("Statement prepare failed: " . $conn->connect_error);
+    }
+    if (!$stmtFALEpisode->bind_param("i", $API_Item)) {
+        die("Statement binding failed: " . $conn->connect_error);
+    }
+    if (!$stmtFALEpisode->execute()) {
+        die("Statement execution failed: " . $stmtFALEpisode->error);
+    } else {
+        //return de json data
+        $result = $stmtFALEpisode->get_result();
+        if ($result->num_rows === 0) {
+            $resultset['FALEpisode']="No Episodes found";
+        } else {
+            $resultset['FALEpisode'] = $result->fetch_all(MYSQLI_ASSOC);
+            $stmtFALEpisode->close();
+        }
+    }
+}
+
+//TODO #65 add backend code to fetch nicknames
+
+function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
+{
+    $stmtFALEpisode = $conn->prepare("call GetRegenerationEpisode(?)");
+    if (!$stmtFALEpisode) {
+        die("Statement prepare failed: " . $conn->connect_error);
+    }
+    if (!$stmtFALEpisode->bind_param("i", $API_Item)) {
+        die("Statement binding failed: " . $conn->connect_error);
+    }
+    if (!$stmtFALEpisode->execute()) {
+        die("Statement execution failed: " . $stmtFALEpisode->error);
+    } else {
+        //return de json data
+        $result = $stmtFALEpisode->get_result();
+        if ($result->num_rows === 0) {
+            $resultset['FALEpisode']="No Regeneration Episode found";
+        } else {
+            $resultset['FALEpisode'] = $result->fetch_all(MYSQLI_ASSOC);
+            $stmtFALEpisode->close();
+        }
+    }
 }
 
 	function getQuotes(&$conn,&$id,&$resultset){

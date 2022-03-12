@@ -22,13 +22,13 @@ class tables_api__serials_characters {
     $records = array();
     $rows = explode("\n", $data);
     foreach ( $rows as $row ){
-      list($doctor_Id,$serial_Id,$SC_Type) = explode(',', $row);
+      list($character_Id,$serial_Id,$SC_Type) = explode(',', $row);
       $record = new Dataface_Record('api__serials_characters', array());
       $record->setValues($defaultValues);
 
       $record->setValues(
         array(
-          'SC_Character_Id'=>$doctor_Id,
+          'SC_Character_Id'=>$character_Id,
           'SC_Serial_Id'=>$serial_Id,
           'SC_Type'=>$SC_Type
         )
