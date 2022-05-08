@@ -17,16 +17,48 @@
     "set read data only"
   ],
   "cSpell.words": [
-    "PHPSESSID",
-    "Serial",
-    "Xataface",
+    "Actorlist",
+    "airdate",
+    "CLASS",
+    "Deathdate",
+    "decs",
+    "Episodelist",
+    "episodestrings",
+    "FEFF",
     "framework",
+    "gesturestart",
+    "Hahmlet",
+    "Langcodes",
+    "memoriams",
+    "pagetype",
+    "Parentelem",
+    "parsererror",
+    "PHPSESSID",
+    "prefilter",
+    "Prefilter",
+    "prefilters",
+    "Quoteselection",
+    "rnamespace",
     "savepath",
+    "Serial",
+    "tabindex",
     "tempdir",
     "tmpnam",
-    "transient"
+    "transform",
+    "transient",
+    "varlist",
+    "Videoselection",
+    "Xataface"
   ],
   "discord.enabled": true,
   "phpcs.errorSeverity": 10,
-  "files.exclude": {}
+  "files.exclude": {},
+  "cSpell.customDictionaries": {
+    "custom-dictionary-folder-doctorwhofansbe": {
+      "name": "custom-dictionary-folder-doctorwhofansbe",
+      "path": "${workspaceFolder:DoctorwhofansBE}/.cspell/custom-dictionary-folder-doctorwhofansbe.txt",
+      "addWords": true,
+      "scope": "folder"
+    }
+  }
 }
