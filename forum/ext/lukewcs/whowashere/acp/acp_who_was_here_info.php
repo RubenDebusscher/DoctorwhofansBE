@@ -23,7 +23,7 @@ class acp_who_was_here_info
 				'settings'	=> [
 					'title'	=> 'LFWWH_NAV_CONFIG',
 					'auth'	=> 'ext_lukewcs/whowashere && acl_a_board',
-					'cat'	=> ['ACP_BOARD_CONFIGURATION']
+					'cat'	=> ['LFWWH_NAV_TITLE'],
 				],
 			],
 		];

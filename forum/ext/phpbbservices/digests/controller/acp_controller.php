@@ -29,10 +29,14 @@ class acp_controller
 	protected $phpbb_path_helper;
 	protected $phpbb_root_path;
 	protected $phpEx;
+	protected $report_details_table;
+	protected $report_table;
 	protected $request;
-	protected $table_prefix;
+	protected $subscribed_forums_table;
 	protected $template;
 	protected $user;
+
+	private $digests_storage_path;
 
 	/**
 	 * Constructor.
@@ -49,12 +53,14 @@ class acp_controller
 	 * @param \phpbb\path_helper						$phpbb_path_helper 			phpBB path helper object
 	 * @param string									$phpbb_root_path			Relative path to phpBB root
 	 * @param string									$php_ext 					PHP file suffix
+	 * @param string									$report_details_table		Extension's digests report details table
+	 * @param string									$report_table				Extension's digests report table
 	 * @param \phpbb\request\request					$request					Request object
-	 * @param string									$table_prefix 				Prefix for phpbb's database tables
+	 * @param string									$subscribed_forums_table	Extension's subscribed forums table
 	 * @param \phpbb\template\template					$template					Template object
 	 * @param \phpbb\user								$user						User object
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\factory $db, \phpbbservices\digests\core\common $helper, \phpbb\language\language $language, \phpbbservices\digests\cron\task\digests $mailer, \phpbb\pagination $pagination, \phpbb\extension\manager $phpbb_extension_manager, \phpbb\log\log $phpbb_log, \phpbb\path_helper $phpbb_path_helper, string $phpbb_root_path, string $php_ext, \phpbb\request\request $request, string $table_prefix, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\factory $db, \phpbbservices\digests\core\common $helper, \phpbb\language\language $language, \phpbbservices\digests\cron\task\digests $mailer, \phpbb\pagination $pagination, \phpbb\extension\manager $phpbb_extension_manager, \phpbb\log\log $phpbb_log, \phpbb\path_helper $phpbb_path_helper, string $phpbb_root_path, string $php_ext, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, string $subscribed_forums_table, string $report_table, string $report_details_table)
 	{
 		$this->auth						= $auth;
 		$this->config					= $config;
@@ -68,10 +74,14 @@ class acp_controller
 		$this->phpbb_path_helper		= $phpbb_path_helper;
 		$this->phpbb_root_path			= $phpbb_root_path;
 		$this->phpEx					= $php_ext;
+		$this->report_table 			= $report_table;
+		$this->report_details_table 	= $report_details_table;
+		$this->subscribed_forums_table	= $subscribed_forums_table;
 		$this->request					= $request;
-		$this->table_prefix				= $table_prefix;
 		$this->template					= $template;
 		$this->user						= $user;
+
+		$this->digests_storage_path 	= $this->phpbb_root_path . 'store/phpbbservices/digests';
 	}
 
 	/**
@@ -112,6 +122,8 @@ class acp_controller
 					'MAX_ITEMS'								=> $this->config['phpbbservices_digests_max_items'],
 					'MIN_POPULARITY_SIZE'					=> $this->config['phpbbservices_digests_min_popularity_size'],
 					'REPLY_TO_EMAIL_ADDRESS'				=> $this->config['phpbbservices_digests_reply_to_email_address'],
+					'REPORTING_DAYS'						=> $this->config['phpbbservices_digests_reporting_days'],
+					'ROWS_PER_PAGE'							=> $this->config['phpbbservices_digests_rows_per_page'],
 					'STRIP_TAGS'							=> $this->config['phpbbservices_digests_strip_tags'],
 					'SALUTATION_FIELDS'						=> $this->config['phpbbservices_digests_saluation_fields'],
 					'S_DIGESTS_BLOCK_IMAGES'				=> (bool) $this->config['phpbbservices_digests_block_images'],
@@ -123,10 +135,10 @@ class acp_controller
 					'S_DIGESTS_LOWERCASE_DIGEST_TYPE'		=> (bool) $this->config['phpbbservices_digests_lowercase_digest_type'],
 					'S_DIGESTS_NOTIFY_ON_ADMIN_CHANGES'		=> (bool) $this->config['phpbbservices_digests_notify_on_admin_changes'],
 					'S_DIGESTS_REGISTRATION_FIELD'			=> (bool) $this->config['phpbbservices_digests_registration_field'],
+					'S_DIGESTS_REPORTING_ENABLE'			=> (bool) $this->config['phpbbservices_digests_reporting_enable'],
 					'S_DIGESTS_SHOW_EMAIL'					=> (bool) $this->config['phpbbservices_digests_show_email'],
 					'S_DIGESTS_SHOW_FORUM_PATH'				=> (bool) $this->config['phpbbservices_digests_show_forum_path'],
 					'S_DIGESTS_UNLINK_FOREIGN_URLS'			=> (bool) $this->config['phpbbservices_digests_foreign_urls'],
-					'USERS_PER_PAGE'						=> $this->config['phpbbservices_digests_users_per_page'],
 				));
 			break;
 
@@ -162,9 +174,14 @@ class acp_controller
 			break;
 
 			case 'digests_edit_subscribers':
+
+				// Change form URL to add start parameter so after form submittal we end up back on the same page.
+				$u_action .= '&amp;start=' . $this->request->variable('start', 0);
+
 				$this->template->assign_vars(array(
 					'L_TITLE'								=> $this->language->lang('ACP_DIGESTS_EDIT_SUBSCRIBERS'),
 					'L_TITLE_EXPLAIN'						=> $this->language->lang('ACP_DIGESTS_EDIT_SUBSCRIBERS_EXPLAIN'),
+					'U_ACTION'								=> $u_action,
 				));
 
 				// Grab some URL parameters that are used in sorting and filtering
@@ -182,11 +199,10 @@ class acp_controller
 
 				// Translate time zone information and set other switches
 				$this->template->assign_vars(array(
-					'L_DIGESTS_BASED_ON'							=> $this->language->lang('DIGESTS_BASED_ON', $my_time_zone),
-					'L_DIGESTS_HOUR_SENT'               			=> $this->language->lang('DIGESTS_HOUR_SENT', $my_time_zone),
-					'S_EDIT_SUBSCRIBERS'							=> true,	// In this module
-					'S_INCLUDE_DIGESTS_CSS'							=> true,	// Need to include special Digests CSS
-					'S_INCLUDE_DIGESTS_JS'							=> true,	// Need to include special Digests Javascript
+					'L_DIGESTS_BASED_ON'			=> $this->language->lang('DIGESTS_BASED_ON', $my_time_zone),
+					'L_DIGESTS_HOUR_SENT'           => $this->language->lang('DIGESTS_HOUR_SENT', $my_time_zone),
+					'S_EDIT_SUBSCRIBERS'			=> true,	// In this module
+					'S_INCLUDE_DIGESTS_JS'			=> true,	// Need to include special Digests Javascript
 				));
 
 				// Set up subscription filter
@@ -330,7 +346,7 @@ class acp_controller
 
 				// Create pagination logic
 				$pagination_url = append_sid("index.$this->phpEx?i=-phpbbservices-digests-acp-main_module&amp;mode=digests_edit_subscribers&amp;sortby=$sortby&amp;subscribe=$subscribe&amp;member=$member&amp;selected=$selected&amp;sortorder=$sortorder");
-				$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_users, $this->config['phpbbservices_digests_users_per_page'], $start);
+				$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_users, $this->config['phpbbservices_digests_rows_per_page'], $start);
 
 				// Stealing some code from my Smartfeed extension so I can get a list of forums that a particular user can access
 
@@ -408,7 +424,7 @@ class acp_controller
 
 				$sql = $this->db->sql_build_query('SELECT', $sql_array);
 
-				$result = $this->db->sql_query_limit($sql, $this->config['phpbbservices_digests_users_per_page'], $start);
+				$result = $this->db->sql_query_limit($sql, $this->config['phpbbservices_digests_rows_per_page'], $start);
 
 				while ($row = $this->db->sql_fetchrow($result))
 				{
@@ -489,7 +505,7 @@ class acp_controller
 						'SELECT'	=> 'forum_id ',
 
 						'FROM'		=> array(
-							$this->table_prefix . constants::DIGESTS_SUBSCRIBED_FORUMS_TABLE => 'sf',
+							$this->subscribed_forums_table => 'sf',
 						),
 
 						'WHERE'		=> 'user_id = ' . (int) $row['user_id'],
@@ -625,6 +641,7 @@ class acp_controller
 							'S_TOC_NO_CHECKED' 					=> ($row['user_digest_toc'] == 0),
 							'S_TOC_YES_CHECKED' 				=> ($row['user_digest_toc'] == 1),
 							'USERNAME'							=> $row['username'],
+							'USER_ADMIN_PATH'					=> append_sid("./index.$this->phpEx?i=acp_users&icat=12&mode=overview&username=" . urlencode($row['username'])),
 							'USER_DIGEST_FORMAT'				=> $digest_format,
 							'USER_DIGEST_HAS_UNSUBSCRIBED'		=> ($row['user_digest_has_unsubscribed']) ? 'x' : '-',
 							'USER_DIGEST_LAST_SENT'				=> $user_digest_last_sent,
@@ -795,7 +812,6 @@ class acp_controller
 					'L_TITLE_EXPLAIN'							=> $this->language->lang('ACP_DIGESTS_BALANCE_LOAD_EXPLAIN'),
 					'S_BALANCE_LOAD'							=> true,
 					'S_DIGESTS_AVERAGE'							=> '<strong>' . $avg_per_hour . '</strong>',
-					'S_INCLUDE_DIGESTS_CSS'						=> true,	// Need to include special Digests CSS
 				));
 
 				$sql_array = array(
@@ -946,21 +962,158 @@ class acp_controller
 					}
 					$current_hour_subscribers[] = $row['username'] . ' (' . $digest_type . ')';
 				}
+				if (count($current_hour_subscribers) == 0)
+				{
+					$current_hour_subscribers[] = $this->language->lang('DIGESTS_NO_SUBSCRIBERS');
+				}
 
 				$this->template->assign_vars(array(
+					'L_DIGESTS_RUN_TEST_DATE_HOUR_EXPLAIN'		=> $this->language->lang('DIGESTS_RUN_TEST_DATE_HOUR_EXPLAIN', $this->user->data['user_timezone']),
+					'L_DIGESTS_RUN_TEST_EMAIL_ADDRESS_EXPLAIN'	=> $this->language->lang('DIGESTS_RUN_TEST_EMAIL_ADDRESS_EXPLAIN', $this->config['board_email']),
+					'L_DIGESTS_RUN_TEST_SEND_TO_ADMIN_EXPLAIN'	=> $this->language->lang('DIGESTS_RUN_TEST_SEND_TO_ADMIN_EXPLAIN', $this->config['board_email']),
 					'L_TITLE'									=> $this->language->lang('ACP_DIGESTS_TEST'),
-					'L_TITLE_EXPLAIN'							=> sprintf($this->language->lang('ACP_DIGESTS_TEST_EXPLAIN'),implode($this->language->lang('DIGESTS_COMMA'), $current_hour_subscribers)),
+					'L_TITLE_EXPLAIN'							=> $this->language->lang('ACP_DIGESTS_TEST_EXPLAIN',implode($this->language->lang('DIGESTS_COMMA'), $current_hour_subscribers)),
 					'S_DIGESTS_MANUAL_RUN'						=> true, // Run this module
-					'S_DIGESTS_RUN_TEST'						=> (bool) $this->config['phpbbservices_digests_test'],
 					'S_DIGESTS_RUN_TEST_SEND_TO_ADMIN'			=> (bool) $this->config['phpbbservices_digests_test_send_to_admin'],
-					'S_DIGESTS_RUN_TEST_CLEAR_SPOOL'			=> (bool) $this->config['phpbbservices_digests_test_clear_spool'],
 					'S_DIGESTS_RUN_TEST_SPOOL'					=> (bool) $this->config['phpbbservices_digests_test_spool'],
 					'S_INCLUDE_DIGESTS_MANUAL_MAILER'			=> true,	// Allows inclusion of date and hour picker
 					'TEST_DATE_HOUR'							=> $this->config['phpbbservices_digests_test_date_hour'],
 					'TEST_EMAIL_ADDRESS'						=> $this->config['phpbbservices_digests_test_email_address'],
 				));
 
+			break;
 
+			case 'digests_clear_cached':
+
+				$cached_files = $this->get_cached_files_list();
+				$cached_files_list = count($cached_files) > 0 ? implode($this->language->lang('DIGESTS_COMMA'), $cached_files) : $this->language->lang('DIGESTS_NO_FILES');
+				$this->template->assign_vars(array(
+					'L_TITLE'									=> $this->language->lang('ACP_DIGESTS_CLEAR_CACHED_DIGESTS'),
+					'L_TITLE_EXPLAIN'							=> $this->language->lang('ACP_DIGESTS_CLEAR_CACHED_DIGESTS_EXPLAIN',count($cached_files), $cached_files_list),
+					'S_DIGESTS_CLEAR_CACHED'					=> true, // Run this module
+					'S_DIGESTS_CLEAR_REPORT'					=> (bool) $this->config['phpbbservices_digests_clear_report'],
+					'S_DIGESTS_RUN_TEST_CLEAR_SPOOL'			=> (bool) $this->config['phpbbservices_digests_test_clear_spool'],
+				));
+			break;
+
+			case 'digests_report':
+
+				// Get the total rows for pagination purposes
+				$sql_array = array(
+					'SELECT'	=> 'COUNT(*) AS total_rows',
+					'FROM'		=> array(
+						$this->report_table		=> 'r',
+					),
+				);
+
+				$sql = $this->db->sql_build_query('SELECT', $sql_array);
+
+				$result = $this->db->sql_query($sql);
+
+				// Get the total rows, this is a single row, single field.
+				$total_rows = $this->db->sql_fetchfield('total_rows');
+
+				// Free the result
+				$this->db->sql_freeresult($result);
+
+				// Determine the order by
+				$sort_field = $this->request->variable('sort_field','date_hour_sent_utc');
+				$sort_dir = $this->request->variable('sort','DESC');
+
+				// If not ordering by date_hour_sent_utc, make a second column order on this column
+				$more_sorts = ($sort_field != 'date_hour_sent_utc') ? ', date_hour_sent_utc ' . $sort_dir : '';
+
+				// Create pagination logic
+				$start = $this->request->variable('start', 0);
+				$pagination_url = append_sid("./index.$this->phpEx?i=-phpbbservices-digests-acp-main_module&amp;mode=digests_report&amp;sort={$sort_dir}&amp;sort_field={$sort_field}");
+				$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_rows, $this->config['phpbbservices_digests_rows_per_page'], $start);
+
+				// Get report data, show from most recent date/hour to least recent
+				$sql_array = [
+					'SELECT' => 'r.*',
+					'FROM'	=> [
+						$this->report_table => 'r',
+					],
+					'ORDER_BY' => "$sort_field $sort_dir{$more_sorts} LIMIT {$start},{$this->config['phpbbservices_digests_rows_per_page']}"
+				];
+				$sql = $this->db->sql_build_query('SELECT', $sql_array);
+				$result = $this->db->sql_query($sql);
+				$rowset = $this->db->sql_fetchrowset($result);
+
+				foreach ($rowset as $row)
+				{
+					switch ($row['cron_type'])
+					{
+						case constants::DIGESTS_RUN_REGULAR:
+						default:
+							$cron_type = $this->language->lang('DIGESTS_CRON_TYPE_PHPBB');
+						break;
+						case constants::DIGESTS_RUN_SYSTEM:
+							$cron_type = $this->language->lang('DIGESTS_CRON_TYPE_SYSTEM');
+						break;
+						case constants::DIGESTS_RUN_MANUAL:
+							$cron_type = $this->language->lang('DIGESTS_CRON_TYPE_MANUAL');
+						break;
+					}
+
+					$mailed_tooltip = '';
+					$show_mailed_tooltip = false;
+					if (((int) $row['mailed']) > 0)
+					{
+						$mailed_tooltip = $this->language->lang('DIGESTS_MAILED_TOOLTIP');
+						$show_mailed_tooltip = true;
+					}
+
+					$skipped_tooltip = '';
+					$show_skipped_tooltip = false;
+					if (((int) $row['skipped']) > 0)
+					{
+						$skipped_tooltip = $this->language->lang('DIGESTS_SKIPPED_TOOLTIP');
+						$show_skipped_tooltip = true;
+					}
+
+					// Save the digests_report_id so we can find any rows in the phpbb_digests_report_details table.
+					// We want to avoid an outer join with this table above because it messes up pagination.
+					$digests_report_ids[] = $row['digests_report_id'];
+					$mailed_details = '';
+					$skipped_details = '';
+					if ($row['mailed'] > 0)
+					{
+						$mailed_details = $this->get_hourly_details($row['digests_report_id'], true);
+					}
+					if ($row['skipped'] > 0)
+					{
+						$skipped_details = $this->get_hourly_details($row['digests_report_id'], false);
+					}
+
+					$this->template->assign_block_vars('digests_reports', array(
+						'CRON_TYPE'					=> $cron_type,
+						'DATE_HOUR'         		=> date($this->user->data['user_dateformat'],$row['date_hour_sent_utc']),
+						'EXECUTION_TIME'			=> $row['execution_time_secs'],
+						'MAILED'					=> $row['mailed'] > 0 ? "<strong>{$row['mailed']}</strong>" : $row['mailed'],
+						'MAILED_DETAILS'			=> $mailed_details,
+						'MAILED_TOOLTIP'			=> $mailed_tooltip,
+						'MEMORY_USED'				=> $row['memory_used_mb'],
+						'PROCESS_ENDED'				=> date($this->user->data['user_dateformat'],$row['ended']),
+						'PROCESS_STARTED'   		=> date($this->user->data['user_dateformat'],$row['started']),
+						'S_SHOW_MAILED_TOOLTIP'		=> $show_mailed_tooltip,
+						'S_SHOW_SKIPPED_TOOLTIP'	=> $show_skipped_tooltip,
+						'SKIPPED'					=> $row['skipped'] > 0 ? "<strong>{$row['skipped']}</strong>" : $row['skipped'],
+						'SKIPPED_DETAILS'			=> $skipped_details,
+						'SKIPPED_TOOLTIP'			=> $skipped_tooltip,
+					));
+				}
+				$this->db->sql_freeresult($result);
+
+				$this->template->assign_vars(array(
+					'L_TITLE'					=> $this->language->lang('ACP_DIGESTS_REPORTS'),
+					'L_TITLE_EXPLAIN'			=> $this->language->lang('ACP_DIGESTS_REPORTS_EXPLAIN'),
+					'REPORTS_URL'				=> $pagination_url,
+					'SORT_DIR'					=> $sort_dir == 'ASC' ? 'DESC' : 'ASC', // Toggle the field
+					'SORT_FIELD'				=> $sort_field,
+					'S_INCLUDE_DIGESTS_REPORTS'	=> true,
+					'S_REPORTS'					=> true, // Run this module
+				));
 
 			break;
 
@@ -980,6 +1133,7 @@ class acp_controller
 			if ($mode === 'digests_general')
 			{
 				$this->config->set('phpbbservices_digests_block_images', $this->request->variable('phpbbservices_digests_block_images', 0));
+				$this->config->set('phpbbservices_digests_reporting_enable', $this->request->variable('phpbbservices_digests_reporting_enable', 0));
 				$this->config->set('phpbbservices_digests_custom_stylesheet_path', $this->request->variable('phpbbservices_digests_custom_stylesheet_path', ''));
 				$this->config->set('phpbbservices_digests_debug', $this->request->variable('phpbbservices_digests_debug', 0));
 				$this->config->set('phpbbservices_digests_enable_auto_subscriptions', $this->request->variable('phpbbservices_digests_enable_auto_subscriptions', 0));
@@ -996,11 +1150,12 @@ class acp_controller
 				$this->config->set('phpbbservices_digests_notify_on_admin_changes', $this->request->variable('phpbbservices_digests_notify_on_admin_changes', 0));
 				$this->config->set('phpbbservices_digests_registration_field', $this->request->variable('phpbbservices_digests_registration_field', 0));
 				$this->config->set('phpbbservices_digests_reply_to_email_address', $this->request->variable('phpbbservices_digests_reply_to_email_address', ''));
+				$this->config->set('phpbbservices_digests_reporting_days', $this->request->variable('phpbbservices_digests_reporting_days', ''));
+				$this->config->set('phpbbservices_digests_rows_per_page', $this->request->variable('phpbbservices_digests_rows_per_page', 20));
 				$this->config->set('phpbbservices_digests_saluation_fields', $this->request->variable('phpbbservices_digests_saluation_fields', ''));
 				$this->config->set('phpbbservices_digests_show_email', $this->request->variable('phpbbservices_digests_show_email', 0));
 				$this->config->set('phpbbservices_digests_show_forum_path', $this->request->variable('phpbbservices_digests_show_forum_path', 0));
 				$this->config->set('phpbbservices_digests_strip_tags', $this->request->variable('phpbbservices_digests_strip_tags', ''));
-				$this->config->set('phpbbservices_digests_users_per_page', $this->request->variable('phpbbservices_digests_users_per_page', 20));
 				$this->config->set('phpbbservices_digests_weekly_digest_day', $this->request->variable('phpbbservices_digests_weekly_digest_day', 0));
 
 				// If config variable phpbbservices_digests_min_popularity_size value is more than any row in the phpbb_users table for the
@@ -1121,14 +1276,14 @@ class acp_controller
 							}
 
 							// If there are any individual forum subscriptions for this user, remove the old ones.
-							$sql = 'DELETE FROM ' . $this->table_prefix . constants::DIGESTS_SUBSCRIBED_FORUMS_TABLE . ' 
+							$sql = 'DELETE FROM ' . $this->subscribed_forums_table . ' 
 									WHERE user_id = ' . (int) $current_user_id;
 							$this->db->sql_query($sql);
 
 							// Now save the individual forum subscriptions, if any
 							if ($change_details && isset($sql_ary2) && count($sql_ary2) > 0)
 							{
-								$this->db->sql_multi_insert($this->table_prefix . constants::DIGESTS_SUBSCRIBED_FORUMS_TABLE, $sql_ary2);
+								$this->db->sql_multi_insert($this->subscribed_forums_table, $sql_ary2);
 							}
 
 							// Also want to save some information to an array to be used for sending emails to affected users.
@@ -1289,14 +1444,14 @@ class acp_controller
 				}
 
 				// If there are any individual forum subscriptions for this user, remove the old ones.
-				$sql = 'DELETE FROM ' . $this->table_prefix . constants::DIGESTS_SUBSCRIBED_FORUMS_TABLE . ' 
+				$sql = 'DELETE FROM ' . $this->subscribed_forums_table . ' 
 						WHERE user_id = ' . (int) $current_user_id;
 				$this->db->sql_query($sql);
 
 				// Now save the individual forum subscriptions, if any
 				if ($change_details && isset($sql_ary2) && count($sql_ary2) > 0)
 				{
-					$this->db->sql_multi_insert($this->table_prefix . constants::DIGESTS_SUBSCRIBED_FORUMS_TABLE, $sql_ary2);
+					$this->db->sql_multi_insert($this->subscribed_forums_table, $sql_ary2);
 				}
 
 				// Also want to save some information to an array to be used for sending emails to affected users.
@@ -1616,70 +1771,19 @@ class acp_controller
 
 				define('IN_DIGESTS_TEST', true);
 				$proceed = true;
-				$digests_storage_path = $this->phpbb_root_path . 'store/phpbbservices/digests';
 
 				// Store the form field settings
-				$this->config->set('phpbbservices_digests_test', $this->request->variable('phpbbservices_digests_test', 0));
-				$this->config->set('phpbbservices_digests_test_clear_spool', $this->request->variable('phpbbservices_digests_test_clear_spool', 0));
 				$this->config->set('phpbbservices_digests_test_date_hour', $this->request->variable('phpbbservices_digests_test_date_hour', ''));
 				$this->config->set('phpbbservices_digests_test_send_to_admin', $this->request->variable('phpbbservices_digests_test_send_to_admin', 0));
 				$this->config->set('phpbbservices_digests_test_spool', $this->request->variable('phpbbservices_digests_test_spool', 0));
 				$this->config->set('phpbbservices_digests_test_email_address', $this->request->variable('phpbbservices_digests_test_email_address', ''));
 
-				if (!$this->config['phpbbservices_digests_test'] && !$this->config['phpbbservices_digests_test_clear_spool'])
-				{
-					$message = $this->language->lang('DIGESTS_MAILER_NOT_RUN');
-					$proceed = false;
-				}
-
 				// Create the store/phpbbservices/digests folder. It should exist already.
 				if (!$this->helper->make_directories())
 				{
 					$message_type = E_USER_WARNING;
-					$message = sprintf($this->language->lang('DIGESTS_CREATE_DIRECTORY_ERROR'), $digests_storage_path);
+					$message = $this->language->lang('DIGESTS_CREATE_DIRECTORY_ERROR', $this->digests_storage_path);
 					$proceed = false;
-				}
-
-				if ($proceed && $this->config['phpbbservices_digests_test_clear_spool'])
-				{
-
-					// Clear the digests store folder of .txt and .html files, if so instructed
-
-					$all_cleared = true;
-
-					foreach (new \DirectoryIterator($digests_storage_path) as $file_info)
-					{
-						$file_name = $file_info->getFilename();
-						// Exclude dot files, hidden files and non "real" files, and real files if they don't have the .html or .txt suffix
-						if ((substr($file_name, 0, 1) !== '.') && $file_info->isFile() && ($file_info->getExtension() == 'html' || $file_info->getExtension() == 'txt'))
-						{
-							$deleted = unlink($digests_storage_path . '/' . $file_name); // delete file
-							if (!$deleted)
-							{
-								$all_cleared = false;
-							}
-						}
-					}
-
-					if ($this->config['phpbbservices_digests_enable_log'])
-					{
-						if ($all_cleared)
-						{
-							$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_CACHE_CLEARED');
-						}
-						else
-						{
-							$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_CLEAR_SPOOL_ERROR');
-						}
-					}
-
-					if (!$all_cleared)
-					{
-						$message_type = E_USER_WARNING;
-						$message = $this->language->lang('DIGESTS_RUN_TEST_CLEAR_SPOOL_ERROR');
-						$proceed = false;
-					}
-
 				}
 
 				if ($proceed && (trim($this->config['phpbbservices_digests_test_date_hour']) !== ''))
@@ -1697,7 +1801,7 @@ class acp_controller
 				}
 
 				// Get ready to manually mail digests
-				if ($proceed && $this->config['phpbbservices_digests_test'])
+				if ($proceed)
 				{
 
 					// Call the mailer's run method. The logic for sending a digest is embedded in this method, which is normally run as a cron task.
@@ -1722,6 +1826,89 @@ class acp_controller
 
 			}
 
+			if ($mode === 'digests_clear_cached')
+			{
+
+				// Store the form field settings
+				$this->config->set('phpbbservices_digests_test_clear_spool', $this->request->variable('phpbbservices_digests_test_clear_spool', 0));
+				$this->config->set('phpbbservices_digests_clear_report', $this->request->variable('phpbbservices_digests_clear_report', 0));
+
+				// Handle clearing the digests cache
+				if (!$this->config['phpbbservices_digests_test_clear_spool'])
+				{
+					$message[] = $this->language->lang('DIGESTS_CLEAR_CACHE_NOT_RUN');
+				}
+				else
+				{
+					// Clear the digests store folder of .txt and .html files
+					$all_cleared = true;
+
+					if (!is_dir($this->digests_storage_path))
+					{
+						// If the digests store directory does not exist, we need to bail
+						$all_cleared = false;
+					}
+					else
+					{
+						foreach (new \DirectoryIterator($this->digests_storage_path) as $file_info)
+						{
+							$file_name = $file_info->getFilename();
+							// Exclude dot files, hidden files and non "real" files, and real files if they don't have the .html or .txt suffix
+							if ((substr($file_name, 0, 1) !== '.') && $file_info->isFile() && ($file_info->getExtension() == 'html' || $file_info->getExtension() == 'txt'))
+							{
+								$deleted = unlink($this->digests_storage_path . '/' . $file_name); // delete file
+								if (!$deleted)
+								{
+									$all_cleared = false;
+								}
+							}
+						}
+					}
+
+					if ($this->config['phpbbservices_digests_enable_log'])
+					{
+						if ($all_cleared)
+						{
+							$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_CACHE_CLEARED');
+						}
+						else
+						{
+							$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_CLEAR_SPOOL_ERROR');
+						}
+					}
+
+					if (!$all_cleared)
+					{
+						$message_type = E_USER_WARNING;
+						$message[] = $this->language->lang('DIGESTS_RUN_TEST_CLEAR_SPOOL_ERROR');
+					}
+					else
+					{
+						$message[] = strip_tags($this->language->lang('LOG_CONFIG_DIGESTS_CACHE_CLEARED'));
+					}
+
+				}
+
+				// Handle clearing the digests cache
+				if (!$this->config['phpbbservices_digests_clear_report'])
+				{
+					$message[] = $this->language->lang('DIGESTS_CLEAR_REPORT_NOT_RUN');
+				}
+				else
+				{
+					$sql = 'DELETE FROM ' . $this->report_table;
+					$this->db->sql_query($sql);
+
+					$sql = 'DELETE FROM ' . $this->report_details_table;
+					$this->db->sql_query($sql);
+
+					$message[] = $this->language->lang('DIGESTS_CLEAR_REPORT_RUN');
+					$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_CLEAR_REPORT');
+				}
+				$message = implode('<br>', $message);
+
+			}
+
 			if (!isset($message_type))
 			{
 				$message_type = E_USER_NOTICE;
@@ -1739,9 +1926,25 @@ class acp_controller
 				}
 			}
 
-			if ($mode !== 'digests_test')
+			if ($mode !== 'digests_test' && $mode !== 'digests_clear_cached')
 			{
+				// Record the settings were changed in the log
 				$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_' . strtoupper($mode));
+			}
+
+			if ($mode == 'digests_test')
+			{
+				// This code will place the module links in the ACP sidebar if they have disappeared. They can disappear
+				// when the digests mailer uses the templating system (any digests are processed for an hour).
+				if (!isset($module))
+				{
+					$module_id	= $this->request->variable('i', '');
+					$mode		= $this->request->variable('mode', '');
+					$module 	= new \p_master();
+					$module->list_modules('acp');
+					$module->set_active($module_id, $mode);
+					$module->assign_tpl_vars(append_sid("{$this->phpbb_root_path}adm/index.{$this->phpEx}"));
+				}
 			}
 
 			trigger_error($message . adm_back_link($u_action), $message_type);
@@ -1937,6 +2140,64 @@ class acp_controller
 		$sql_ary['user_digest_toc']					= $this->config['phpbbservices_digests_user_digest_toc'];
 
 		return ($sql_ary);
+
+	}
+
+	function get_cached_files_list()
+	{
+		// This function returns an array of digest cached files. These will have either a .html or .txt suffix and are stored in the
+		// /store/phpbbservices/digests folder.
+
+		$cached_files = array();
+
+		if (is_dir($this->digests_storage_path))
+		{
+			foreach (new \DirectoryIterator($this->digests_storage_path) as $file_info)
+			{
+				$file_name = $file_info->getFilename();
+				// Exclude dot files, hidden files and non "real" files, and real files if they don't have the .html or .txt suffix
+				if ((substr($file_name, 0, 1) !== '.') && $file_info->isFile() && ($file_info->getExtension() == 'html' || $file_info->getExtension() == 'txt'))
+				{
+					$cached_files[] = $file_name;
+				}
+			}
+		}
+
+		return $cached_files;
+	}
+
+	function get_hourly_details($digests_report_id, $is_mailed = true)
+	{
+
+		// Gets digest mailing details for a particular date and hour. This appears in a popup alert box on the report details page.
+
+		// status == 1 means digest was sent, not skipped. sent == 1 means no mailing error occurred sending out the digest.
+		$sql_where = ($is_mailed) ? ' AND status = 1 and sent = 1' : ' AND status = 0';
+
+		// Now get any applicable rows from the phpbb_digests_report_details table
+		$sql_array = [
+			'SELECT' => 'd.*, u.username',
+			'FROM'	=> [
+				$this->report_details_table => 'd',
+				USERS_TABLE => 'u'
+			],
+			'WHERE' => 'd.user_id = u.user_id AND ' . $this->db->sql_in_set('digests_report_id', $digests_report_id) . $sql_where,
+		];
+		$sql = $this->db->sql_build_query('SELECT', $sql_array);
+		$result = $this->db->sql_query($sql);
+		$rowset = $this->db->sql_fetchrowset($result);
+
+		$detail_rows = array();
+		foreach ($rowset as $row)
+		{
+			$detail_rows[] = ($is_mailed) ?
+				$row['username'] . $this->language->lang('DIGESTS_SENT_AT') . date($this->user->data['user_dateformat'], $row['creation_time']) :
+				$row['username'] . $this->language->lang('DIGESTS_SKIPPED_AT') . date($this->user->data['user_dateformat'], $row['creation_time']);
+		}
+
+		$this->db->sql_freeresult($result);
+
+		return (count($detail_rows) == 0) ? $this->language->lang('DIGESTS_NO_DETAILS_ERROR') : implode('<br>', $detail_rows);
 
 	}
 

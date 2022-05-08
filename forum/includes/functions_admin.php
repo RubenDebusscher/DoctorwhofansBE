@@ -503,7 +503,7 @@ function copy_forum_permissions($src_forum_id, $dest_forum_ids, $clear_dest_perm
 * Get physical file listing
 */
 if (!function_exists('filelist')){
-function filelist($rootdir, $dir = '', $type = 'gif|jpg|jpeg|png')
+function filelist($rootdir, $dir = '', $type = 'gif|jpg|jpeg|png|svg|webp')
 {
 	$matches = array($dir => array());
 

@@ -21,6 +21,7 @@ class unsubscribe
 	protected $helper;
 	protected $language;
 	protected $request;
+	protected $subscribed_forums_table;
 	protected $user;
 
 	/**
@@ -31,15 +32,17 @@ class unsubscribe
 	 * @param \phpbb\db\driver\factory 				$db 		The database factory object
 	 * @param \phpbbservices\digests\core\common	$helper		Digests helper object
 	 * @param \phpbb\language\language 				$language 	Language object
+	 * @param string								$subscribed_forums_table	Extension's subscribed forums table
 	 *
 	 *
 	 */
-	public function __construct(\phpbb\request\request $request, \phpbb\user $user, \phpbb\db\driver\factory $db, \phpbbservices\digests\core\common $helper, \phpbb\language\language $language)
+	public function __construct(\phpbb\request\request $request, \phpbb\user $user, \phpbb\db\driver\factory $db, \phpbbservices\digests\core\common $helper, \phpbb\language\language $language, string $subscribed_forums_table)
 	{
 		$this->db 		= $db;
 		$this->helper	= $helper;
 		$this->language = $language;
 		$this->request 	= $request;
+		$this->subscribed_forums_table = $subscribed_forums_table;
 		$this->user 	= $user;
 	}
 
@@ -51,27 +54,37 @@ class unsubscribe
 		// This function handles one-click unsubscribe. The link is in the footer of the email digest.
 
 		$user_id = $this->request->variable('u', ANONYMOUS, true);
-		$email = $this->request->variable('e', '', true);	// The user's email address must match the user_id for the unsubscribe request to be assumed to be legitimate
+		$salt = $this->request->variable('s', '', true);	// The user_form_salt for the user must match the user_id for the unsubscribe request to be assumed to be legitimate
 
 		$success = false;
 		if ($user_id != ANONYMOUS)
 		{
-			$sql = 'SELECT user_email 
+			$sql = 'SELECT user_form_salt, user_email
 				FROM ' . USERS_TABLE . '
 				WHERE user_id = ' . (int) $user_id . ' AND ' . $this->db->sql_in_set('user_type', array(USER_IGNORE), true);
 			$result = $this->db->sql_query($sql);
 			$rowset = $this->db->sql_fetchrowset($result);
+			$email = '';
 
-			if (count($rowset) == 1 && trim($rowset[0]['user_email']) == trim($email))
+			if (count($rowset) == 1 && trim($rowset[0]['user_form_salt']) == trim($salt))
 			{
-				// This unsubscribe request should be valid
+				// This unsubscribe request should be valid because the user_id matches the email address in the request
 				$sql2 = 'UPDATE ' . USERS_TABLE . "
 					SET user_digest_type = '" . constants::DIGESTS_NONE_VALUE . "'
 					WHERE user_id = " . (int) $user_id;
 				$this->db->sql_query($sql2);
 				$success = true;
+
+				// Delete any forum subscriptions
+				$sql2 = 'DELETE FROM ' . $this->subscribed_forums_table . ' 
+					WHERE user_id = ' . (int) $user_id;
+				$this->db->sql_query($sql2);
+
+				$email = $rowset[0]['user_email'];
+
 			}
 			$this->db->sql_freeresult($result);
+
 		}
 
 		if ($success)

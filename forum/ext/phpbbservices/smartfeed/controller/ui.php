@@ -43,7 +43,7 @@ class ui
 	*/
 	
 	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\user $user,
-		$php_ext, \phpbb\db\driver\factory $db, \phpbb\auth\auth $auth, $phpbb_root_path, \phpbbservices\smartfeed\core\common $common, $ext_root_path, \phpbb\language\language $language)
+		string $php_ext, \phpbb\db\driver\factory $db, \phpbb\auth\auth $auth, string $phpbb_root_path, \phpbbservices\smartfeed\core\common $common, string $ext_root_path, \phpbb\language\language $language)
 	{
 		$this->config = $config;
 		$this->helper = $helper;
@@ -121,25 +121,6 @@ class ui
 		}
 
 		$allowed_forum_ids = array();
-		$forum_read_ary = array();
-		
-		// Get forum read permissions for this user. They are also usually stored in the user_permissions column, but sometimes the field is empty. This always works.
-		$forum_array = $this->auth->acl_raw_data_single_user($smartfeed_user_id);
-		
-		foreach ($forum_array as $key => $value)
-		{
-			foreach ($value as $auth_option_id => $auth_setting)
-			{
-				if ($this->auth->acl_get('f_read', $key))
-				{
-					$forum_read_ary[$key]['f_read'] = 1;
-				}
-				if ($this->auth->acl_get('f_list', $key))
-				{
-					$forum_read_ary[$key]['f_list'] = 1;
-				}
-			}
-		}
 
 		// Get a list of parent_ids for each forum and put them in an array.
 		$parent_array = array();
@@ -153,35 +134,32 @@ class ui
 		}
 		$this->db->sql_freeresult($result);
 
-		if (sizeof($forum_read_ary) > 0) // This should avoid a PHP Notice
+		foreach ($parent_array as $forum_id => $parent_id)
 		{
-			foreach ($forum_read_ary as $forum_id => $allowed)
+			if ($this->auth->acl_get('f_read', $forum_id) && $this->auth->acl_get('f_list', $forum_id) && $this->common->check_all_parents($parent_array, $forum_id))
 			{
-				if ($this->auth->acl_get('f_read', $forum_id) && $this->auth->acl_get('f_list', $forum_id) && $this->common->check_all_parents($parent_array, $forum_id))
+				// Since this user has read access to this forum, add it to the $allowed_forum_ids array
+				$allowed_forum_ids[] = (int) $forum_id;
+
+				// Also add to $allowed_forum_ids the parents, if any, of this forum. Actually we have to find the parent's parents, etc., going up as far as necessary because
+				// $this->auth->act_getf does not return the parents for which the user has access, yet parents must be shown are in the user interface
+				$there_are_parents = true;
+				$this_forum_id = (int) $forum_id;
+
+				while ($there_are_parents)
 				{
-					// Since this user has read access to this forum, add it to the $allowed_forum_ids array
-					$allowed_forum_ids[] = (int) $forum_id;
-					
-					// Also add to $allowed_forum_ids the parents, if any, of this forum. Actually we have to find the parent's parents, etc., going up as far as necessary because 
-					// $this->auth->act_getf does not return the parents for which the user has access, yet parents must be shown are in the user interface
-					$there_are_parents = true;
-					$this_forum_id = (int) $forum_id;
-					
-					while ($there_are_parents)
+					if ($parent_array[$this_forum_id] == 0)
 					{
-						if ($parent_array[$this_forum_id] == 0)
+						$there_are_parents = false;
+					}
+					else
+					{
+						// Do not add this parent to the list of allowed forums if it is already in the array
+						if (!in_array((int) $parent_array[$this_forum_id], $allowed_forum_ids))
 						{
-							$there_are_parents = false;
+							$allowed_forum_ids[] = (int) $parent_array[$this_forum_id];
 						}
-						else
-						{
-							// Do not add this parent to the list of allowed forums if it is already in the array
-							if (!in_array((int) $parent_array[$this_forum_id], $allowed_forum_ids))
-							{
-								$allowed_forum_ids[] = (int) $parent_array[$this_forum_id];
-							} 
-							$this_forum_id = (int) $parent_array[$this_forum_id];	// Keep looping...
-						}
+						$this_forum_id = (int) $parent_array[$this_forum_id];	// Keep looping...
 					}
 				}
 			}
@@ -415,8 +393,7 @@ class ui
 			'S_SMARTFEED_USER_ID' 				=> constants::SMARTFEED_USER_ID,
 			'S_SMARTFEED_USERNAMES' 			=> constants::SMARTFEED_USERNAMES,
 			'U_SMARTFEED_IMAGE_PATH'         	=> generate_board_url() . $this->ext_root_path . 'styles/all/theme/images/',
-			//'UA_SMARTFEED_SITE_URL'				=> $this->helper->route('phpbbservices_smartfeed_feed_controller', array(), true, false, \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL),
-			'UA_SMARTFEED_SITE_URL'				=>"forum.doctorwhofans.be/feed",
+			'UA_SMARTFEED_SITE_URL'				=> $this->helper->route('phpbbservices_smartfeed_feed_controller', array(), true, false, \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL),
 			'UA_SMARTFEED_USER_ID'				=> $smartfeed_user_id,
 
 			)
