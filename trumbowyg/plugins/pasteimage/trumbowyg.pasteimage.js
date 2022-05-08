@@ -29,7 +29,7 @@
                                         trumbowyg.execCmd('insertImage', event.target.result, false, true);
                                     };
                                     /* jshint +W083 */
-                                    reader.readAsDataURL(items[i].getAsFile());
+                                    reader.readAsdataURL(items[i].getAsFile());
 
                                     mustPreventDefault = true;
                                 }

@@ -147,7 +147,7 @@
                                         }
                                     };
 
-                                    fReader.readAsDataURL(file);
+                                    fReader.readAsdataURL(file);
                                 }
                             );
 

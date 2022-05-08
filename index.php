@@ -91,10 +91,10 @@ $_SESSION["Menu"]="";?>
     ?>
    
 <script>
-        setDarkmodefromCookie();
+        setDarkModeFromCookie();
         setFontFromCookie();
         if (getCookie("size") != "") {
-            getSizesfromCookie();
+            getSizesFromCookie();
         }
         var menu = "<?php echo $menu?>";
         var id=Number("<?php echo $id?>");

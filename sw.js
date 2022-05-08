@@ -2,8 +2,8 @@ var CACHE_NAME = 'my-site-cache-v2';
 var urlsToCache = [
   'https://www.doctorwhofans.be/css',
   'https://www.doctorwhofans.be/js',
-  'https://www.doctorwhofans.be/images',
-  'https://www.doctorwhofans.be/'
+  'https://www.doctorwhofans.be/images'//,
+  //'https://www.doctorwhofans.be/'
 ];
 // @ts-ignore
 let deferredPrompt;
