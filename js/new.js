@@ -256,9 +256,9 @@ function populateLangChoice(Choices){
     var option= document.createElement("option");
     option.value=Choices.data[i].language_Name;
     option.innerText=Choices.data[i].language_LongName;
-    $("#lang-select").append(option)
+    $("#lang-select").append(option);
   }
-  var currentLang=getCookie("lang")
+  var currentLang=getCookie("lang");
   $("#lang-select option[value='"+currentLang+"']").attr("disabled","disabled");
   $("#lang-select option[value='"+currentLang+"']").attr("selected","selected");
 }
@@ -368,12 +368,15 @@ function GetContent(menu, id) {
       if(menu.startsWith('Category:')){
         console.log("This is a Category, WIP");
         populateEpisodesOfTheDay(response.EpisodesOf_The_day);
+        populateActorsOfTheDay(response.ActorsOf_The_day);
         footerAlign();
          //TODO: #55 set default title for Category, replace with content of content Function, but after content, add an item to put categories in (that is excluded for replacement when content is not null),
         Content(response.Content);
       }else{
         populatePath(response.Path);
         populateEpisodesOfTheDay(response.EpisodesOf_The_day);
+        populateActorsOfTheDay(response.ActorsOf_The_day);
+
         footerAlign();
         document.title = response.Page[0].page_Name;
         Content(response.Content);
@@ -402,6 +405,10 @@ function GetContent(menu, id) {
             $('main article').append('<ul id="Sitemap"></ul>');
             createSiteMap("Sitemap", response.Sitemap);
             break;
+          case "Video":
+            AddMainVideoToDom(response.MainVideo,".MainVideo","replace");
+            AddVideoSelectionToDom(response.Videos);
+            break;
           default:
             // code block
         }
@@ -417,7 +424,6 @@ function GetContent(menu, id) {
         });
         $("#Inhoud").append(varlist);
       }
-      
     });
   }
 }
@@ -455,6 +461,42 @@ function AddQuoteSelectionToDom(quotes){
   }
 
 }
+
+function AddMainVideoToDom(mainVideo,Parentelem,replace){
+  var MainVideoElem = "";
+  var MainVideoImage="";
+  
+
+  if(replace=="replace"){
+    MainVideoImage="<iframe src='"+mainVideo[0].video_URL+"' allowfullscreen width='420' height='315'></iframe>";
+    MainVideoElem +="<h2>"+mainVideo[0].video_Name+"</h2>";
+    MainVideoElem += MainVideoImage;
+    $(Parentelem).html(MainVideoElem);
+  }else{
+    MainVideoImage="<iframe src='"+mainVideo[0].video_URL+"' allowfullscreen width='420' height='315'></iframe>";
+    MainVideoElem +="<h2>"+mainVideo[0].video_Name+"</h2>";
+    MainVideoElem += MainVideoImage;
+    $(Parentelem).append(MainVideoElem);
+  }
+}
+function AddVideoSelectionToDom(videos){
+  let Videoselection = "";
+  if(videos.length >0){
+    for (var i = 0; i < videos.length; i++) {
+      Videoselection += " <a href='" + window.location.origin + "/Video/" + videos[i].video_Id + ".html'>" + videos[i].video_Name + "</a>";
+    }
+    $('.VideoChoice').html(Videoselection);
+
+  }
+
+}
+
+
+
+
+
+
+
 function ChildPages(Pages) {
   var OverzichtEl = "";
   if (Pages.length > 0) {
@@ -636,6 +678,25 @@ function populateEpisodesOfTheDay(Episodes) {
   }
 }
 
+
+function populateActorsOfTheDay(Actors) {
+  $(".p__ActorsOfTheDay").text('Birthdays and in memoriam:');
+  var Actorlist = "";
+  if (Actors.length > 0) {
+    for (var i = 0; i < Actors.length; i++) {
+
+      if (Actors[0].Type == "Birthday") {
+        Actorlist += "<li><a href='../"+Actors[i].page_Link +".html'>" + Actors[i].actor_First_name +" "+Actors[i].actor_Last_name + " (&deg;" + getYear(Actors[i].actor_Birthdate) + ")</a></li>";
+      } else {
+        Actorlist += "<li><a href='../"+Actors[i].page_Link +".html'>" + Actors[i].actor_First_name +" "+Actors[i].actor_Last_name + " (&#10013;" + getYear(Actors[i].actor_Deathdate) + ")</a></li>";
+      }
+    }
+    $(".footer__ActorsOfTheDay ol").html(Actorlist);
+  } else {
+    $(".footer__ActorsOfTheDay").html("<p>Geen Birthdays/In memoriams vandaag</p>");
+  }
+}
+
 /**
  * * Small functions that support the bigger functions for reusability
  */
@@ -722,7 +783,7 @@ function LocalDate(original) {
   } else {
     langFormat = 'default';
   }
-  var newdate = rawDate.toLocaleString(langFormat, {
+  var newDate = rawDate.toLocaleString(langFormat, {
     month: 'long',
     year: 'numeric',
     day: '2-digit',
@@ -731,7 +792,7 @@ function LocalDate(original) {
     second: '2-digit',
     timeZoneName: 'short'
   });
-  return newdate;
+  return newDate;
 }
 
 function DumpInfo(elem,data) {
@@ -749,7 +810,7 @@ function PreviousNextLink(EpisodeText, EpisodeLink) {
 
 function Episodes(episodes) {
   var tableRow;
-  var tabledata ="";
+  var tableData ="";
   for (var i = 0; i < episodes.length; i++) {
     if (episodes[i].state.search('Missing') > -1) {
       tableRow = '<tr class="missing">';
@@ -774,9 +835,9 @@ function Episodes(episodes) {
     tableRow += '<td>' + stateString + '</td>';
 
     tableRow += '</tr>';
-    tabledata += tableRow;
+    tableData += tableRow;
   }
-  $('#EpisodeTable tbody').html(tabledata);
+  $('#EpisodeTable tbody').html(tableData);
 
 }
 
@@ -790,8 +851,11 @@ function buildLogo(element, color) {
 
 let deferredPrompt;
 
+/* Listening for the beforeinstallprompt event. When the event is fired, it prevents the default
+behavior (which is to show the mini-info bar) and stores the event in a variable so it can be
+triggered later. */
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing on mobile
+  // Prevent the mini-info bar from appearing on mobile
   e.preventDefault();
   // Stash the event so it can be triggered later.
   deferredPrompt = e;
@@ -818,6 +882,8 @@ function A2HS() {
   });
 }
 
+/* The code below is listening for the appinstalled event. When the event is fired, the install button
+is hidden. */
 window.addEventListener('appinstalled', (evt) => {
   $('.installButton').css('display', 'none');
   //console.log('INSTALL: Success');
@@ -847,6 +913,12 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
+/**
+ * It takes a number of seconds and returns a string with the number of days, hours, minutes and
+ * seconds.
+ * @param seconds - The number of seconds to be converted to days, hours, minutes and seconds.
+ * @returns the number of days, hours, minutes, and seconds.
+ */
 function secondsToDhms(seconds) {
 
   seconds = Number(seconds);
@@ -873,10 +945,14 @@ function secondsToDhms(seconds) {
 
 }
 
-function GetSecondsForEpisodes(dataurl) {
+/**
+ * It gets the data from the PHP file, and then it puts it in a div.
+ * @param dataURL - the url to the json file
+ */
+function GetSecondsForEpisodes(dataURL) {
   $.ajax({
     type: "GET",
-    url: 'https://www.doctorwhofans.be/php/' + dataurl,
+    url: 'https://www.doctorwhofans.be/php/' + dataURL,
     dataType: 'json',
     cache: false
   }).done(function (resultaat) {
@@ -902,9 +978,13 @@ function HideNotificationButton() {
   }
 }
 
-window.addEventListener("afterprint", Closeprint);
+window.addEventListener("afterprint", ClosePrint);
 
-function Closeprint(){
+/**
+ * It shows the nav, path, access, footer, back-to-top, changes the width of the WikiDetails and Inhoud
+ * and removes the class print.
+ */
+function ClosePrint(){
   $('nav').show();
   $('.path').show();
   $('.access').show();
@@ -918,7 +998,7 @@ function Closeprint(){
 
 }
 
-window.onbeforeprint = function() {printContent()};
+window.onbeforeprint = function() {printContent();};
 function printContent(){
   $('nav').hide();
   $('.path').hide();
@@ -936,33 +1016,33 @@ function printContent(){
 function ToggleNightMode() {
   
   if (getCookie("Theme")=="Dark"){
-    setCookie("Theme","Light",30)
-    setDarkmodefromCookie()
+    setCookie("Theme","Light",30);
+    setDarkModeFromCookie();
   }else {
-    setCookie("Theme","Dark",30)
-    setDarkmodefromCookie()
+    setCookie("Theme","Dark",30);
+    setDarkModeFromCookie();
   }
 }
 
 
-function setDarkmodefromCookie() {
+function setDarkModeFromCookie() {
   var element = document.body;
   
   if (getCookie("Theme")=="Dark"){
     element.classList.add("dark-mode");
     $("*").addClass("dark-mode");
-    $('::-webkit-scrollbar-thumb').addClass("dark-mode")
-    $('#NightMode i').removeClass("fa-moon-o")
-    $('#NightMode i').addClass("fa-sun-o")
+    $('::-webkit-scrollbar-thumb').addClass("dark-mode");
+    $('#NightMode i').removeClass("fa-moon-o");
+    $('#NightMode i').addClass("fa-sun-o");
     
   }else{
     element.classList.remove("dark-mode");
   $("*").removeClass("dark-mode");
-  $('::-webkit-scrollbar-thumb').removeClass("dark-mode")
+  $('::-webkit-scrollbar-thumb').removeClass("dark-mode");
  
   
-  $('#NightMode i').removeClass("fa-sun-o")
-    $('#NightMode i').addClass("fa-moon-o")
+  $('#NightMode i').removeClass("fa-sun-o");
+    $('#NightMode i').addClass("fa-moon-o");
   }
 }
 
@@ -999,17 +1079,15 @@ $(document).ready(
   });
 
   function setFontFromCookie(){
-    
-    var selectedOption = getCookie("Font")
+    var selectedOption = getCookie("Font");
     $('body').css( 'font-family', selectedOption );
-    
     setCookie("Font",selectedOption,30);
     $("#font-select option[value='"+selectedOption+"']").attr("disabled","disabled");
     $("#font-select option[value='"+selectedOption+"']").attr("selected","selected");
 
   }
 
-  function getSizesfromCookie(){
+  function getSizesFromCookie(){
     $('#size').text(getCookie("size"));
     $("main,.under,footer").children().each(function() {
       var size = parseInt($(this).css("font-size"));
