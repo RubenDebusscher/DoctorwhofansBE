@@ -63,6 +63,7 @@
 			getSubPages($conn,$current_Page_Id,$antwoord);
 			getPath($conn,$current_Page_Id,$antwoord);
 			getEpisodeOfTheDay($conn,$antwoord);
+			getActorsOfTheDay($conn,$antwoord);
 			getTags($conn,$current_Page_Id,$antwoord);
 			getContent($conn,$current_Page_Id,$language,$antwoord);
 			getDownloads($conn,$current_Page_Id,$antwoord);
@@ -277,7 +278,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 					if(!$stmtOtherQuotes){
 						die('Statement preparing failed: ' . $conn->error);
 					}
-					if(!$stmtOtherQuotes->bind_param("i",$id)){
+					if(!$stmtOtherQuotes->bind_param("i",$QuoteIdFromURL)){
 						die('Statement binding failed: ' . $conn->connect_error);
 					}
 					if(!$stmtOtherQuotes->execute()){
@@ -332,7 +333,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 					if(!$stmtOtherVideos){
 						die('Statement preparing failed: ' . $conn->error);
 					}
-					if(!$stmtOtherVideos->bind_param("i",$id)){
+					if(!$stmtOtherVideos->bind_param("i",$VideoIdFromURL)){
 						die('Statement binding failed: ' . $conn->connect_error);
 					}
 					if(!$stmtOtherVideos->execute()){
@@ -560,6 +561,37 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 		}
 		$stmtEOTD->close();
 	}
+
+
+
+	function getActorsOfTheDay(&$conn,&$resultset){
+		$resultset['ActorsOf_The_day'] = "Geen resultaten gevonden.";
+		$stmtAOTD = $conn->prepare("SELECT *,IF(EXTRACT( MONTH FROM actor_Birthdate)=EXTRACT( MONTH FROM CONVERT_TZ(CURRENT_TIMESTAMP(),'GMT','Europe/Brussels')) and EXTRACT( day FROM actor_Birthdate)=EXTRACT( day FROM CONVERT_TZ(CURRENT_TIMESTAMP(),'GMT','Europe/Brussels')),'Birthday','In Memoriam') as Type from Actors_With_Link where (EXTRACT( MONTH FROM actor_Birthdate)=EXTRACT( MONTH FROM CONVERT_TZ(CURRENT_TIMESTAMP(),'GMT','Europe/Brussels')) and EXTRACT( day FROM actor_Birthdate)=EXTRACT( day FROM CONVERT_TZ(CURRENT_TIMESTAMP(),'GMT','Europe/Brussels'))) OR (EXTRACT( MONTH FROM actor_Deathdate)=EXTRACT( MONTH FROM CONVERT_TZ(CURRENT_TIMESTAMP(),'GMT','Europe/Brussels')) and EXTRACT( day FROM actor_Deathdate)=EXTRACT( day FROM CONVERT_TZ(CURRENT_TIMESTAMP(),'GMT','Europe/Brussels')));");//prepare de query (maak de query zonder de variabelen op te nemen)
+			if(!$stmtAOTD){
+				die("Statement preparing failed: " . $conn->error);
+			}
+		if(!$stmtAOTD->execute()){
+			die("Statement execution failed: " . $stmtAOTD->error);
+		}else{
+			//return de json data
+			$result = $stmtAOTD->get_result();
+			if($result->num_rows === 0){
+				$resultset['ActorsOf_The_day'] = "";
+
+			} else{
+				$resultset['ActorsOf_The_day'] = $result->fetch_all(MYSQLI_ASSOC);
+
+			}
+		}
+		$stmtAOTD->close();
+	}
+
+
+
+
+
+
+
 	function getTags($conn,$current_Page_Id,&$resultset){
 		$stmtTags = $conn->prepare('select category_Name,concat("Category:",replace(category_Name," ","_"),".html") as category_Link from management__categories inner join management__pages_categories on PC_category_Id=category_Id where PC_page_Id=?');
 			if(!$stmtTags){
