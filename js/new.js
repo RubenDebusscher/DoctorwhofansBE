@@ -313,14 +313,17 @@ function Search() {
     $('.modal-content h1').html('Search');
     var SearchEl = "";
     if (response.results.length > 0) {
+      const regEscape = v => v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+
       for (var i = 0; i < response.results.length; i++) {
-        SearchEl += "<section><a href='" + window.location.origin + "/" + response.results[i].link + ".html'>" + response.results[i].title.replaceAll(searchString.toString(), "<b>" + searchString.toString() + "</b>") + "</a>";
-        SearchEl += "<p>" + response.results[i].body.replaceAll(searchString.toString(), "<b>" + searchString.toString() + "</b>") + "...</p>";
+        var TitleText = response.results[i].title.split(new RegExp(regEscape(searchString), "ig")).join("<b>"+searchString+"</b>");
+        var BodyText = response.results[i].body.split(new RegExp(regEscape(searchString), "ig")).join("<b>"+searchString+"</b>");
+
+        SearchEl += "<section><a href='" + window.location.origin + "/" + response.results[i].link + ".html'>" + TitleText + "</a>";
+        SearchEl += "<p>" + BodyText + "...</p>";
         SearchEl += "</section>";
       }
       // @ts-ignore
-
-      
       $('.modal-content article').html(SearchEl);
 
     } else {
@@ -361,7 +364,7 @@ function GetContent(menu, id) {
     $.ajax(settings).done(function (response) {
       if(response.Page == false && menu.startsWith('Category:')==false){
         var myHeaders = new Headers(); // Currently empty
-        myHeaders.set('Status Code', '404');
+        //myHeaders.set('Status Code', '404');
         // @ts-ignore
         window.location = "http://www.doctorwhofans.be/notfound.html";
       }
@@ -1129,3 +1132,4 @@ $(document).ready(
       });
     });
   });
+
