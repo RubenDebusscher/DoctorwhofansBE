@@ -32,9 +32,9 @@
           "type": "image/png"
         }  
       ],
-    "start_url": "../Home.html",
-    "background_color": "#306090",
-    "display": "standalone",
-    "scope": "/",
-    "theme_color": "#306090"
+      "start_url": "https://www.doctorwhofans.be/Home.html",
+      "background_color": "#306090",
+      "display": "standalone",
+      "scope": "https://www.doctorwhofans.be/",
+      "theme_color": "#306090"
   }
