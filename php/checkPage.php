@@ -45,6 +45,7 @@
 		if($result->num_rows === 0 & stripos($menu,'Category')==false) {
 			$antwoord['Page']=false;
 			$conn->close();
+			mysqli_close($conn);
 			echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
 			return;
 		}else{
@@ -68,8 +69,11 @@
 			getContent($conn,$current_Page_Id,$language,$antwoord);
 			getDownloads($conn,$current_Page_Id,$antwoord);
 			$conn->close();
+			mysqli_close($conn);
+
 			echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
 		}
+		$conn->close();mysqli_close($conn);
 	}
 
 function processPageData(&$resultset,&$current_Page_Id,&$prefix,&$Page_Name){
