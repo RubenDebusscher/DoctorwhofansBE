@@ -81,7 +81,7 @@ $_SESSION["Menu"]="";?>
         include_once 'includes/overlays.html';
         include_once 'includes/footer.html';
 
-        //TODO #66 add fist and last pepisode (both regular and departure/regeneration)
+        //TODO #66 add fist and lastepisode (both regular and departure/regeneration)
         //TODO #67 add books/magazines/comics to DB
         //TODO #68 add audio (big finish,...)
         //TODO #69 create list of episodes by characteristics
@@ -104,6 +104,19 @@ $_SESSION["Menu"]="";?>
         var main_path='https://www.doctorwhofans.be';
         //getAvailableLangcodes();
         //checkCookie()
+    </script>
+    
+    <script type="application/javascript" src="https://sdki.truepush.com/sdk/v2.0.3/app.js" async></script>
+    <script>
+    var truepush = window.truepush || [];
+            
+    truepush.push(function(){
+        truepush.Init({
+            id: "62877acc88e61fd3932d116a"
+        },function(error){
+          if(error) console.error(error);
+        })
+    })
     </script>
 </body>
 
