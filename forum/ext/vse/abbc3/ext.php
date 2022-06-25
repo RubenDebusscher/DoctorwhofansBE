@@ -18,6 +18,7 @@ class ext extends \phpbb\extension\base
 	const MOVE_DOWN = 'move_down';
 	const MOVE_DRAG = 'move_drag';
 	const PHPBB_MIN_VERSION = '3.2.2'; // Require 3.2.2 due to TextFormatter and BBCode changes
+	const ABBC3_BBCODE_FONTS = ['ABBC3_FONT_SAFE' => ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia', 'Impact', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana']];
 
 	/**
 	 * {@inheritdoc}
@@ -25,9 +26,7 @@ class ext extends \phpbb\extension\base
 	public function is_enableable()
 	{
 		$config = $this->container->get('config');
-
-		return phpbb_version_compare($config['version'], self::PHPBB_MIN_VERSION, '>=') &&
-			phpbb_version_compare(PHPBB_VERSION, self::PHPBB_MIN_VERSION, '>=');
+		return phpbb_version_compare(min($config['version'], PHPBB_VERSION), self::PHPBB_MIN_VERSION, '>=');
 	}
 
 	/**

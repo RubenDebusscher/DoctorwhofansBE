@@ -41,7 +41,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	// language pack author
 	'LFWWH_LANG_DESC'					=> 'Deutsch (Du)',
-	'LFWWH_LANG_EXT_VER' 				=> '2.1.1',
+	'LFWWH_LANG_EXT_VER' 				=> '2.1.2',
 	'LFWWH_LANG_AUTHOR' 				=> 'LukeWCS',
 
 	// config head
@@ -73,8 +73,8 @@ $lang = array_merge($lang, [
 	'LFWWH_DISP_HIDDEN_EXP'				=> 'In der Benutzerliste werden auch unsichtbare Benutzer angezeigt. (Nur für Benutzer mit administrativen Rechten, wie bei „Wer ist online?“.)',
 	'LFWWH_DISP_BOTS'					=> 'Zeige Bots (Anzahl und Namen)',
 	'LFWWH_DISP_BOTS_EXP'				=> 'Einige Benutzer werden sich fragen was Bots sind und sie fürchten.',
-	'LFWWH_DISP_BOTS_WITH_USERS'		=> 'Mit den Benutzern',
 	'LFWWH_DISP_BOTS_OWN_LINE'			=> 'In einer eigenen Zeile',
+	'LFWWH_DISP_BOTS_WITH_USERS'		=> 'Mit den Benutzern',
 	'LFWWH_DISP_BOTS_DISABLED'			=> 'Nein',
 	'LFWWH_DISP_GUESTS'					=> 'Zeige Gäste (Anzahl)',
 	'LFWWH_DISP_GUESTS_EXP'				=> 'Die Anzahl der Gäste wird angezeigt.',

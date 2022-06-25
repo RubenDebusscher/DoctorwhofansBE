@@ -11,6 +11,8 @@
 namespace vse\abbc3\event;
 
 use phpbb\config\config;
+use phpbb\config\db_text;
+use phpbb\language\language;
 use phpbb\routing\helper;
 use phpbb\template\template;
 use phpbb\user;
@@ -18,6 +20,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use vse\abbc3\core\bbcodes_display;
 use vse\abbc3\core\bbcodes_help;
 use vse\abbc3\core\bbcodes_config;
+use vse\abbc3\ext;
 
 /**
  * Event listener
@@ -36,8 +39,14 @@ class listener implements EventSubscriberInterface
 	/** @var config */
 	protected $config;
 
+	/** @var db_text */
+	protected $config_text;
+
 	/** @var helper */
 	protected $helper;
+
+	/** @var language */
+	protected $language;
 
 	/** @var template */
 	protected $template;
@@ -54,20 +63,24 @@ class listener implements EventSubscriberInterface
 	 * @param bbcodes_display $bbcodes_display
 	 * @param bbcodes_help    $bbcodes_help
 	 * @param config          $config
+	 * @param db_text         $db_text
 	 * @param helper          $helper
+	 * @param language        $language
 	 * @param template        $template
 	 * @param user            $user
 	 * @access public
 	 */
-	public function __construct(bbcodes_config $bbcodes_config, bbcodes_display $bbcodes_display, bbcodes_help $bbcodes_help, config $config, helper $helper, template $template, user $user)
+	public function __construct(bbcodes_config $bbcodes_config, bbcodes_display $bbcodes_display, bbcodes_help $bbcodes_help, config $config, db_text $db_text, helper $helper, language $language, template $template, user $user)
 	{
 		$this->bbcodes_config = $bbcodes_config;
 		$this->bbcodes_display = $bbcodes_display;
 		$this->bbcodes_help = $bbcodes_help;
 		$this->config = $config;
+		$this->config_text = $db_text;
 		$this->helper = $helper;
 		$this->template = $template;
 		$this->user = $user;
+		$this->language = $language;
 	}
 
 	/**
@@ -81,6 +94,8 @@ class listener implements EventSubscriberInterface
 	{
 		return [
 			'core.user_setup'							=> 'load_language_on_setup',
+			'core.page_header' 							=> 'load_google_fonts',
+			'core.adm_page_header' 						=> 'load_google_fonts',
 
 			'core.display_custom_bbcodes'				=> 'setup_custom_bbcodes',
 			'core.display_custom_bbcodes_modify_sql'	=> 'custom_bbcode_modify_sql',
@@ -113,6 +128,20 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
+	 * Load Google fonts data
+	 * For injecting Google Font names into the template
+	 *
+	 * @access public
+	 */
+	public function load_google_fonts()
+	{
+		$this->template->assign_var(
+			'abbc3_google_fonts',
+			json_decode($this->config_text->get('abbc3_google_fonts'), true)
+		);
+	}
+
+	/**
 	 * Modify the SQL array to gather custom BBCode data
 	 *
 	 * @param \phpbb\event\data $event The event object
@@ -136,6 +165,7 @@ class listener implements EventSubscriberInterface
 		$this->template->assign_vars([
 			'ABBC3_USERNAME'			=> $this->user->data['username'],
 			'ABBC3_BBCODE_ICONS'		=> $this->bbcodes_display->get_icons(),
+			'ABBC3_BBCODE_FONTS'		=> ext::ABBC3_BBCODE_FONTS,
 
 			'S_ABBC3_BBCODES_BAR'		=> $this->config['abbc3_bbcode_bar'],
 
@@ -228,7 +258,7 @@ class listener implements EventSubscriberInterface
 	{
 		if ($this->quick_reply)
 		{
-			$this->user->add_lang('posting');
+			$this->language->add_lang('posting');
 			$this->template->assign_var('S_ABBC3_QUICKREPLY', true);
 			$this->template->assign_vars($this->bbcodes_display->bbcode_statuses($event['forum_id']));
 		}
