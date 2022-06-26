@@ -247,6 +247,11 @@ class core
 
 		unset($backup);
 
+		if (!count($list_ary))
+		{
+			throw new HttpException(503, $this->user->lang['SEOMAP_NO_DATA']);
+		}
+
 		// Get max global announcement time
 		$sql = 'SELECT MAX(topic_last_post_time) AS max_glob_time
 			FROM ' . TOPICS_TABLE . '

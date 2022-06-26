@@ -11,7 +11,7 @@
 namespace shredder\sitemap\controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class sitemap
 {
@@ -61,7 +61,7 @@ class sitemap
 
 			if (false == $f_xml)
 			{
-				throw new NotFoundHttpException($this->user->lang['SEOMAP_NO_DATA']);
+				throw new HttpException(503, $this->user->lang['SEOMAP_NO_DATA']);
 			}
 
 			$this->config->set('sitemap_seo_url_count', $this->appender->getUrlCount());
@@ -85,7 +85,7 @@ class sitemap
 
 		if (false == $f_xml)
 		{
-			throw new NotFoundHttpException(sprintf($this->user->lang['SEOMAP_NO_FILE'], generate_board_url() . '/store/shredder/' . $seqno . '.xml'));
+			throw new HttpException(503, sprintf($this->user->lang['SEOMAP_NO_FILE'], generate_board_url() . '/store/shredder/' . $seqno . '.xml'));
 		}
 
 		$response = new Response($f_xml);

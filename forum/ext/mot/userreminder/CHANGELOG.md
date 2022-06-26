@@ -4,6 +4,67 @@ All changes to `Userreminder for phpBB` will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.2] - 2022-02-22
+
+### Added
+  
+### Changed
+  
+### Fixed
+-	The length of the column `remind_type` in the MOT_USERREMINDER_REMIND_QUEUE table which was too short (15 chars) to take the remind_type `reminder_sleeper'
+  
+### Removed
+  
+  
+## [1.4.1] - 2022-01-26
+
+### Added
+  
+### Changed
+-	Migration file `migrations/ur_v_0_1_0.php` from 'automatically' to 'manually' determine the module info in order to prevent error messages during a
+	fresh install of this version due to missing the (now obsolete and no longer present) `xyz_info.php` files
+-	Revoked the changes to `migrations/ur_v_1_3_3_0.php` and `migrations/ur_v_1_3_3_1.php` made in ver 1.4.0
+-	Some code optimisation in `controller/ur_acp.php`
+-	Replacement of long array declaration with short version in the a.m. changed files
+  
+### Fixed
+-	Some grammatical and spelling errors in en language files and mail texts
+-	A mis-named name attribute in `adm/style/acp_ur_sleeper.html` line 105 which prevented the array holding the sleepers selected for deletion from being
+	filled properly
+-	A problem with deleting this extension's data in `migrations/ur_v_1_4_0_0.php`
+  
+### Removed
+  
+  
+## [1.4.0] - 2021-12-28
+
+### Added
+-	A cron task to limit the number of e-mails sent in case of many users to be reminded, all mails above the mail limit will be stored in DB table and
+	subsequently sent by cron task
+-	A setting in the settings tab to manage the maximum number of e-mails to be sent in specific time frame which can be set, too
+-	An information panel with the time of the last cron task run and the number of avaialable e-mails
+-	A general settings division in the settings tab to set the number of lines per page in the other tab's tables
+-	A general option in the settings tab to display ´Remind all´ and ´Delete all´ buttons on the remind, sleepers and zero-posters tabs
+-	New settings for reminding and deleting sleepers including the option to auto-remind and auto-delete them
+-	Inactive links for the Reminder, Sleepers and Zeroposter tabs on the `Quick access` tab
+-	Informations about the cron job's last run and the currently available number of e-mails
+-	Generating the version number in the ACP tabs from the `composer.json` file
+  
+### Changed
+-	ACP has been changed to a controller using service injection instead of modules using global variables
+-	ACP module (controller function) and HTML file for sleepers have been renamed `sleeper` instead of `registrated_only`
+-	DOM operations are now done using jQuery
+-	All numeric values on the settings tab are now entered using number type input fields instead of text type input fields
+-	Usage of short form to define arrays in all changed or newly created php files
+-	E-mail address checking (input of BCC and CC addresses) no longer refuses capital letters
+  
+### Fixed
+    
+### Removed
+-	Plural rules in language files
+-	Config variable holding the version number
+  
+  
 ## [1.3.5] - 2021-04-06
 
 ### Added

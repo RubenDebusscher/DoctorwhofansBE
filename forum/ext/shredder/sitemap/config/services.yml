@@ -4,8 +4,8 @@ services:
         arguments:
             - '@config'
             - '@user'
-            - '%core.root_path%'
-            - '%core.php_ext%'
+            - %core.root_path%
+            - %core.php_ext%
     shredder.sitemap.core:
         class: shredder\sitemap\core
         arguments:
@@ -17,8 +17,8 @@ services:
             - '@service_container'
             - '@ext.manager'
             - '@user'
-            - '%core.root_path%'
-            - '%core.php_ext%'
+            - %core.root_path%
+            - %core.php_ext%
     shredder.sitemap.controller:
         class: shredder\sitemap\controller\sitemap
         arguments:
@@ -35,7 +35,7 @@ services:
             - '@dbal.conn'
             - '@template'
             - '@user'
-            - '%core.root_path%'
-            - '%core.php_ext%'
+            - %core.root_path%
+            - %core.php_ext%
         tags:
             - { name: event.listener }

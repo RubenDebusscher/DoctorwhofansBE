@@ -21,7 +21,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'SEOMAP'						=> 'SEO Карта сайта',
-	'SEOMAP_VERSION'				=> 'Версия расширения: %s. Новые версии и поддержку вы можете найти <a style="font-weight: bold;" href="http://www.phpbb-work.ru/sitemap-extension-t76.html" onclick="window.open(this.href);return false;">на странице расширения на сайте автора</a>.',
+	'SEOMAP_VERSION'				=> 'Версия расширения: %s. Новые версии и поддержку вы можете найти <a style="font-weight: bold;" href="https://www.phpbb-work.ru/sitemap-extension-t76.html" onclick="window.open(this.href);return false;">на странице расширения на сайте автора</a>.',
 	'SEOMAP_EXPLAIN'				=> 'Обратите внимание, что применение необязательных опций priority (приоритет) и changefreq (частота обновления) может дать некоторый позитивный результат, но рекомендуется использовать их вместе и только после анализа того, какие страницы должны считаться более важными по сравнению с другими, прежде чем принимать какие-либо решения. Если вы не знаете или не уверены, то лучше отключите эти опции. Более подробно о priority и changefreq читайте <a href="http://www.sitemaps.org/ru/protocol.html#xmlTagDefinitions" onclick="window.open(this.href);return false;">здесь</a>.<br />Для отключения приоритета введите 0.',
 	'SEOMAP_SETTINGS'				=> 'Настройки SEO Sitemap',
 	'SEOMAP_SETTINGS_UPDATED'		=> '<strong>Изменены настройки SEO Sitemap</strong>',
@@ -55,7 +55,7 @@ $lang = array_merge($lang, array(
 	'SEOMAP_FREQ_DAILY'				=> 'Ежедневно',
 	'SEOMAP_FREQ_HOURLY'			=> 'Ежечасно',
 	'SEOMAP_FREQ_ALWAYS'			=> 'Постоянно',
-	'SEOMAP_NO_DATA'				=> 'Нет данных для внесения в карту.',
+	'SEOMAP_NO_DATA'				=> 'Нет данных для внесения в карту. Проверьте наличие и доступность хотя бы одной темы для аккаунта гостя.',
 	'SEOMAP_NO_FILE'				=> 'Невозможно открыть файл:<br /><strong>%s</strong>',
 	'SEOMAP_CANT_WRITE'				=> 'Папка <strong>%s</strong> не существует или недоступна для записи. Исправьте это вручную, используя FTP-клиент.',
 	'SEOMAP_COPYRIGHT'				=> 'Моды и расширения phpBB',
