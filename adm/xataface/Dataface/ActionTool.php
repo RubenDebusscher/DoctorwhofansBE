@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *-------------------------------------------------------------------------------
  */
-import('Dataface/LanguageTool.php');
+import(XFROOT.'Dataface/LanguageTool.php');
  
 /**
  * A tool to manage actions within the application.
@@ -44,7 +44,7 @@ class Dataface_ActionTool {
 	
 	function _loadActionsINIFile(/*$path*/){
 		
-		import('Dataface/ConfigTool.php');
+		import(XFROOT.'Dataface/ConfigTool.php');
 		$configTool =& Dataface_ConfigTool::getInstance();
 		$actions =& $configTool->loadConfig('actions', null);
 		foreach ( array_keys($actions) as $key){
@@ -73,7 +73,7 @@ class Dataface_ActionTool {
 	}
 	
 	function _loadTableActions($tablename){
-		import('Dataface/Table.php');
+		import(XFROOT.'Dataface/Table.php');
 		// Some actions are loaded from the table's actions.ini file and must be loaded before we return the actions.
 
 		$table =& Dataface_Table::loadTable($tablename);
@@ -149,6 +149,13 @@ class Dataface_ActionTool {
 		
 	}
 	
+	function countActions($params=array(), $actions=null) {
+		if (is_string($params)) {
+			$params = array('category' => $params);
+		}
+		return count($this->getActions($params, $actions));
+	}
+
 	/**
 	 * Returns an array of all actions as specified by $params.
 	 * $params must be an array.  It may contain the following options:
@@ -162,6 +169,25 @@ class Dataface_ActionTool {
 		if ( !is_array($params) ){
 			trigger_error("In Dataface_ActionTool::getActions(), expected parameter to be an array but received a scalar: ".$params.".".Dataface_Error::printStackTrace(), E_USER_ERROR);
 		}
+        if (@$params['category']) {
+            $cats = $params['category'];
+            if (is_string($cats)) {
+                $pos = strpos($cats, '|');
+                if ($pos !== false) {
+                    $cats = array_map('trim', explode('|', $cats));
+                }
+                
+            }
+            if (is_array($cats)) {
+                $out = [];
+                foreach ($cats as $cat) {
+                    $params['category'] = $cat;
+                    $out = array_merge($out, $this->getActions($params, $actions));
+                }
+                return $out;
+            }
+        }
+        
 		$app =& Dataface_Application::getInstance();
 		
 		$out = array();
@@ -190,6 +216,21 @@ class Dataface_ActionTool {
 			}
 		}
 		
+        if (@$params['category'] == '__relationships__') {
+            // Special case.  The __relationships__ category will get the table's relationship as actions.
+            if (!$tablename) {
+                $query = $app->getQuery();
+                $tablename = $query['-table'];
+            }
+            $table = Dataface_Table::loadTable($tablename);
+            if (PEAR::isError($table)) {
+                throw new Exception("Cannot find table: ".$tablename);
+            }
+            return $table->getRelationshipsAsActions([]);
+        }
+        if ($tablename === null) {
+            $tablename = $app->getQuery()['-table'];
+        }
 		if ( $tablename !== null ){
 			// Some actions are loaded from the table's actions.ini file and must be loaded before we return the actions.
 			$table =& Dataface_Table::loadTable($tablename);
@@ -197,6 +238,21 @@ class Dataface_ActionTool {
 				$tparams = array();
 				$table->getActions($tparams, true);
 			}
+            $tableExcludes = $table->getAttribute('actions.exclude');
+            if (isset($tableExcludes)) {
+                if (is_string($tableExcludes)) {
+                    $tableExcludes = explode(' ', $tableExcludes);
+                    $table->setAttribute('actions.exclude', $tableExcludes);
+                }
+                if (!@$params['exclude']) {
+                    $params['exclude'] = $tableExcludes;
+                } else {
+                    if (is_string($params['exclude'])) {
+                        $params['exclude'] = explode(' ', $params['exclude']);
+                    }
+                    $params['exclude'] = array_merge($params['exclude'], $tableExcludes);
+                }
+            }
 			unset($table);
 		}
 		
@@ -210,14 +266,44 @@ class Dataface_ActionTool {
 			}
 			else $actions = $this->actions;
 		}
+        $excludes = null;
+        if (@$params['exclude']) {
+            $excludes = $params['exclude'];
+            if (is_string($excludes)) {
+                $excludes = explode(' ', $excludes);
+            }
+        }
 		foreach ( array_keys($actions) as $key ){
 			if ( isset($action) ) unset($action);
 			$action = $actions[$key];
 			$action['atts'] = array();
-			
+			if ($excludes and in_array($action['name'], $excludes)) {
+			    continue;
+			}
 			if ( @$params['name'] and @$params['name'] !== @$action['name']) continue;
 			if ( @$params['id'] and @$params['id'] !== @$action['id']) continue;
-			
+			if ( @$params['withtags']) {
+			    if (!@$action['tags'] or strpos($action['tags'], $params['withtags']) === false) {
+			        continue;
+			    }
+			}
+            if (@$params['with']) {
+                $missingKey = false;
+                foreach (explode(' ', $params['with']) as $withKey) {
+                    if (!@$action[$withKey]) {
+                        $missingKey = true;
+                        break;
+                    }
+                }
+                if ($missingKey) {
+                    continue;
+                }
+            }
+			if (@$params['sanstags']) {
+			    if (@$action['tags'] and strpos($action['tags'], $params['sanstags']) !== false) {
+			        continue;
+			    }
+			}
 			if ( isset($params['category'])  and $params['category'] !== @$action['category']) continue;
 				// make sure that the category matches
 			
@@ -239,7 +325,6 @@ class Dataface_ActionTool {
 					continue;
 				}
 			}
-			
 			if ( @$action['selected_condition'] ) $action['selected'] = $app->testCondition($action['selected_condition'], $params);
 			else {
 				$query = $app->getQuery();
@@ -257,8 +342,9 @@ class Dataface_ActionTool {
 				// ProfileID=10 and ProfileName = 'John Smith', then:
 				// $app->parseString('ID is ${ProfileID} and Name is ${ProfileName}') === 'ID is 10 and Name is John Smith'
 				//if ( strpos($attribute, 'condition') !== false) continue;
-				if ( preg_match('/condition/i',$attribute) ) continue;
+				if ( strstr($attribute, '_condition') === '_condition') continue;
 				if ( is_array($action[$attribute]) ) continue;
+                if ($attribute === 'condition') continue;
 				if ( isset($action[$attribute.'_condition']) and !$app->testCondition($action[$attribute.'_condition'], $params) ){
 
 					$action[$attribute] = null;
@@ -267,16 +353,74 @@ class Dataface_ActionTool {
 				}
 				if ( strpos($attribute, 'atts:') === 0 ){
 					$attAtt = substr($attribute, 5);
-					if ( !preg_match('/_condition$/', $attAtt) ){
+					if (strstr($attAtt, '_condition') !== '_condition') {
 						$action['atts'][$attAtt] = $action[$attribute];
 					}
 				}
 			}
+            $i18nTable = @$params['table'];
+            if (!$i18nTable) {
+                if (!@$query) {
+                    $query = $app->getQuery();
+                }
+                $i18nTable = $query['-table'];
+            }
+            
+            $keyBase = 'tables.'.$i18nTable.'.actions.'.$action['name'].'.';
+            $action['label'] = df_translate($keyBase.'label', @$action['label']);
+            if (@$action['label_prefix']) {
+                $action['label'] = $action['label_prefix'] . $action['label'];
+            }
+            if (@$action['label_suffix']) {
+                $action['label'] = $action['label'] . $action['label_suffix'];
+            }
+            $action['description'] = df_translate($keyBase.'description', @$action['description']);
+            $action['materialIcon'] = df_translate($keyBase.'materialIcon', @$action['materialIcon']);
+            if (@$action['ajax'] and !@$action['ajax_action']) {
+                $action['ajax_action'] = $action['name'];
+            }
+            if (@$action['ajax_action']) {
+        		xf_script('xataface/actions/ajax_action_client.js');
+                $removeClass = 'undefined';
+                if (@$action['ajax.on']) $removeClass = '\''.$action['ajax.on'].'\'';
+                $addClass = 'undefined';
+                if (@$action['ajax.off']) $addClass = '\''.$action['ajax.off'].'\'';
+                $action['onclick'] = 'xataface.post(\''.$action['ajax_action'].'\',this, '.$removeClass.', '.$addClass.')';
+                $action['url'] = 'javascript:void(0)';
+                
+                
+            }
+			
+			$cssClass = @$action['class'];
+			if ($cssClass) {
+				if (strpos($cssClass, ' ')) {
+					$cssClassArray = explode(' ', $cssClass);
+				} else {
+					$cssClassArray = [$cssClass];
+				}
+				
+				$classChanged = false;
+				foreach ($cssClassArray as $k=>$cssClass) {
+
+					if (isset($action['class.'.$cssClass.'_condition'])) {
+						$cond = $action['class.'.$cssClass.'_condition'];
+						if (!$app->testCondition($cond, $params)) {
+							unset($cssClassArray[$k]);
+							$classChanged = true;
+						}
+					}
+				}
+				if ($classChanged) {
+					$action['class'] = trim(implode(' ', $cssClassArray));
+				}
+				
+			}
+            
 			$out[$key] =& $action;
 			
 			unset($action);
 		}
-		
+
 		uasort($out, array(&$this, '_compareActions'));
 		return $out;
 	}

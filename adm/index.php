@@ -1,4 +1,6 @@
 <?php
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'on');
 // Include the Xataface API
 require_once 'xataface/dataface-public-api.php';
 
@@ -18,5 +20,5 @@ function before_form(){
     $jt = Dataface_JavascriptTool::getInstance();
     $jt->import('test/plugin.js');
 }
-//TODO #73 add imports for admin panel
+
 ?>

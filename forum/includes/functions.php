@@ -263,23 +263,23 @@ function phpbb_version_compare($version1, $version2, $operator = null)
 // functions used for building option fields
 
 /**
-* Pick a language, any language ...
+ * Pick a language, any language ...
  *
  * @param string $default	Language ISO code to be selected by default in the dropdown list
  * @param array $langdata	Language data in format of array(array('lang_iso' => string, lang_local_name => string), ...)
  *
  * @return string			HTML options for language selection dropdown list.
-*/
+ */
 function language_select($default = '', array $langdata = [])
 {
 	global $db;
 
 	if (empty($langdata))
 	{
-	$sql = 'SELECT lang_iso, lang_local_name
-		FROM ' . LANG_TABLE . '
-		ORDER BY lang_english_name';
-	$result = $db->sql_query($sql);
+		$sql = 'SELECT lang_iso, lang_local_name
+			FROM ' . LANG_TABLE . '
+			ORDER BY lang_english_name';
+		$result = $db->sql_query($sql);
 		$langdata = (array) $db->sql_fetchrowset($result);
 		$db->sql_freeresult($result);
 	}
@@ -302,19 +302,19 @@ function language_select($default = '', array $langdata = [])
  * @param array $styledata	Style data in format of array(array('style_id' => int, style_name => string), ...)
  *
  * @return string			HTML options for style selection dropdown list.
-*/
+ */
 function style_select($default = '', $all = false, array $styledata = [])
 {
 	global $db;
 
 	if (empty($styledata))
 	{
-	$sql_where = (!$all) ? 'WHERE style_active = 1 ' : '';
-	$sql = 'SELECT style_id, style_name
-		FROM ' . STYLES_TABLE . "
-		$sql_where
-		ORDER BY style_name";
-	$result = $db->sql_query($sql);
+		$sql_where = (!$all) ? 'WHERE style_active = 1 ' : '';
+		$sql = 'SELECT style_id, style_name
+			FROM ' . STYLES_TABLE . "
+			$sql_where
+			ORDER BY style_name";
+		$result = $db->sql_query($sql);
 		$styledata = (array) $db->sql_fetchrowset($result);
 		$db->sql_freeresult($result);
 	}
@@ -599,6 +599,7 @@ function markread($mode, $forum_id = false, $topic_id = false, $post_time = 0, $
 				'notification.type.post',
 				'notification.type.approve_topic',
 				'notification.type.approve_post',
+				'notification.type.forum',
 			), false, $user->data['user_id'], $post_time);
 
 			if ($config['load_db_lastread'] && $user->data['is_registered'])
@@ -682,6 +683,7 @@ function markread($mode, $forum_id = false, $topic_id = false, $post_time = 0, $
 			'notification.type.bookmark',
 			'notification.type.post',
 			'notification.type.approve_post',
+			'notification.type.forum',
 		), $topic_ids, $user->data['user_id'], $post_time);
 
 		// Add 0 to forums array to mark global announcements correctly
@@ -792,6 +794,7 @@ function markread($mode, $forum_id = false, $topic_id = false, $post_time = 0, $
 			'notification.type.bookmark',
 			'notification.type.post',
 			'notification.type.approve_post',
+			'notification.type.forum',
 		), $topic_id, $user->data['user_id'], $post_time);
 
 		if ($config['load_db_lastread'] && $user->data['is_registered'])
@@ -3871,8 +3874,9 @@ function page_header($page_title = '', $display_online_list = false, $item_id = 
 		}
 	}
 
-	$forum_id = $request->variable('f', 0);
-	$topic_id = $request->variable('t', 0);
+	// Negative forum and topic IDs are not allowed
+	$forum_id = max(0, $request->variable('f', 0));
+	$topic_id = max(0, $request->variable('t', 0));
 
 	$s_feed_news = false;
 

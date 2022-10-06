@@ -1,0 +1,52 @@
+/* jumpboxindex.css
+------------------- */
+
+.jumpbox-index {
+	margin: 6px 0;
+}
+
+.jumpbox-ucp {
+	margin: 12px 0;
+}
+
+.jumpbox-navbar {
+	margin: -6px auto;
+	cursor: pointer;
+}
+
+.jumpbox-navbar-top {
+	margin: 1px 0 -5px;
+}
+
+.jumpbox-navbar-bottom {
+	margin: 1px 0 -8px 0;
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.content-navbar li {
+	padding-right: 0;
+}
+
+.dropdown-left .dropdown .jb-pointer-navbar, .nojs .rightside .dropdown .jb-pointer-navbar {
+	right: 0;
+}
+
+.dropdown .jb-pointer-navbar {
+	left: 0;
+}
+
+.caret-left {
+	border-right: 1px solid;
+	border-right-color: currentcolor;
+	position: relative;
+	right: 4px;
+}
+
+.caret-left i {
+	vertical-align: top;
+}
+
+.caret-bottom i {
+	vertical-align: sub;
+}

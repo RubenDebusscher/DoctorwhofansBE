@@ -1,0 +1,18 @@
+<script data-name="googletranslateext">
+	function showAllgoogleTranslateElementInit() {
+		if( $( '#translate' ).length > 0 ) {
+			$( '#translate' ).each( function() {
+				_wrapper = $( this );
+				_wrapper.children("#google_translate_element").show().html();
+			});
+		}
+	}
+	function hideAllgoogleTranslateElementInit() {
+		if( $( '#translate' ).length > 0 ) {
+			$( '#translate' ).each( function() {
+				_wrapper = $( this );
+				_wrapper.children("#google_translate_element").hide().html();
+			});
+		}
+	}
+</script>

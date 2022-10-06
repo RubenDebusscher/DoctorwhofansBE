@@ -1,0 +1,114 @@
+{% INCLUDECSS 'css/chris1278_cookie_acp.css' %}
+{% include 'overall_header.html' %}
+
+	<h1>{{ lang('ACP_COOKIE_GENERAL') }}</h1>
+	<p>{{ lang('CM_CONFIG_DESC', CM_EXT_NAME, CM_EXT_VER) }} {{ lang('ACP_CM_GENERAL_PAGE_TITLE_EXPLAIN') }}</p>
+
+{% if S_ERROR %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+{% endif %}
+{% if CM_NOTES %}
+	<div class="errorbox notice">
+		{{ CM_NOTES }}
+	</div>
+{% endif %}
+	<h2 class="cookie-set-title">{{ lang('ACP_CM_GENERAL_SET_TITLE') }}</h2>
+	<form id="cookie_general" name="cookie_general" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<dl>
+			<dt><label for="window_position">{{ lang('WINDOW_POSITION') ~ lang('COLON') }}</label><br /><span>{{ lang('WINDOW_POSITION_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="window_position" value="1" {% if WINDOW_POSITION %}checked="checked" {% endif %}/> {{ lang('DOWNRIGHT') }} &nbsp;
+				<input type="radio" class="radio" name="window_position" value="0" {% if not WINDOW_POSITION %}checked="checked" {% endif %}/> {{ lang('MIDDLE') }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="name_of_cookie">{{ lang('NAME_OF_COOKIE') ~ lang('COLON') }}</label><br><span>{{ lang('NAME_OF_COOKIE_EXPLAIN') }}</span></dt>
+			<dd><input type="text" name="name_of_cookie" maxlength="255" size="40" value="{{ NAME_OF_COOKIE }}"/></dd>
+		</dl>
+		<dl>
+			<dt><label for="klaro_div_container">{{ lang('KLARO_DIV_CONTAINER') ~ lang('COLON') }}</label><br><span>{{ lang('KLARO_DIV_CONTAINER_EXPLAIN') }}</span></dt>
+			<dd><input type="text" name="klaro_div_container" maxlength="255" size="40" value="{{ KLARO_DIV_CONTAINER }}"/></dd>
+		</dl>
+		<dl>
+			<dt><label for="storage_version">{{ lang('STORAGE_VERSION') ~ lang('COLON') }}</label><br /><span>{{ lang('STORAGE_VERSION_EXPLAIN') }}</span></dt>
+			<dd><select name="storage_version" id="storage_version">
+					<option value="cookie" {% if STORAGE_VERSION == "cookie" %}selected="selected" {% endif %}>{{ lang('COOKIE') }}</option>
+					<option value="localStorage" {% if STORAGE_VERSION == "localStorage" %}selected="selected"{% endif %}>{{ lang('LOCALSTORAGE') }}</option>
+				</select></dd>
+		</dl>
+		<dl>
+			<dt><label for="klarostyle">{{ lang('KLARO_STYLE') ~ lang('COLON') }}</label><br /><span>{{ lang('KLARO_STYLE_EXPLAIN') }}</span></dt>
+			<dd><select name="klarostyle" id="klarostyle">
+					<option value="dark" {% if KLAROSTYLE == "dark" %}selected="selected" {% endif %}>{{ lang('DARK') }}</option>
+					<option value="light" {% if KLAROSTYLE == "light" %}selected="selected"{% endif %}>{{ lang('LIGHT') }}</option>
+				</select></dd>
+		</dl>
+		<dl>
+		<dt><label for="klaro_hidden_windows">{{ lang('KLARO_HIDDEN_WINDOWS') ~ lang('COLON') }}</label><br /><span>{{ lang('KLARO_HIDDEN_WINDOWS_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="klaro_hidden_windows" value="1" {% if KLARO_HIDDEN_WINDOWS %}checked="checked" {% endif %}/> {{ lang('ALTERNATE') }} &nbsp;
+				<input type="radio" class="radio" name="klaro_hidden_windows" value="0" {% if not KLARO_HIDDEN_WINDOWS %}checked="checked" {% endif %}/> {{ lang('HIDDEN') }}</dd>
+		</dl>
+		<dl>
+		<dt><label for="html_code_processing">{{ lang('HTML_CODE_PROCESSING') ~ lang('COLON') }}</label><br /><span>{{ lang('HTML_CODE_PROCESSING_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="html_code_processing" value="1" {% if HTML_CODE_PROCESSING %}checked="checked"  {% endif %}/> {{ lang('PHPBBKOMP') }}&nbsp;
+				<input type="radio" class="radio" name="html_code_processing" value="0" {% if not HTML_CODE_PROCESSING %}checked="checked"  {% endif %}/> {{ lang('KLARO') }}</dd>
+		</dl>
+		<dl>
+		<dt><label for="group_formation">{{ lang('GROUP_FORMATION') ~ lang('COLON') }}</label><br /><span>{{ lang('GROUP_FORMATION_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="group_formation" value="1" {% if GROUP_FORMATION %}checked="checked"  {% endif %}/> {{ lang('CM_GROUP') }}&nbsp;
+				<input type="radio" class="radio" name="group_formation" value="0" {% if not GROUP_FORMATION %}checked="checked"  {% endif %}/> {{ lang('NO_CM_GROUP') }}</dd>
+		</dl>
+		
+		<dl>
+			<dt><label for="cookie_icon_selection">{{ lang('COOKIE_ICON_SELECTION') ~ lang('COLON') }}</label><br /><span>{{ lang('COOKIE_ICON_SELECTION_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="cookie_icon_selection" value="1" {% if COOKIE_ICON_SELECTION %}checked="checked" {% endif %}/> {{ lang('ACP_FONTAWESOME') }} &nbsp;
+				<input type="radio" class="radio" name="cookie_icon_selection" value="0" {% if not COOKIE_ICON_SELECTION %}checked="checked" {% endif %}/> {{ lang('ACP_SVG') }}</dd>
+		</dl>
+		
+		<dl>
+		<dt><label for="save_all_button">{{ lang('SAVE_ALL_BUTTON') ~ lang('COLON') }}</label><br /><span>{{ lang('SAVE_ALL_BUTTON_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="save_all_button" value="1" {% if SAVE_ALL_BUTTON %}checked="checked" {% endif %}/> {{ lang('YES') }} &nbsp;
+				<input type="radio" class="radio" name="save_all_button" value="0" {% if not SAVE_ALL_BUTTON %}checked="checked" {% endif %}/> {{ lang('NO') }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="cookie_runtime">{{ lang('COOKIE_RUNTIME') ~ lang('COLON') }}</label><br><span>{{ lang('COOKIE_RUNTIME_EXPLAIN') }}</span></dt>
+			<dd><input type="text" name="cookie_runtime" maxlength="255" size="40" value="{{ COOKIE_RUNTIME }}"/></dd>
+		</dl>
+		<dl>
+		<dt><label for="show_decline_button">{{ lang('SHOW_DECLINE_BUTTON') ~ lang('COLON') }}</label><br /><span>{{ lang('SHOW_DECLINE_BUTTON_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="show_decline_button" value="1" {% if SHOW_DECLINE_BUTTON %}checked="checked" {% endif %}/> {{ lang('YES') }} &nbsp;
+				<input type="radio" class="radio" name="show_decline_button" value="0" {% if not SHOW_DECLINE_BUTTON %}checked="checked" {% endif %}/> {{ lang('NO') }}</dd>
+		</dl>
+		<dl>
+		<dt><label for="to_the_cookie_settings">{{ lang('TO_THE_COOKIE_SETTINGS') ~ lang('COLON') }}</label><br /><span>{{ lang('TO_THE_COOKIE_SETTINGS_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="to_the_cookie_settings" value="1" {% if TO_THE_COOKIE_SETTINGS %}checked="checked" {% endif %}/> {{ lang('YES') }} &nbsp;
+				<input type="radio" class="radio" name="to_the_cookie_settings" value="0" {% if not TO_THE_COOKIE_SETTINGS %}checked="checked" {% endif %}/> {{ lang('NO') }}</dd>
+		</dl>
+		<dl>
+		<dt><label for="window_fix_in_the_middle">{{ lang('WINDOW_FIX_IN_THE_MIDDLE') ~ lang('COLON') }}</label><br /><span>{{ lang('WINDOW_FIX_IN_THE_MIDDLE_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="window_fix_in_the_middle" value="1" {% if WINDOW_FIX_IN_THE_MIDDLE %}checked="checked" {% endif %}/> {{ lang('YES') }} &nbsp;
+				<input type="radio" class="radio" name="window_fix_in_the_middle" value="0" {% if not WINDOW_FIX_IN_THE_MIDDLE %}checked="checked" {% endif %}/> {{ lang('NO') }}</dd>
+		</dl>
+		<dl>
+		<dt><label for="klaro_note">{{ lang('KLARO_NOTE') ~ lang('COLON') }}</label><br /><span>{{ lang('KLARO_NOTE_EXPLAIN') }}</span></dt>
+			<dd><input type="radio" class="radio" name="klaro_note" value="1" {% if KLARO_NOTE %}checked="checked" {% endif %}/> {{ lang('YES') }} &nbsp;
+				<input type="radio" class="radio" name="klaro_note" value="0" {% if not KLARO_NOTE %}checked="checked" {% endif %}/> {{ lang('NO') }}</dd>
+		</dl>
+	</fieldset>
+	<fieldset>
+	<p class="info-cookie">{{ lang('COOKIE_WARN_1') }} <a href="{U_COOKIE_BANNER}">{{ lang('COOKIE_WARN_2') }}</a> {{ lang('COOKIE_WARN_3') }}</p>
+	</fieldset>
+	<p class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+	</p>
+	<p class="chris1278_acp_copyright">
+		{{ CM_EXT_NAME }} &copy; Chris1278<br />
+		{{ lang('CM_LANG_DESC') }} {{ lang('CM_LANG_EXT_VER') }} &bull; {{ lang('CM_LANG_AUTHOR') }}
+	</p>
+	{S_FORM_TOKEN}
+
+</form>
+{% include 'overall_footer.html' %}

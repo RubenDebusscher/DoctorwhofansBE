@@ -12,7 +12,7 @@ function wrapNode(node,wrappertype,wrapperclass){wrapper=document.createElement(
 wrapper.className=wrapperclass;innerNode=node.parentNode.replaceChild(wrapper,node);wrapper.appendChild(innerNode)}
 var registerXatafaceDecorator=null;var decorateXatafaceNode=null;(function(){var decorators=[];registerXatafaceDecorator=function(decorator){decorators.push(decorator);};decorateXatafaceNode=function(node){var replaceCallbacks=[];removeNoDecorateSections(node,replaceCallbacks);for(var i=0;i<decorators.length;i++){decorators[i](node);}
 for(var i=0;i<replaceCallbacks.length;i++){replaceCallbacks[i]();}}
-function removeNoDecorateSections(node,callbacks){if(typeof(jQuery)!='undefined'){jQuery('.xf-disable-decorate',node).each(function(){var replace=document.createTextNode('');var parent=jQuery(this).parent();jQuery(this).replaceWith(replace);var self=this;callbacks.push(function(){jQuery(replace).replaceWith(self);});});}}})();registerPloneFunction(function(){decorateXatafaceNode(document.documentElement)});function showDay(date){document.getElementById('day'+date).style.visibility='visible';return true;}
+function removeNoDecorateSections(node,callbacks){if(typeof(jQuery)!='undefined'){jQuery('.xf-disable-decorate',node).each(function(){var replace=document.createTextNode('');var parent=jQuery(this).parent();jQuery(this).replaceWith(replace);var self=this;callbacks.push(function(){jQuery(replace).replaceWith(self);});});}}})();window.addEventListener('DOMContentLoaded', function(){decorateXatafaceNode(document.documentElement)});function showDay(date){document.getElementById('day'+date).style.visibility='visible';return true;}
 function hideDay(date){document.getElementById('day'+date).style.visibility='hidden';return true;}
 function setFocus(){var xre=new RegExp(/\berror\b/);for(var f=0;(formnode=document.getElementsByTagName('form').item(f));f++){for(var i=0;(node=formnode.getElementsByTagName('div').item(i));i++){if(xre.exec(node.className)){for(var j=0;(inputnode=node.getElementsByTagName('input').item(j));j++){inputnode.focus();return;}}}}}
 registerPloneFunction(setFocus)
@@ -66,13 +66,6 @@ if(selectbutton.isSelected==null)
 {initialState=initialState||false;selectbutton.isSelected=initialState;}
 if(selectbutton.isSelected==false){selectbutton.setAttribute('src',portal_url+'/images/select_none_icon.gif');selectbutton.isSelected=true;return selectAll(id,formName);}
 else{selectbutton.setAttribute('src',portal_url+'/images/select_all_icon.gif');selectbutton.isSelected=false;return deselectAll(id,formName);}}
-function scanforlinks(){if(!document.getElementsByTagName){return false};if(!document.getElementById){return false};contentarea=getContentArea()
-if(!contentarea){return false}
-links=contentarea.getElementsByTagName('a');for(i=0;i<links.length;i++){if((links[i].getAttribute('href'))&&(links[i].className.indexOf('link-plain')==-1)){var linkval=links[i].getAttribute('href')
-if(linkval.toLowerCase().indexOf(window.location.protocol+'//'+window.location.host)==0){}else if(linkval.indexOf('http:')!=0){protocols=['mailto','ftp','news','irc','h323','sip','callto','https']
-for(p=0;p<protocols.length;p++){if(linkval.indexOf(protocols[p]+':')==0){wrapNode(links[i],'span','link-'+protocols[p])
-break;}}}else{if(links[i].getElementsByTagName('img').length==0&&!links[i].className.match(/no-link-icon/)){wrapNode(links[i],'span','link-external')}}}}}
-registerPloneFunction(scanforlinks)
 function climb(node,word){if(!node){return false}
 if(node.hasChildNodes){var i;for(i=0;i<node.childNodes.length;i++){climb(node.childNodes[i],word);}
 if(node.nodeType==3){checkforhighlight(node,word);}}
@@ -164,3 +157,369 @@ function updateSelected(tableid){var ids=getSelectedIds(tableid);if(ids.length==
 var form=document.getElementById("result_list_selected_items_form");form.elements['--selected-ids'].value=ids.join("\n");form.elements['-action'].value='copy_replace';form.submit();}
 function removeSelectedRelated(tableid){var ids=getSelectedIds(tableid);if(ids.length==0){alert("Please first check boxes beside the records you wish to remove, and then press 'Remove'.");return;}
 var form=document.getElementById("result_list_selected_items_form");form.elements['--selected-ids'].value=ids.join("\n");form.elements['-action'].value='remove_related_record';form.submit();}
+(function() {
+    
+    // Mobile stuff now
+    var mobileActivated = false;
+    function xfHandleResize() {
+        var body = document.querySelector('body');
+        if (!body) return;
+        if (window.innerWidth < 768) {
+            if (body.classList.contains('large') || !body.classList.contains('small')) {
+                body.classList.add('small');
+                body.classList.remove('large');
+                window.dispatchEvent(new Event('xf-mobileenter'));
+            }
+            
+            mobileActivated = true;
+        } else {
+            if (body.classList.contains('small') || !body.classList.contains('large')) {
+                body.classList.remove('small');
+                body.classList.add('large');
+                window.dispatchEvent(new Event('xf-mobileexit'));
+            }
+            
+        }
+    }
+    xfHandleResize();
+    window.addEventListener('DOMContentLoaded', xfHandleResize);
+    window.addEventListener('resize', xfHandleResize);
+
+    var paddingTopExplicit = false;
+    var paddingBottomExplicit = false;
+    var viewport = {
+        top : 0,
+        left : 0,
+        right : 0,
+        bottom : 0,
+        width : window.innerWidth,
+        height : window.innerHeight
+         
+    };
+    var firedInitialViewportChangedEvent = false;
+    function updateBodyPadding() {
+        var localFiredInitialViewportChangedEvent = firedInitialViewportChangedEvent;
+        firedInitialViewportChangedEvent = true;
+        if (!mobileActivated) {
+            if (viewport.width != window.innerWidth || viewport.height != window.innerHeight) {
+                viewport.width = window.innerWidth;
+                viewport.height = window.innerHeight;
+                var event = new Event('xf-viewport-changed');
+                window.dispatchEvent(event);
+            } else {
+                if (!localFiredInitialViewportChangedEvent) {
+                    var event = new Event('xf-viewport-changed');
+                    window.dispatchEvent(event);
+                }
+            }
+            
+            return;
+        }
+        var body = document.querySelector('body');
+        var changed = false;
+        if (!body.classList.contains('small')) {
+            changed = paddingTopExplicit || paddingBottomExplicit;
+            body.style.paddingBottom = null;
+            body.style.paddingTop = null;
+            paddingTopExplicit = paddingBottomExplicit = false;
+            viewport.top = viewport.bottom = viewport.left = viewport.right = 0;
+            viewport.width = window.innerWidth;
+            viewport.height = window.innerHeight;
+        } else {
+
+            var footer = document.querySelector('.mobile-footer');
+            var buttons = document.querySelector('.button-section');
+            if (footer || buttons) {
+                var offsetHeight = 0;
+                if (footer) offsetHeight = footer.offsetHeight;
+                if (buttons) offsetHeight = Math.max(offsetHeight, buttons.offsetHeight);
+                if (body.style.paddingBottom != offsetHeight+'px') {
+                    changed = true;
+                }
+                body.style.paddingBottom = offsetHeight + 'px';
+                viewport.bottom = offsetHeight;
+                viewport.height = window.innerHeight - viewport.bottom - viewport.top;
+                viewport.width = window.innerWidth;
+                explicitBottomPadding = true;
+            }
+            
+            var header = document.querySelector('.mobile-header');
+            if (header) {
+                if (body.style.paddingTop != header.offsetHeight+'px') {
+                    changed = true;
+                }
+                body.style.paddingTop = header.offsetHeight + 'px';
+                viewport.top = header.offsetHeight;
+                viewport.height = window.innerHeight - viewport.top - viewport.bottom;
+                viewport.width = window.innerWidth;
+                explicitBottomPadding = true;
+            }
+            
+        }
+        
+        if (changed) {
+            var event = new Event('xf-viewport-changed');
+            window.dispatchEvent(event);
+        }
+        
+    }
+    
+    function getViewport() {
+        return Object.assign({}, viewport);
+    }
+    window.xataface = window.xataface || {};
+    Object.defineProperty(window.xataface, 'viewport', {
+        get: getViewport,
+        configurable: false,
+        enumerable: false
+    });
+    window.addEventListener('DOMContentLoaded', updateBodyPadding);
+    window.addEventListener('load', updateBodyPadding);
+    setInterval(updateBodyPadding, 1000);
+    
+})();
+
+(function() {
+    // browser detection
+    function iOS() {
+            
+      return [
+        'iPad Simulator',
+        'iPhone Simulator',
+        'iPod Simulator',
+        'iPad',
+        'iPhone',
+        'iPod'
+      ].includes(navigator.platform)
+      // iPad on iOS 13 detection
+      || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+    }
+    
+    function addUserAgentCSSClass() {
+        if (iOS()) {
+            document.body.classList.add('iphone');
+        }
+    }
+    window.addEventListener('DOMContentLoaded', addUserAgentCSSClass);
+    
+})();
+
+(function() {
+    var isScrolled = false;
+    function onReady() {
+        var body = document.querySelector('body');
+        var runOnScroll = function(evt) {
+            //console.log("scrolling ", body.scrollTop);
+            
+            if (body.scrollTop < 100) {
+                if (isScrolled) {
+                    body.classList.remove('xf-viewport-scrolled');
+                    isScrolled = false;
+                }
+                
+            } else {
+                if (!isScrolled) {
+                    body.classList.add('xf-viewport-scrolled');
+                    isScrolled = true;
+                }
+                
+            }
+            
+        };
+    
+        body.addEventListener('scroll', runOnScroll, {passive:true});
+    }
+    window.addEventListener('DOMContentLoaded', onReady);
+    
+})();
+(function() {
+    
+    if (!window.localStorage) {
+        return;
+    }
+    var history = window.localStorage.getItem('xf-history');
+    if (!history) {
+        history = {startPos : 0, endPos: 0, urls : {}};
+        localStorage.setItem('xf-history', JSON.stringify(history));
+    } else {
+        history = JSON.parse(history);
+    }
+    history.urls[history.endPos++] = window.location.href;
+    var currPos = history.endPos-1;
+    while (history.endPos - history.startPos > 100) {
+        delete history.urls[history.startPos++];
+    }
+    localStorage.setItem('xf-history', JSON.stringify(history));
+    
+    
+    
+    
+    
+    function addBackButton() {
+        
+        if (!window.jQuery) {
+        
+            
+            return;
+        }
+        var referrerIndex = getReferrer();
+        
+        
+        var $ = jQuery;
+        var backButton = $('<button class="back-btn"><i class="material-icons">navigate_before</i> <span>Back</span></button>');
+        var backUrl = history.urls[referrerIndex];
+        if (!backUrl) {
+            return;
+        }
+        backButton.click(function() {
+            window.location.href  = backUrl;
+        });
+        backButton.insertBefore($('.site_logo'));
+        $('body').addClass('has-back-button');
+    }
+    
+    function getReferrer() {
+        var search = window.location.search;
+        
+        var referrerPos = search.indexOf('&--referrer=');
+        
+        if (referrerPos < 0) {
+            return -1;
+        }
+        referrerPos = search.indexOf('=', referrerPos)+1;
+        var referrerEndPos = search.indexOf('&', referrerPos);
+        var referrerIndex = -1;
+        if (referrerEndPos < 0) {
+            referrerIndex = search.substring(referrerPos);
+            
+        } else {
+            referrerIndex = search.substring(referrerPos, referrerEndPos);
+            
+        }
+        referrerIndex = parseInt(referrerIndex);
+        return referrerIndex;
+    }
+    
+    function addReferrer(link, index) {
+        
+        if (!link) {
+            return link;
+        }
+        if (link.indexOf('javascript:') === 0) {
+            return link;
+        }
+        if (link.indexOf('--referrer') > 0) {
+            return link;
+        }
+        if (link.indexOf('?') < 0) {
+            link += '?';
+        }
+        if (index) {
+            return link + '&--referrer=' + index;
+        }
+        return link + '&--referrer=' + currPos;
+    }
+    
+    var thisReferrer = getReferrer();
+    registerXatafaceDecorator(function(root) {
+        
+        if (!window.jQuery) {
+            console.log('jquery not loaded yet');
+            return;
+        }
+
+        var $ = jQuery;
+
+        $('[rel][href]').each(function() {
+            
+            var rel = $(this).attr('rel');
+            if (rel == 'child') {
+                $(this).attr('href', addReferrer(this.getAttribute('href')));
+            } else if (rel == 'sibling') {
+                if (thisReferrer >= 0) {
+                    $(this).attr('href', addReferrer(this.getAttribute('href'), thisReferrer));
+                }
+                
+            }
+            
+        });
+        
+    });
+    
+    window.addEventListener('DOMContentLoaded', addBackButton);
+
+})();
+(function() {
+    var $ = jQuery;
+    var xataface = window.xataface || {};
+    window.xataface = xataface;
+    xataface.showInfiniteProgress = showInfiniteProgress;
+    xataface.hideInfiniteProgress = hideInfiniteProgress;
+    
+    var globalInfiniteProgress;
+    function showInfiniteProgress(el) {
+        var spinner = el ? $('<div class="spin"></div>') : $('<div class="spin fillscreen"></div>');
+        if (el) {
+            $(el).append(spinner);
+        } else {
+            if (globalInfiniteProgress && jQuery.contains(document, globalInfiniteProgress)) {
+                return globalInfiniteProgress;
+            }
+            $('body').append(spinner);
+            globalInfiniteProgress = spinner.get(0);
+            
+        }
+        return spinner.get(0);
+    }
+    
+    function hideInfiniteProgress(el) {
+        if (el) {
+            $(el).remove();
+        } else {
+            if (globalInfiniteProgress) {
+                $(globalInfiniteProgress).remove();
+                globalInfiniteProgress = null;
+            }
+        }
+        
+    }
+})();
+
+(function() {
+    // Define a goBackToParentContext() method which is used in the new record form
+    // when the -add-related-context is supplied (meaning that it is actually adding a record to a relationship).
+    var $ = jQuery;
+    var xataface = window.xataface || {};
+    window.xataface = xataface;
+    
+
+    xataface.goBackToParentContext = goBackToParentContext;
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+    function goBackToParentContext() {
+        var params = new URLSearchParams(document.location.search.substring(1));
+        var contextString = params.get('-add-related-context');
+        if (!contextString) {
+            // Context string might be embedded in hidden fields on forms
+            contextString = $('input[name="-add-related-context"]').val();
+            if (contextString) {
+                contextString = decodeHtml(contextString);
+            }
+        }
+        if (!contextString) {
+            return;
+        }
+        
+        var context = JSON.parse(contextString);
+        var id = context.id;
+        var tableName = id.substring(0, id.indexOf('?'));
+        window.location.search = '?-table=' + encodeURIComponent(tableName)+ '&-action=related_records_list&-relationship=' + encodeURIComponent(context.relationship) + '&-recordid=' + encodeURIComponent(id);
+        
+        
+    }
+})();
+
+

@@ -1,19 +1,5 @@
 /* General Markup Styles
 ---------------------------------------- */
-
-@font-face {
-  font-family: 'Eleventh Doctor';
-	src: url(https://www.doctorwhofans.be/fonts/Doctor.otf);
-	font-weight:100;
-	
-
-}
-option[style="font-family:Eleventh Doctor"] {
-	font-size: 2em;
-}
-span[style^="font-family:Eleventh Doctor"] {
-	line-height: 1em;
-	font-size: 4em;}
 html {
 	font-size: 100%;
 	/* Always show a scrollbar for short pages - stops the jump when the scrollbar appears. non-IE browsers */
@@ -155,7 +141,7 @@ a:hover	{ text-decoration: underline; }
 	border: 1px solid transparent;
 	border-radius: 8px;
 	margin: 0 auto;
-	max-width: 100%;
+	max-width: 1152px;
 	min-width: 625px;
 	padding: 15px;
 }
@@ -190,8 +176,9 @@ a:hover	{ text-decoration: underline; }
 }
 
 .site_logo {
+	background-repeat: no-repeat;
 	display: inline-block;
-	width: 10em;
+	width: 149px;
 	height: 52px;
 }
 

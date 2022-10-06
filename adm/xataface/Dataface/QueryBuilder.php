@@ -28,15 +28,17 @@
  *
  ******************************************************************************/
 
-import( 'PEAR.php');
-import( 'Dataface/Table.php');
-import( 'Dataface/Error.php');
-import( 'Dataface/Serializer.php');
-import('Dataface/DB.php'); // for Blob registry.
+import( XFROOT.'PEAR.php');
+import( XFROOT.'Dataface/Table.php');
+import( XFROOT.'Dataface/Error.php');
+import( XFROOT.'Dataface/Serializer.php');
+import( XFROOT.'Dataface/DB.php'); // for Blob registry.
 
 define('QUERYBUILDER_ERROR_EMPTY_SELECT', 1);
 
 class Dataface_QueryBuilder {
+    
+    private $alwaysAddOrderBy = true;
 
 	/**
 	 * Associative array containing the query.
@@ -137,9 +139,17 @@ class Dataface_QueryBuilder {
 		$this->action = null;
 
 		$app =& Dataface_Application::getInstance();
-		if ( @$app->_conf['metadata_enabled'] ){
+		if ( !empty($app->_conf['metadata_enabled']) ){
 			$this->metadata = true;
 		}
+        if (isset($app->_conf['default_order_by_primary_key']) and !$app->_conf['default_order_by_primary_key']) {
+            // Newer versions of MariaDB work MUCH better if you provide an order by clause always
+            $this->alwaysAddOrderBy = false;
+        }
+        if (strstr($tablename, '_tmp_') === $tablename) {
+            
+            $this->alwaysAddOrderBy = false;
+        }
 
 		$keys = array_keys( $this->_query );
 		foreach ($keys as $key){
@@ -266,6 +276,56 @@ class Dataface_QueryBuilder {
 
 
 	}
+	
+	function select_groups($groupBy, $query=array(), $tablename=null) {
+		$this->action='select_groups';
+		$query = array_merge( $this->_query, $query);
+		if (is_array($groupBy)) {
+			$ret = 'SELECT ';
+			$first = true;
+			foreach ($groupBy as $fname) {
+				if ($first) {
+					$first = false;
+				} else {
+					$ret .= ', ';
+				}
+				$ret .= '`'.addslashes($fname).'`'; 
+			}
+			$ret .= ', COUNT(*) as num';
+			
+		} else {
+			$ret = 'SELECT `'.addslashes($groupBy).'` COUNT(*) as num';
+		}
+		
+		$from = $this->_from($this->tablename($tablename));
+		$where = $this->_where($query);
+		$where = $this->_secure($where);
+		$groupByStr = '';
+		if (!is_array($groupBy)) {
+			$groupByStr = 'group by `'.addslashes($groupBy).'`';
+		} else {
+			$groupByStr = 'group by ';
+			$first = true;
+			foreach ($groupBy as $fname) {
+				if ($first) {
+					$first = false;
+				} else {
+					$groupByStr .= ', ';
+				}
+				$groupByStr .= '`'.addslashes($fname).'`';
+			}
+			
+		}
+		
+		$having = 'having `num` > 0';
+
+		if ( strlen($from)>0 ) $ret .= ' '.$from;
+		if ( strlen($where)>0 ) $ret .= ' '.$where;
+		if ( strlen($groupByStr)>0) $ret .= ' '.$groupByStr;
+		$ret .= ' '.$having;
+		$this->action = null;
+		return trim($ret);
+	}
 
         function select_totals($query=array(), $tablename=null, $fields = array()){
             $tablename = $this->tablename($tablename);
@@ -357,6 +417,10 @@ class Dataface_QueryBuilder {
 				// state of the record.
 				continue;
 			}
+            if (@$fieldArr['ownerstamp'] or @$fieldArr['uuid']) {
+                continue;
+            }
+
 			if ( $tableObj->isVersioned() and $tableObj->getVersionField() === $fieldname ){
 				continue;
 			}
@@ -451,6 +515,39 @@ class Dataface_QueryBuilder {
 					continue;
 				}
 			}
+            if (@$field['uuid']) {
+                $insertedKeys[] = '`'.$key.'`';
+                $insertedValues[] = 'UUID()';
+                continue;
+            }
+            if (@$field['ownerstamp']) {
+                if (class_exists('Dataface_AuthenticationTool')) {
+                    $auth = Dataface_AuthenticationTool::getInstance();
+                    
+                    if ($tableObj->isText($field['name'])) {
+                        $insertedKeys[] = '`'.$key.'`';
+                        $unm = $auth->getLoggedInUserName();
+                        $insertedValues[] = $this->prepareValue($key, $unm);
+                        $record->setValue($key, $unm);
+                        continue;
+                    } else {
+                        $user = $auth->getLoggedInUser();
+                        if ($user) {
+                            $keynames = array_keys($user->table()->keys());
+                            if (count($keynames) == 1) {
+                                $keyname = array_shift($keynames);
+                                $id = $user->val($keyname);
+                                $insertedKeys[] = '`'.$key.'`';
+                                $insertedValues[] = $this->prepareValue($key, $id);
+                                $record->setValue($key, $id);
+                                continue;
+                            }
+                        }
+                    }
+                
+                }
+            
+            }
 			if ( !$record->hasValue($key) ) continue;
 			$val = $record->getValue($key);
 			if ( strtolower($this->_mutableFields[$key]['Extra']) == 'auto_increment' && !$val && $val !== 0 && $val !== '0' ){
@@ -536,7 +633,7 @@ class Dataface_QueryBuilder {
 
 	function wc($tablename, $colname, $collate = ''){
         if ($collate) $collate = ' COLLATE '.$collate;
-		if ( in_array($this->action, array('select','delete', 'select_num_rows', 'select_totals')) ){
+		if ( in_array($this->action, array('select','delete', 'select_num_rows', 'select_totals', 'select_groups')) ){
 			return "`{$tablename}`.`{$colname}`".$collate;
 		} else {
 			return "`{$colname}`".$collate;
@@ -546,9 +643,9 @@ class Dataface_QueryBuilder {
         $collate = @$field['collate'];
         if (!$collate) $collate = '';
         if (strlen($value) > 6 and
-            $value{0} == '~' and
-            $value{1} == '#' and
-            $value{strlen($value)-1} == '#' and
+            $value[0] == '~' and
+            $value[1] == '#' and
+            $value[strlen($value)-1] == '#' and
             ($commandParts = explode('#', $value)) and
             count($commandParts) === 4) {
             $value = trim($commandParts[1]);
@@ -595,7 +692,7 @@ class Dataface_QueryBuilder {
 		foreach ($words as $value){
 			if ( $value === '' ) continue;
 			// A value with a prefix of '=' indicates that this is an exact match
-			if ( $value{0}=='=' ){
+			if ( $value[0]=='=' ){
 				$exact = true;
 				$value = substr($value,1);
 			} else {
@@ -726,30 +823,31 @@ class Dataface_QueryBuilder {
 	}
 
 	/**
-         * @brief A wrapper around the _where() method that optionally takes
-         * a Dataface_Record object as a parameter.  This produces just the
-         * where clause of an SQL query.
-         *
-         * @param mixed $query Either an array of parameters or a Dataface_Record object
-         * which will be used for its keys.
-         * @param Boolean $merge Whether to merge the criteria with the object's
-         * current query.
-         * @return string The where clause e.g. "WHERE name='Steve' and age=29"
-         * @since 2.0.3
-         */
-        public function where($query = null, $merge=true){
-            if ( $query instanceof Dataface_Record ){
-                $record = $query;
-                $keys = array_keys($record->table()->keys());
-                $query = array();
-                foreach ($keys as $key){
-                    $query[$key] =  "=".$this->_serializer->serialize($key, $record->val($key));
-                }
-            } else if ( !isset($query) ){
-                $query = array();
+     * @brief A wrapper around the _where() method that optionally takes
+     * a Dataface_Record object as a parameter.  This produces just the
+     * where clause of an SQL query.
+     *
+     * @param mixed $query Either an array of parameters or a Dataface_Record object
+     * which will be used for its keys.
+     * @param Boolean $merge Whether to merge the criteria with the object's
+     * current query.
+     * @return string The where clause e.g. "WHERE name='Steve' and age=29"
+     * @since 2.0.3
+     */
+    public function where($query = null, $merge=true){
+        if ( $query instanceof Dataface_Record ){
+            $record = $query;
+            $keys = array_keys($record->table()->keys());
+            $query = array();
+            foreach ($keys as $key){
+                $query[$key] =  "=".$this->_serializer->serialize($key, $record->val($key));
             }
-            return $this->_where($query, $merge);
+        } else if ( !isset($query) ){
+            $query = array();
         }
+        return $this->_where($query, $merge);
+    }
+
 
 	/**
 	 * Returns the where clause for the sql query.
@@ -887,7 +985,6 @@ class Dataface_QueryBuilder {
 		} else {
 			$where = '';
 		}
-
 		return $where;
 	}
 
@@ -1053,17 +1150,29 @@ class Dataface_QueryBuilder {
 	 * Returns the ORDER BY clause of the SQL query.
 	 */
 	function _orderby($query = array()){
-		$query = array_merge( $this->_query, $query);
+        $query = array_merge( $this->_query, $query);
 		foreach ($query as $key=>$value) {
 			if ( $value === null ){
 				unset($query[$key]);
 			}
 		}
+		if (empty($query['-sort']) and $this->alwaysAddOrderBy) {
+		    $defaultSort = $this->_table->getAttribute('default_sort');
+		    if (empty($defaultSort)) {
+		        $keys = array_keys($this->_table->keys());
+                if (!empty($keys)) {
+                    $defaultSort = $keys[0];
+                }
+		    }
+		    if (!empty($defaultSort)) {
+		        $query['-sort'] = $defaultSort;
+		    }
+		}
 
-		if ( isset($query['-sort']) ){
+		if ( !empty($query['-sort'])  ){
 
 			return 'ORDER BY '.preg_replace_callback('/\b(\w+?)\b/',array(&$this, '_mysql_quote_idents'), $query['-sort']);
-		}
+		} 
 		return '';
 
 	}
@@ -1203,7 +1312,8 @@ class Dataface_QueryBuilder {
 		$table_cols = $relatedRecord->getForeignKeyValues( $sql);
 		if ( count($this->errors) > 0 ){
 			$error = array_pop($this->errors);
-			$error->addUserInfo("Error getting foreign key values for relationship '$relationship_name'");
+			$relationshipName = $relationship->getName();
+			$error->addUserInfo("Error getting foreign key values for relationship '$relationshipName'");
 			throw new Exception($error->toString());
 		}
 

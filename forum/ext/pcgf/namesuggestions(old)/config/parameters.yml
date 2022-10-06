@@ -1,2 +1,0 @@
-parameters:
-    tables.pcgf.namesuggestions.events: '%core.table_prefix%namesuggestions_events'

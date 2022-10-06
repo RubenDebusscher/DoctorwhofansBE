@@ -61,8 +61,8 @@ if ( !function_exists('sys_get_temp_dir') )
 }
 
 require_once dirname(__FILE__)."/../config.inc.php";
-import('Dataface/PermissionsTool.php');
-import('Dataface/LanguageTool.php');
+import(XFROOT.'Dataface/PermissionsTool.php');
+import(XFROOT.'Dataface/LanguageTool.php');
 define('DATAFACE_STRICT_PERMISSIONS', 100);
 	// the minimum security level that is deemed as strict permissions.
 	// strict permissions mean that permissions must be explicitly granted to a
@@ -179,9 +179,161 @@ END;
 	private $pageTitle = null;
 
 	/**
+	 * Array of UI libraries that have been loaded.
+	 */
+	private $uiLibraries = array();
+	public $UI_LIBRARY_PATH = null;
+	
+	/**
+	 * Gets the UI library search path - the paths where it will
+	 * search for UI libraries.
+	 * @return string Paths separated by path separator char.
+	 */
+	public function getUILibraryPath() {
+	    if ($this->UI_LIBRARY_PATH === null) {
+	        $this->UI_LIBRARY_PATH = XFAPPROOT.'uilibs' . PATH_SEPARATOR .XFROOT.'uilibs';
+	    }
+		return $this->UI_LIBRARY_PATH;
+	}
+
+	/**
+	 * Sets the search paths to look for UI libraries.
+	 * @param string $path  A path in format like PATH or LD_LIBRARY_PATH.  Paths separated by PATH_SEPARATOR.  (e.g. semicolon on windows, and colon on unix).
+	 */
+	public function setUILibraryPath($path) {
+		$this->UI_LIBRARY_PATH = $path;
+	}
+
+	/**
+	 * Appends path to the UI library search paths.
+	 * @param string $path The path to add.
+	 * @return void.
+	 */
+	public  function appendUILibraryPath($path) {
+		$this->UI_LIBRARY_PATH = $this->getUILibraryPath() .PATH_SEPARATOR . $path;
+	}
+
+	/**
+	 * Prepends path to the UI library search paths.
+	 * @param string $path The path to add.
+	 * @return void
+	 */
+	public  function prependUILibraryPath($path) {
+		$this->UI_LIBRARY_PATH = $path . PATH_SEPARATOR . $this->getUILibraryPath();
+	}
+
+	/**
+	 * Gets the search paths that will be searched to load
+	 * UI libraries, as an array.
+	 * 
+	 * @return array Array of paths to directories to search for uilibs.
+	 */
+	public  function getUILibraryPaths() {
+		return explode(PATH_SEPARATOR, $this->getUILibraryPath());
+	}
+
+	/**
+	 * Loads a UI library.  A UI library consists of a file
+	 * located at uilibs/$name/$name.uilib.html.  This file will 
+	 * be included in the head of the document, so it should
+	 * contain an HTML snippet that loads the necessary CSS and javascript
+	 * files for the UI library to work.
+	 * 
+	 * The $name.uilib.html file should use the {{LIBROOT}} placeholder
+	 * as the URL to the uilib's directory so that it knows how to reference
+	 * its CSS and Javascript files.
+	 * 
+	 * @param string $name The name of the UI library to load.
+	 * @return boolean True if the library was loaded.  False otherwise.
+	 */
+	public function loadUILibrary($name) {
+		if (!isset($this->uiLibraries[$name])) {
+			$this->uiLibraries[$name] = $name;
+			
+			
+			foreach ($this->getUILibraryPaths() as $p) {
+				
+				if (strpos($p, XFAPPROOT) === 0) {
+					$baseUrl = DATAFACE_SITE_URL;
+					$basePath = XFAPPROOT;
+				} else if (strpos($p, XFROOT) === 0) {
+					$baseUrl = DATAFACE_URL;
+					$basePath = XFROOT;
+				} else {
+					continue;
+				}
+				if (strlen($baseUrl) == 0) {
+					$baseUrl = '/';
+				}
+				if (substr($baseUrl, -1) != "/") {
+					$baseUrl .= '/';
+				}
+
+				$filePath = $p.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.$name.'.uilib.html';
+				//echo "Filepath: $filePath;";
+				//echo "BaseUrl: $baseUrl;";
+				if ((XF_USE_OPCACHE and xf_opcache_is_script_cached($filePath)) or file_exists($filePath)) {
+
+					$fileUrl = $baseUrl .
+						substr($filePath, strlen($basePath));
+					$fileUrl = str_replace(DIRECTORY_SEPARATOR, '/', $fileUrl);
+					$libRoot = substr($fileUrl, 0, strrpos($fileUrl, '/'));
+                    
+                    if (XF_USE_OPCACHE and xf_opcache_is_script_cached($filePath)) {
+                        include(xf_opcache_path($filePath));
+                        list($content) = $xf_opcache_export;
+                    } else {
+    					$content = file_get_contents($filePath);
+    					$content = str_replace('{{LIBROOT}}', $libRoot, $content);
+    					$this->addHeadContent($content);
+                        if (XF_USE_OPCACHE) {
+                            xf_opcache_cache_array($filePath, [$content]);
+                        }
+                    }
+					
+					return true;
+				}
+
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @private
 	 */
 	var $sessionCookieKey;
+    
+    /**
+     * Array to keep track of "marks" on the cache.
+     * @see #markCache($table, $user)
+     *
+     * Structure:
+     * [
+     *      'app' => boolean, 
+     *      'users' => [$username => boolean], 
+     *      'tables' => [$tablename => [
+     *          'app' => boolean,
+     *          'users' => [
+     *              $username => boolean
+     *          ]
+     *      ]
+     * ]
+     * 
+     * $versionUpdates['app'] == true => Entire app requires cache update
+     * $versionUpdates['users'][$username] == true => Entire app requires cache update for user $username
+     * $versionUpdates['tables'][$tablename]['app'] == true => Table $tablename requires cache update for all users.
+     * $versionUpdates['tables'][$tablename]['users'][$username] == true => Table $tablename requires cache update for user $username
+     *
+     * There is no guarantee, at the end of the request that this structure or any of its keys will be non-null/defined
+     * do you will need to test before using.
+     * 
+     * The markCache($table, $user) method includes all logic for updating this structure.  Generally changes to the
+     * structure should only be made through that method.
+     *
+     * @since 3.0
+     */
+    private $versionUpdates;
 
 
 	/**
@@ -301,7 +453,8 @@ END;
 		'show_record_tabs' => 1,		// View, Edit, Translate, History, etc...
 		'show_record_tree' => 1,		// Tree to navigate the relationships of this record.
 		'list_view_scroll_horizontal'=>1, // Whether to scroll list horizontal if it exceeds page width
-		'list_view_scroll_vertical'=>1	// Whether to scroll list vertical if it exceeds page height.
+		'list_view_scroll_vertical'=>1,	// Whether to scroll list vertical if it exceeds page height.
+		'disable_master_detail' => 1
 
 	);
 
@@ -557,25 +710,68 @@ END;
 		}
 		$this->_baseUrl  = $_SERVER['PHP_SELF'];
 		if ( !is_array($conf) ) $conf = array();
-                $configPath = DATAFACE_SITE_PATH.'/conf.ini.php';
-                if (!is_readable($configPath)) {
-                    $configPath = DATAFACE_SITE_PATH.'/conf.ini';
-                }
-		if ( is_readable($configPath) ){
-			$conf = array_merge(parse_ini_file($configPath, true), $conf);
-			if ( @$conf['__include__'] ){
-				$includes = array_map('trim',explode(',', $conf['__include__']));
-				foreach ($includes as $i){
-                                        
-					if ( is_readable($i) ){
-						$conf = array_merge($conf, parse_ini_file($i, true));
-					} else if ( is_readable($i.'.php') ){
-						$conf = array_merge($conf, parse_ini_file($i.'.php', true));
-					}
-				}
-			}
-		}
+        
+        $configPath = DATAFACE_SITE_PATH.'/conf.ini.php';
+        $configOpcacheKey = $configPath;
 
+        if (XF_USE_OPCACHE and xf_opcache_is_script_cached($configOpcacheKey)) {
+            include(xf_opcache_path($configOpcacheKey));
+            $conf = $xf_opcache_export;
+        } else {
+            if (!is_readable($configPath)) {
+                $configPath = DATAFACE_SITE_PATH.'/conf.ini';
+            }
+    		if ( is_readable($configPath) ){
+    			$conf = array_merge(parse_ini_file($configPath, true), $conf);
+    			if ( @$conf['__include__'] ){
+    				$includes = array_map('trim',explode(',', $conf['__include__']));
+    				foreach ($includes as $i){
+                        if (!$i) continue;
+                        
+                        $lastChar = substr($i, -1);
+                        $optional = false;
+                        if ($lastChar == '?') {
+                            $optional = true;
+                            $i = substr($i, 0, -1);
+                        }
+                        if (strpos($i, '{host}') !== false) {
+                            $host = $_SERVER['HTTP_HOST'];
+                            $port = '80';
+                            if (@$_SERVER['PORT']) {
+                                $port = $_SERVER['PORT'];
+                            }
+                            $colonPos = strpos($host, ':');
+                            if ($colonPos !== false) {
+                                $port = substr($host, $colonPos+1);
+                                $host = substr($host, 0, $colonPos);
+                            }
+                            $port = intval($port);
+                            
+                            $i = str_replace('{host}', preg_replace('/[^0-9a-zA-Z\.\-]/','', basename($host)), $i);
+                            $i = str_replace('{port}', $port, $i);
+                        }
+                        
+    					if ( is_readable($i) ){
+                            //echo $i;
+                            $conf2 = parse_ini_file($i, true);
+                            //print_r($conf2);
+    						$conf = array_merge($conf, parse_ini_file($i, true));
+                            
+    					} else if ( is_readable($i.'.php') ){
+    						$conf = array_merge($conf, parse_ini_file($i.'.php', true));
+    					} else if (!$optional) {
+    					    throw new Exception("Include directive $i not satisifed.  Cannot find the file $i");
+    					}
+    				}
+                    //print_r($conf);exit;
+    			}
+    		}
+            if (XF_USE_OPCACHE) {
+                xf_opcache_cache_array($configOpcacheKey, $conf);
+            }
+            
+        }
+        
 
 
 		if ( !isset( $conf['_tables'] ) ){
@@ -609,17 +805,43 @@ END;
 
 			}
 			if ( !isset($dbinfo['driver']) ){
-				$dbinfo['driver'] = 'mysql';
+				// It's time to move to mysqli as the default database driver.
+				// this might break old apps.
+				$dbinfo['driver'] = 'mysqli';
 			}
-			require_once 'xf/db/drivers/'.basename($dbinfo['driver']).'.php';
+			require_once XFROOT.'xf/db/drivers/'.basename($dbinfo['driver']).'.php';
 			//if ( @$dbinfo['persistent'] ){
 			//	$this->_db = xf_db_pconnect( $dbinfo['host'], $dbinfo['user'], $dbinfo['password'] );
 			//} else {
+                $useEnv = false;
+                if (strpos($dbinfo['host'], '$') === 0) {
+                    $parts = explode('|', $dbinfo['host']);
+                    $dbinfo['host'] = @$_ENV[substr($parts[0], 1)];
+                    if (!$dbinfo['host'] and count($parts) > 1) {
+                        $dbinfo['host'] = $parts[1];
+                    }
+                    $useEnv = true;
+                }
+                if (strpos($dbinfo['user'], '$') === 0) {
+                    $parts = explode('|', $dbinfo['user']);
+                    $dbinfo['user'] = @$_ENV[substr($parts[0], 1)];
+                    if (!$dbinfo['user'] and count($parts) > 1) {
+                        $dbinfo['user'] = $parts[1];
+                    }
+                    $useEnv = true;
+                }
+                if ($useEnv and strpos($dbinfo['password'], '$') === 0) {
+                    $parts = explode('|', $dbinfo['password']);
+                    $dbinfo['password'] = @$_ENV[substr($parts[0], 1)];
+                    if (!$dbinfo['password'] and count($parts) > 1) {
+                        $dbinfo['password'] = $parts[1];
+                    }
+                }
 
 			$this->_db = xf_db_connect( $dbinfo['host'], $dbinfo['user'], $dbinfo['password'] );
 			//}
 			if ( !$this->_db ){
-				throw new Exception('Error connecting to the database: '.xf_db_error());
+				throw new Exception('Error connecting to the database: '.xf_db_connect_error());
 
 			}
 			$this->mysqlVersion = xf_db_get_server_info($this->_db);
@@ -682,10 +904,16 @@ END;
 		}
 
 		// Include XataJax module always.
-		$mods = array('modules_XataJax'=>'modules/XataJax/XataJax.php');
-		if ( !@$this->_conf['disable_g2'] ){
-			$mods['modules_g2'] = 'modules/g2/g2.php';
-		}
+		$mods = [
+            'modules_XataJax'=>'modules/XataJax/XataJax.php'
+        ];
+
+		// We used to make g2 the default, but
+		// starting with version 3.0, we will be going back to the default
+		// look - which is improved.
+		//if ( !@$this->_conf['disable_g2'] ){
+		//	$mods['modules_g2'] = 'modules/g2/g2.php';
+		//}
 		foreach ($this->_conf['_modules'] as $k=>$v){
 			$mods[$k] = $v;
 		}
@@ -693,7 +921,7 @@ END;
 
 
 		if ( isset($this->_conf['_modules'])  and count($this->_conf['_modules'])>0 ){
-			import('Dataface/ModuleTool.php');
+			import(XFROOT.'Dataface/ModuleTool.php');
 		}
 
 		if ( isset($this->_conf['languages']) ){
@@ -702,6 +930,8 @@ END;
 				$this->_conf['languages'][$lang_code] = $lang_code;
 			}
 		}
+        
+        
 
 		if ( @$this->_conf['support_transactions'] ){
 			// We will support transactions
@@ -818,11 +1048,24 @@ END;
 
 		if ( !isset($this->_conf['default_table'] ) ){
 			// The default table is the table that is used if no other table is specified.
-			foreach ($this->_tables as $key=>$value){
-				$this->_conf['default_table'] = $key;
-
-				break;
-			}
+            
+            if (isset($this->_conf['default_tables']) and !empty($_REQUEST['-action'])) {
+                
+                if (!empty($this->_conf['default_tables'][$_REQUEST['-action']])) {
+                    $defaultTable = $this->_conf['default_tables'][$_REQUEST['-action']];
+                    if ($defaultTable == '_') {
+                        $defaultTable = '_tmp_null';
+                    }
+                    $this->_conf['default_table'] = $defaultTable;
+                }
+            }
+            if (!isset($this->_conf['default_table'])) {
+    			foreach ($this->_tables as $key=>$value){
+    				$this->_conf['default_table'] = $key;
+    				break;
+    			}
+            }
+			
 		}
 
 		if ( !isset($this->_conf['auto_load_results']) ) $this->_conf['auto_load_results'] = false;
@@ -883,19 +1126,27 @@ END;
 			$_REQUEST['-lang'] = basename($_REQUEST['-lang']);
 			$this->_conf['lang'] = $_REQUEST['-lang'];
 			if ( @$_COOKIE[$prefix.'lang'] !== $_REQUEST['-lang'] ){
-				setcookie($prefix.'lang', $_REQUEST['-lang'], null, '/');
+				if (php_sapi_name() === 'cli') {
+					//fwrite(STDERR, "\nNOTICE: Running in CLI mode mode, so not setting language cookie\n");
+				} else {
+					setcookie($prefix.'lang', $_REQUEST['-lang'], null, '/');
+				}
 			}
 		} else if (isset( $_COOKIE[$prefix.'lang']) ){
 			$this->_conf['lang'] = $_COOKIE[$prefix.'lang'];
 		} else {
-			import('I18Nv2/I18Nv2.php');
+			import(XFLIB.'I18Nv2/I18Nv2.php');
 			$negotiator = I18Nv2::createNegotiator($this->_conf['default_language'], 'UTF-8');
 			$this->_conf['lang'] = $this->getLanguageCode(
 				$negotiator->getLocaleMatch(
 					$this->getAvailableLanguages()
 				)
 			);
-			setcookie($prefix.'lang', $this->_conf['lang'], null, '/');
+			if (php_sapi_name() === 'cli') {
+				//fwrite(STDERR, "\nNOTICE: Running in CLI mode so not setting the lang cookie.\n");
+			} else {
+				setcookie($prefix.'lang', $this->_conf['lang'], null, '/');
+			}
 		}
 
 		$this->_conf['lang'] = basename($this->_conf['lang']);
@@ -927,11 +1178,11 @@ END;
 		define('DATAFACE_USAGE_MODE', $this->_conf['usage_mode']);
 
 		if ( @$this->_conf['enable_workflow'] ){
-			import('Dataface/WorkflowTool.php');
+			import(XFROOT.'Dataface/WorkflowTool.php');
 		}
 
 		if (@$_GET['--url']) {
-			import('actions/request_public_url.php');
+			import(XFROOT.'actions/request_public_url.php');
 			// This allows the use of a public URL for setting
 			// both the query and the logged in user.
 			dataface_actions_request_public_url::apply_url($this);
@@ -940,7 +1191,7 @@ END;
 		if ( isset($_REQUEST['__keys__']) and is_array($_REQUEST['__keys__']) ){
 			$query = $_REQUEST['__keys__'];
 			foreach ( array_keys($_REQUEST) as $key ){
-				if ( $key{0} == '-' and !in_array($key, array('-search','-cursor','-skip','-limit'))){
+				if ( $key[0] == '-' and !in_array($key, array('-search','-cursor','-skip','-limit'))){
 					$query[$key] = $_REQUEST[$key];
 				}
 			}
@@ -1008,23 +1259,70 @@ END;
 
 		$this->rawQuery = $query;
 
-		if ( !isset( $query['-table'] ) ) $query['-table'] = $this->_conf['default_table'];
+		if ( empty( $query['-table'] ) ) {
+            if (!empty($query['-action'])) {
+                
+                if (!empty($this->_conf['default_table.'.$query['-action']])) {
+                    $this->_conf['default_table'] = $this->_conf['default_table.'.$query['-action']];
+                }
+            }
+		    $query['-table'] = $this->_conf['default_table'];
+            $this->_conf['using_default_table'] = true;
+		}
 		$this->_currentTable = $query['-table'];
 
 
-		if ( !@$query['-action'] ) {
+		if ( empty($query['-action']) ) {
 			$query['-action'] = $this->_conf['default_action'];
+            if (@$this->_conf['default_action.'.$this->_currentTable]) {
+                $query['-action'] = $this->_conf['default_action.'.$this->_currentTable];
+            }
+            
 			$this->_conf['using_default_action'] = true;
 		}
+        if (!empty($this->_conf['using_default_action']) and isset($this->_conf['default_params.'.$this->_currentTable])) {
+            $defaultParams = $this->_conf['default_params.'.$this->_currentTable];
+            if (is_string($defaultParams)) {
+                parse_str($defaultParams, $defaultParams);
+
+            }
+            if (is_array($defaultParams)) {
+                foreach ($defaultParams as $k=>$v) {
+                    if (!isset($query[$k])) {
+                        $query[$k] = $v;
+                    }
+                    
+                }
+            } 
+        }
 
 		$query['--original_action'] = $query['-action'];
 		if ( $query['-action'] == 'browse') {
+            if (@$this->_conf['default_browse_params.'.$this->_currentTable]) {
+                $defaultParams = $this->_conf['default_browse_params.'.$this->_currentTable];
+                if (is_string($defaultParams)) {
+                    parse_str($defaultParams, $defaultParams);
+
+                }
+                if (is_array($defaultParams)) {
+                    foreach ($defaultParams as $k=>$v) {
+                        if (!isset($query[$k])) {
+                            $query[$k] = $v;
+                        }
+                    
+                    }
+                } 
+            }
+            
 			if ( isset($query['-relationship']) ){
 				$query['-action'] = 'related_records_list';
 			} else if ( isset($query['-new']) and $query['-new']) {
 				$query['-action'] = 'new';
 			} else {
 				$query['-action'] = $this->_conf['default_browse_action']; // for backwards compatibility to 0.5.x
+                if (@$this->_conf['default_browse_action.'.$this->_currentTable]) {
+                    $query['-action'] = $this->_conf['default_browse_action.'.$this->_currentTable];
+                }
 			}
 		} else if ( $query['-action'] == 'find_list' ){
 			$query['-action'] = 'list';
@@ -1076,6 +1374,258 @@ END;
 
 
 	}
+    
+    
+    
+    /**
+     * Method for caching plugins that retrieves a list of the "caching" commands that should be 
+     * executed.  This will return an array of "commands".  Each "command" is an array with two 
+     * keys: "user" and "table", indicating whether the "user", "table", both or neither need to
+     * have their content versions incremented.
+     * #cache
+     *
+     * Data structure:
+     *
+     * [
+     *   ['table' => $tablename:string, 'user' => $username:string]
+     * ]
+     *
+     * Meaning of commands:
+     *. 1. If $tablename and $username are both empty strings, then the command is to increment
+     *      the app version.
+     *. 2. If the $tablename is empty string but $username is not empty, then the command is to increment
+     *      the app version for the given username.
+     * 3. If the $tablename and $username are both non-empty, then the command is to increment the 
+     *      table version for the given user.
+     * 4. If the $tablename is non-empty, but the $username is empty, then the command is to increment
+     *   the table version for all users.
+     */
+    public function getCacheUpdates() {
+        $out = [];
+        if (!@$this->versionUpdates) return $out;
+        
+        if (@$this->versionUpdates['app']) {
+            $out[] = ['table' => '', 'user' => ''];
+            return $out;
+        }
+        if (@$this->versionUpdates['users']) {
+            foreach ($this->versionUpdates['users'] as $k => $v) {
+                if ($v) {
+                    $out[] = ['table' => '', 'user' => $k];
+                }
+            }
+        }
+        if (@$this->versionUpdates['tables']) {
+            foreach ($this->versionUpdates['tables'] as $k => $tableData) {
+                if (@$tableData['app']) {
+                    $out[] = ['table' => $k, 'user' => ''];
+                } else if (@$tableData['users']) {
+                    foreach ($tableData['users'] as $uk => $uVal) {
+                        if ($uVal) {
+                            $out[] = ['table' => $k, 'user' => $uk];
+                        }
+                    }
+                }
+            }
+        }
+        return $out;
+    }
+    
+    private $manifest;
+    public function &getManifest() {
+        if (!isset($this->manifest)) {
+            $manifestPath = XFTEMPLATES_C.'manifest-'.df_get_database_version().'.php';
+            if (file_exists($manifestPath)) {
+                
+                include $manifestPath;
+                $this->manifest = &$__manifest;
+            } else {
+                $this->updateManifest(df_get_database_version());
+            }
+            
+        }
+        return $this->manifest;
+    }
+    
+    private function updateManifest($version) {
+
+        $manifest = [];
+        foreach ([XFROOT, XFAPPROOT] as $root) {
+            $directory = new \RecursiveDirectoryIterator($root);
+            $iterator = new \RecursiveIteratorIterator($directory);
+        
+            foreach ($iterator as $info) {
+                $pathname = $info->getPathname();
+                if (preg_match('/\.(php|ini|js|html|css)$/', $pathname)) {
+                    $manifest[$pathname] = true;
+                }
+            }
+        }
+        
+        
+        $manifestContents = '<'.'?php'."\n\$__manifest = ".var_export($manifest, true).';';
+        $manifestPath = XFTEMPLATES_C . 'manifest-'.$version.'.php';
+
+        $res = file_put_contents($manifestPath, $manifestContents, LOCK_EX);
+        if ($res === false) {
+            echo "Failed to update manifest.  Could not write contents to ".$manifestPath;
+            exit;
+        } else {
+            if (!file_exists($manifestPath)) {
+                echo "Manifest still doesn't exist after writing it";
+                exit;
+            } else {
+                //echo "Wrote the manifest at $manifestPath";
+                //echo file_get_contents($manifestPath);
+                //exit;
+            }
+        }
+
+        $this->manifest = $manifest;
+        
+    }
+    
+    /**
+     * Calling this method instructs Xataface to NOT cache the current response using the 
+     * scaler module. #cache
+     * @since 3.0
+     */
+    public function nocache() {
+        $this->_conf['nocache'] = true; 
+    }
+    
+    public function cache() {
+        $this->_conf['nocache'] = false;
+    }
+    
+    /**
+     * Sets the cache expiry in seconds.  This is used by the Scaler module
+     * to set the memcache expiry.#cache
+     * @since 3.0
+     */
+    public function setCacheExpiry($expires) {
+        $this->_conf['cache_expiry'] = $expires;
+    }
+    
+    /**
+     * Gets the cache expiry in seconds.  #cache
+     * @return mixed The cache expiry for this response.  Or null if none is explicitly set.
+     * @since 3.0
+     */
+    public function getCacheExpiry() {
+        if (isset($this->_conf['cache_expiry'])) {
+            return $this->_conf['cache_expiry'];
+        }
+        return null;
+    }
+    
+    
+    
+    /**
+     * Marks the cache for a particular user/table combination to provide hints
+     * to caching solution that it should invalidate its cache for that table/user
+     * combination at the end of the request. #cache
+     * 
+     * @param string $table The table name or null.  If null is provided, then this applies to all tables.
+     * @param string $user The username of the user or null.  If null is provided then this applies to all users.
+     * @return void
+     * @since 3.0
+     */
+    public function markCache($table = null, $user = null) {
+        if (!isset($this->versionUpdates)) {
+            $this->versionUpdates = [];
+        }
+        if (@$this->versionUpdates['app']) {
+            // If we are already updating the entire app, then we don't need to 
+            // do anything.  The entire thing is invalidated.
+            return;
+        }
+        if (!$table and !$user) {
+            // This updates the entire application version.
+            if (!@$this->versionUpdates['app']) {
+                $this->versionUpdates['app'] = true;
+            }
+            if (isset($this->versionUpdates['users'])) {
+                unset($this->versionUpdates['users']);
+            }
+            if (isset($this->versionUpdates['tables'])) {
+                unset($this->versionUpdates['tables']);
+            }
+            return;
+        }
+
+        if ($table and !$user) {
+            // This updates a particular table
+            if (!isset($this->versionUpdates['tables'])) {
+                $this->versionUpdates['tables'] = [];
+            }
+            $tables =& $this->versionUpdates['tables'];
+            if (!isset($tables[$table])) {
+                // This is our first foray into this table.
+                // we initialize it with the 'app' key true
+                // to indicate that the table is invalidated app-wide
+                $tables[$table] = ['app' => true];
+                return;
+            }
+            $tableData =& $tables[$table];
+            if (@$tableData['app']) {
+                // This table is already invalidated app-wide, so we don't need to do anything.
+                return;
+            }
+            
+            if (isset($tableData['users'])) {
+                // If we previously invalidated a particular user for this table,
+                // we don't need that anymore because we are invalidating the whole table.
+                unset($tableData['users']);
+            }
+            // We set the 'app' key true to indicate that this table is invalidated app-wide
+            $tableData['app'] = true;
+            return;
+            
+        }
+        
+        if (!$table and $user) {
+            // This updates a particular user app-wide
+            if (!isset($this->versionUpdates['users'])) {
+                $this->versionUpdates['users'] = [];
+            }
+            $users =& $this->versionUpdates['users'];
+            if (!@$users[$user]) {
+                $users[$user] = true;
+            }
+            return;
+        }
+        
+        if ($table and $user) {
+            // Invalidating particular user for particular table.
+            if (!isset($this->versionUpdates['tables'])) {
+                $this->versionUpdates['tables'] = [];
+            }
+            $tables =& $this->versionUpdates['tables'];
+            if (!isset($tables[$table])) {
+                // This is our first foray into this table.
+                // we initialize it with the 'app' key true
+                // to indicate that the table is invalidated app-wide
+                $tables[$table] = [];
+            }
+            $tableData =& $tables[$table];
+            if (@$tableData['app']) {
+                // This table is already invalidated for entire app
+                // we don't need to invalidate for this user.
+                return;
+            }
+            if (!isset($tableData['users'])) {
+                $tableData['users'] = [];
+            }
+            
+            $tableData['users'][$user] = true;
+            return;
+        }
+        
+        
+        
+        
+    }
 
 
 	/**
@@ -1110,6 +1660,10 @@ END;
 	}
 
 
+	/**
+	 * Adds javascript strings for use in javascript internationalization.
+	 * @param array(string=>string) $strings
+	 */
 	public function addJSStrings($strings){
 	    $jsStrings = json_encode($strings);
 	    $this->addHeadContent(<<<END
@@ -1172,6 +1726,20 @@ END
 	}
 
 
+    /**
+     * Returns the application version as reported in the version.txt file.  This only
+     * returns the build version, which is the 2nd component of the version in version.txt
+     * Value is returned as an int.
+     *
+     * If no version is supplied, this will return 0
+     * 
+     * @return int The application version number.
+     */
+    function getApplicationVersion() {
+        return df_get_file_system_version();
+        
+    }
+    
 	/**
 	 * @brief Get the mysql major version number of MySQL.
 	 * returns int
@@ -1184,21 +1752,34 @@ END
 		return intval($mv);
 	}
 
-	function getPageTitle(){
+	function getPageTitle($mode='desktop'){
+        $out = '';
 		if ( isset($this->pageTitle) ){
-			return $this->pageTitle;
+			$out = $this->pageTitle;
 		} else {
-			$title = $this->getSiteTitle();
+			
 			$query =& $this->getQuery();
+			if (@$this->_conf['using_default_table'] and @$this->_conf['using_default_action']) {
+			    return $this->getSiteTitle();
+			}
 			if ( ($record = $this->getRecord()) && $query['-mode'] == 'browse'  ){
-                return $record->getTitle().' - '.$title;
+                $out = $record->getTitle();
             } else {
-                $tableLabel = Dataface_Table::loadTable($query['-table'])->getLabel();
-                return $tableLabel.' - '.$title;
+                $tableLabel = Dataface_Table::loadTable($query['-table'])->getPageTitleForAction($query['-action']);
+                $out = $tableLabel;
 
             }
 		}
+        $textLength = strlen($out);
+        $maxChars = 32;
+        if ($textLength > $maxChars) {
+            $out = substr_replace($out, '...', $maxChars/2, $textLength-$maxChars);
+        }
+        
+        return $out;
 	}
+    
+    
 
 	function setPageTitle($title){
 		$this->pageTitle = $title;
@@ -1230,6 +1811,28 @@ END
 
 	}
 
+
+    function getPageMenuCategory() {
+        if (@$this->_conf['page_menu_category']) {
+            return $this->_conf['page_menu_category'];
+        }
+        $query = $this->_query;
+        $action = $query['-action'];
+        if ($action == 'list') {
+            return 'table_actions_menu';
+        } else if ($action == 'view' and @$query['-mode'] == 'browse') {
+            return 'record_actions_menu';
+        }
+        return $query['-action'] . '_actions_menu';
+        /*
+        if (@$query['-mode'] == 'browse') {
+            return 'record_actions_menu';
+        } else {
+            return 'table_actions_menu';
+        }
+        */
+        
+    }
 
 	// @}
 	// END CONFIGURATION
@@ -1306,11 +1909,31 @@ END
 				// Do whatever we need to do before the request is handled.
 				$applicationDelegate->beforeLoadResultSet();
 			}
-			import('Dataface/QueryTool.php');
+			import(XFROOT.'Dataface/QueryTool.php');
 			$this->queryTool = Dataface_QueryTool::loadResult($this->_query['-table'], $this->db(), $this->_query);
 		}
 		return $this->queryTool;
 
+	}
+	
+    function getTable() {
+        return Dataface_Table::loadTable($this->_query['-table']);
+    }
+    
+    function getRelationship() {
+        if (!$this->_query['-relationship']) return null;
+        $table = $this->getTable();
+        if (!$table) return null;
+        $relationship = $table->getRelationship($this->_query['-relationship']);
+        //echo "Relationship label ". $relationship->getLabel();
+        return $relationship;
+    }
+	
+	function &getRecords() {
+		$rs =& $this->getResultSet();
+		$rs->loadSet();
+		$out = $rs->getRecordsArray();
+		return $out;
 	}
 
 	/**
@@ -1384,6 +2007,17 @@ END
 				$this->currentRecord = $rs->loadCurrent();
 			}
 			if ( $this->currentRecord === null ) $this->currentRecord = -1;
+            
+            if ($this->currentRecord instanceof Dataface_RelatedRecord) {
+                $asRec = $this->currentRecord->toRecord();
+                
+                
+                if (!$this->recordContext) {
+                    $this->recordContext = [];
+                }
+                $this->recordContext[$asRec->getId()] = $this->currentRecord;
+                $this->currentRecord = $asRec;
+            }
 		}
 		if ( $this->currentRecord === -1 || !$this->currentRecord ) return $null;
 		return $this->currentRecord;
@@ -1464,6 +2098,10 @@ END
 			unset($contextMasks[$k]);
 		}
 	}
+    
+    public function incrementVersion($tableName = null, $userName = null) {
+        
+    }
 
 	/**
 	 * @brief Checks is the current record has been loaded yet.
@@ -1484,7 +2122,7 @@ END
 	 * @return array Action parameters (or null if action doesn't exist).
 	 */
 	function &getAction(){
-		import('Dataface/ActionTool.php');
+		import(XFROOT.'Dataface/ActionTool.php');
 		$actionTool = Dataface_ActionTool::getInstance();
 		return $actionTool->getAction(array('name'=>$this->_query['-action']));
 	}
@@ -1600,7 +2238,7 @@ END
 	 * to not rack up huge amounts of Session files unnecessarily.
 	 *
 	 * @see disableSessions()
-	 * @see sessionsEnabled()
+	 * @see sessionEnabled()
 	 */
 	function enableSessions(){
 		setcookie($this->sessionCookieKey, 1, 0, DATAFACE_SITE_URL);
@@ -1628,8 +2266,368 @@ END
 	 * @see startSession()
 	 */
 	function sessionEnabled(){
-		return @$_COOKIE[$this->sessionCookieKey];
+        if (@$this->_conf['_auth'] and @$this->_conf['_auth']['autologin'] and @$_COOKIE[$this->getAutologinCookieName()]) {
+            // If autologin is enabled and the user has logged in, then sessions are enabled.
+            return true;
+        }
+		return @$_COOKIE[$this->sessionCookieKey] or $this->getBearerToken() !== null;
 	}
+
+	/** 
+	 * Get header Authorization
+	 * */
+	private function getAuthorizationHeader(){
+			$headers = null;
+			if (isset($_SERVER['Authorization'])) {
+				$headers = trim($_SERVER["Authorization"]);
+			}
+			else if (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
+				$headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+			} elseif (function_exists('apache_request_headers')) {
+				$requestHeaders = apache_request_headers();
+				// Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
+				$requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+				//print_r($requestHeaders);
+				if (isset($requestHeaders['Authorization'])) {
+					$headers = trim($requestHeaders['Authorization']);
+				}
+			}
+			return $headers;
+		}
+	/**
+	 * get access token from header
+	 * */
+	private function getBearerToken() {
+		$headers = $this->getAuthorizationHeader();
+		// HEADER: Get the access token from the header
+		if (!empty($headers)) {
+			if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+				return $matches[1];
+			}
+		}
+        if (!empty($_REQUEST['--Bearer'])) {
+            return $_REQUEST['--Bearer'];
+        }
+		return null;
+	}
+    
+    private function updateAutologinTable() {
+        //$nonceVal = time().'.'.rand();
+        //echo '28198f1e35f949d3a4141b92a28b3aaac072-'.$nonceVal.'-'.sha1($nonceVal . '58598b90-b96e-48af-a3ae-d890d2d3e9e1');
+        //exit;
+        
+        $modname = 'xf_autologin';
+        $autologinVersion = Dataface_ModuleTool::getInstance()->getDbVersion($modname);
+        
+        if (!$autologinVersion) {
+            try {
+                $this->createAutologinTable();
+               
+            } catch (Exception $ex){}
+            try {
+                  xf_db_query("replace into dataface__modules (`module_name`, `module_version`) values ('".addslashes($modname)."', 1)", df_db());
+            } catch (Exception $ex) {
+                
+            }
+            $autologinVersion = 1;
+        }
+        if (intval($autologinVersion) === 1) {
+            xf_db_query("ALTER TABLE `dataface__autologin` ADD `hashed_token` VARCHAR(36) NULL AFTER `token`;", df_db());
+            xf_db_query("ALTER TABLE `dataface__autologin` ADD INDEX (`hashed_token`);", df_db());
+            xf_db_query("CREATE TABLE `dataface__autologin_nonces` ( `nonce_value` VARCHAR(36) NOT NULL , `last_used_time` BIGINT(20) UNSIGNED NOT NULL , PRIMARY KEY (`nonce_value`)) ENGINE = MyISAM;", df_db());
+            xf_db_query("UPDATE `dataface__autologin` set `hashed_token` = SHA1(`token`)", df_db());
+            xf_db_query("replace into dataface__modules (`module_name`, `module_version`) values ('".addslashes($modname)."', 2)", df_db());
+        }
+        
+        
+    }
+    
+    /**
+     * Creates the autologin table.
+     */
+    private function createAutologinTable() {
+        $createSql = "create table dataface__autologin (`username` varchar(100) NOT NULL, `token` varchar(36) NOT NULL PRIMARY KEY) Engine MyISAM";
+        $res = xf_db_query($createSql, df_db());
+        if (!$res) {
+            error_log("Failed to create autologin table: ". xf_db_error(df_db()));
+            throw new Exception("Failed to create autologin table.");
+        }
+    }
+    
+    /**
+     * Inserts an autologin token into the autologins table.
+     */
+    public function insertAutologinToken($token, $tryCreateTableOnFail = true) {
+        $this->updateAutologinTable();
+        $insertSql = "replace into dataface__autologin (`username`,`token`, `hashed_token`) values ('".addslashes($_SESSION['UserName'])."', '".addslashes($token)."', SHA1('".addslashes($token)."'))";
+        $res = xf_db_query($insertSql, df_db());
+        if (!$res) {
+            if ($tryCreateTableOnFail) {
+                $this->createAutologinTable();
+                $this->insertAutologinToken($token, false);
+            } else {
+                error_log("Failed to insert autologin token for user ".$_SESSION['UserName'].' due to SQL error: '.xf_db_error(df_db()));
+                throw new Exception("Failed to insert autologin token due to SQL error");
+            }
+        }
+    }
+    
+    /**
+     * Get the username for the given autologin token.
+     */
+    private function getAutologinUserForToken($token) {
+        $res = xf_db_query("select username from dataface__autologin where token='".addslashes($token)."' limit 1", df_db());
+        if ($res) {
+            if ($row = xf_db_fetch_row($res)) {
+                return $row[0];
+            }
+            xf_db_free_result($res);
+        } 
+        return null;
+         
+    }
+    
+    /**
+     * Hashed tokens can be passed in the open (e.g. as a GET parameter).  Their structure is:
+     * {hashedToken}-{nonce}-{combinedHash}
+     * 
+     * Where 
+     * - hashedToken is the sha1 hash of an autologin token (each autologin token's hash 
+     *  will be stored in the dataface__autologin table's hashed_token column for efficient lookup).
+     * - nonce is 36-character string that cannot be reused again for 24 hours.  The intention is that a nonce would be
+     *  generated as follows: {currentTime}.{64-bit random integer}.
+     * - combinedHash is SHA1({nonce}, {token}) - where {token} corresponds to value in token column of dataface__autologin table.
+     *
+     * @return string Username or null
+     * @throws Exception if nonce is invalid.
+     */ 
+    private function getAutologinUserForHashedToken($token) {
+        $this->updateAutologinTable();
+        $parts = explode('-', $token);
+        if (count($parts) !== 3) throw new Exception("Invalid token");
+        list($hashedToken, $nonce, $combinedHash) = $parts;
+        if (strpos($nonce, '.') === false) {
+            // The nonce must be in the form {currentTime}.{randomNumber}
+            // This allows us to check the current time to ensure that it is relatively current
+            throw new Exception("Invalid nonce");
+        }
+        $nonceTime = intval(substr($nonce, 0, strpos($nonce, '.')));
+    
+        if (abs($nonceTime-time()) > 3600) {
+            throw new Exception("Invalid nonce");
+        }
+        $res = xf_db_query("select count(*) from dataface__autologin_nonces where `nonce_value`='".addslashes($nonce)."' and last_used_time > ".(time() - 3600), df_db());
+        if (!$res) {
+            // If the nonces table isn't created yet, then we don't worry about it.
+            error_log(xf_db_error(df_db()));
+            throw new Exception("Server error querying nonces log");
+        }
+        list($count) = xf_db_fetch_row($res);
+        xf_db_free_result($res);
+        //echo "Count=$count";exit;
+        if (intval($count) !== 0) {
+            // This nonce has already been used.
+            throw new Exception("Invalid nonce");
+        }
+        $sql = "select username from `dataface__autologin` where `hashed_token` = '".addslashes($hashedToken)."' and SHA1(CONCAT('".addslashes($nonce)."', `token`)) = '".addslashes($combinedHash)."' limit 1";
+        //echo $sql;exit;
+        $res = xf_db_query($sql, df_db());
+        if (!$res) {
+            // If the autologin table isn't set up yet, then there is no matching token
+            // just return null.  THe autologin table will be set up when tokens are inserted.
+            return null;
+        }
+        
+        $username = null;
+        while ($row = xf_db_fetch_row($res)) {
+            list($username) = $row;
+            break;
+        }
+        xf_db_free_result($res);
+        if (!isset($username)) {
+            return null;
+        }
+        
+        // Record the nonce so that it can't be reused.
+        $res = xf_db_query("replace into dataface__autologin_nonces (`nonce_value`, `last_used_time`) values ('".addslashes($nonce)."', '".addslashes(time())."')", df_db());
+        if (!$res) {
+            throw new Exception("Failed to update nonces: " . xf_db_error(df_db()));
+        }
+        
+        return $username;
+        
+    }
+    
+    
+    /**
+     * Removes the current autologin cookie.  Generally called when logging out.
+     */
+    public function clearAutologinCookie() {
+        $cookieName = $this->getAutologinCookieName();
+        $token = @$_COOKIE[$cookieName];
+        if ($token) {
+            $res = xf_db_query("delete from dataface__autologin where token='".addslashes($token)."' limit 1", df_db());
+            if (!$res) {
+                error_log("Failed to delete autologin cookie due to sql error: ".xf_db_error(df_db()));
+                
+            }
+            unset($_COOKIE[$cookieName]);
+            setcookie($cookieName, '', -1);
+        }
+        if (@$_SESSION['UserName']) {
+            if (@$this->_conf['_auth'] and @$this->_conf['_auth']['autologin.logout_all_devices']) {
+                $res = xf_db_query("delete from dataface_autologin where username = '".addslashes($_SESSION['UserName'])."'", df_db());
+                if (!$res) {
+                    error_log("Failed ot delete autologin tokens for user ".$_SESSION['UserName'].": ". xf_db_error(df_db()));
+                    throw new Exception("Failed to delete tokens due to SQL error");
+                }
+            }
+        }
+        
+        
+    }
+    
+    /**
+     * Gets the cookie named used for autologin.
+     * 
+     * Default is xf_pulse, but can be overridden with the autologin_cookie conf.ini property in the _auth section.
+     */
+    public function getAutologinCookieName() {
+        $conf = @$this->_conf['_auth'];
+        if (!$conf) {
+            $conf = [];
+        }
+        $cookieName = 'xf_pulse';
+        if (@$conf['autologin_cookie']) {
+            $cookieName = $conf['autologin_cookie'];
+        }
+        return $cookieName;
+    }
+    
+    
+    private $bearerTokensTablesVersion = -1;
+
+    public function updateBearerTokensTables() {
+        if ($this->bearerTokensTablesVersion >= 0) {
+            return;
+        }
+        $modname = 'xf_bearer_tokens';
+        $res = xf_db_query("select module_version from dataface__modules where module_name='".addslashes($modname)."' limit 1", df_db());
+        if (!$res) throw new Exception("Failed to update bearer tokens tables.");
+        $this->bearerTokensTablesVersion = 0;
+        while ($row = xf_db_fetch_row($res)) {
+            list($this->bearerTokensTablesVersion) = $row;
+        }
+        xf_db_free_result($res);
+        
+    
+        if (!$this->bearerTokensTablesVersion) {
+            $res = xf_db_query("CREATE TABLE `dataface__tokens` ( `token` VARCHAR(100) NOT NULL , `hashed_token` VARCHAR(36) NOT NULL , PRIMARY KEY (`hashed_token`), UNIQUE (`token`)) ENGINE = MyISAM;", df_db());
+            if (!$res) {
+                error_log("Failed to create tokens table: ".xf_db_error(df_db()));
+                throw new Exception("Failed to create tokens table");
+            }
+            $res = xf_db_query("CREATE TABLE `dataface__tokens_nonce` ( `nonce_value` VARCHAR(36) NOT NULL , `last_used_time` BIGINT(20) NOT NULL , PRIMARY KEY (`nonce_value`)) ENGINE = MyISAM;");
+            if (!$res) {
+                error_log("Failed to create tokens_nonce table: ".xf_db_error(df_db()));
+                throw new Exception("Failed to create tokens_nonce table");
+            }
+            
+            xf_db_query("replace into dataface__modules (`module_name`, `module_version`) values ('".addslashes($modname)."', 1)", df_db());    
+            
+            $this->bearerTokensTablesVersion = 1;
+        }
+        if (intval($this->bearerTokensTablesVersion) === 1) {
+            $res = xf_db_query("ALTER TABLE `dataface__tokens` CHANGE `hashed_token` `hashed_token` VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;");
+            if (!$res) {
+                error_log("Failed to update tokens table: ".xf_db_error(df_db()));
+                throw new Exception("Failed to update tokens table");
+            }
+            $res = xf_db_query("ALTER TABLE `dataface__tokens_nonce` CHANGE `nonce_value` `nonce_value` VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;");
+            if (!$res) {
+                error_log("Failed to update tokens_nonce table: ".xf_db_error(df_db()));
+                throw new Exception("Failed to update tokens_nonce table");
+            }
+            xf_db_query("replace into dataface__modules (`module_name`, `module_version`) values ('".addslashes($modname)."', 2)", df_db());    
+            
+            $this->bearerTokensTablesVersion = 2;
+            
+        }
+        
+    }
+    
+    
+    private function decodeBearerToken($token) {
+
+        //$nonce = time().'.'.rand();
+        //$ex = 'c461a059aec5f9c91377a0525f868a47cf90-'.$nonce.'-'.sha1($nonce . '5766469aa305a3957f2c9cc49041c2f9.ZWZiMTdhNjExYzJmNTM4YzBjNDI0MjdiYTYwYjk3Mjg=');
+        //echo $ex;exit;
+        //echo "here: $token";exit;
+
+        if (strstr($token, 'xf.') !== $token) return $token;
+        
+        $this->updateBearerTokensTables();
+        $token = substr($token, strpos($token, '.')+1);
+        $parts = explode('-', $token);
+        if (count($parts) !== 3) throw new Exception("Invalid token");
+        //print_r($parts);exit;
+        list($hashedToken, $nonce, $combinedHash) = $parts;
+        if (strpos($nonce, '.') === false) {
+            // The nonce must be in the form {currentTime}.{randomNumber}
+            // This allows us to check the current time to ensure that it is relatively current
+            throw new Exception("Invalid nonce");
+        }
+                                
+        $nonceTime = intval(substr($nonce, 0, strpos($nonce, '.')));
+    
+        if (abs($nonceTime-time()) > 3600) {
+            throw new Exception("Invalid nonce");
+        }
+        
+        $res = xf_db_query("select count(*) from dataface__tokens_nonce where `nonce_value`='".addslashes($nonce)."' and last_used_time > ".(time() - 3600), df_db());
+        if (!$res) {
+            // If the nonces table isn't created yet, then we don't worry about it.
+            error_log(xf_db_error(df_db()));
+            throw new Exception("Server error querying nonces log");
+        }
+        
+        list($count) = xf_db_fetch_row($res);
+        xf_db_free_result($res);
+        //echo "Count=$count";exit;
+        if (intval($count) !== 0) {
+            // This nonce has already been used.
+            throw new Exception("Invalid nonce");
+        }
+        
+        $sql = "select token from `dataface__tokens` where `hashed_token` = '".addslashes($hashedToken)."' and SHA1(CONCAT('".addslashes($nonce)."', `token`)) = '".addslashes($combinedHash)."' limit 1";
+        //echo $sql;exit;
+        $res = xf_db_query($sql, df_db());
+        if (!$res) {
+            // If the autologin table isn't set up yet, then there is no matching token
+            // just return null.  THe autologin table will be set up when tokens are inserted.
+            error_log("Error while checking tokens table: ".xf_db_error(df_db()));
+            throw new Exception("tokens table not setup yet");
+        }
+        
+        
+        $token = null;
+        while ($row = xf_db_fetch_row($res)) {
+            list($token) = $row;
+            break;
+        }
+
+        xf_db_free_result($res);
+        if (!isset($token)) {
+            return null;
+        }
+        
+        // Record the nonce so that it can't be reused.
+        $res = xf_db_query("replace into dataface__tokens_nonce (`nonce_value`, `last_used_time`) values ('".addslashes($nonce)."', '".addslashes(time())."')", df_db());
+        if (!$res) {
+            throw new Exception("Failed to update nonces: " . xf_db_error(df_db()));
+        }
+        return $token;
+    }
 
 	/**
 	 * @brief Starts a session if one does not already exist.  If you are writing code
@@ -1645,10 +2643,39 @@ END
 	function startSession($conf=null){
 		if ( defined('XATAFACE_NO_SESSION') and XATAFACE_NO_SESSION ) return;
 		//echo "In startSession()";
-		if ( !$this->sessionEnabled() ){
+		if ( empty($_COOKIE[$this->sessionCookieKey]) ){
 		    $this->enableSessions();
 		}
-		if ( session_id() == "" ){
+		$bearerToken = $this->getBearerToken();
+		$sessionFromBearer = false;
+		if (session_id() == "" and $bearerToken) {
+			// We'll allow users to keep the php session ID 
+			// in the bearer ID
+            if (strstr($bearerToken, 'xf.') === $bearerToken) {
+
+                try {
+                    $decoded = $this->decodeBearerToken($bearerToken);
+                    //echo 'foo['.strstr($decoded, "xf.").']';
+                    if (!empty($decoded) and strstr($decoded, 'xf.') != $decoded) {
+                        $bearerToken = $decoded;
+                    }
+                } catch (Exception $ex) {
+                    $bearerToken = null;
+                    error_log($ex->getMessage());
+                }
+                
+            }
+            //echo "herenow $bearerToken";exit;
+			$parts = explode('.', $bearerToken);
+			//echo "Parts[0] = {$parts[0]} vs ".md5('sessid');
+			if (count($parts) == 2 and $parts[0] == md5('sessid')) {
+                //echo "decoding session for ".base64_decode($parts[1]);exit;
+				session_id(base64_decode($parts[1]));
+				$sessionFromBearer = true;
+			}
+			
+		}
+		if ( session_id() == "" or $sessionFromBearer){
 			if ( !isset($conf) ){
 				if ( isset($this->_conf['_auth']) ) $conf = $this->_conf['_auth'];
 				else $conf = array();
@@ -1671,7 +2698,7 @@ END
 				}
 
 				if (strlen($cookie_path)==0) $cookie_path = '/';
-				if ( $cookie_path{strlen($cookie_path)-1} != '/' ) $cookie_path .= '/';
+				if ( $cookie_path[strlen($cookie_path)-1] != '/' ) $cookie_path .= '/';
 
 				// timeout value for the cookie
 				$cookie_timeout = (isset($conf['session_timeout']) ? intval($conf['session_timeout']) : 0);
@@ -1708,7 +2735,7 @@ END
 						 $sessdir = substr($sessdir, strpos($sessdir, ";")+1);
 					}
 					if ( !$sessdir ) $sessdir = sys_get_temp_dir(); //'/tmp';
-					if ( $sessdir and $sessdir{strlen($sessdir)-1} == '/' ) $sessdir = substr($sessdir,0, strlen($sessdir)-1);
+					if ( $sessdir and $sessdir[strlen($sessdir)-1] == '/' ) $sessdir = substr($sessdir,0, strlen($sessdir)-1);
 
 					if ( @$conf['subdir'] ) $subdir = $conf['subdir'];
 					else $subdir = md5(DATAFACE_SITE_PATH);
@@ -1736,9 +2763,37 @@ END
 				if ( @$conf['session_name'] ) session_name($conf['session_name']);
 				//echo "Starting session with ".session_name();
 				session_start();	// start the session
+                
 				if (defined('REQUEST_PUBLIC_URL_USERNAME')) {
 					$_SESSION['UserName'] = REQUEST_PUBLIC_URL_USERNAME;
 				}
+                if (!@$_SESSION['UserName'] and @$conf['autologin']) {
+
+                    if (!empty($_REQUEST['--autologin'])) {
+ 
+                        $foundUser = $this->getAutologinUserForHashedToken($_REQUEST['--autologin']);
+                                                                   
+                        if ($foundUser) {
+                            $_SESSION['UserName'] = $foundUser;
+                            // We don't set the cookie here because the hashed token doesn't actually have the token.
+                            // But it gets us in.
+                        }
+                    } 
+                    if (empty($_SESSION['UserName'])){
+                        $autologinCookieVal = @$_COOKIE[$this->getAutologinCookieName()];
+                    
+                        if ($autologinCookieVal) {
+                            $foundUser = $this->getAutologinUserForToken($autologinCookieVal);
+                            if ($foundUser) {
+                                $_SESSION['UserName'] = $foundUser;
+                                setcookie($this->getAutologinCookieName(), $autologinCookieVal, time() + (10 * 365 * 24 * 60 * 60)); // 10 years
+                            }
+                        
+                        } 
+                    }
+                    
+                } 
+                
 				header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
 				// This updates the session timeout on page load
@@ -1807,7 +2862,7 @@ END
 		if ( !isset($this->authenticationTool) ){
 
 			if ( isset($this->_conf['_auth']) ){
-				import('Dataface/AuthenticationTool.php');
+				import(XFROOT.'Dataface/AuthenticationTool.php');
 				$this->authenticationTool = Dataface_AuthenticationTool::getInstance($this->_conf['_auth']);
 			} else {
 				return $null;
@@ -1858,7 +2913,16 @@ END
 	function addHeadContent($content){
 		$this->headContent[] = $content;
 	}
-
+	
+	private $bodyCSSClasses = array();
+	
+	function addBodyCSSClass($class) {
+		$this->bodyCSSClasses[] = $class;
+	}
+	
+	function getBodyCSSClasses() {
+		return implode(' ', $this->bodyCSSClasses);
+	}
 
 	/**
 	 * @brief Returns the nav item info for a key.  This is a wrapper around the nav items defined
@@ -2065,6 +3129,9 @@ END
 		foreach ($listeners as $listener){
 			$res = call_user_func($listener, $params);
 			if ( PEAR::isError($res) ) return $res;
+            if ($params and ($params instanceof stdClass) and @$params->consumed) {
+                return $res;
+            }
 		}
 		$this->firedEvents[$name] = true;
 		return true;
@@ -2139,7 +3206,59 @@ END
 	 * the heaving lifting of displaying a page.
 	 */
 
-
+    /**
+     * Builds an associative array index of all action handlers located in the xataface, xataface/modules,
+     * modules, tables, modules/tables, and xataface/modules/tables directories.
+     * @return [string => boolean] Mapping full file paths of action handlers to boolean value indicating whether it exists.
+     */
+    private function buildActionIndexForOpcache() {
+        $actionsIndex = [];
+        $actionsDirs = [XFAPPROOT . 'actions', XFROOT . 'actions'];
+        $modulesDirs = [XFAPPROOT . 'modules', XFROOT . 'modules'];
+        $tablesDirs = [XFAPPROOT . 'tables', XFROOT . 'tables'];
+        foreach ($modulesDirs as $modulesDir) {
+            if (is_dir($modulesDir)) {
+                foreach (scandir($modulesDir) as $moduleDir) {
+                    if ($moduleDir[0] == '.') {
+                        continue;
+                    }
+                    $moduleDirPath = $modulesDir . DIRECTORY_SEPARATOR . $moduleDir;
+                    if (is_dir($moduleDirPath)) {
+                        $actionsDirs[] = $moduleDirPath . DIRECTORY_SEPARATOR . 'actions';
+                        $tablesDirs[] = $moduleDirPath . DIRECTORY_SEPARATOR . 'tables';
+                    }
+                    
+                }
+            }
+        }
+        foreach ($tablesDirs as $tablesDir) {
+            
+            if (is_dir($tablesDir)) {
+                foreach (scandir($tablesDir) as $tableDir) {
+                    if ($tableDir[0] == '.') {
+                        continue;
+                    }
+                    $tableDirPath = $tablesDir . DIRECTORY_SEPARATOR . $tableDir;
+                    if (is_dir($tableDirPath)) {
+                        $actionsDirs[] = $tableDirPath . DIRECTORY_SEPARATOR . 'actions';
+                    }
+                    
+                }
+            }
+        }
+       
+        foreach ($actionsDirs as $actionsDir) {
+            if (is_dir($actionsDir)) {
+                foreach (scandir($actionsDir) as $actionFile) {
+                    $actionFilePath = $actionsDir . DIRECTORY_SEPARATOR . $actionFile;
+                    if (is_file($actionFilePath) and strlen($actionFile) > 4 and substr($actionFile, -4) === '.php') {
+                        $actionsIndex[ $actionsDir . DIRECTORY_SEPARATOR . $actionFile ] = true;
+                    }
+                }
+            }
+        }
+        return $actionsIndex;
+    }
 
 
 	/**
@@ -2165,16 +3284,16 @@ END
 	function handleRequest($disableCache=false){
 
 
-		if ( !$disableCache and (@$_GET['-action'] != 'getBlob') and isset( $this->_conf['_output_cache'] ) and @$this->_conf['_output_cache']['enabled'] and count($_POST) == 0){
-			import('Dataface/OutputCache.php');
+		if ( !$disableCache and (@$_GET['-action'] != 'getBlob') and isset( $this->_conf['_output_cache'] ) and @$this->_conf['_output_cache']['enabled'] and empty($_POST) == 0){
+			import(XFROOT.'Dataface/OutputCache.php');
 			$oc = new Dataface_OutputCache($this->_conf['_output_cache']);
 			$oc->ob_start();
 
 		}
-		import('Dataface/ActionTool.php');
-		import('Dataface/PermissionsTool.php');
-		import('Dataface/Table.php');
-
+		import(XFROOT.'Dataface/ActionTool.php');
+		import(XFROOT.'Dataface/PermissionsTool.php');
+		import(XFROOT.'Dataface/Table.php');
+        
 		if ( isset($this->_conf['_modules']) and count($this->_conf['_modules']) > 0 ){
 			$mt = Dataface_ModuleTool::getInstance();
 			foreach ($this->_conf['_modules'] as $modname=>$modpath){
@@ -2186,6 +3305,9 @@ END
 		// Set up security filters
 		$query =& $this->getQuery();
 		$table = Dataface_Table::loadTable($query['-table']);
+        xf_script('xataface/actions/core.js');
+        // Ignore jquery because it is included in the head of the document
+        Dataface_JavascriptTool::getInstance()->ignore('jquery.packed.js');
 
 		if (@$this->_conf['using_default_action'] and $table->isSingleton()) {
 		    $query['-action'] = $this->_conf['default_browse_action'];
@@ -2200,10 +3322,13 @@ END
 		    // For singleton tables search is pointless
 		    $this->_conf['_prefs']['show_search'] = 0;
 		}
-
+        
 		if (!@$query['-sort'] and @$table->_atts['default_sort']) {
 		    $query['-sort'] = $table->_atts['default_sort'];
 		}
+        if (@$query['-relationship'] and !@$query['-related:sort'] and @$table->_atts['default_sort.'.$query['-relationship']]) {
+            $query['-related:sort'] = $table->_atts['default_sort.'.$query['-relationship']];
+        }
 
 		$this->fireEvent('beforeHandleRequest');
 		$applicationDelegate = $this->getDelegate();
@@ -2211,7 +3336,8 @@ END
 			// Do whatever we need to do before the request is handled.
 			$applicationDelegate->beforeHandleRequest();
 		}
-
+        
+        
 
 
 		//$table->setSecurityFilter();
@@ -2223,6 +3349,7 @@ END
 		if ( isset($this->_conf['_prefs']) and is_array($this->_conf['_prefs']) ){
 			$this->prefs = array_merge($this->prefs,$this->_conf['_prefs']);
 		}
+
 		if ( @$this->_conf['hide_nav_menu'] ){
 			$this->prefs['show_tables_menu'] = 0;
 		}
@@ -2246,6 +3373,9 @@ END
 		if ( !isset($this->prefs['disable_ajax_record_details']) ){
 			$this->prefs['disable_ajax_record_details'] = 1;
 		}
+        if (!isset($this->prefs['mobile_nav_style'])) {
+            $this->prefs['mobile_nav_style'] = 'tabs';
+        }
 
 		if ( $query['-action'] == 'login_prompt' ) $this->prefs['no_history'] = 1;
 
@@ -2253,13 +3383,59 @@ END
 		if ( isset($applicationDelegate) and method_exists($applicationDelegate, 'getPreferences') ){
 			$this->prefs = array_merge($this->prefs, $applicationDelegate->getPreferences());
 		}
-		$this->prefs = array_map('intval', $this->prefs);
+        if (class_exists('Dataface_AuthenticationTool')) {
+            $auth = Dataface_AuthenticationTool::getInstance();
+            $userRecord = $auth->getLoggedInUser();
+            if ($userRecord) {
+                $stylesheetField = null;
+                // Fill in preferences with those found in the user record.
+                foreach ($userRecord->table()->fields(false, true, true) as $fld) {
+                    if (isset($fld['prefs.key'])) {
+                        $this->prefs[$fld['prefs.key']] = $userRecord->val($fld['name']);
+                    }
+                }
+                
+            }
+        }
+        
+        foreach ($this->prefs as $k=>$v) {
+            if ($v === '0') {
+                $this->prefs[$k] = 0;
+            } else if ($v === '1') {
+                $this->prefs[$k] = 1;
+            }
+        }
+        if (!isset($this->prefs['mobile_app_menu_position'])) {
+            $this->prefs['mobile_app_menu_position'] = 'ne';
+        }
+        $mobileAppMenuPosition = $this->prefs['mobile_app_menu_position'];
+        if (!isset($this->prefs['mobile_app_menu_sheet_position'])) {
+            
+            $this->prefs['mobile_app_menu_sheet_position'] = $mobileAppMenuPosition == 'ne' ? 'right' : 'fill';
+        }
+        
+        $this->addBodyCSSClass('mobile-app-menu-trigger-'.$mobileAppMenuPosition);
 
+            
+        
+
+        
+        if (isset($this->prefs['user_stylesheet'])) {
+            $userStylesheet = basename($this->prefs['user_stylesheet']);
+            $ssPath = XFAPPROOT.'css/'.$userStylesheet;
+            $ssRootPath = XFROOT.'css/'.$userStylesheet;
+            if ((XF_USE_OPCACHE and xf_opcache_is_script_cached($ssPath)) or file_exists($ssPath)) {
+                xf_stylesheet(DATAFACE_SITE_URL .'/css/'.$userStylesheet, false);
+            } else if ((XF_USE_OPCACHE and xf_opcache_is_script_cached($ssRootPath)) or file_exists($ssRootPath)) {
+                xf_stylesheet(DATAFACE_URL.'/css/'.$userStylesheet, false);
+            }
+        }
+		
 		// Check to make sure that this table hasn't been disallowed
 		$disallowed = false;
 		if ( isset($this->_conf['_disallowed_tables']) ){
 			foreach ( $this->_conf['_disallowed_tables'] as $name=>$pattern ){
-				if ( $pattern{0} == '/' and preg_match($pattern, $query['-table']) ){
+				if ( $pattern[0] == '/' and preg_match($pattern, $query['-table']) ){
 					$disallowed = true;
 					break;
 				} else if ( $pattern == $query['-table'] ){
@@ -2271,7 +3447,7 @@ END
 
 		if ( $disallowed and isset($this->_conf['_allowed_tables']) ){
 			foreach ($this->_conf['_allowed_tables'] as $name=>$pattern ){
-				if ( $pattern{0} == '/' and preg_match($pattern, $query['-table']) ){
+				if ( $pattern[0] == '/' and preg_match($pattern, $query['-table']) ){
 					$disallowed = false;
 					break;
 				} else if ( $pattern == $query['-table'] ){
@@ -2293,14 +3469,30 @@ END
 			);
 
 		}
-
+        
 
 		$actionTool = Dataface_ActionTool::getInstance();
 
-		//if ( $this->_conf['multilingual_content'] ){
-			//import('I18Nv2/I18Nv2.php');
-     		//I18Nv2::autoConv();
-     	//}
+        $record = $this->getRecord();
+        if ($record and $record->getTableAttribute('no_view_tab') and $query['-action'] == 'view') {
+            $relationshipActions = $record->table()->getRelationshipsAsActions();
+            $recordActions = $actionTool->getActions([
+                'record' => $record, 
+                'category' => 'record_tabs', 
+                'exclude' => 'edit view',
+                'actions' => $relationshipActions,
+                'with' => 'url'
+            ]);
+            
+            $recordActions = array_merge($recordActions, $relationshipActions);
+            if (count($recordActions) > 0) {
+                foreach ($recordActions as $recordAction) {
+                    $this->redirect($recordAction['url']);
+                    exit;
+                }
+            }
+            
+        }
 
 		$params = array(
 			'table'=>$query['-table'],
@@ -2363,12 +3555,30 @@ END
 			$action = array('name'=>$query['-action'], 'label'=>$query['-action']);
 		}
 
+        if (!empty($action['page_menu_category'])) {
+            $this->_conf['page_menu_category'] = $action['page_menu_category'];
+        }
+        if (!empty($action['nocache'])) {
+            $this->nocache();
+        }
+        if ($table->getAttribute('nocache')) {
+            $this->nocache();
+        }
 		// Step 1:  See if the delegate class has a handler.
 
 		$delegate = $table->getDelegate();
 		$handled = false;
-		if ( method_exists($delegate,'handleRequest') ){
-			$result = $delegate->handleRequest();
+		if ( isset($delegate) and method_exists($delegate,'handleRequest') ){
+            try {
+                $result = $delegate->handleRequest();
+            } catch (xf\core\XFException $ex) {
+                if ($ex->getClientErrorCode() >= 400 and $ex->getClientErrorCode() < 500) {
+                    $result = Dataface_Error::permissionDenied($ex->getClientErrorMessage(), ['cause' => $ex]);
+                } else {
+                    throw $ex;
+                }
+            }
+			
 			if ( PEAR::isError($result) and $result->getCode() === DATAFACE_E_REQUEST_NOT_HANDLED ){
 				$handled = false;
 			} else if ( PEAR::isError($result) ){
@@ -2392,7 +3602,7 @@ END
 				$mt = Dataface_ModuleTool::getInstance();
 				foreach ($this->_conf['_modules'] as $modname=>$modpath){
 					$mt->loadModule($modname);
-					if ( $modpath{0} == '/' )
+					if ( $modpath[0] == '/' )
 						$locations[ dirname($modpath).'/actions/'.basename($query['-action']).'.php' ] = 'actions_'.$query['-action'];
 					else {
 						$locations[ DATAFACE_SITE_PATH.'/'.dirname($modpath).'/actions/'.basename($query['-action']).'.php' ] = 'actions_'.$query['-action'];
@@ -2407,10 +3617,37 @@ END
 		}
 		$doParams = array('action'=>&$action);
 			//parameters to be passed to the do method of the handler
-
-
+        
+        $foundHandlerClassName = null;
+        $actionsIndex = null;
+        if (false and XF_USE_OPCACHE) {
+            $actionsIndexPath = XFAPPROOT . 'actions.index.php';
+            if (!xf_opcache_is_script_cached($actionsIndexPath)) {
+                if (is_readable(xf_opcache_path($actionsIndexPath))) {
+                    include(xf_opcache_path($actionsIndexPath));
+                    $actionsIndex = $xf_opcache_export;
+                } else {
+                    $actionsIndex = $this->buildActionIndexForOpcache();
+                    xf_opcache_cache_array($actionsIndexPath, $actionsIndex);
+                }
+                
+            } else {
+                include(xf_opcache_path($actionsIndexPath));
+                $actionsIndex = $xf_opcache_export;
+            }
+            
+        }
+       
+        
+        
 		foreach ($locations as $handlerPath=>$handlerClassName){
-			if ( is_readable($handlerPath) ){
+            $handlerPathExists = false;
+            if (XF_USE_OPCACHE and isset($actionsIndex)) {
+                $handlerPathExists = @$actionsIndex[$handlerPath];
+            } else {
+                $handlerPathExists = is_readable($handlerPath);
+            }
+			if ( $handlerPathExists ){
 				import($handlerPath);
 				$handler = new $handlerClassName;
 				$params  = array();
@@ -2468,10 +3705,17 @@ END
 
 				}
 
-				if ( method_exists($handler, 'handle') ){
+				if (isset($handler) and method_exists($handler, 'handle') ){
 
-
-					$result = $handler->handle($doParams);
+                    try {
+                        $result = $handler->handle($doParams);
+                    } catch (xf\core\XFException $ex) {
+                        if ($ex->getClientErrorCode() >= 400 and $ex->getClientErrorCode() < 500) {
+                            $result = Dataface_Error::permissionDenied($ex->getClientErrorMessage(), ['cause' => $ex]);
+                        } else {
+                            throw $ex;
+                        }
+                    }
 					if ( PEAR::isError($result) and $result->getCode() === DATAFACE_E_REQUEST_NOT_HANDLED ){
 						continue;
 					}
@@ -2500,11 +3744,9 @@ END
 				$uuid = df_error_log($ex);
 				header('Content-type: application/json; charset="'.$this->_conf['oe'].'"');
 				$resp = array(
-					array(
-						'code' => '500', 
-						'message' => 'Internal server error.  Check error log for details',
-						'uuid' => $uuid
-					)
+					'code' => '500', 
+					'message' => 'Internal server error.  Check error log for details',
+					'uuid' => $uuid
 				);
 				$errorMessage = 'Check error log for details.';
 				$errorCode = $ex->getCode();
@@ -2514,9 +3756,16 @@ END
 				}
 				$resp['errorMessage'] = $errorMessage;
 				$resp['errorCode'] = $errorCode;
+                $this->nocache();
 				echo json_encode($resp);
 				exit;
 			}
+			if ($ex->getCode() == DATAFACE_E_NOTICE) {
+                $this->nocache();
+				df_display(array('body'=>'<div class="portalMessageWrapper"><div class="responsive-content"><div class="portalMessage"><ul><li>'.htmlspecialchars($ex->getMessage()).'</li></ul></div></div></div>'), 'Dataface_Main_Template.html');
+				return;
+			}
+            $this->nocache();
 			$uuid = df_error_log($ex);
 			header('HTTP/1.0 500 Internal Server Error', true);
 
@@ -2680,9 +3929,10 @@ END
 	 * @private
 	 */
 	function _handleGetBlob($request){
-		import('Dataface/Application/blob.php');
+		import(XFROOT.'Dataface/Application/blob.php');
 		return Dataface_Application_blob::_handleGetBlob($request);
 	}
+    
 
 
 	// @}
@@ -2781,6 +4031,7 @@ END
 		$site_href = DATAFACE_SITE_HREF;
 		$dataface_url = DATAFACE_URL;
 		$table = $this->_currentTable;
+		$authTool = Dataface_AuthenticationTool::getInstance();
 		$tableObj = Dataface_Table::loadTable($table);
 		if ( PEAR::isError($tableObj) ){
 			throw new Exception($tableObj->getMessage(), $tableObj->getCode());
@@ -2808,8 +4059,16 @@ END
 			}
 			//unset($tableObj);
 		}
-		if ( !@$app->_conf['debug'] ){
-			@eval('$parsed = "'.$expression.'";');
+        if (defined('XF_PHP8') and !defined('XF_PHP8_STRICT')) {
+            $expression = preg_replace('/\[([a-zA-Z_][a-zA-Z0-9_]*)\]/', '[\'$1\']', $expression);
+        }
+        
+		if ( empty($app->_conf['debug']) ){
+            try {
+			    @eval('$parsed = "'.$expression.'";');
+            } catch (ParseError $e) {
+                throw new Exception('Caught exception while parsing expression '.$expression.' for action property.  Error was: '.$e->getMessage()." while evaluating ".$expression."\n");
+            }
 		} else {
 			eval('$parsed = "'.$expression.'";');
 		}
@@ -2915,6 +4174,7 @@ END
 		$resultSet = $app->getResultSet();
 		if ( isset($context['record']) ) $record = $context['record'];
 		else $record = $app->getRecord();
+        $related_record = @$context['related_record'];
 
 		if ( isset($context['relationship']) ){
 			//$tableObj =& Dataface_Table::loadTable($table);
@@ -2928,6 +4188,9 @@ END
 			}
 			//unset($tableObj);
 		}
+        if (defined('XF_PHP8') and !defined('XF_PHP8_STRICT')) {
+            $condition = preg_replace('/\[([a-zA-Z_][a-zA-Z0-9_]*)\]/', '[\'$1\']', $condition);
+        }
 		if ( !@$this->_conf['debug'] ){
 			return @eval('return ('.$condition.');');
 		} else {
@@ -2965,7 +4228,7 @@ END
 	 *
 	 */
 	function url($query, $useContext=true, $forceContext=false){
-		import('Dataface/LinkTool.php');
+		import(XFROOT.'Dataface/LinkTool.php');
 		return Dataface_LinkTool::buildLInk($query, $useContext, $forceContext);
 
 	}
@@ -2973,6 +4236,25 @@ END
 
 
 
+    /**
+     * Gets a table attribute.  Table attributes are defined in the fields.ini file in the global
+     * scope.  They can be overridden in the delegate class via the attribute__attname methods.
+     * @since 3.0
+     */
+    function getTableAttribute($attname) {
+        $query = $this->getQuery();
+        $table = Dataface_Table::loadTable($query['-table']);
+        
+        $del = $table->getDelegate();
+        $method = 'attribute__'.$attname;
+        if ($del and method_exists($del, $method)) {
+            $out = $del->$method($this);
+            if (isset($out)) {
+                return $out;
+            }
+        }
+        return @$table->_atts[$attname];
+    }
 
 
 
@@ -3061,14 +4343,46 @@ END
 	 * You can assign your own redirect behavior by setting the redirect handler fo the application.
 	 */
 	function redirect($url){
+        if (stripos($url, 'location:') === 0) {
+            $url = substr($url, strpos(':', $url)+1);
+        }
+        $url = trim($url);
+        //print_r($_SERVER);exit;
+        $isInSite = ((strpos($url, DATAFACE_SITE_HREF) === 0) or (strpos($url, $_SERVER['HOST_URI']) === 0)) ? true : false;
+        $currentRequestHasMessage = @$this->_query['--msg'] ? true : false;
+        $urlHasMessage = strpos($url, '--msg') !== false;
+        $sessionHasMessage = @$_SESSION['--msg'] ? true : false;
+        
+        if ($isInSite and $currentRequestHasMessage and !$urlHasMessage and !$sessionHasMessage) {
+
+            $_SESSION['--msg'] = htmlspecialchars($this->_query['--msg']);
+        }
 		if ( isset($this->redirectHandler) and method_exists('redirect', $this->redirectHandler) ){
 			$this->redirectHandler->redirect($url);
 			throw new Dataface_Application_RedirectException($url);
 		}
+        $url = $this->addURLParams($url, ['--referrer']);
 		header('Location: '.$url);
 		exit;
 
 	}
+    
+    private function addURLParams($url, $params) {
+        
+        foreach ($params as $param) {
+            $isInSite = ((strpos($url, DATAFACE_SITE_HREF) === 0) or (strpos($url, $_SERVER['HOST_URI']) === 0)) ? true : false;
+            $currentRequestHasParam = @$this->_query[$param] ? true : false;
+            $urlHasParam = strpos($url, $param) !== false;
+            if ($isInSite and $currentRequestHasParam and !$urlHasParam) {
+                if (strpos($url, '?') === false) {
+                    $url .= '?';
+                }
+                $url .= '&'.urlencode($param).'='.urlencode($this->_query[$param]);
+            }
+        }
+        return $url;
+        
+    }
 
 	// @}
 	// End Utility Functions
@@ -3096,13 +4410,16 @@ END
 	function &getDelegate(){
 		if ( $this->delegate === -1 ){
 			$delegate_path = DATAFACE_SITE_PATH.'/conf/ApplicationDelegate.php';
-			if ( is_readable($delegate_path) ){
+ 
+			if ( xf_is_readable($delegate_path) ){
 				import($delegate_path);
 				$this->delegate = new conf_ApplicationDelegate();
 			} else {
 				$this->delegate = null;
 			}
-		}
+        }
+			
+		
 		return $this->delegate;
 
 	}
@@ -3219,7 +4536,7 @@ END
 	 * @return array
 	 */
 	function _parseRelatedBlobRequest($request){
-		import('Dataface/Application/blob.php');
+		import(XFROOT.'Dataface/Application/blob.php');
 		return Dataface_Application_blob::_parseRelatedBlobRequest($request);
 	}
 

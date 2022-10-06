@@ -97,6 +97,7 @@ class acp_board
 						'allow_smilies'					=> array('lang' => 'ALLOW_SMILIES',					'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => false),
 						'allow_sig'						=> array('lang' => 'ALLOW_SIG',						'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => false),
 						'allow_board_notifications'		=> array('lang' => 'ALLOW_BOARD_NOTIFICATIONS',		'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => false),
+
 						'allow_nocensors'				=> array('lang' => 'ALLOW_NO_CENSORS',				'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
 						'allow_bookmarks'				=> array('lang' => 'ALLOW_BOOKMARKS',				'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
 						'allow_birthdays'				=> array('lang' => 'ALLOW_BIRTHDAYS',				'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
@@ -192,7 +193,7 @@ class acp_board
 						'allow_post_flash'		=> array('lang' => 'ALLOW_POST_FLASH',		'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
 						'allow_smilies'			=> array('lang' => 'ALLOW_SMILIES',			'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => false),
 						'allow_post_links'		=> array('lang' => 'ALLOW_POST_LINKS',		'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
-						'allowed_schemes_links'	=> array('lang' => 'ALLOWED_SCHEMES_LINKS',	'validate' => 'string',	'type' => 'text:0:255', 'explain' => true),
+						'allowed_schemes_links'	=> array('lang' => 'ALLOWED_SCHEMES_LINKS',	'validate' => 'csv',	'type' => 'text:0:255', 'explain' => true),
 						'allow_nocensors'		=> array('lang' => 'ALLOW_NO_CENSORS',		'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
 						'allow_bookmarks'		=> array('lang' => 'ALLOW_BOOKMARKS',		'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
 						'enable_post_confirm'	=> array('lang' => 'VISUAL_CONFIRM_POST',	'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true),
@@ -496,6 +497,42 @@ class acp_board
 		$cfg_array = (isset($_REQUEST['config'])) ? $request->variable('config', array('' => ''), true) : $this->new_config;
 		$error = array();
 
+		// Prevalidate allowed URL schemes
+		if ($mode == 'post')
+		{
+			$schemes = array_filter(explode(',', $cfg_array['allowed_schemes_links']));
+			foreach ($schemes as $scheme)
+			{
+				if (!preg_match('#^[a-z][a-z0-9+\\-.]*$#Di', $scheme))
+				{
+					$error[] = $language->lang('URL_SCHEME_INVALID', $language->lang('ALLOWED_SCHEMES_LINKS'), $scheme);
+				}
+			}
+		}
+
+		if ($mode == 'avatar' && $cfg_array['allow_avatar_upload'])
+		{
+			// If avatar uploading is enabled but the path setting is empty,
+			// config variable validation is bypassed. Catch the case here
+			if (!$cfg_array['avatar_path'])
+			{
+				$error[] = $language->lang('AVATAR_NO_UPLOAD_PATH');
+			}
+			else if (!$submit)
+			{
+				$filesystem = $phpbb_container->get('filesystem');
+				$avatar_path_exists = $filesystem->exists($phpbb_root_path . $cfg_array['avatar_path']);
+				$avatar_path_writable = $filesystem->is_writable($phpbb_root_path . $cfg_array['avatar_path']);
+
+				// Not existing or writable path will be caught on submit by validate_config_vars().
+				// Display the warning if the directory was changed on the server afterwards
+				if (!$avatar_path_exists || !$avatar_path_writable)
+				{
+					$error[] = $language->lang('AVATAR_NO_UPLOAD_DIR');
+				}
+			}
+		}
+
 		// We validate the complete config if wished
 		validate_config_vars($display_vars['vars'], $cfg_array, $error);
 
@@ -683,8 +720,8 @@ class acp_board
 				$messenger->set_addresses($user->data);
 				$messenger->anti_abuse_headers($config, $user);
 				$messenger->assign_vars(array(
-					'USERNAME'	=> htmlspecialchars_decode($user->data['username'], ENT_COMPAT),
-					'MESSAGE'	=> htmlspecialchars_decode($request->variable('send_test_email_text', '', true), ENT_COMPAT),
+					'USERNAME'	=> html_entity_decode($user->data['username'], ENT_COMPAT),
+					'MESSAGE'	=> html_entity_decode($request->variable('send_test_email_text', '', true), ENT_COMPAT),
 				));
 				$messenger->send(NOTIFY_EMAIL);
 
@@ -936,13 +973,11 @@ class acp_board
 	/**
 	* Minimum password length
 	*/
-	function password_length($value, $key='')
+	function password_length($value, $key)
 	{
 		global $user;
 
 		return '<input id="' . $key . '" type="number" min="1" max="999" name="config[min_pass_chars]" value="' . $value . '" /> ' . $user->lang['MIN_CHARS'];
-
-
 	}
 
 	/**

@@ -56,7 +56,7 @@ define('REST_INSERT_VALIDATION_ERROR', 501);
 class dataface_actions_rest_insert {
 	function handle($params){
 		if ( !defined('DISABLE_reCAPTCHA') ) define('DISABLE_reCAPTCHA', 1);
-		import('Dataface/QuickForm.php');
+		import(XFROOT.'Dataface/QuickForm.php');
 		Dataface_QuickForm::$TRACK_SUBMIT = false;
 		$app = Dataface_Application::getInstance();
 		$query = $app->getQuery();
@@ -80,7 +80,7 @@ class dataface_actions_rest_insert {
 				throw new Exception("Failed to insert record.  Permission denied");
 			}
 			foreach ($_POST as $k=>$v){
-				if ( $k{0} == '-' ) continue;
+				if ( $k[0] == '-' ) continue;
 				$fields[] = $k;
 				$rec->setValue($k, $v);
 				if ( !$rec->checkPermission('new', array('field'=>$k) ) ){

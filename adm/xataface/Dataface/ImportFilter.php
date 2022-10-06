@@ -30,8 +30,11 @@
  * delegate files for specific functionality.
  *
  */
+ 
 require_once 'Dataface/Table.php';
+
 class Dataface_ImportFilter {
+	
 	/**
 	 * Reference to table object.
 	 * @type Dataface_Table
@@ -62,19 +65,28 @@ class Dataface_ImportFilter {
 	}
 		function Dataface_ImportFilter($tablename, $name, $label) { self::__construct($tablename, $name, $label); }
 	
+	
 	/**
 	 * Imports data into the table.  This works by calling the delegate function __import__<filtername>
 	 * where you replace '<filtername>' with the name of this filter.
 	 *
 	 * @param $data  @type raw data The raw data that is being imported.
 	 */
-	function import($data, $defaultValues=array()){
+	function import(&$data, $defaultValues=array()){
+	
 		$delegate =& $this->_table->getDelegate();
-		if ( $delegate !== null and method_exists($delegate, '__import__'.$this->name) ){
-			//print_r(array($delegate,'__import__'.$this->name));
-			//print_r($data);
-			//print_r($defaultValues);
-			return call_user_func(array($delegate,'__import__'.$this->name), $data, $defaultValues);
+		$methodName = '__import__'.$this->name;
+		if ( $delegate !== null and method_exists($delegate, $methodName) ){
+			return $delegate->$methodName($data, $defaultValues);
 		}
+	
 	}
+	
+	
+
+
 }
+
+
+
+?>

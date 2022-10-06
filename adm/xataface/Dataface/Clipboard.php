@@ -1,10 +1,10 @@
 <?php
-import('Dataface/AuthenticationTool.php');
-import('Dataface/IO.php');
-define('Dataface_Clipboard_tablename', '_df_clipboard');
-define('Dataface_Clipboard_lifetime', 1800);
-define('Dataface_Clipboard_threshold', 20);
-define('Dataface_Clipboard_clipboard_id_key', '_df_clipboard_id');
+import(XFROOT.'Dataface/AuthenticationTool.php');
+import(XFROOT.'Dataface/IO.php');
+define(XFROOT.'Dataface_Clipboard_tablename', '_df_clipboard');
+define(XFROOT.'Dataface_Clipboard_lifetime', 1800);
+define(XFROOT.'Dataface_Clipboard_threshold', 20);
+define(XFROOT.'Dataface_Clipboard_clipboard_id_key', '_df_clipboard_id');
 
 /**
  * A clipboard class to enable users to cut and paste records between relationships
@@ -146,7 +146,10 @@ class Dataface_Clipboard {
 		$res = xf_db_query(
 			"REPLACE INTO `".Dataface_Clipboard_tablename."` 
 			(`clipperid`,`cut`,`recordids`,`lastmodified`)
-			VALUES('".addslashes($this->id)."',0,'".addslashes(implode("\n",$recordids))."', NOW())", $app->db());
+			VALUES
+			('".addslashes($this->id)."',
+			0,'".addslashes(implode("\n",$recordids))."', NOW()
+			)", $app->db();
 		if ( !$res ){
 			return PEAR::raiseError(xf_db_error($app->db()));
 		}
@@ -170,7 +173,9 @@ class Dataface_Clipboard {
 			"REPLACE INTO `".Dataface_Clipboard_tablename."` 
 			(`clipperid`,`cut`,`recordids`,`lastmodified`)
 			VALUES
-			('".addslashes($this->id)."',1,'".addslashes(implode("\n",$recordids))."', NOW())", $app->db());
+			('".addslashes($this->id)."',
+			1,'".addslashes(implode("\n",$recordids))."', NOW()
+			)", $app->db();
 		if ( !$res ){
 			return PEAR::raiseError(xf_db_error($app->db()));
 		}

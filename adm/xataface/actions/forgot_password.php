@@ -12,6 +12,12 @@ class dataface_actions_forgot_password {
 	public static $EX_NO_USERS_FOUND_WITH_USERNAME = 508;
 	public static $EX_MULTIPLE_USERS_WITH_SAME_USERNAME = 509;
 	
+    /**
+     * If the email login flag is set, then this action will act like "Email Login Link" instead
+     * of "Forgot Password"
+     */
+    private $emailLoginLink = false;
+    
 	function handle($params){
 		
 		
@@ -19,12 +25,17 @@ class dataface_actions_forgot_password {
 		$query =& $app->getQuery();
 		$jt = Dataface_JavascriptTool::getInstance();
 		$jt->import('forgot_password.js');
-				
+		$app->addBodyCSSClass('no-table-tabs');
+        $app->addBodyCSSClass('no-mobile-header');
+         $app->addBodyCSSClass('no-app-menu');
+        $app->addBodyCSSClass('no-fab');
+		$app->setPageTitle(df_translate('actions.forgot_password.title', 'Forgot Password'));	
 		try {
 			if ( isset($query['--uuid']) ){
 				// A uuid was supplied, 
 				$res = $this->reset_password_with_uuid($query['--uuid']);
 				if ( $res ){
+                    $app->setPageTitle(df_translate('actions.forgot_password.password_reset.title', 'Password Reset'));
 					df_display(array(), 'xataface/forgot_password/password_has_been_reset.html');
 					exit;
 				} else {
@@ -41,6 +52,7 @@ class dataface_actions_forgot_password {
 					));
 					exit;
 				} else {
+                    $app->setPageTitle(df_translate('actions.forgot_password.sent_email.title', 'Email Sent'));
 					df_display(array(), 'xataface/forgot_password/sent_email.html');
 					exit;
 				}
@@ -56,15 +68,15 @@ class dataface_actions_forgot_password {
 					));
 					exit;
 				} else {
+                    $app->setPageTitle(df_translate('actions.forgot_password.sent_email.title', 'Email Sent'));
 					df_display(array(), 'xataface/forgot_password/sent_email.html');
 					exit;
 				}
 				
 				
 			} else {
-			
-				
-				df_display(array(), 'xataface/forgot_password/form.html');
+                $app->setPageTitle(df_translate('actions.forgot_password.title', 'Forgot Password'));
+                df_display(array(), 'xataface/forgot_password/form.html');
 				exit;
 			}
 		} catch ( Exception $ex ){
@@ -237,7 +249,11 @@ class dataface_actions_forgot_password {
 		
 		$url = df_absolute_url(DATAFACE_SITE_HREF.'?-action=forgot_password&--uuid='.$uuid);
 		$site_url = df_absolute_url(DATAFACE_SITE_URL);
-		
+		$resetPasswordStr = df_translate('actions.forgot_password.reset_password', 'Reset Password');
+        
+        
+        $link = '</p><p style="color:#1a1a1a;font-size:16px;line-height:26px;margin:0 0 1em 0;text-align:center"><a href="'.htmlspecialchars($url).'" style="background-color:#000080;border:solid #000080;border-radius:4px;border-width:12px 20px;box-sizing:content-box;color:#ffffff;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';font-size:16px;height:auto;line-height:1em;margin:0;opacity:1;outline:none;padding:0;text-decoration:none!important" >'.htmlspecialchars($resetPasswordStr).'</a></p><p>';
+        
 		$msg = df_translate('actions.forgot_password.reset_password_request_email_body',
 		<<<END
 You have requested to reset the password for the user '$username'.
@@ -246,7 +262,12 @@ Please go to the URL below in order to proceed with resetting your password:
 
 If you did not make this request, please disregard this email.
 END
-, array('username'=>$username, 'url'=>$url));
+, array('username'=>$username, 'url'=>'{{URL}}'));
+
+        $htmlMsg = str_replace('<{{URL}}>', '{{URL}}', $msg);
+
+        $htmlMsg = '<html><body><p>'.str_replace('{{URL}}', $link, $htmlMsg).'</p></body></html>';
+        $msg = str_replace('{{URL}}', $url, $msg);
 
 		$subject = df_translate('actions.forgot_password.password_reset',"Password Reset");
 		
@@ -278,13 +299,34 @@ END
                         ."\r\nContent-type: text/plain; charset=".$app->_conf['oe'];
 		if ( isset($info['headers']) ) $headers = $info['headers'];
 		//echo "Subject: $subject \nEmail: $email \n$msg \nHeaders: $headers";exit;
-		if ( @$app->_conf['_mail']['func'] ) $func = $app->_conf['_mail']['func'];
-		else $func = 'mail';
-		$res = $func($email,
-					$subject,
-					$msg,
-					$headers,
-					$parameters);
+        
+		$event = new StdClass;
+		$event->email = $email;
+        $event->subject = $subject;
+        
+        
+        
+        $event->message = array('text/plain' => $msg, 'text/html' => $htmlMsg);
+        
+        $event->headers = $headers;
+        $event->parameters = $parameters;
+		$event->consumed = false;
+        $app->fireEvent('mail', $event);
+        
+        if ($event->consumed) {
+            $res = @$event->out;
+        } else {
+    		if ( @$app->_conf['_mail']['func'] ) $func = $app->_conf['_mail']['func'];
+    		else $func = 'mail';
+    		$res = $func($email,
+    					$subject,
+    					$msg,
+    					$headers,
+    					$parameters);
+        }
+		
+        
+		
 		if ( !$res ){
 			throw new Exception(df_translate('actions.forgot_password.failed_send_activation',"Failed to send activation email.  Please try again later."), DATAFACE_E_ERROR);
 		} else {
@@ -408,13 +450,32 @@ END
 		if ( isset($info['headers']) ) $headers = $info['headers'];
 		
 		
-		if ( @$app->_conf['_mail']['func'] ) $func = $app->_conf['_mail']['func'];
-		else $func = 'mail';
-		$res = $func($email,
-					$subject,
-					$msg,
-					$headers,
-					$parameters);
+		$event = new StdClass;
+		$event->email = $email;
+        $event->subject = $subject;
+        
+        
+        
+        $event->message = array('text/plain' => $msg);
+        
+        $event->headers = $headers;
+        $event->parameters = $parameters;
+		$event->consumed = false;
+        $app->fireEvent('mail', $event);
+        
+        if ($event->consumed) {
+            $res = @$event->out;
+        } else {
+    		if ( @$app->_conf['_mail']['func'] ) $func = $app->_conf['_mail']['func'];
+    		else $func = 'mail';
+    		$res = $func($email,
+    					$subject,
+    					$msg,
+    					$headers,
+    					$parameters);
+        }
+        
+        
 		if ( !$res ){
 			return PEAR::raiseError(df_translate('actions.forgot_password.failed_send_activation',"Failed to send activation email.  Please try again later."), DATAFACE_E_ERROR);
 		} else {

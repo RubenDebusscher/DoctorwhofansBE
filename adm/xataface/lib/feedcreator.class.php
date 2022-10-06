@@ -183,7 +183,7 @@ class FeedItem extends HtmlDescribable {
 	/**
 	 * Optional attributes of an item.
 	 */
-	var $author, $authorEmail, $image, $category, $comments, $guid, $source, $creator;
+	var $author, $authorEmail, $image, $category, $comments, $guid, $source, $creator, $enclosure, $podcast, $itunes;
 	
 	/**
 	 * Publishing date of an item. May be in one of the following formats:
@@ -288,7 +288,7 @@ class FeedHtmlField {
 	 * Creates a new instance of FeedHtmlField.
 	 * @param  $string: if given, sets the rawFieldContent property
 	 */
-	function FeedHtmlField($parFieldContent) {
+	function __construct($parFieldContent) {
 		if ($parFieldContent) {
 			$this->rawFieldContent = $parFieldContent;
 		}
@@ -467,7 +467,7 @@ class FeedCreator extends HtmlDescribable {
 	/**
 	 * Optional attributes of a feed.
 	 */
-	var $syndicationURL, $image, $language, $copyright, $pubDate, $lastBuildDate, $editor, $editorEmail, $webmaster, $category, $docs, $ttl, $rating, $skipHours, $skipDays;
+	var $syndicationURL, $image, $language, $copyright, $pubDate, $lastBuildDate, $editor, $editorEmail, $webmaster, $category, $docs, $ttl, $rating, $skipHours, $skipDays, $itunes;
 
 	/**
 	* The url of the external xsl stylesheet used to format the naked rss feed.
@@ -532,7 +532,7 @@ class FeedCreator extends HtmlDescribable {
 	 * @param int        length the maximum length the string should be truncated to
 	 * @return string    the truncated string
 	 */
-	function iTrunc($string, $length) {
+	static function iTrunc($string, $length) {
 		if (strlen($string)<=$length) {
 			return $string;
 		}
@@ -709,7 +709,7 @@ class FeedDate {
 	 * Accepts RFC 822, ISO 8601 date formats as well as unix time stamps.
 	 * @param mixed $dateString optional the date this FeedDate will represent. If not specified, the current date and time is used.
 	 */
-	function FeedDate($dateString="") {
+	function __construct($dateString="") {
 		if ($dateString=="") $dateString = date("r");
 		
 		if (is_integer($dateString)) {
@@ -885,7 +885,7 @@ class RSSCreator091 extends FeedCreator {
 	 */
 	var $RSSVersion;
 
-	function RSSCreator091() {
+	function __construct() {
 		$this->_setRSSVersion("0.91");
 		$this->contentType = "application/rss+xml";
 	}
@@ -904,10 +904,15 @@ class RSSCreator091 extends FeedCreator {
 	 * @return    string    the feed's complete text 
 	 */
 	function createFeed() {
-		$feed = "<?xml version=\"1.0\" encoding=\"".$this->encoding."\"?>\n";
+        $xmlns = 'xmlns:podcast="https://podcastindex.org/namespace/1.0" ';
+        if (!empty($this->itunes)) {
+            $xmlns .= 'xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"';
+        }
+        
+		$feed = "<?xml version=\"1.0\" encoding=\"".$this->encoding."\" ?>\n";
 		$feed.= $this->_createGeneratorComment();
 		$feed.= $this->_createStylesheetReferences();
-		$feed.= "<rss version=\"".$this->RSSVersion."\">\n"; 
+		$feed.= "<rss $xmlns version=\"".$this->RSSVersion."\">\n"; 
 		$feed.= "    <channel>\n";
 		$feed.= "        <title>".FeedCreator::iTrunc(df_escape($this->title),100)."</title>\n";
 		$this->descriptionTruncSize = 500;
@@ -916,20 +921,70 @@ class RSSCreator091 extends FeedCreator {
 		$now = new FeedDate();
 		$feed.= "        <lastBuildDate>".df_escape($now->rfc822())."</lastBuildDate>\n";
 		$feed.= "        <generator>".FEEDCREATOR_VERSION."</generator>\n";
+        $feed.= "        <author>".df_escape($this->author)."</author>\n";
+        if (!empty($this->itunes)) {
+            if (is_array($this->itunes)) {
+                foreach ($this->itunes as $k=>$v) {
+                    if (is_array($v)) {
+                        if ($k == 'owner') {
+                            $feed .= "        <itunes:$k>\n";
+                            foreach ($v as $ki=>$vi) {
+                                $feed .= "            <itunes:$ki>".df_escape($vi)."</itunes:$ki>\n";
+                            }
+                            $feed .= "        </itunes:$k>\n";
 
+                        } else {
+                            foreach ($v as $vi) {
+                                if ($k == 'category') {
+                                    $feed .= "        <itunes:$k text=\"".df_escape($vi)."\"/>\n";
+                                } else {
+                                    $feed .= "        <itunes:$k>".df_escape($vi)."</itunes:$k>\n";
+                                }
+                            }
+                        }
+                        
+                    } else {
+                        if ($k == 'explicit') {
+                            if (empty($v) or $v === false or $v === '0' or $v === 0) {
+                                $v = 'False';
+                            } else if ($v === '1' or $v === 1 or $v === true) {
+                                $v = 'True';
+                            }
+                        } else if ($k == 'block' or $k == 'complete') {
+                            if (empty($v) or $v === false or $v === '0' or $v === 0) {
+                                $v = 'No';
+                            } else if ($v === true or $v === '1' or $v === 1) {
+                                $v = 'Yes';
+                            }
+                        }
+                        if ($k == 'image') {
+                            $feed .= "        <itunes:$k href=\"".df_escape($v)."\"/>\n";
+                        } else if ($k == 'category') {
+                            $feed .= "        <itunes:$k text=\"".df_escape($v)."\"/>\n";
+                        } else {
+                            $feed .= "        <itunes:$k>".df_escape($v)."</itunes:$k>\n";
+                        }
+                    }
+                
+                }
+            } else {
+                $feed .= "        " . $this->itunes ."\n";
+            }
+            
+        }
 		if ($this->image!=null) {
 			$feed.= "        <image>\n";
-			$feed.= "            <url>".$this->image->url."</url>\n"; 
+			$feed.= "            <url>".df_escape($this->image->url)."</url>\n"; 
 			$feed.= "            <title>".FeedCreator::iTrunc(df_escape($this->image->title),100)."</title>\n"; 
-			$feed.= "            <link>".$this->image->link."</link>\n";
-			if ($this->image->width!="") {
+			$feed.= "            <link>".df_escape($this->image->link)."</link>\n";
+			if (!empty($this->image->width)) {
 				$feed.= "            <width>".$this->image->width."</width>\n";
 			}
-			if ($this->image->height!="") {
+			if (!empty($this->image->height)) {
 				$feed.= "            <height>".$this->image->height."</height>\n";
 			}
-			if ($this->image->description!="") {
-				$feed.= "            <description>".$this->image->getDescription()."</description>\n";
+			if (!empty($this->image->description)) {
+				$feed.= "            <description>".df_escape($this->image->getDescription())."</description>\n";
 			}
 			$feed.= "        </image>\n";
 		}
@@ -984,6 +1039,9 @@ class RSSCreator091 extends FeedCreator {
 					$feed.= "            <source>".df_escape($this->items[$i]->source)."</source>\n";
 			}
 			*/
+            if ($this->items[$i]->enclosure) {
+                $feed.= "            <enclosure url=\"".df_escape($this->items[$i]->enclosure['url'])."\" length=\"".df_escape($this->items[$i]->enclosure['length'])."\" type=\"".df_escape($this->items[$i]->enclosure['type'])."\"/>\n";
+            }
 			if ($this->items[$i]->category!="") {
 				$feed.= "            <category>".df_escape($this->items[$i]->category)."</category>\n";
 			}
@@ -997,6 +1055,67 @@ class RSSCreator091 extends FeedCreator {
 			if ($this->items[$i]->guid!="") {
 				$feed.= "            <guid>".df_escape($this->items[$i]->guid)."</guid>\n";
 			}
+            if (!empty($this->items[$i]->podcast)) {
+                foreach ($this->items[$i]->podcast as $k=>$v) {
+                    if (is_array($v)) {
+                        $feed .= "            <podcast:$k ";
+                        foreach ($v as $vk=>$vv) {
+                            $feed .= "$vk=\"".df_escape($vv)."\" ";
+                        }
+                        $feed .= "/>\n";
+                    }
+                    
+                }
+            }
+            if (!empty($this->items[$i]->itunes)) {
+                if (is_array($this->items[$i]->itunes)) {
+                    foreach ($this->items[$i]->itunes as $k=>$v) {
+                        if (is_array($v)) {
+                            if ($k == 'owner') {
+                                $feed .= "            <itunes:$k>\n";
+                                foreach ($v as $ki=>$vi) {
+                                    $feed .= "                <itunes:$ki>".df_escape($vi)."</itunes:$ki>\n";
+                                }
+                                $feed .= "            </itunes:$k>\n";
+
+                            } else {
+                                foreach ($v as $vi) {
+                                    if ($k == 'category') {
+                                        $feed .= "            <itunes:$k text=\"".df_escape($vi)."\"/>\n";
+                                    } else {
+                                        $feed .= "            <itunes:$k>".df_escape($vi)."</itunes:$k>\n";
+                                    }
+                                }
+                            }
+                        
+                        } else {
+                            if ($k == 'explicit') {
+                                if (empty($v) or $v === false or $v === '0' or $v === 0) {
+                                    $v = 'False';
+                                } else if ($v === '1' or $v === 1 or $v === true) {
+                                    $v = 'True';
+                                }
+                            } else if ($k == 'block' or $k == 'complete') {
+                                if (empty($v) or $v === false or $v === '0' or $v === 0) {
+                                    $v = 'No';
+                                } else if ($v === true or $v === '1' or $v === 1) {
+                                    $v = 'Yes';
+                                }
+                            }
+                            if ($k == 'image') {
+                                $feed .= "        <itunes:$k href=\"".df_escape($v)."\"/>\n";
+                            } else if ($k == 'category') {
+                                $feed .= "            <itunes:$k text=\"".df_escape($v)."\"/>\n";
+                            } else {
+                                $feed .= "            <itunes:$k>".df_escape($v)."</itunes:$k>\n";
+                            }
+                        }
+                
+                    }
+                } else {
+                    $feed .= "            " . $this->items[$i]->itunes ."\n";
+                }
+            }
 			$feed.= $this->_createAdditionalElements($this->items[$i]->additionalElements, "        ");
 			$feed.= "        </item>\n";
 		}
@@ -1017,7 +1136,7 @@ class RSSCreator091 extends FeedCreator {
  */
 class RSSCreator20 extends RSSCreator091 {
 
-    function RSSCreator20() {
+    function __construct() {
         parent::_setRSSVersion("2.0");
     }
     
@@ -1034,7 +1153,7 @@ class RSSCreator20 extends RSSCreator091 {
  */
 class PIECreator01 extends FeedCreator {
 	
-	function PIECreator01() {
+	function __construct() {
 		$this->encoding = "utf-8";
 	}
     
@@ -1046,6 +1165,7 @@ class PIECreator01 extends FeedCreator {
 		$this->truncSize = 500;
 		$feed.= "    <subtitle>".$this->getDescription()."</subtitle>\n";
 		$feed.= "    <link>".$this->link."</link>\n";
+        //$feed.= "    <author>".df_escape($this->author)."</author>\n";
 		for ($i=0;$i<count($this->items);$i++) {
 			$feed.= "    <entry>\n";
 			$feed.= "        <title>".FeedCreator::iTrunc(df_escape(strip_tags($this->items[$i]->title)),100)."</title>\n";
@@ -1092,7 +1212,7 @@ class PIECreator01 extends FeedCreator {
  */
 class AtomCreator03 extends FeedCreator {
 
-	function AtomCreator03() {
+	function __construct() {
 		$this->contentType = "application/atom+xml";
 		$this->encoding = "utf-8";
 	}
@@ -1160,7 +1280,7 @@ class AtomCreator03 extends FeedCreator {
  */
 class MBOXCreator extends FeedCreator {
 
-	function MBOXCreator() {
+	function __construct() {
 		$this->contentType = "text/plain";
 		$this->encoding = "ISO-8859-15";
 	}
@@ -1247,7 +1367,7 @@ class MBOXCreator extends FeedCreator {
  */
 class OPMLCreator extends FeedCreator {
 
-	function OPMLCreator() {
+	function __construct() {
 		$this->encoding = "utf-8";
 	}
     

@@ -6,10 +6,11 @@ class dataface_actions_new_related_record {
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
 		$resultSet =& $app->getResultSet();
+        $app->_conf['page_menu_category'] = 'new_related_record_actions_menu';
 		
 		//$record =& $app->getRecord();	// loads the current record 
 		
-		import( 'Dataface/ShortRelatedRecordForm.php');
+		import( XFROOT.'Dataface/ShortRelatedRecordForm.php');
 		if ( !isset( $query['-relationship'])){
 			return PEAR::raiseError(Dataface_LanguageTool::translate(
 				'No relationship specified in new related record',
@@ -17,9 +18,29 @@ class dataface_actions_new_related_record {
 				), DATAFACE_E_ERROR
 			);
 		}
+        
+        
 
 
-		$record = null;	// we let the Form automatically handle loading of record.
+		$record = $app->getRecord();
+        if ($record) {
+            $relationship = $record->_table->getRelationship($query['-relationship']);
+            if (PEAR::isError($relationship)) {
+                return $relationship;
+            }
+            $addRecordTable = $relationship->getAddRelatedRecordTable();
+            if ($addRecordTable) {
+                // This relationship has a "dummy" table registered to be used for adding
+                // records to this relationship.
+                header('Location: '.$app->url([
+                    '-table' => $addRecordTable, 
+                    '-action' => 'new',
+                    '-add-related-context' => json_encode(['id' => $record->getId(), 'relationship' => $query['-relationship']])]));
+                return;
+                    
+            }
+        }
+        
 		$form = new Dataface_ShortRelatedRecordForm($record, $query['-relationship']);
 
 		$form->_build();
@@ -86,7 +107,7 @@ class dataface_actions_new_related_record {
 			}
 				
 			if ( $success ){
-				import('Dataface/Utilities.php');
+				import(XFROOT.'Dataface/Utilities.php');
 				Dataface_Utilities::fireEvent('after_action_new_related_record');
 				$fquery = array('-action'=>'browse');
 				$table = Dataface_Table::loadTable($query['-table']);

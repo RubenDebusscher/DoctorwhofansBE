@@ -31,32 +31,82 @@
  */
 class dataface_actions_new {
 	function handle(){
-		import( 'Dataface/FormTool.php');
-		import( 'Dataface/QuickForm.php');
+		import( XFROOT.'Dataface/FormTool.php');
+		import( XFROOT.'Dataface/QuickForm.php');
 		$formTool =& Dataface_FormTool::getInstance();
 		$app =& Dataface_Application::getInstance();
 		$query =& $app->getQuery();
-
+        
+        // This request may have been redirected from new_related_record if this table is being used
+        // as a proxy for adding to a relationship.  In this case it would pass the -add-related-context
+        // parameter with a JSON value of the form ['id' => RECORDID, ' => 'relationship' => RELATIONSHIPNAME]
+        
+        $addRelatedContext = empty($query['-add-related-context']) ? 
+                null : 
+                json_decode($query['-add-related-context'], true);
+        $parentRecord = ($addRelatedContext and !empty($addRelatedContext['id'])) ? 
+                df_get_record_by_id($addRelatedContext['id']) : 
+                null;
+        $relationship = ($addRelatedContext and $parentRecord and !empty($addRelatedContext['relationship'])) ?
+                $parentRecord->_table->getRelationship($addRelatedContext['relationship']) : 
+                null;
+        
+        if ($parentRecord and $relationship) {
+            import(XFROOT.'Dataface/RelatedRecord.php');
+            $app->addRecordContext(new Dataface_RelatedRecord($parentRecord, $relationship->getName()));
+        }
+        
+        
+		$app->addBodyCSSClass('no-table-tabs');
+        $app->addBodyCSSClass('no-mobile-header');
+        $app->addBodyCSSClass('no-app-menu');
+        $app->addBodyCSSClass('no-fab');
+        $app->_conf['page_menu_category'] = 'new_record_actions_menu';
 		$new = true;
 
-                $includedFields = null; // Null for all fields
+        $includedFields = null; // Null for all fields
 
-                if ( @$query['-fields'] ){
-                    $includedFields = explode(' ', $query['-fields']);
-                }
+        if ( @$query['-fields'] ){
+            $includedFields = explode(' ', $query['-fields']);
+        }
 
 		$currentRecord = new Dataface_Record($query['-table'], array());
 		$currentTable =& Dataface_Table::loadTable($query['-table']);
+		if (!$currentTable or PEAR::isError($currentTable)) {
+			die("No such table");
+		}
+		
+		if (!$_POST) {
+			$newRecordTableName = $currentTable->getNewRecordFormTable();
+			if ($newRecordTableName != $currentTable->tablename) {
+				$app->redirect($app->url(array('-table' => $newRecordTableName), true, true));
+				exit;
+			}
+		}
 
-		$app->setPageTitle(
-		    df_translate(
-		        'actions.new.label',
-		        'New '.$currentTable->getSingularLabel(),
-		        array(
-		            'tableObj'=>$currentTable
-		        )
-		    )
-		);
+        if ($relationship) {
+            // This is a relationship
+    		$app->setPageTitle(
+    		    df_translate(
+    		        'scripts.Dataface.RelatedList.toHtml.LABEL_ADD_NEW_RELATED_RECORD',
+    		        'Add '.$relationship->getSingularLabel(),
+    		        array(
+    		            'relationship'=>$relationship->getSingularLabel()
+    		        )
+    		    )
+    		);
+        } else {
+    		$app->setPageTitle(
+    		    df_translate(
+    		        'actions.new.label',
+    		        'New '.$currentTable->getSingularLabel(),
+    		        array(
+    		            'tableObj'=>$currentTable
+    		        )
+    		    )
+    		);
+        }
+		
 
 		if ( !isset($query['--tab']) and count($currentTable->tabs($currentRecord)) > 1 ){
 		   $tabs = $currentTable->tabs($currentRecord);
@@ -159,7 +209,7 @@ class dataface_actions_new {
 					$success = false;
 					$form->_errors[] = $result->getMessage();
 					if (@$query['-response'] == 'json') {
-						import('xf/core/XFException.php');
+						import(XFROOT.'xf/core/XFException.php');
 						throw new xf\core\XFException('Failed to insert record.  Duplicate record.', $result->getCode(), new Exception($result->getMessage(), $result->getCode()));
 					}
 
@@ -176,7 +226,7 @@ class dataface_actions_new {
 				$app->addError($result);
 				$success = false;
 				if (@$query['-response'] == 'json') {
-					import('xf/core/XFException.php');
+					import(XFROOT.'xf/core/XFException.php');
 					throw new xf\core\XFException('Failed to insert record', $result->getCode(), new Exception($result->getMessage(), $result->getCode()));
 				}
 			}
@@ -191,7 +241,7 @@ class dataface_actions_new {
 					echo json_encode(array('response_code'=>200, 'record_data'=> $rvals, 'response_message'=>df_translate('Record Successfully Saved', 'Record Successfully Saved')));
 					return;
 				}
-				import('Dataface/Utilities.php');
+				import(XFROOT.'Dataface/Utilities.php');
 
 
 				Dataface_Utilities::fireEvent('after_action_new', array('record'=>$currentRecord));
@@ -205,9 +255,21 @@ class dataface_actions_new {
 				 */
 				//$query = $form->_record->getValues(array_keys($form->_record->_table->keys()));
 				$currentRecord->secureDisplay = false;
-				if ( $currentRecord->checkPermission('edit') ){
-					$nextAction = 'edit';
+                $newAction = Dataface_ActionTool::getInstance()->getAction(array('name'=>'new'));
+                if (@$newAction['after_action.'.$query['-table']]) {
+					$nextAction = $newAction['after_action_'.$query['-table']];
+				} else if (@$newAction['after_action']) {
+					$nextAction = $newAction['after_action'];
+                    
 				} else {
+				    $nextAction = 'edit';
+				}
+                $nextActionConfig = Dataface_ActionTool::getInstance()->getAction(array('name'=>$nextAction));
+                $perm = '';
+                if ($nextActionConfig and @$nextActionConfig['permission']) {
+                    $perm = $nextActionConfig['permission'];
+                }
+				if ( $perm and !$currentRecord->checkPermission($perm) ){
 					$nextAction = 'view';
 				}
 				$urlParams = array('-action'=>$nextAction);
@@ -223,6 +285,11 @@ class dataface_actions_new {
 						$urlParams[$passedParam] = $query[$passedParam];
 					}
 				}
+				
+				if ($currentRecord->getInsertedRecordId()) {
+					$currentRecord = df_get_record_by_id($currentRecord->getInsertedRecordId());
+				}
+				
 				$url = $currentRecord->getURL($urlParams);
 				if ( @$query['--lang'] ){
 					$url .= '&--lang='.$query['--lang'];
@@ -240,6 +307,13 @@ class dataface_actions_new {
 				if ( strpos($url, '?') === false ) $url .= '?';
 				$link = $url.'&--saved=1&--msg='.$msg;
                                 //echo "$link";exit;
+                                
+                if ($parentRecord and $relationship) {
+                    // This form was to add a new record to the given relationship
+                    $link = $parentRecord->getURL('-action=related_records_list&-relationship='.urlencode($relationship->getName()));
+                    $link .= '&--msg='.$msg;
+                }           
+                
 				$app->redirect("$link");
 
 			} else {
@@ -262,7 +336,7 @@ class dataface_actions_new {
 			//$app->clearMessages();
 			//$app->addError(PEAR::raiseError("Some errors occurred while processing this form: <ul><li>".implode('</li><li>', $form->_errors)."</li></ul>"));
 			if (@$query['-response'] == 'json') {
-				import('xf/core/XFException.php');
+				import(XFROOT.'xf/core/XFException.php');
 				$messages = implode('. ', $form->_errors);
 				throw new xf\core\XFException('Failed to insert record.'.$messages, DATAFACE_E_VALIDATION_CONSTRAINT_FAILED, new Exception($messages, DATAFACE_E_VALIDATION_CONSTRAINT_FAILED));
 			}
@@ -279,8 +353,27 @@ class dataface_actions_new {
 		}
 		$context = array('form'=>&$out);
 		$context['tabs'] = $formTool->createHTMLTabs($currentRecord, $form, @$query['--tab']);
-
-
+        if ($relationship) {
+    		$context['new_record_header_label'] = 'Add '.$relationship->getSingularLabel();
+        } else {
+    		$context['new_record_header_label'] = 'Create new '.$currentTable->getSingularLabel();
+        }
+		if (@$currentTable->_atts['new_record_label']) {
+			$context['new_record_header_label'] = $currentTable->_atts['new_record_label'];
+		}
+		if (@$currentTable->_atts['new_record_label_html']) {
+			$context['new_record_header_label_html'] = $currentTable->_atts['new_record_label_html'];
+		}
+		
+		
+		$context['new_record_header_description'] = "";
+		if (@$currentTable->_atts['new_record_description']) {
+			$context['new_record_header_description'] = $currentTable->_atts['new_record_description'];
+		}
+		if (@$currentTable->_atts['new_record_description_html']) {
+			$context['new_record_header_description_html'] = $currentTable->_atts['new_record_description_html'];
+		}
+		
                 if ( isset($query['-template']) ) $template = $query['-template'];
                 else if ( @$query['-headless'] ) $template = 'Dataface_New_Record_headless.html';
 		else $template = 'Dataface_New_Record.html';

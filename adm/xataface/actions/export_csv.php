@@ -51,61 +51,52 @@ class dataface_actions_export_csv {
         function startFile($fh, $query){
             
         }
-        
         function endFile($fh, $query){
-            
         }
-        
         function writeOutput($fh, $query){
             $app = Dataface_Application::getInstance();
             if ( @$app->_conf['export_csv'] and @$app->_conf['export_csv']['format'] == 'excel' ){
-                    
                 $this->outputExcelcsv($fh, $query, $app);
             } else {
                 $this->outputStandardCsv($fh, $query, $app);
             }
         }
-    
 	function handle(&$params){
 		//set_time_limit(0);
-		import('Dataface/RecordReader.php');
+		import(XFROOT.'Dataface/RecordReader.php');
 		$app =& Dataface_Application::getInstance();
-                
                 $this->csv_delimiter = @$app->_conf['export_csv']['delimiter'];     //get delimiter key from conf.ini
                 if (!$this->csv_delimiter || $this->csv_delimiter==''){             //if no delimiter specified
-                    if ( @$app->_conf['export_csv'] and @$app->_conf['export_csv']['format'] == 'excel'){   
+                    if ( @$app->_conf['export_csv'] and @$app->_conf['export_csv']['format'] == 'excel'){
                         $this->csv_delimiter ="\t";                                 //  default to tab when using excel format
                     }else{
                         $this->csv_delimiter =",";                                  //  default to comma when using plain csv format
                     }
                 }elseif (strtolower($this->csv_delimiter)=='\\t'){    // \t is not recognized as tab in ini parsing and so we have to check for the string '\t'
-                    $this->csv_delimiter ="\t";                          
+                    $this->csv_delimiter ="\t";
                 }elseif (strlen($this->csv_delimiter)!=1){
-                    die('Error in conf.ini: length of csv_delimiter cannot be greater than 1'); 
+                    die('Error in conf.ini: length of csv_delimiter cannot be greater than 1');
                 }elseif ($this->csv_delimiter=='"'){
-                    die('Error in conf.ini: csv_delimiter cannot be set to double quote (")'); 
+                    die('Error in conf.ini: csv_delimiter cannot be set to double quote (")');
                 }
-		
 		$query = $app->getQuery();
 		// Better to set the skip and limit in the actions.ini file
 		//$query['-limit'] = 9999999;
 		$table =& Dataface_Table::loadTable($query['-table']);
 		if ( isset($query['-relationship']) and @$query['--related'] ){
 			if (!isset($query['-related:start'])) {
-			    $query['-related:start'] = 0;
+				$query['-related:start'] = 0;
 			} else {
-			    $query['-related:start'] = intval($query['-related:start']);
+				$query['-related:start'] = intval($query['-related:start']);
 			}
 			if (!isset($query['-related:limit'])) {
-			    $query['-related:limit'] = 9999999;
+				$query['-related:limit'] = 9999999;
 			} else {
-			    $query['-related:limit']  = intval($query['-related:limit']);
+				$query['-related:limit']  = intval($query['-related:limit']);
 			}
 			$record =& $app->getRecord();
 			$relationship =& $table->getRelationship($query['-relationship']);
-			
 			$records =& df_get_related_records($query); //$record->getRelatedRecordObjects($query['-relationship']);
-			
 			$data = array(/*$relationship->_schema['short_columns']*/);
 			$headings = array();
 			foreach ( $relationship->_schema['short_columns'] as $colhead ){

@@ -22,10 +22,40 @@ class Dataface_FeedTool {
 		if ( !isset($res['date']) ) $res['date'] = $this->getItemDate($record);
 		if ( !isset($res['author']) ) $res['author'] = $this->getItemAuthor($record);
 		if ( !isset($res['source']) ) $res['source'] = $this->getItemSource($record);
+        if ( !isset($res['enclosure']) ) $res['enclosure'] = $this->getItemEnclosure($record);
 		
 		return $res;
 		
 	}
+    
+    function getItemEnclosure($record) {
+    	
+		$delegate =& $record->_table->getDelegate();
+		if ( isset($delegate) and method_exists($delegate, 'getRSSEnclosure') ){
+			return $delegate->getRSSEnclosure($record);
+		} else {
+			$table = $record->table();
+            $enclosureField = $table->getEnclosureField();
+            if ($enclosureField) {
+                $type = $record->getMimetype($enclosureField);
+                $length = $record->getLength($enclosureField);
+                if ($length > 0 and strpos($type, 'audio/') === 0 or strpos($type, 'video/') === 0) {
+                    return array(
+                        'url' => df_absolute_urL($record->display($enclosureField)),
+                        'length' => $length,
+                        'type' => $type
+                    );
+                }
+                
+            }
+            return null;
+	
+		}
+	
+		//return $record->getDescription();
+    	
+        
+    }
 	
 	function buildFeedData($query=null){
 		$app =& Dataface_Application::getInstance();
@@ -226,15 +256,26 @@ class Dataface_FeedTool {
 		$item->title = $data['title'];
 		$item->link = $data['link'];
 		$item->description = $data['description']; 
+		if (!empty($data['itunes'])) {
+		    $item->itunes = $data['itunes'];
+		}
+        if (!empty($data['guid'])) {
+            $item->guid = $data['guid'];
+        }
 		
 		//optional
 		//item->descriptionTruncSize = 500;
 		//item->descriptionHtmlSyndicated = true;
 		
-		$item->date = $data['date']; 
+		$item->date = strtotime($data['date']); 
 
 		$item->source = $data['source']; 
 		$item->author = $data['author'];
+        $item->enclosure = $data['enclosure'];
+        if (!empty($data['podcast'])) {
+            $item->podcast = $data['podcast'];
+        }
+        
 		return $item;
 	}
 	
@@ -248,7 +289,7 @@ class Dataface_FeedTool {
 	}
 	
 	function createFeed($query=null){
-		import('feedcreator.class.php');
+		import(XFLIB.'feedcreator.class.php');
 		$app =& Dataface_Application::getInstance();
 		if ( !isset($query) ){
 			$query = $app->getQuery();
@@ -260,13 +301,29 @@ class Dataface_FeedTool {
 		//$rss->useCached(); // use cached version if age<1 hour
 		$rss->title = $feed_data['title']; 
 		$rss->description = $feed_data['description'];
-		
+        if (@$feed_data['author']) {
+            $rss->author = $feed_data['author'];
+        } else {
+            $rss->author= $app->getSiteTitle();
+        }
+		if (!empty($feed_data['itunes'])) {
+		    $rss->itunes = $feed_data['itunes'];
+		}
+        if (!empty($feed_data['copyright'])) {
+            $rss->copyright = $feed_data['copyright'];
+        }
+        if (!empty($feed_data['language'])) {
+            $rss->language = $feed_data['language'];
+        }
 		//optional
 		//$rss->descriptionTruncSize = 500;
 		//$rss->descriptionHtmlSyndicated = true;
 		
 		$rss->link = htmlentities($feed_data['link']);
 		$rss->syndicationURL = htmlentities($feed_data['syndicationURL']);
+        if (!empty($feed_data['image'])) {
+            $rss->image = (object)$feed_data['image'];
+        }
 		
 		if ( isset($query['-relationship']) ){
 			// Do the related records thing

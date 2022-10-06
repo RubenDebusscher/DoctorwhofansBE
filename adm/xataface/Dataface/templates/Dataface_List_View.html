@@ -18,7 +18,12 @@
  *-------------------------------------------------------------------------------
  *}
 {use_macro file="Dataface_Main_Template.html"}
-
+    {fill_slot name="h1"}
+         <h1>{$ENV.APPLICATION_OBJECT->getPageTitle()|escape}</h1>
+         {if $ENV.table_object->getAttribute('description')}
+             <div class='record-heading-description'>{$ENV.table_object->getAttribute('description')|escape}</div>
+         {/if}
+    {/fill_slot}
 	{fill_slot name="main_section"}
 		{if $error}<div id="error">{translate id=$error_i18n}{$error}{/translate}</div>{/if}
 		
@@ -31,11 +36,13 @@
 		{/if}
 		<div id="list-window">
 		{if !$ENV.prefs.use_old_resultlist_controller}
+            {if $ENV.resultSet->found() > 0}
 			{if !$ENV.prefs.hide_resultlist_controller}
 			{if $ENV.resultSet->found() > $ENV.resultSet->limit() or !$ENV.APPLICATION_OBJECT->prefs.show_resultlist_controller_only_when_needed}
 				{result_controller}
 			{/if}
 			{/if}
+            {/if}
 		{/if}
 		<div style="clear:both">
 		{block name="before_result_list_content"}
@@ -45,11 +52,13 @@
 		{block name="after_result_list_content"}
 		</div>
 		{if !$ENV.prefs.use_old_resultlist_controller}
+            {if $ENV.resultSet->found() > 0}
 			{if !$ENV.prefs.hide_resultlist_controller}
 			{if ($ENV.resultSet->found() > $ENV.resultSet->limit()) or !$ENV.APPLICATION_OBJECT->prefs.show_resultlist_controller_only_when_needed}
 				{result_controller}
 			{/if}
 			{/if}
+            {/if}
 		{/if}
 		</div>
 		{/define_slot}

@@ -1,0 +1,7 @@
+{% if JUMPBOX_INDEX_UCP && JUMPBOX_POSITION == 3 %}
+	{% if JUMPBOX_DEFAULT %}
+		{% INCLUDE 'jumpbox_default.html' %}
+	{% else %}
+		{% INCLUDE 'jumpbox_modern.html' %}
+	{% endif %}
+{% endif %}

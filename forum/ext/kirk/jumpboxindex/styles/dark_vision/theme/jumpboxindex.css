@@ -1,0 +1,64 @@
+/* jumpboxindex.css dark_vision
+------------------------------- */
+
+.nav-breadcrumbs.linklist.navlinks {
+	padding: 7px 0 0 0;
+}
+
+.jumpbox-index {
+	margin: 6px 0;
+}
+
+.jumpbox-ucp {
+	margin: 12px 0;
+}
+
+.jumpbox-navbar {
+	margin: -4px 0;
+	cursor: pointer;
+}
+
+.jumpbox-navbar-top {
+	margin: 2px 0 -11px;
+}
+
+.jumpbox-navbar-bottom {
+	margin: 2px 0 -9px;
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.content-navbar li {
+	padding-right: 0;
+}
+
+.jumpbox-navbar .dropdown-visible .dropdown-select, .nojs .dropdown-container:hover .dropdown-select {
+	background-image: none;
+}
+
+.dropdown-visible .dropdown-select .dropdown-container-navbar:hover {
+	background-image: none;
+}
+
+.dropdown-left .dropdown .jb-pointer-navbar, .nojs .rightside .dropdown .jb-pointer-navbar {
+	right: 0;
+}
+
+.dropdown .jb-pointer-navbar {
+	left: 0;
+}
+
+.caret-left {
+	border-right: 1px solid;
+	border-right-color: currentcolor;
+	position: relative;
+	right: 4px;
+}
+
+.caret-left i {
+	vertical-align: top;
+}
+
+.caret-bottom i {
+	vertical-align: sub;
+}

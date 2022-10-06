@@ -1,0 +1,25 @@
+services:
+    chris1278.cookie.admin.controller:
+        class: chris1278\cookie\controller\admin_controller
+        arguments:
+            - '@ext.manager' 
+            - '@path_helper'
+            - '@config'
+            - '@language'
+            - '@log'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'            
+
+    chris1278.cookie.listener:
+        class: chris1278\cookie\event\main_listener
+        arguments:
+            - '@config'
+            - '@template'
+            - '@language'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        tags:
+            - { name: event.listener }

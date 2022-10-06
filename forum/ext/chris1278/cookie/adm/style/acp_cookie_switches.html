@@ -1,0 +1,111 @@
+{% INCLUDECSS 'css/chris1278_cookie_acp.css' %}
+{% include 'overall_header.html' %}
+
+	<h1>{{ lang('ACP_COOKIE_SWITCHES') }}</h1>
+	<p>{{ lang('ACP_CM_SETTINGS_PAGE_TITLE_EXPLAIN') }}</p>
+
+{% if S_ERROR %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+{% endif %}
+<h2 class="cookie-set-title">{{ lang('ACP_CM_SWITCH_SET_TITLE') }}</h2>
+<form id="cookie_switches" name="cookie_switches" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+	<legend>{{ lang('ACP_MEDIA_SWITCHES') }}</legend>
+		<dl id="youtube_bbcode_switch">
+			<dt><label for="youtube_bbcode_switch">{{ lang('YOUTUBE_BBCODE_SWITCH') ~ lang('COLON') }}</label><br /><span>{{ lang('YOUTUBE_BBCODE_SWITCH_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="youtube_bbcode_switch" value="1" {% if YOUTUBE_BBCODE_SWITCH %}checked="checked" {% endif %}/> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="youtube_bbcode_switch" value="0" {% if not YOUTUBE_BBCODE_SWITCH %}checked="checked" {% endif %}/> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+		<dl id="vimeo_bbcode_switch">
+			<dt><label for="vimeo_bbcode_switch">{{ lang('VIMEO_BBCODE_SWITCH') ~ lang('COLON') }}</label><br /><span>{{ lang('VIMEO_BBCODE_SWITCH_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="vimeo_bbcode_switch" value="1" {% if VIMEO_BBCODE_SWITCH %}checked="checked" {% endif %}/> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="vimeo_bbcode_switch" value="0" {% if not VIMEO_BBCODE_SWITCH %}checked="checked" {% endif %}/> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+		<dl id="spotify_bbcode_switch">
+			<dt><label for="spotify_bbcode_switch">{{ lang('SPOTIFY_BBCODE_SWITCH') ~ lang('COLON') }}</label><br /><span>{{ lang('SPOTIFY_BBCODE_SWITCH_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="spotify_bbcode_switch" value="1" {% if SPOTIFY_BBCODE_SWITCH %}checked="checked" {% endif %}/> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="spotify_bbcode_switch" value="0" {% if not SPOTIFY_BBCODE_SWITCH %}checked="checked" {% endif %}/> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+	</fieldset>
+	<fieldset>
+	<legend>{{ lang('ACP_OTHER_EXTENSIONS_SWITCHES') }}</legend>
+		<dl id="google_translator_switch">
+			<dt><label for="google_translator_switch">{{ lang('GOOGLE_TRANSLATOR_SWITCH') ~ lang('COLON') }}</label><br /><span>{{ lang('GOOGLE_TRANSLATOR_SWITCH_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="google_translator_switch" value="1" {% if GOOGLE_TRANSLATOR_SWITCH %}checked="checked" {% endif %}/> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="google_translator_switch" value="0" {% if not GOOGLE_TRANSLATOR_SWITCH %}checked="checked" {% endif %}/> {{ lang('NO') }} </label>
+			</dd>
+		</dl>
+	</fieldset>
+	<fieldset>
+	<legend>{{ lang('ACP_VISITOR STATISTICS_SWITCHES') }}</legend>
+		<dl id="google_analytics_no_tm_switch" onchange="cookiedimmer.setConfig()">
+			<dt><label for="google_analytics_no_tm_switch">{{ lang('GOOGLE_ANALYTICS_NO_TAGMANAGER') ~ lang('COLON') }}</label><br /><span>{{ lang('GOOGLE_ANALYTICS_NO_TAGMANAGER_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="google_analytics_no_tm_switch" value="1" {% if GOOGLE_ANALYTICS_NO_TM_SWITCH %}checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" id="google_analytics_no_tm_switch_0" name="google_analytics_no_tm_switch" value="0" {% if not GOOGLE_ANALYTICS_NO_TM_SWITCH %}checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+	
+		<dl id="dim_google_analytics_id">
+			<dt><label for="google_analytics_id">{{ lang('GOOGLE_ANALYTICS_ID') ~ lang('COLON') }}</label><br /><span>{{ lang('GOOGLE_ANALYTICS_ID_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="text" name="google_analytics_id" id="google_analytics_id" maxlength="255" size="40" value="{{ GOOGLE_ANALYTICS_ID }}" placeholder=" {{ lang('ACP_GOOGLE_ANALYTICS_ID') }}" /></label>
+			</dd>
+		</dl>	
+		<dl id="matomo_switch" onchange="cookiedimmer.setConfig()">
+			<dt><label for="matomo_switch">{{ lang('MATOMO_SWITCH') ~ lang('COLON') }}</label><br /><span>{{ lang('MATOMO_SWITCH_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="matomo_switch" value="1" {% if MATOMO_SWITCH %}checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" id="matomo_switch_0" name="matomo_switch" value="0" {% if not MATOMO_SWITCH %}checked="checked"{% endif %} /> {{ lang('NO') }}</label>
+			</dd>
+		</dl>
+	
+		<dl id="dim_matomo_url">
+			<dt><label for="matomo_url">{{ lang('MATOMO_URL') ~ lang('COLON') }}</label><br /><span>{{ lang('MATOMO_URL_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="text" name="matomo_url" id="matomo_url" maxlength="255" size="40" value="{{ MATOMO_URL }}"  /></label>
+			</dd>
+		</dl>
+		<dl id="dim_matomo_side_id">
+			<dt><label for="matomo_side_id">{{ lang('MATOMO_SIDE_ID') ~ lang('COLON') }}</label><br /><span>{{ lang('MATOMO_SIDE_ID_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="text" name="matomo_side_id" id="matomo_side_id" maxlength="255" size="4" value="{{ MATOMO_SIDE_ID }}" /></label>
+			</dd>
+		</dl>
+		<dl id="dim_matomo_in_out">
+			<dt><label for="matomo_in_out">{{ lang('MATOMO_IN_OUT') ~ lang('COLON') }}</label><br /><span>{{ lang('MATOMO_IN_OUT_EXPLAIN') }}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="matomo_in_out" value="1" {% if MATOMO_IN_OUT %}checked="checked"{% endif %} /> {{ lang('ACP_MATOMO_EXTERN') }}</label>
+				<label><input type="radio" class="radio" name="matomo_in_out" value="0" {% if not MATOMO_IN_OUT %}checked="checked"{% endif %} /> {{ lang('ACP_MATOMO_INTERN') }}</label>
+			</dd>
+		</dl>
+		
+	</fieldset>
+	<p class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+	</p>
+
+	{S_FORM_TOKEN}
+	<p class="chris1278_acp_copyright">
+		{{ CM_EXT_NAME }} &copy; Chris1278<br />
+		{{ lang('CM_LANG_DESC') }} {{ lang('CM_LANG_EXT_VER') }} &bull; {{ lang('CM_LANG_AUTHOR') }}
+	</p>
+</form>
+
+<script>
+	var cookiedimmer= {};
+</script>
+
+{% INCLUDEJS 'acp_cookiedimmer.js' %}
+{% include 'overall_footer.html' %}

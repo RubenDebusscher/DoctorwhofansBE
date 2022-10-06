@@ -216,10 +216,9 @@ class chat
 		$result	 = $this->db->sql_query($sql);
 		$row	 = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
-
-		$status = $this->get_status($row['user_lastpost']);
-
-		if ($status == 'online' || $status == 'idle')
+		if(!empty($row)){
+			$status = $this->get_status($row['user_lastpost']);
+			if ($status == 'online' || $status == 'idle')
 		{
 			$refresh = $this->config['refresh_' . $status . '_chat'];
 		}
@@ -236,6 +235,28 @@ class chat
 		{
 			$last_post = $row['user_lastpost'];
 		}
+		}else{
+			$status = 'online';
+			if ($status == 'online' || $status == 'idle')
+			{
+				$refresh = $this->config['refresh_' . $status . '_chat'];
+			}
+			else
+			{
+				$refresh = $this->config['refresh_offline_chat'];
+			}
+	
+			if ($this->user->data['user_id'] === ANONYMOUS)
+			{
+				$last_post = '0';
+			}
+			else
+			{
+				$last_post = '0';
+			}
+		}
+
+		
 
 		add_form_key('ajax_chat_post');
 

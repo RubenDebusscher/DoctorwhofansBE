@@ -15,6 +15,7 @@ namespace phpbb\cron;
 
 use phpbb\cron\task\wrapper;
 use phpbb\routing\helper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
 * Cron manager class.
@@ -23,6 +24,11 @@ use phpbb\routing\helper;
 */
 class manager
 {
+	/**
+	 * @var ContainerInterface
+	 */
+	protected $phpbb_container;
+
 	/**
 	 * @var helper
 	 */
@@ -34,7 +40,14 @@ class manager
 	*
 	* @var array
 	*/
-	protected $tasks = array();
+	protected $tasks = [];
+
+	/**
+	 * Flag indicating if $this->tasks contains tasks registered in the container
+	 *
+	 * @var bool
+	 */
+	protected $is_initialised_from_container = false;
 
 	/**
 	 * @var string
@@ -47,20 +60,26 @@ class manager
 	protected $php_ext;
 
 	/**
+	 * @var \phpbb\template\template
+	 */
+	protected $template;
+
+	/**
 	* Constructor. Loads all available tasks.
 	*
-	* @param array|\Traversable $tasks Provides an iterable set of task names
+	* @param ContainerInterface $phpbb_container Container
 	* @param helper $routing_helper Routing helper
 	* @param string $phpbb_root_path Relative path to phpBB root
 	* @param string $php_ext PHP file extension
+	* @param \phpbb\template\template $template
 	*/
-	public function __construct($tasks, helper $routing_helper, $phpbb_root_path, $php_ext)
+	public function __construct(ContainerInterface $phpbb_container, helper $routing_helper, $phpbb_root_path, $php_ext, $template)
 	{
+		$this->phpbb_container = $phpbb_container;
 		$this->routing_helper = $routing_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-
-		$this->load_tasks($tasks);
+		$this->template = $template;
 	}
 
 	/**
@@ -104,6 +123,8 @@ class manager
 	*/
 	public function find_one_ready_task()
 	{
+		$this->load_tasks_from_container();
+
 		shuffle($this->tasks);
 		foreach ($this->tasks as $task)
 		{
@@ -122,7 +143,9 @@ class manager
 	*/
 	public function find_all_ready_tasks()
 	{
-		$tasks = array();
+		$this->load_tasks_from_container();
+
+		$tasks = [];
 		foreach ($this->tasks as $task)
 		{
 			if ($task->is_ready())
@@ -145,6 +168,8 @@ class manager
 	*/
 	public function find_task($name)
 	{
+		$this->load_tasks_from_container();
+
 		foreach ($this->tasks as $task)
 		{
 			if ($task->get_name() == $name)
@@ -162,6 +187,8 @@ class manager
 	*/
 	public function get_tasks()
 	{
+		$this->load_tasks_from_container();
+
 		return $this->tasks;
 	}
 
@@ -173,6 +200,6 @@ class manager
 	*/
 	public function wrap_task(\phpbb\cron\task\task $task)
 	{
-		return new wrapper($task, $this->routing_helper, $this->phpbb_root_path, $this->php_ext);
+		return new wrapper($task, $this->routing_helper, $this->phpbb_root_path, $this->php_ext, $this->template);
 	}
 }

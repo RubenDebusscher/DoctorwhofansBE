@@ -20,7 +20,7 @@ if (!defined('IN_PHPBB'))
 }
 
 /**
-* @todo [smilies] check regular expressions for special char replacements (stored specialchared in db)
+  * @todo {smilies} check regular expressions for special char replacements (stored specialchared in db)
   */
 class acp_icons
 {
@@ -93,24 +93,24 @@ class acp_icons
 
 					if ($img_size)
 					{
-					if (!$img_size[0] || !$img_size[1] || strlen($img) > 255)
-					{
-						continue;
-					}
+						if (!$img_size[0] || !$img_size[1] || strlen($img) > 255)
+						{
+							continue;
+						}
 
-					// adjust the width and height to be lower than 128px while perserving the aspect ratio (for icons)
-					if ($mode == 'icons')
-					{
-						if ($img_size[0] > 127 && $img_size[0] > $img_size[1])
+						// adjust the width and height to be lower than 128px while perserving the aspect ratio (for icons)
+						if ($mode == 'icons')
 						{
-							$img_size[1] = (int) ($img_size[1] * (127 / $img_size[0]));
-							$img_size[0] = 127;
-						}
-						else if ($img_size[1] > 127)
-						{
-							$img_size[0] = (int) ($img_size[0] * (127 / $img_size[1]));
-							$img_size[1] = 127;
-						}
+							if ($img_size[0] > 127 && $img_size[0] > $img_size[1])
+							{
+								$img_size[1] = (int) ($img_size[1] * (127 / $img_size[0]));
+								$img_size[0] = 127;
+							}
+							else if ($img_size[1] > 127)
+							{
+								$img_size[0] = (int) ($img_size[0] * (127 / $img_size[1]));
+								$img_size[1] = 127;
+							}
 						}
 					}
 					else

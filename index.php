@@ -11,7 +11,7 @@ $_SESSION["Menu"]="";?>
     }
     if(isset($_GET['id'])){
         $id= $_GET['id'];
-    }
+    }else{$id=0;}
 ?>
 <html lang="nl-BE">
 

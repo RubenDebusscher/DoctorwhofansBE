@@ -283,6 +283,7 @@ class listener implements EventSubscriberInterface
 		while (current($list) !== false)
 		{
 			$next = next($list);
+			if (empty($tree['forum_id'])){$var = 0;}else{$var = $tree['forum_id'];}
 			if (!($tree['forum_id'] == $next['parent_id']))
 			{
 				// The current node isn't our child, so we backwards and we return the current tree

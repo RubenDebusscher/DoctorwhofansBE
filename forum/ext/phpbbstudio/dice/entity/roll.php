@@ -553,7 +553,7 @@ class roll implements roll_interface
 				// we are exploding the dice so we need a compare point, but none has been defined
 				$dice['compare_point'] = [
 					'operator'	=> '=',
-					'value'		=> $dice['fudge'] ? 1 : ($dice['sides'] === '%') ? 100 : $dice['sides'],
+					'value'		=> ($dice['fudge'] ? 1 : ($dice['sides'] === '%')) ? 100 : $dice['sides'],
 				];
 			}
 

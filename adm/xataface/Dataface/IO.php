@@ -38,8 +38,8 @@
  *		// update the changes to the database.
  */
 
-import( 'Dataface/QueryBuilder.php');
-import('Dataface/DB.php');
+import( XFROOT.'Dataface/QueryBuilder.php');
+import(XFROOT.'Dataface/DB.php');
 define('Dataface_IO_READ_ERROR', 1001);
 define('Dataface_IO_WRITE_ERROR', 1002);
 define('Dataface_IO_NOT_FOUND_ERROR', 1003);
@@ -142,7 +142,7 @@ class Dataface_IO {
 	 * @return array Associative array of query parameters.
 	 * @since 0.6.1
 	 */
-	function recordid2query($recordid){
+	static function recordid2query($recordid){
 		$query = array();
 		list($base,$qstr) = explode('?', $recordid);
 		if ( strpos($base,'/') !== false ){
@@ -174,7 +174,7 @@ class Dataface_IO {
 	 *				the real table. (or a deleted table).
 	 *
 	 */
-	function read($query='', &$record, $tablename=null){
+	function read($query, &$record, $tablename=null){
 		$app =& Dataface_Application::getInstance();
 		if ( !is_a($record, "Dataface_Record") ){
 			throw new Exception(
@@ -332,16 +332,11 @@ class Dataface_IO {
                     if ( PEAR::isError($sql) ) return $sql;
 
                     //$res = xf_db_query($sql);
-                    //echo "Running ".$sql;
                     $res = $this->dbObj->query($sql, null, $this->lang);
                     if ( !$res || PEAR::isError($res)){
 
                             if ( PEAR::isError($res) ) $msg = $res->getMessage();
                             else $msg = xf_db_error(df_db());
-                            //echo "Error";
-                            //echo $msg;
-                            //print_r($res);
-                            //exit;
                             error_log($msg);
                             return PEAR::raiseError(
 
@@ -372,7 +367,7 @@ class Dataface_IO {
 			$res2 = $this->fireAfterDelete($record);
 			if ( PEAR::isError($res2) ) return $res2;
 		}
-		self::touchTable($this->_table->tablename);
+		self::touchTable($this->_table->tablename, $record);
 		return $res;
 
 	}
@@ -434,7 +429,6 @@ class Dataface_IO {
 
 				// Update the existing records in the relationship.
 				// We use the __id__ parameter in each row for this.
-				//echo "About to save related records";
 				foreach ($trecords as $trec){
 					$tid = $trec->getId();
 
@@ -453,7 +447,6 @@ class Dataface_IO {
 						if ( $changed ){
 							$trec->setValues($tval_existing[$tid]);
 							if ( $orderCol ) $trec->setValue( $orderCol, $tval_existing[$tid]['__order__']);
-							//echo "Saving ";print_r($trec->vals());
 							$res_t = $trec->save($this->lang, $secure);
 
 							if ( PEAR::isError($res_t) ){
@@ -689,7 +682,6 @@ class Dataface_IO {
 		if ( !$forceNew and $this->recordExists($record, $keys, $this->tablename($tablename)) ){
 			$res = $this->_update($record, $keys, $this->tablename($tablename), $secure);
 		} else {
-
 			$res = $this->_insert($record, $this->tablename($tablename), $secure);
 
 		}
@@ -730,7 +722,7 @@ class Dataface_IO {
 		if ( isset($app->_conf['history']) and ( @$app->_conf['history']['enabled'] || !isset($app->_conf['history']['enabled']))){
 
 			// History is enabled ... let's save this record in our history.
-			import('Dataface/HistoryTool.php');
+			import(XFROOT.'Dataface/HistoryTool.php');
 			$historyTool = new Dataface_HistoryTool();
 			$historyTool->logRecord($record, $this->getHistoryComments($record), $this->lang);
 		}
@@ -741,14 +733,14 @@ class Dataface_IO {
 			// searchable by natural language searching.
 			// The Dataface_Index class takes care of whether or not this
 			// record should be indexed.
-			import('Dataface/Index.php');
+			import(XFROOT.'Dataface/Index.php');
 			$index = new Dataface_Index();
 			$index->indexRecord($record);
 		}
 		// It seems to me that we should be setting a new snapshot at this point.
 		//$record->clearSnapshot();
 		$record->setSnapshot();
-		self::touchTable($this->_table->tablename);
+		self::touchTable($record->table()->tablename, $record);
 		self::touchRecord($record);
 		//$record->vetoSecurity = $oldVeto;
 		return $res;
@@ -919,6 +911,9 @@ class Dataface_IO {
 						// we don't need to perform any permissions on it
 						continue;
 					}
+                    if (@$field['ownerstamp'] or @$field['uuid']) {
+                        continue;
+                    }
 					// If this field's change doesn't have veto power and its value has changed,
 					// we must make sure that the user has edit permission on this field.
 					return Dataface_Error::permissionDenied(
@@ -1115,6 +1110,8 @@ class Dataface_IO {
 		}
 		$s =& $this->_table;
 		$delegate =& $s->getDelegate();
+        
+
 
 		if ( $this->fireTriggers ){
 			$res = $this->fireBeforeInsert($record);
@@ -1526,6 +1523,7 @@ class Dataface_IO {
 
 				unset($idfield);
 			}
+            self::touchTable($currentRecord->_table->tablename, $currentRecord);
 			unset($currentRecord);
 			$rio = new Dataface_IO($drecords[$recordIndex]->_table->tablename);
 
@@ -1538,7 +1536,7 @@ class Dataface_IO {
 			if (PEAR::isError($res) ) return $res;
 			$res = $rio->fireAfterSave($drecords[$recordIndex]);
 			if ( PEAR::isError($res) ) return $res;
-
+            
 			unset($rio);
 		}
 
@@ -1690,10 +1688,9 @@ class Dataface_IO {
 					return $domainRec2;
 				}
 				foreach ( array_keys($fkeys[$domainRec2->_table->tablename]) as $fkey){
-					//echo $fkey;
 
 					if ( $domainRec2->val($fkey) ){
-						return PEAR::raiseError("Could not add existing related record '".$domainRec2->getTitle()."' because it can only belong to a single relationship and it already belongs to one.");
+						return PEAR::raiseError("Could not add existing related record '".$domainRec2->getTitle()."' because it can only belong to a single relationship and it already belongs to one.  FKEY($fkey=".$domainRec2->val($fkey).")");
 
 					} else {
 
@@ -2257,7 +2254,7 @@ class Dataface_IO {
 				'rows' => array()
 				);
 			if ( isset($record) ) $importData['record'] = $record->getId();
-			//print_r($importData);
+
 			foreach ($records as $r){
 				if ( is_a($r, 'Dataface_ImportRecord') ){
 					// The current record is actually an ImportRecord
@@ -2503,7 +2500,7 @@ class Dataface_IO {
 			}
 
 			foreach ($uri_parts['query'] as $ukey=>$uval){
-				if ( $uval and $uval{0}!='=' ) $uval = '='.$uval;
+				if ( $uval and $uval[0]!='=' ) $uval = '='.$uval;
 				$uri_parts['query'][$ukey]=$uval;
 			}
 			// At this point we are sure that this is requesting an existing record
@@ -2542,10 +2539,10 @@ class Dataface_IO {
 			}
 			if ( isset($uri_parts['field']) ) {
 				if ( isset($filter) and method_exists($related_records[0], $filter) ){
-					$val =& $related_records[0]->$filter($uri_parts['field']);
+					$val = $related_records[0]->$filter($uri_parts['field']);
 					return $val;
 				} else {
-					$val =& $related_records[0]->val($uri_parts['field']);
+					$val = $related_records[0]->val($uri_parts['field']);
 					return $val;
 				}
 			}
@@ -2586,15 +2583,91 @@ class Dataface_IO {
 		$res = xf_db_query($sql, df_db());
 		if ( !$res ) throw new Exception(xf_db_error(df_db()));
 	}
-
-	static function touchTable($table){
-		$sql = "replace into dataface__mtimes (`name`,`mtime`) values ('".addslashes($table)."','".addslashes(time())."')";
+    
+    /**
+     * Marks the modification time for a table, and updates the cache version.
+     * @param string $table The tablename
+     * @param Dataface_Record $record Optional the record that was touched.
+     */
+	static function touchTable($table, $record = null){
+        if ($record and is_array($record)) {
+            if (strstr($table, '_my_') === $table) {
+                $record = new Dataface_Record(substr($table, 4), $record);
+            } else {
+                $record = new Dataface_Record($table, $record);
+            }
+        }
+        $sql = "replace into dataface__mtimes (`name`,`mtime`) values ('".addslashes($table)."','".addslashes(time())."')";
 		$res = xf_db_query($sql, df_db());
 		if ( !$res ){
 			self::createModificationTimesTable();
 			$res = xf_db_query($sql, df_db());
 			if ( !$res ) throw new Exception(xf_db_error(df_db()));
 		}
+        // We need to mark this table changed for ALL users.
+        // But the phantom _my_$table table can be used to mark it changed
+        // for only particular users.  This will allow caching plugins
+        // to bind the cache to the _my_$table variant in certain cases.
+        $app = Dataface_Application::getInstance();
+        $app->markCache($table, null);
+        if (!$record) {
+            // The rest of this method is only for invalidating the cache
+            // for particular users - which is only possible if we know which record
+            // triggered this "touch"
+            return;
+        }
+        $tableObj = Dataface_Table::loadTable($table);
+        $userFields = $tableObj->getUserFields();
+        if (count($userFields) == 0) {
+            return;
+        }
+        if (!class_exists('Dataface_AuthenticationTool')) {
+            import(XFROOT . 'Dataface/AuthenticationTool.php');
+        }
+        $auth = Dataface_AuthenticationTool::getInstance();
+        $usersTable = $auth->getUsersTable();
+        if (!$usersTable) {
+            // If there is no users table defined
+            // then we can't really proceed now can we.
+            return;
+        }
+        
+        
+        $userIdField = null;
+        
+        foreach ($userFields as $key) {
+            $field =& $tableObj->getField($key);
+            if (!empty($field['username'])) {
+                // This is a username field.
+                $username = $record->val($key);
+                if ($username) {
+                    $app->markCache('_my_'.$table, $username);
+                }
+                
+            } else if (!empty($field['userid'])) {
+                $userid = $record->val($key);
+                if (!$userIdField) {
+                    foreach ($usersTable->keys() as $k=>$v) {
+                        $userIdField = $k;
+                        break;
+                    }
+                }
+                if ($userid and $userIdField) {
+                    $sql = "select `".$auth->usernameColumn."` from `".$usersTable->tablename."` where `".$userIdField."` = '".addslashes($userid)."' limit 1";
+                    $res = xf_db_query($sql, df_db());
+                    if (!$res) {
+                        error_log("SQL error on ".$sql." .  Error was ". xf_db_error(df_db()));
+                        throw new Exception("SQL error");
+                    }
+                    $row = xf_db_fetch_row($res);
+                    xf_db_free_result($res);
+                    if ($row and $row[0]) {
+                        $app->markCache('_my_'.$table, $row[0]);
+                    }
+                }
+            }
+            unset($field);
+        }
 	}
 
 

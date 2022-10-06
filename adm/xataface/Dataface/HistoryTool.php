@@ -1,5 +1,5 @@
 <?php
-import('Dataface/AuthenticationTool.php');
+import(XFROOT.'Dataface/AuthenticationTool.php');
 /**
  * <p>Manages the history of records.  This class will record the state of each record
  * in the database by copying it to a 'history' table.  A separate history table
@@ -179,9 +179,9 @@ class Dataface_HistoryTool {
 					return;
 				}
 				$savepath = $field['savepath'];
-				if ( $savepath{strlen($savepath)-1} != $s ) $savepath.=$s;
+				if ( $savepath[strlen($savepath)-1] != $s ) $savepath.=$s;
 				if ( !$record->val($fieldname) ) break; // there is no file currently stored in this field.
-				if ( !is_readable($savepath.$record->val($fieldname)) ) break; // the file does not exist
+				if ( !xf_is_readable($savepath.$record->val($fieldname)) ) break; // the file does not exist
 				if ( !file_exists($savepath) || !is_dir($savepath) )
 					trigger_error(
 						df_translate(
@@ -330,8 +330,6 @@ class Dataface_HistoryTool {
 			trigger_error(xf_db_error($app->db()), E_USER_ERROR);
 		}
 	}
-	
-	
 	/**
 	 * Gets an HTML diff output between the records at $id1 and $id2 
 	 * respectively, where $id1 and $id2 are history ids from the history__id
@@ -344,8 +342,31 @@ class Dataface_HistoryTool {
 	 *			or a Dataface_Record object whose field values are formatted diffs.
 	 */
 	function getDiffs($tablename, $id1, $id2=null, $fieldname=null ){
-		import('Text/Diff.php');
-		import('Text/Diff/Renderer/inline.php');
+		if (isset($fieldname)) {
+			return $this->getDiffsAssoc($tablename, $id1, $id2, $fieldname);
+		} else {
+			$rec = new Dataface_Record(
+				$tablename.'__history', 
+				$this->getDiffsAssoc($tablename, $id1, $id2, $fieldname) 
+			);
+			return $rec;
+		}
+	}
+	
+	/**
+	 * Gets an HTML diff output between the records at $id1 and $id2 
+	 * respectively, where $id1 and $id2 are history ids from the history__id
+	 * column of the history table.
+	 * @param string $tablename The name of the base table.
+	 * @param integer $id1 The id number of the first record (from the history__id column)
+	 * @param integer $id2 The id of the second record (from the history__id column)
+	 * @param string $fieldname Optional name of a field to return.
+	 * @returns mixed Either the value of the specified field name if $fieldname is specified,
+	 *			or a Dataface_Record object whose field values are formatted diffs.
+	 */
+	function getDiffsAssoc($tablename, $id1, $id2=null, $fieldname=null ){
+		import(XFLIB.'Text/Diff.php');
+		import(XFLIB.'Text/Diff/Renderer/inline.php');
 		$htablename = $tablename.'__history';
 		if ( !Dataface_Table::tableExists($htablename) )
 			return PEAR::raiseError(
@@ -375,14 +396,22 @@ class Dataface_HistoryTool {
 		$vals_diff = array();
 		$renderer = new Text_Diff_Renderer_inline();
 		foreach ($vals2 as $key=>$val ){
-			$diff = new Text_Diff(explode("\n", @$vals1[$key]), explode("\n", $val));
 			
-			$vals_diff[$key] = $renderer->render($diff);
+			$diff = new Text_Diff(explode("\n", @$vals1[$key]), explode("\n", $val));
+			$strDiff = $renderer->render($diff);
+			if (!trim($strDiff)) {
+				if ($vals1[$key] == $val) {
+					$vals_diff[$key] = '';
+				} else {
+					$vals_diff[$key] = '<del>'.$vals1[$key].'</del><ins>'.$val.'</ins>';
+				}
+			} else {
+				$vals_diff[$key] = $strDiff;
+			}
+			
 		}
-		
-		$diff_rec = new Dataface_Record($htablename, $vals_diff);
-		if ( isset($fieldname) ) return $diff_rec->val($fieldname);
-		return $diff_rec;
+		if ( isset($fieldname) ) return $vals_diff[$fieldname];
+		return $vals_diff;
 		
 		
 	}
@@ -402,6 +431,12 @@ class Dataface_HistoryTool {
 	 */
 	function getDiffsByDate(&$record, $date1, $date2=null, $lang=null, $fieldname=null){
 		if ( !isset($date2) ) $date2 = date('Y-m-d H:i:s');
+		if (is_int($date1)) {
+			$date1 = date('Y-m-d H:i:s', $date1);
+		}
+		if (is_int($date2)) {
+			$date2 = date('Y-m-d H:i:s', $date2);
+		}
 		$time1 = strtotime($date1);
 		$time2 = strtotime($date2);
 		if ( $time1 > $time2 ){
@@ -412,6 +447,7 @@ class Dataface_HistoryTool {
 		$app =& Dataface_Application::getInstance();
 		if ( !isset($lang) )  $lang = $app->_conf['lang'];
 		$htablename = $record->_table->tablename.'__history';
+		$tablename = $record->_table->tablename;
 		if ( !Dataface_Table::tableExists($htablename) ) 
 			return PEAR::raiseError(
 				df_translate('scripts.Dataface.HistoryTool.getDiffs.ERROR_HISTORY_TABLE_DOES_NOT_EXIST',
@@ -424,10 +460,11 @@ class Dataface_HistoryTool {
 			$clauses[] = "`{$key}`='".addslashes($val)."'";
 		}
 		$clauses[] = "`history__language`='".addslashes($lang)."'";
-		
+		$date1Encoded = "ifnull(convert_tz('".addslashes($date1)."','".addslashes(df_utc_offset())."','SYSTEM'),'".addslashes($date1)."')";
+		$date2Encoded = "ifnull(convert_tz('".addslashes($date2)."','".addslashes(df_utc_offset())."','SYSTEM'),'".addslashes($date2)."')";
 		$sql = "select `history__id` from `{$htablename}` where ".implode(' and ',$clauses);
-		$sql1 = $sql . " and `history__modified` <= '".addslashes($date1)."' order by `history__modified` desc limit 1";
-		$sql2 = $sql . " and `history__modified` <= '".addslashes($date2)."' order by `history__modified` desc limit 1";
+		$sql1 = $sql . " and `history__modified` <= $date1Encoded order by `history__modified` desc limit 1";
+		$sql2 = $sql . " and `history__modified` <= $date2Encoded order by `history__modified` desc limit 1";
 		
 		$res2 = xf_db_query($sql2, $app->db());
 		if ( !$res2 ){
@@ -538,7 +575,7 @@ class Dataface_HistoryTool {
 					return true;
 				}
 				$savepath = $field['savepath'];
-				if ( $savepath{strlen($savepath)-1} != '/' ) $savepath .= '/';
+				if ( $savepath[strlen($savepath)-1] != '/' ) $savepath .= '/';
 				
 				if ( $old_record->val($fieldname) ){
 					// we need to delete the existing file
@@ -620,9 +657,12 @@ class Dataface_HistoryTool {
 			$clauses[] = "`{$key}`='".addslashes($val)."'";
 		}
 		$clauses[] = "`history__language`='".addslashes($lang)."'";
-		
+		if (is_int($date)) {
+			$date = date('Y-m-d H:i:s', $date);
+		}
+		$dateEncoded = "ifnull(convert_tz('".addslashes($date)."','".addslashes(df_utc_offset())."','SYSTEM'),'".addslashes($date)."')";
 		$sql = "select `history__id` from `{$htablename}` where ".implode(' and ',$clauses)."
-				and `history__modified` <= '".addslashes($date)."' order by `history__modified` desc limit 1";
+				and `history__modified` <= ".$dateEncoded." order by `history__modified` desc limit 1";
 		
 		$res = xf_db_query($sql, $app->db());
 		if ( !$res ) trigger_error(xf_db_error($app->db()), E_USER_ERROR);

@@ -28,16 +28,16 @@
  *
  *******************************************************************************/
 
-import( 'HTML/QuickForm.php');
-import( 'Dataface/Table.php');
-import( 'Dataface/Vocabulary.php');
-import( 'Dataface/QueryBuilder.php');
-import( 'Dataface/QueryTool.php');
-import( 'Dataface/IO.php');
-import( 'Dataface/SkinTool.php');
-import('HTML/QuickForm/Renderer/Dataface.php');
-import( 'Dataface/PermissionsTool.php');
-import('Dataface/FormTool.php');
+import( XFLIB.'HTML/QuickForm.php');
+import( XFROOT.'Dataface/Table.php');
+import( XFROOT.'Dataface/Vocabulary.php');
+import( XFROOT.'Dataface/QueryBuilder.php');
+import( XFROOT.'Dataface/QueryTool.php');
+import( XFROOT.'Dataface/IO.php');
+import( XFROOT.'Dataface/SkinTool.php');
+import(XFROOT.'HTML/QuickForm/Renderer/Dataface.php');
+import(XFROOT. 'Dataface/PermissionsTool.php');
+import(XFROOT.'Dataface/FormTool.php');
 
 
 // Register our special types
@@ -57,6 +57,8 @@ define( 'QUICKFORM_NO_SUCH_FIELD_ERROR',3);
 class Dataface_QuickForm extends HTML_QuickForm {
 
 	public static $TRACK_SUBMIT = true;
+    
+    var $newPermission = 'new';
 
 
 	/**
@@ -155,6 +157,10 @@ class Dataface_QuickForm extends HTML_QuickForm {
 
 
 	var $submitLabel = null;
+    
+    private $addRelatedContext;
+    private $parentRecord;
+    private $relationship;
 
 	/**
 	 * @param $tablename The name of the table upon which this form is based. - or a Dataface_Record object to edit.
@@ -177,6 +183,22 @@ class Dataface_QuickForm extends HTML_QuickForm {
 		$app =& Dataface_Application::getInstance();
 		$this->app =& $app;
 		$appQuery =& $app->getQuery();
+        
+        if ($new) {
+            // This request may have been redirected from new_related_record if this table is being used
+            // as a proxy for adding to a relationship.  In this case it would pass the -add-related-context
+            // parameter with a JSON value of the form ['id' => RECORDID, ' => 'relationship' => RELATIONSHIPNAME]
+            $this->addRelatedContext = empty($query['-add-related-context']) ? 
+                    null : 
+                    json_decode($query['-add-related-context'], true);
+            $this->parentRecord = ($this->addRelatedContext and !empty($this->addRelatedContext['id'])) ? 
+                    df_get_record_by_id($this->addRelatedContext['id']) : 
+                    null;
+            $this->relationship = ($this->addRelatedContext and $this->parentRecord and !empty($this->addRelatedContext['relationship'])) ?
+                    $this->parentRecord->_table->getRelationship($this->addRelatedContext['relationship']) : 
+                    null;
+        }
+        
 		if ( !isset($lang) && !isset($this->_lang) ){
 			$this->_lang = $app->_conf['lang'];
 		} else if ( isset($lang) ){
@@ -304,7 +326,7 @@ class Dataface_QuickForm extends HTML_QuickForm {
 
 			if ( is_array($query) ){
 				foreach ( array_keys($query) as $postKey ){
-					if ( $query[$postKey]{0} != '=' ){
+					if ( $query[$postKey][0] != '=' ){
 						$query[$postKey] = '='.$query[$postKey];
 					}
 				}
@@ -395,8 +417,8 @@ class Dataface_QuickForm extends HTML_QuickForm {
 
 
 		$formTool =& Dataface_FormTool::getInstance();
-		$el =& $formTool->buildWidget($this->_record, $field, $this, $field['name'], $this->_new, $permissions);
 
+		$el =& $formTool->buildWidget($this->_record, $field, $this, $field['name'], $this->_new, $permissions);
 
 		return $el;
 
@@ -514,7 +536,7 @@ class Dataface_QuickForm extends HTML_QuickForm {
 				 *
 				 */
 				if ( !Dataface_PermissionsTool::view($this->_record, array('field'=>$name))
-					and !($this->_new and Dataface_PermissionsTool::checkPermission('new',$this->_record->getPermissions(array('field'=>$name))))
+					and !($this->_new and Dataface_PermissionsTool::checkPermission($this->newPermission,$this->_record->getPermissions(array('field'=>$name))))
 				){
 					unset($widget);
 					continue;
@@ -589,7 +611,7 @@ class Dataface_QuickForm extends HTML_QuickForm {
 		$this->addElement('hidden','-new');
 
 		$this->setDefaults(array('-new'=>$this->_new));
-		if ( ($this->_new and Dataface_PermissionsTool::checkPermission('new',$this->_table) ) or
+		if ( ($this->_new and Dataface_PermissionsTool::checkPermission($this->newPermission,$this->_table) ) or
 		     (!$this->_new and Dataface_PermissionsTool::edit($this->_record) ) ){
 		     $saveButtonLabel = df_translate('tables.'.$this->_table->tablename.'.save_button_label', '');
 			if ( !$saveButtonLabel ) $saveButtonLabel = df_translate('save_button_label','Save');
@@ -778,7 +800,7 @@ class Dataface_QuickForm extends HTML_QuickForm {
 	 * standard QuickForm method by adding custom validation from the Record object.
 	 *
 	 */
-	 function validate(){
+	 function validate($submittedValues = null){
 	 	$this->_build();
 	 	//$this->push();
 	 	if ( $this->isSubmitted() ){
@@ -796,11 +818,19 @@ class Dataface_QuickForm extends HTML_QuickForm {
 	 		//foreach ( array_keys($this->_fields) as $field ){
 
 	 		$rec = new Dataface_Record($this->_record->_table->tablename, array());
+            
+            $rec->setValues($this->_record->getValues());
+            if ($submittedValues) {
+                foreach ($submittedValues as $k=>$v) {
+                    $rec->setValue($k, $v);
+                }
+                //$rec->setValues($submittedValues);
+            }
 	 		$rec->pouch = $this->_record->pouch;
 	 		$formTool =& Dataface_FormTool::getInstance();
 	 		foreach ($this->_fieldnames as $field){
 	 		    $fieldDef =& $this->_table->getField($field);
-	 		    $formTool->pushField($rec, $fieldDef, $this, $field, $this->_new);
+	 		    $formTool->pushField($rec, $fieldDef, $this, $field, $this->_new, false);
 	 		    unset($fieldDef);
 			}
 			
@@ -808,7 +838,7 @@ class Dataface_QuickForm extends HTML_QuickForm {
 
 			if ($tableDelegate) {
 				$methodName = 'prevalidate';
-				if (method_exists($tableDelegate, $methodName)) {
+				if (isset($tableDelegate) and method_exists($tableDelegate, $methodName)) {
 					$res = $tableDelegate->$methodName($this->_record, $rec, $this->_new);
 					if (Dataface_Error::isNotice($res)) {
 						$this->_errors[] = $res->getMessage();
@@ -877,12 +907,10 @@ class Dataface_QuickForm extends HTML_QuickForm {
 	 *
 	 */
 	function pushField($fieldname){
-
 		$formTool =& Dataface_FormTool::getInstance();
 		$field =& $this->_table->getField($fieldname);
 
 		$res = $formTool->pushField($this->_record, $field, $this, $fieldname, $this->_new);
-
 		return $res;
 
 	}
@@ -901,7 +929,6 @@ class Dataface_QuickForm extends HTML_QuickForm {
 	 * Extracts value from the form ready to be stored in the table.
 	 */
 	function pushValue($fieldname, &$metaValues, $element=null){
-
 		$formTool =& Dataface_FormTool::getInstance();
 		$field =& $this->_table->getField($fieldname);
 		if ( !isset($element) ) $element =& $formTool->getElement($this, $field, $fieldname);
@@ -926,14 +953,13 @@ class Dataface_QuickForm extends HTML_QuickForm {
 					$this->freeze();
 				}
 
-				if ( $this->_new  and /*!Dataface_PermissionsTool::edit($this->_table)*/!Dataface_PermissionsTool::checkPermission('new',$this->_table) ){
+				if ( $this->_new  and /*!Dataface_PermissionsTool::edit($this->_table)*/!Dataface_PermissionsTool::checkPermission($this->newPermission,$this->_table) ){
 					$this->freeze();
 				}
 				$formTool =& Dataface_FormTool::getInstance();
 
 
 				if ( $this->_new || Dataface_PermissionsTool::view($this->_record) ){
-					//echo $this->_renderer->toHtml();
 					echo $formTool->display($this, $this->xml ? 'Dataface_Form_Template.xml' : null);
 				} else {
 					echo "<p>".df_translate('scripts.GLOBAL.INSUFFICIENT_PERMISSIONS_TO_VIEW_RECORD','Sorry you have insufficient permissions to view this record.')."</p>";
@@ -1158,7 +1184,6 @@ END;
 		$io->lang = $this->_lang;
 		if ( $this->_new ) $keys = null;
 		else $keys = $values['__keys__'];
-
 		$res = $io->write($this->_record,$keys,null,true /*Adding security!!!*/, $this->_new);
 		if ( PEAR::isError($res) ){
 			if ( Dataface_Error::isDuplicateEntry($res) ){

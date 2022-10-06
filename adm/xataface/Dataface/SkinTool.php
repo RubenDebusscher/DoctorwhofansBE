@@ -19,8 +19,8 @@
  *-------------------------------------------------------------------------------
  */
 
-import( 'Smarty/Smarty.class.php');
-import( 'Dataface/LanguageTool.php');
+import( XFLIB.'Smarty/Smarty.class.php');
+import( XFROOT.'Dataface/LanguageTool.php');
 /**
  * Handles the display of content in Dataface using templates.  Abstracts all templating.
  *
@@ -93,7 +93,9 @@ class Dataface_SkinTool extends Smarty{
 
 
 	function __construct() {
-
+        if (defined('XF_PHP8') and !defined('XF_PHP8_STRICT_SMARTY')) {
+            error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
+        }
 		if ( is_writable($GLOBALS['Dataface_Globals_Local_Templates_c']) ){
 
 			$this->compile_dir = $GLOBALS['Dataface_Globals_Local_Templates_c'];
@@ -153,7 +155,7 @@ class Dataface_SkinTool extends Smarty{
 			'DATAFACE_URL' => DATAFACE_URL,
 			'DATAFACE_SITE_PATH' => DATAFACE_SITE_PATH,
 			'DATAFACE_SITE_URL' => DATAFACE_SITE_URL,
-			'DATAFACE_SITE_HREF' => DATAFACE_SITE_URL,
+			'DATAFACE_SITE_HREF' => DATAFACE_SITE_HREF,
 			'SCRIPT_NAME' => DATAFACE_SITE_URL.'/'.basename($_SERVER['SCRIPT_NAME']),
 			'APPLICATION' => &$conf,
 			'APPLICATION_OBJECT' => &$app,
@@ -170,7 +172,9 @@ class Dataface_SkinTool extends Smarty{
 			'mode'=>&$app->_query['-mode'],
 			'language'=>$app->_conf['lang'],
 			'prefs'=>&$app->prefs,
-			'search'=>@$_REQUEST['-search']
+			'search'=>@$_REQUEST['-search'],
+            'APPLICATION_VERSION' => $app->getApplicationVersion(),
+            'BACK_LINK' => $this->getBackLink()
 
 		);
 
@@ -180,7 +184,9 @@ class Dataface_SkinTool extends Smarty{
 			if ( isset($user) ){
 				$this->ENV['user'] = &$user;
 				$this->ENV['username'] = $authTool->getLoggedInUsername();
+                
 			}
+            $this->ENV['auth'] = $authTool;
 		}
 		$context = array();
 		$context['APP'] =& $this->app;
@@ -223,6 +229,9 @@ class Dataface_SkinTool extends Smarty{
 		$this->register_function('feed', array(&$this,'feed'));
 		$this->register_function('records', array(&$this, 'records'));
 		$this->register_function('form_context', array(&$this, 'form_context'));
+        $this->register_function('cancel_back_button', array(&$this, 'cancel_back_button'));
+        $this->register_function('script', array(&$this, 'script'));
+        $this->register_function('html_attributes', array(&$this, 'html_attributes'));
 		$this->register_block('translate', array(&$this, 'translate'));
 		$this->register_block('use_macro',array(&$this,'use_macro'));
 		$this->register_block('define_slot', array(&$this,'define_slot'));
@@ -233,6 +242,7 @@ class Dataface_SkinTool extends Smarty{
 		$this->register_block('master_detail', array(&$this, 'master_detail'));
 		$this->register_block('master', array(&$this, 'master'));
 		$this->register_block('detail', array(&$this, 'detail'));
+        $this->register_function('relationship_label', array(&$this, 'relationship_label'));
 
 
 	}
@@ -248,7 +258,7 @@ class Dataface_SkinTool extends Smarty{
 	 */
 	function &getResultController(){
 		if ( !isset($this->resultController) ){
-			import('Dataface/ResultController.php');
+			import(XFROOT.'Dataface/ResultController.php');
 
 			$query =& $this->app->getQuery();
 
@@ -257,7 +267,82 @@ class Dataface_SkinTool extends Smarty{
 
 		return $this->resultController;
 	}
+    
+    function relationship_label($params) {
+        $app = Dataface_Application::getInstance();
+        $query = $app->getQuery();
+        if (!@$query['-relationship']) {
+            return '';
+        }
+        $table = Dataface_Table::loadTable($query['-table']);
+        if (!$table or PEAR::isError($table)) return '';
+        $relationship = $table->getRelationship($query['-relationship']);
+        if (!$relationship or PEAR::isError($relationship)) {
+            return '';
+        }
+        if (@$params['count']) {
+            if ($params['count'] == 0 or $params['count'] > 1) {
+                return $relationship->getLabel();
+            } else {
+                return $relationship->getSingularLabel();
+            }
+        } else {
+            return $relationship->getLabel();
+        }
 
+    }
+    
+    /**
+     * Renders string attributes as html attributes.  
+     * @param string $params.atts The attributes as a string.  Syntax is to separate attributes with semi-colons, and
+     * use colons to separate keys from values.  E.g. {html_attributes atts="href:index.php;title=A title"} will ve 
+     * rendered as href="index.php" title="A title"
+     * 
+     * This is useful for storing multiple attributes in a single configuration option, and then have the template
+     * parse them out.  This is used in the Dataface_Logo.html for the alt images.
+     */
+    function html_attributes($params, &$smarty) {
+
+        $separator = ';';
+        if (@$params['separator']) {
+            $separator = $params['separator'];
+        }
+        //print_r($params);exit;
+        
+        $out = '';
+        if (@$params['atts']) {
+
+            $string = $params['atts'];
+
+            $parts = explode($separator, $string);
+            foreach ($parts as $part) {
+                $part = trim($part);
+                $kv = explode(':', $part, 2);
+                if (strlen($out) > 0) {
+                    $out .= ' ';
+                }
+                if (count($kv) > 1) {
+                    $out .= $kv[0].'="'.htmlspecialchars($kv[1]).'"';
+                } else {
+                    $out .= $kv[0];
+                }
+            }
+        }
+        return $out;
+    }
+    
+    function getBackLink() {
+        $app = Dataface_Application::getInstance();
+        $query = $app->getQuery();
+        
+        $referer = @$_SERVER['HTTP_REFERER'];
+        if ($referer and strpos($_SERVER['HTTP_REFERER'], df_absolute_url(DATAFACE_SITE_URL)) === 0) {
+            return 'javascript:window.history.back()';//$referer;
+        } else {
+            return df_absolute_url(DATAFACE_SITE_URL);
+        }
+    }
+    
 	/**
      * Get the compile path for this resource.
      *
@@ -272,7 +357,7 @@ class Dataface_SkinTool extends Smarty{
     	$params = array('resource_name'=>$resource_name, 'resource_base_path' => $this->template_dir);
     	$name = $this->_parse_resource_name($params);
     	$template_dir = dirname($params['resource_name']);
-    	$skin = $this->skins[$template_dir];
+    	$skin = @$this->skins[$template_dir];
     	if ( strlen($skin) > 0 and preg_match('/^[0-9a-zA-Z_]+$/', $skin) ){
     		$compile_dir = $this->compile_dir.'/'.$skin;
     		if ( !file_exists($compile_dir) ){
@@ -448,7 +533,7 @@ class Dataface_SkinTool extends Smarty{
 	 *
 	 */
 	function load_record($params, &$smarty){
-		import( 'dataface-public-api.php');
+		import( XFROOT.'dataface-public-api.php');
 		if ( empty($params['table']) ){
 			$params['table'] = $this->ENV['table'];
 		}
@@ -484,7 +569,7 @@ class Dataface_SkinTool extends Smarty{
 
 
 	function record_view($params, &$smarty){
-		import('Dataface/RecordView.php');
+		import(XFROOT.'Dataface/RecordView.php');
 
 		if ( empty($params['record']) ) $params['record'] =& $this->app->getRecord();
 		if ( empty($params['var']) ) $params['var'] = 'rv';
@@ -508,7 +593,7 @@ class Dataface_SkinTool extends Smarty{
 	 */
 	function group($params, &$smarty){
 
-		import( 'Dataface/Utilities.php');
+		import( XFROOT.'Dataface/Utilities.php');
 		if ( empty($params['from']) ){
 			throw new Exception('group: Please specify a from parameter.', E_USER_ERROR);
 		}
@@ -541,6 +626,25 @@ class Dataface_SkinTool extends Smarty{
 		$smarty->assign($context);
 
 	}
+
+    /**
+     * Displays a cancel back button in the upper right corner on mobile.  
+     * If the referer is within the app, it will use window.history.back()
+     * to go back.  Otherwise it will just go to the browse URL with the current
+     * query.
+     */
+    function cancel_back_button($params, &$smarty) {
+        $href = $this->getBackLink();
+        $html = <<<END
+            <div class="cancel-back-button">
+                <a class="cancel-back-button" href="$href"><i class="material-icons">clear</i></a>
+            </div>
+END;
+        return $html;
+        
+            
+    }
+
 
 	/**
 	 * Prints an 'img' tag that will show a thumbnail of the requested image using
@@ -575,7 +679,7 @@ class Dataface_SkinTool extends Smarty{
 		}
 
 		$url = DATAFACE_URL;
-		if ( strlen($url) > 0 and $url{0} != '/' ){
+		if ( strlen($url) > 0 and $url[0] != '/' ){
 			$url = DATAFACE_SITE_URL.'/'.$url;
 		} else if ( strlen($url) == 0 ){
 			$url = DATAFACE_SITE_URL;
@@ -598,6 +702,11 @@ class Dataface_SkinTool extends Smarty{
 
 	}
 
+    function script($params, &$smarty) {
+        if (@$params['src']) {
+            xf_script($params['src']);
+        }
+    }
 
 	/**
 	 * Returns an associative array of actions matching the criteria.
@@ -611,21 +720,80 @@ class Dataface_SkinTool extends Smarty{
 		if ( !isset($params['var']) ) throw new Exception('actions: var is a required parameter.', E_USER_ERROR);
 		$varname = $params['var'];
 		unset($params['var']);
-		import( 'Dataface/ActionTool.php');
+        $firstOnly = @$params['first'];
+        unset($params['first']);
+        
+		import( XFROOT.'Dataface/ActionTool.php');
 		$actionTool =& Dataface_ActionTool::getInstance();
 		if ( !isset($params['record']) ){
-			$params['record'] =& $this->ENV['record'];
+            $params['record'] =& $this->ENV['record'];
 		}
 		$actions = $actionTool->getActions($params);
-		$context = array($varname=>$actions);
+        $this->fillSubactions($actions, true);
+        $flatActions = [];
+        $this->flattenActionRefsInto($flatActions, $actions);
+		foreach (array_keys($flatActions) as $k){
+            $a = & $flatActions[$k];
+            if (@$a['hidden_status']) $statuses[] = $a['hidden_status'];
+            if (@$a['visible_status']) $statuses[] = $a['visible_status'];
+            unset($a);
+		}
+       
+        if ($firstOnly) {
+            $action = null;
+            foreach ($actions as $a) {
+                $action = $a;
+                break;
+            }
+            $context = array($varname=>$action);
+        } else {
+            $context = array($varname=>$actions);
+        }
+		
 		$smarty->assign($context);
 
 	}
 
+    private $statusClassesAddedToCSS = array();
+    
+    private function fillSubactions(&$actions, $recursive = false) {
+        $actionTool = Dataface_ActionTool::getInstance();
+		foreach ($actions as $k=>$a){
+            
+			if ( @$a['subcategory'] ){
+				$p2 = $params;
+				$p2['category'] = $a['subcategory'];
+				$subactions = $actionTool->getActions($p2);
+                if (count($subactions) > 0) {
+                    if ($recursive) {
+                        $this->fillSubactions($subactions);
+                    }
+    				$actions[$k]['subactions'] = $subactions;
+                } else {
+                    unset($actions[$k]);
+                }
+			}
+		}
+    }
+    
+    private function flattenActionRefsInto(&$dest, &$src) {
+        foreach (array_keys($src) as $k) {
+            $dest[$k] =& $src[$k];
+            if (@$src[$k]['subactions']) {
+                $this->flattenActionRefsInto($dest, $src[$k]['subactions']);
+            }
+        }
+    }
 
 	function actions_menu($params, &$smarty){
-
+        
 		$context = array();
+        $navicon = null;
+        $record = null;
+        if (isset($params['navicon'])) {
+            $navicon = $params['navicon'];
+            unset($params['navicon']);
+        }
 		if ( isset( $params['id'] ) ) {
 			$context['id'] = $params['id'];
 			unset($params['id']);
@@ -638,6 +806,36 @@ class Dataface_SkinTool extends Smarty{
 		} else {
 			$context['class'] = '';
 		}
+
+        $app = Dataface_Application::getInstance();
+        
+        if (@$params['record'] or @$this->ENV['record'] or $app->getRecord()) {
+            if (@$params['record']) {
+                $record = $params['record'];
+            } else if (@$this->ENV['record']) {
+                $record = $this->ENV['record'];
+            } else if ($app->getRecord()) {
+                $record = $app->getRecord();
+            }
+            
+            $status = $record->getStatus();
+            if ($status) {
+
+                $status = explode(' ', $status);
+                foreach ($status as $i=>$s) {
+                    $status[$i] = 'xf-record-status-'.$s;
+                    if (!isset($this->statusClassesAddedToCSS[$s])) {
+                        $this->statusClassesAddedToCSS[$s] = true;
+                        $app->addHeadContent('<style>ul.xf-record-status-'.$s.' li.xf-record-hidden-status-'.$s.' {display:none !important;} ul.xf-record-status:not(.xf-record-status-'.$s.')  li.xf-record-visible-status-'.$s.' {display:none !important;}</style>');
+                    }
+                }
+                $status = implode(' ', $status);
+                $context['class'] .= ' xf-record-status '.$status;
+                $context['class'] = trim($context['class']);
+            } else {
+                $context['class'] = 'xf-record-status '.$context['class'];
+            }
+        }
 
 		if ( isset( $params['id_prefix'] ) ) {
 			$context['id_prefix'] = $params['id_prefix'];
@@ -655,19 +853,17 @@ class Dataface_SkinTool extends Smarty{
 
 		if ( isset( $params['actions'] ) ){
 			$addon_actions = & $params['actions'];
+            unset($params['actions']);
 		} else {
 			$addon_actions = null;
 		}
 
-
-
-
 		//$params['var'] = 'actions';
 		//$this->actions($params, $smarty);
 		//print_r($
-		import( 'Dataface/ActionTool.php');
+		import( XFROOT.'Dataface/ActionTool.php');
 		$actionTool =& Dataface_ActionTool::getInstance();
-		$actions = $actionTool->getActions($params);
+		$actions = count($params) > 0 ? $actionTool->getActions($params) : [];
 		if ( $addon_actions !== null ){
 			$p2 = $params;
 			unset($p2['category']);
@@ -675,25 +871,48 @@ class Dataface_SkinTool extends Smarty{
 			usort($actions, array(&$actionTool, '_compareActions'));
 		}
 
-		foreach ($actions as $k=>$a){
-			if ( @$a['subcategory'] ){
-				$p2 = $params;
-				$p2['category'] = $a['subcategory'];
-				$subactions = $actionTool->getActions($p2);
-
-				$actions[$k]['subactions'] = $subactions;
-
-			}
-
+        $statuses = array();
+        $this->fillSubactions($actions, true);
+        $flatActions = [];
+        $this->flattenActionRefsInto($flatActions, $actions);
+		foreach (array_keys($flatActions) as $k){
+            $a = & $flatActions[$k];
+            if (@$a['hidden_status']) $statuses[] = $a['hidden_status'];
+            if (@$a['visible_status']) $statuses[] = $a['visible_status'];
+            if ($navicon) $a['navicon'] = $navicon; 
+            unset($a);
 		}
 		//print_r($actions);
 		$context['actions'] =& $actions;
 		//$smarty->assign($context);
+        if (isset($params['mincount_class'])) {
+            $tmp = $params['mincount_class'];
+            $pos = strpos($tmp, ' ');
+            if ($pos !== false) {
+                $cnt = intval(substr($tmp, 0, $pos));
+                $cls = substr($tmp, $pos+1);
+                if ($cnt <= count($context['actions'])) {
+                    $context['class'] = trim(@$context['class'] .' '.$cls);
+                }
+            }
+        }
+        if (isset($params['maxcount_class'])) {
+            $tmp = $params['maxcount_class'];
+            $pos = strpos($tmp, ' ');
+            if ($pos !== false) {
+                $cnt = intval(substr($tmp, 0, $pos));
+                $cls = substr($tmp, $pos+1);
+                if ($cnt > count($context['actions'])) {
+                    $context['class'] = trim(@$context['class'] .' '.$cls);
+                }
+            }
+        }
 		if ( isset($params['mincount']) and intval($params['mincount']) > count($context['actions']) ) return;
 		if ( isset($params['maxcount']) and intval($params['maxcount']) < count($context['actions']) ){
 			$more = array(
 				'name'=>'more',
-				'label'=> df_translate('actions_menu.more.label', 'More'),
+				'label'=> "",
+				'materialIcon' => 'more_vert',
 				'subactions' => array(),
 				'description' => df_translate('actions_menu.more.description','More actions...'),
 				'url'=>'#'
@@ -717,7 +936,25 @@ class Dataface_SkinTool extends Smarty{
 			}
 			$existing['more'] = $more;
 			$context['actions'] = $existing;
+            
 		}
+        
+        
+        foreach ($statuses as $s) {
+            if (!isset($this->statusClassesAddedToCSS[$s])) {
+                $this->statusClassesAddedToCSS[$s] = true;
+
+                $app->addHeadContent('<style>ul.xf-record-status-'.$s.' li.xf-record-hidden-status-'.$s.' {display:none !important;} ul.xf-record-status:not(.xf-record-status-'.$s.')  li.xf-record-visible-status-'.$s.' {display:none !important;}</style>');
+            }
+        }
+        //echo print_r($context);exit;
+            
+        foreach ($context['actions'] as $actionDef) {
+            $context['class'] .= ' with-'.$actionDef['name'];
+        }
+        if ($record) {
+            $context['actionsRecordId'] = $record->getId();
+        }
 		$smarty->display($context, 'Dataface_ActionsMenu.html');
 
 	}
@@ -736,25 +973,31 @@ class Dataface_SkinTool extends Smarty{
 		$params2 = array();
 
 		$params['actions'] = $table->getRelationshipsAsActions($params2);
+        if ($params['actions']) {
+            foreach ($params['actions'] as $k => $v) {
+                $params['actions'][$k]['rel'] = 'sibling';
+            }
+        }
+
 		return $this->actions_menu($params, $smarty);
 
 	}
 
 
 	function summary_list($params, &$smarty){
-		import('Dataface/SummaryList.php');
+		import(XFROOT.'Dataface/SummaryList.php');
 		$sl = new Dataface_SummaryList($params['records']);
 		return $sl->toHtml();
 	}
 
 	function glance_list($params, &$smarty){
-		import('Dataface/GlanceList.php');
+		import(XFROOT.'Dataface/GlanceList.php');
 		$gl = new Dataface_GlanceList($params['records']);
 		return $gl->toHtml();
 	}
 
 	function sort_controller($params, &$smarty){
-		import('Dataface/SortControl.php');
+		import(XFROOT.'Dataface/SortControl.php');
 		if ( !isset($params['fields']) ){
 			if ( !isset($params['table']) ) $params['table'] = $this->ENV['QUERY']['-table'];
 			$params['fields'] = $params['table'];
@@ -936,7 +1179,7 @@ END;
 	function result_controller($params,&$smarty){
 
 		if ( isset($params['table']) ){
-			import('Dataface/ResultController.php');
+			import(XFROOT.'Dataface/ResultController.php');
 			$base_url = ( isset($params['base_url']) ? $params['base_url'] : '');
 			$query = ( isset($params['query']) ? $params['query'] : array('-table'=>$params['table']));
 			$query['-table'] = $params['table'];
@@ -976,7 +1219,7 @@ END;
 		echo $controller->getPageIndexHtml();
 	}
 	function result_list($params, &$smarty){
-		import( 'Dataface/ResultList.php');
+		import( XFROOT.'Dataface/ResultList.php');
 		$query =& $this->app->getQuery();
 
 		if ( isset($params['columns']) ){
@@ -985,13 +1228,25 @@ END;
 			$columns = array();
 		}
 		$list = new Dataface_ResultList( $query['-table'], $this->app->db(), $columns, $query);
+        $table = Dataface_Table::loadTable($query['-table']);
+        $listTemplate = $table->getAttribute('list_template');
+        if (@$params['template']) {
+            $listTemplate = $params['template'];
+        }
+        if ($listTemplate == '@grid') {
+            $listTemplate = 'xataface/actions/list/grid.html';
+        }
+        
+        if ($listTemplate) {
+            $list->setTemplate($listTemplate);
+        }
 		echo $list->toHtml();
 
 	}
 
 
 	function filters($params, &$smarty){
-		import( 'Dataface/ResultList.php');
+		import( XFROOT.'Dataface/ResultList.php');
 		$query =& $this->app->getQuery();
 
 		if ( isset($params['columns']) ){
@@ -1024,7 +1279,7 @@ END;
 	}
 
 	function related_list($params, &$smarty){
-		import('Dataface/RelatedList.php');
+		import(XFROOT.'Dataface/RelatedList.php');
 		$query =& $this->app->getQuery();
 		if ( isset($params['record']) ) $record =& $params['record'];
 		else $record =& $this->ENV['resultSet']->loadCurrent();
@@ -1052,7 +1307,7 @@ END;
 			$base = '';
 			if ( $record ){
 				foreach ( $record->getBreadCrumbs() as $label=>$url){
-					$base .= ' :: <a href="'.$url.'" id="bread-crumbs-'.str_replace(' ','_', $label).'">'.$label.'</a>';
+					$base .= ' :: <a href="'.htmlspecialchars($url).'" id="bread-crumbs-'.htmlspecialchars(str_replace(' ','_', $label)).'">'.htmlspecialchars($label).'</a>';
 				}
 			}
 			$base = substr($base, 4);
@@ -1066,7 +1321,7 @@ END;
 				$base = '';
 
 				foreach ( $bc as $label=>$url){
-					$base .= ' :: <a href="'.$url.'" id="bread-crumbs-'.str_replace(' ','_', $label).'">'.$label.'</a>';
+					$base .= ' :: <a href="'.htmlspecialchars($url).'" id="bread-crumbs-'.htmlspecialchars(str_replace(' ','_', $label)).'">'.htmlspecialchars($label).'</a>';
 				}
 			}
 		}
@@ -1081,10 +1336,17 @@ END;
 		if ( PEAR::isError($action) ){
 			return '';
 		}
-		$base .= ' :: '.Dataface_LanguageTool::translate(
+		if (@$action['breadcrumb_label']) {
+			$base .= ' :: '.Dataface_LanguageTool::translate(
+			@$action['breadcrumb_label_i18n'] ? $action['breadcrumb_label_i18n'] : $action['label_i18n'],
+			$action['breadcrumb_label']);
+		} else {
+			$base .= ' :: '.Dataface_LanguageTool::translate(
 			$action['label_i18n'],
 			$action['label']);
-		return "<b>".df_translate('scripts.Dataface_SkinTool.LABEL_BREADCRUMB', "You are here").":</b> ".$base;
+		}
+		
+		return "<b><i class='material-icons' style='font-size:100%'>bookmark</i></b> ".$base;
 	}
 
 	function search_form($params, &$smarty){
@@ -1205,9 +1467,9 @@ END;
 		$fields = array();
 		foreach ($query as $k=>$v){
 			if ( isset($exclude[$k]) ) continue;
-			if ( is_string($v) and strlen($k)>1 and $k{0} === '-' and $k{1} !== '-' ){
+			if ( is_string($v) and strlen($k)>1 and $k[0] === '-' and $k[1] !== '-' ){
 				$fields[] = '<input type="hidden" name="'.df_escape($k).'" value="'.df_escape($v).'"/ >';
-			} else if ( @$params['filters'] and is_string($v) and strlen($v)>0 and strlen($k)>0 and $k{0} !== '-'){
+			} else if ( @$params['filters'] and is_string($v) and strlen($v)>0 and strlen($k)>0 and $k[0] !== '-'){
 				$fields[] = '<input type="hidden" name="'.df_escape($k).'" value="'.df_escape($v).'"/ >';
 			}
 		}

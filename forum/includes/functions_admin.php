@@ -28,8 +28,6 @@ if (!defined('IN_PHPBB'))
 * @param int	$parent_id parent_id of the current set (default = 0)
 * @param array	$where	contains strings to compare closer on the where statement (additional)
 */
-
-if(!function_exists('recalc_nested_sets')){
 function recalc_nested_sets(&$new_id, $pkey, $table, $parent_id = 0, $where = array())
 {
 	global $db;
@@ -61,13 +59,10 @@ function recalc_nested_sets(&$new_id, $pkey, $table, $parent_id = 0, $where = ar
 	}
 	$db->sql_freeresult($result);
 }
-}
-
 
 /**
 * Simple version of jumpbox, just lists authed forums
 */
-if(!function_exists('make_forum_select')){
 function make_forum_select($select_id = false, $ignore_id = false, $ignore_acl = false, $ignore_nonpost = false, $ignore_emptycat = true, $only_acl_post = false, $return_array = false)
 {
 	global $db, $auth, $phpbb_dispatcher;
@@ -159,13 +154,10 @@ function make_forum_select($select_id = false, $ignore_id = false, $ignore_acl =
 
 	return $forum_list;
 }
-}
-
 
 /**
 * Generate size select options
 */
-if(!function_exists('size_select_options')){
 function size_select_options($size_compare)
 {
 	global $user;
@@ -183,8 +175,6 @@ function size_select_options($size_compare)
 
 	return $s_size_options;
 }
-}
-
 
 /**
 * Generate list of groups (option fields without select)
@@ -195,9 +185,6 @@ function size_select_options($size_compare)
 *
 * @return string The list of options.
 */
-
-
-if(!function_exists('group_select_options')){
 function group_select_options($group_id, $exclude_ids = false, $manage_founder = false)
 {
 	global $db, $config, $phpbb_container;
@@ -227,14 +214,10 @@ function group_select_options($group_id, $exclude_ids = false, $manage_founder =
 
 	return $s_group_options;
 }
-}
-
 
 /**
 * Obtain authed forums list
 */
-
-if (!function_exists('get_forum_list')){
 function get_forum_list($acl_list = 'f_list', $id_only = true, $postable_only = false, $no_cache = false)
 {
 	global $db, $auth, $phpbb_dispatcher;
@@ -303,14 +286,11 @@ function get_forum_list($acl_list = 'f_list', $id_only = true, $postable_only = 
 	extract($phpbb_dispatcher->trigger_event('core.get_forum_list_modify_data', compact($vars)));
 
 	return $rowset;
-	}
 }
 
 /**
 * Get forum branch
 */
-
-if (!function_exists('get_forum_branch')){
 function get_forum_branch($forum_id, $type = 'all', $order = 'descending', $include_forum = true)
 {
 	global $db;
@@ -352,8 +332,6 @@ function get_forum_branch($forum_id, $type = 'all', $order = 'descending', $incl
 
 	return $rows;
 }
-}
-
 
 /**
 * Copies permissions from one forum to others
@@ -365,7 +343,6 @@ function get_forum_branch($forum_id, $type = 'all', $order = 'descending', $incl
 *
 * @return bool						False on error
 */
-if (!function_exists('copy_forum_permissions')){
 function copy_forum_permissions($src_forum_id, $dest_forum_ids, $clear_dest_perms = true, $add_log = true)
 {
 	global $db, $user, $phpbb_log;
@@ -498,11 +475,10 @@ function copy_forum_permissions($src_forum_id, $dest_forum_ids, $clear_dest_perm
 
 	return true;
 }
-}
+
 /**
 * Get physical file listing
 */
-if (!function_exists('filelist')){
 function filelist($rootdir, $dir = '', $type = 'gif|jpg|jpeg|png|svg|webp')
 {
 	$matches = array($dir => array());
@@ -547,11 +523,10 @@ function filelist($rootdir, $dir = '', $type = 'gif|jpg|jpeg|png|svg|webp')
 
 	return $matches;
 }
-}
+
 /**
 * Move topic(s)
 */
-if (!function_exists('move_topics')){
 function move_topics($topic_ids, $forum_id, $auto_sync = true)
 {
 	global $db, $phpbb_dispatcher;
@@ -654,11 +629,10 @@ function move_topics($topic_ids, $forum_id, $auto_sync = true)
 		unset($forum_ids);
 	}
 }
-}
+
 /**
 * Move post(s)
 */
-if (!function_exists('move_posts')){
 function move_posts($post_ids, $topic_id, $auto_sync = true)
 {
 	global $db, $phpbb_dispatcher;
@@ -784,11 +758,10 @@ function move_posts($post_ids, $topic_id, $auto_sync = true)
 	// Update posted information
 	update_posted_info($topic_ids);
 }
-}
+
 /**
 * Remove topic(s)
 */
-if (!function_exists('delete_topics')){
 function delete_topics($where_type, $where_ids, $auto_sync = true, $post_count_sync = true, $call_delete_posts = true)
 {
 	global $db, $config, $phpbb_container, $phpbb_dispatcher;
@@ -925,11 +898,10 @@ function delete_topics($where_type, $where_ids, $auto_sync = true, $post_count_s
 
 	return $return;
 }
-}
+
 /**
 * Remove post(s)
 */
-if (!function_exists('delete_posts')){
 function delete_posts($where_type, $where_ids, $auto_sync = true, $posted_sync = true, $post_count_sync = true, $call_delete_topics = true)
 {
 	global $db, $config, $phpbb_root_path, $phpEx, $auth, $user, $phpbb_container, $phpbb_dispatcher;
@@ -1216,7 +1188,6 @@ function delete_posts($where_type, $where_ids, $auto_sync = true, $posted_sync =
 	$phpbb_notifications->delete_notifications($delete_notifications_types, $post_ids);
 
 	return count($post_ids);
-	}
 }
 
 /**
@@ -1228,7 +1199,6 @@ function delete_posts($where_type, $where_ids, $auto_sync = true, $posted_sync =
 *
 * @return array		Array with affected forums
 */
-if (!function_exists('delete_topic_shadows')){
 function delete_topic_shadows($forum_id, $sql_more = '', $auto_sync = true)
 {
 	global $db;
@@ -1279,11 +1249,10 @@ function delete_topic_shadows($forum_id, $sql_more = '', $auto_sync = true)
 
 	return $sync_forum_ids;
 }
-}
+
 /**
 * Update/Sync posted information for topics
 */
-if (!function_exists('update_posted_info')){
 function update_posted_info(&$topic_ids)
 {
 	global $db, $config;
@@ -1331,11 +1300,11 @@ function update_posted_info(&$topic_ids)
 
 	$db->sql_multi_insert(TOPICS_POSTED_TABLE, $sql_ary);
 }
-}
+
 /**
 * All-encompasing sync function
 *
-* Examples:
+* Exaples:
 * <code>
 * sync('topic', 'topic_id', 123);			// resync topic #123
 * sync('topic', 'forum_id', array(2, 3));	// resync topics from forum #2 and #3
@@ -1353,7 +1322,6 @@ function update_posted_info(&$topic_ids)
 * - post_attachement	Same as post_reported, but with attachment flags
 * - topic_attachement	Same as topic_reported, but with attachment flags
 */
-if (!function_exists('sync')){
 function sync($mode, $where_type = '', $where_ids = '', $resync_parents = false, $sync_extra = false)
 {
 	global $db, $phpbb_dispatcher;
@@ -2358,11 +2326,10 @@ function sync($mode, $where_type = '', $where_ids = '', $resync_parents = false,
 
 	return;
 }
-}
+
 /**
 * Prune function
 */
-if (!function_exists('prune')){
 function prune($forum_id, $prune_mode, $prune_date, $prune_flags = 0, $auto_sync = true, $prune_limit = 0)
 {
 	global $db, $phpbb_dispatcher;
@@ -2475,12 +2442,11 @@ function prune($forum_id, $prune_mode, $prune_date, $prune_flags = 0, $auto_sync
 
 	return delete_topics('topic_id', $topic_list, $auto_sync, false);
 }
-}
+
 /**
 * Function auto_prune(), this function now relies on passed vars
 */
-if (!function_exists('auto_prune')){
-	function auto_prune($forum_id, $prune_mode, $prune_flags, $prune_days, $prune_freq)
+function auto_prune($forum_id, $prune_mode, $prune_flags, $prune_days, $prune_freq, $log_prune = true)
 {
 	global $db, $user, $phpbb_log;
 
@@ -2500,18 +2466,23 @@ if (!function_exists('auto_prune')){
 
 		if ($result['topics'] == 0 && $result['posts'] == 0)
 		{
+			$column = $prune_mode === 'shadow' ? 'prune_shadow_next' : 'prune_next';
+
 			$sql = 'UPDATE ' . FORUMS_TABLE . "
-					SET prune_next = $next_prune
+				SET $column = $next_prune
 				WHERE forum_id = $forum_id";
 			$db->sql_query($sql);
 		}
 
-			$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_AUTO_PRUNE', false, array($row['forum_name']));
+		if ($log_prune)
+		{
+			$phpbb_log->add('admin', $user->data['user_id'], $user->ip, 'LOG_AUTO_PRUNE', false, [$row['forum_name']]);
+		}
 	}
 
 	return;
 }
-}
+
 /**
 * Cache moderators. Called whenever permissions are changed
 * via admin_permissions. Changes of usernames and group names
@@ -2522,7 +2493,6 @@ if (!function_exists('auto_prune')){
 * @param \phpbb\auth\auth $auth Authentication object
 * @return null
 */
-if (!function_exists('phpbb_cache_moderators')){
 function phpbb_cache_moderators($db, $cache, $auth)
 {
 	// Remove cached sql results
@@ -2693,7 +2663,7 @@ function phpbb_cache_moderators($db, $cache, $auth)
 
 	$db->sql_multi_insert(MODERATOR_CACHE_TABLE, $sql_ary);
 }
-}
+
 /**
 * View log
 *
@@ -2712,7 +2682,6 @@ function phpbb_cache_moderators($db, $cache, $auth)
 *
 * @return	int				Returns the offset of the last valid page, if the specified offset was invalid (too high)
 */
-if (!function_exists('view_log')){
 function view_log($mode, &$log, &$log_count, $limit = 0, $offset = 0, $forum_id = 0, $topic_id = 0, $user_id = 0, $limit_days = 0, $sort_by = 'l.log_time DESC', $keywords = '')
 {
 	global $phpbb_log;
@@ -2724,7 +2693,7 @@ function view_log($mode, &$log, &$log_count, $limit = 0, $offset = 0, $forum_id 
 
 	return $phpbb_log->get_valid_offset();
 }
-}
+
 /**
 * Removes moderators and administrators from foe lists.
 *
@@ -2734,7 +2703,6 @@ function view_log($mode, &$log, &$log_count, $limit = 0, $offset = 0, $forum_id 
 * @param array|bool $user_id If an array, remove this user from foe lists, or false to ignore
 * @return null
 */
-if (!function_exists('phpbb_update_foes')){
 function phpbb_update_foes($db, $auth, $group_id = false, $user_id = false)
 {
 	// update foes for some user
@@ -2843,11 +2811,10 @@ function phpbb_update_foes($db, $auth, $group_id = false, $user_id = false)
 	}
 	unset($perms);
 }
-}
+
 /**
 * Lists inactive users
 */
-if (!function_exists('view_inactive_users')){
 function view_inactive_users(&$users, &$user_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'user_inactive_time DESC')
 {
 	global $db, $user;
@@ -2906,11 +2873,10 @@ function view_inactive_users(&$users, &$user_count, $limit = 0, $offset = 0, $li
 
 	return $offset;
 }
-}
+
 /**
 * Lists warned users
 */
-if (!function_exists('view_warned_users')){
 function view_warned_users(&$users, &$user_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'user_warnings DESC')
 {
 	global $db;
@@ -2933,13 +2899,11 @@ function view_warned_users(&$users, &$user_count, $limit = 0, $offset = 0, $limi
 	$db->sql_freeresult($result);
 
 	return;
-	}
 }
 
 /**
 * Get database size
 */
-if (!function_exists('get_database_size')){
 function get_database_size()
 {
 	global $db, $user;
@@ -2964,6 +2928,7 @@ function get_database_size()
 					$database_size += $row['Data_length'] + $row['Index_length'];
 				}
 			}
+
 			$db->sql_freeresult($result);
 
 			$database_size = $database_size ? $database_size : false;
@@ -3033,7 +2998,7 @@ function get_database_size()
 
 	return $database_size;
 }
-}
+
 /*
 * Tidy Warnings
 * Remove all warnings which have now expired from the database
@@ -3041,7 +3006,6 @@ function get_database_size()
 * This only removes the warning and reduces the associated count,
 * it does not remove the user note recording the contents of the warning
 */
-if (!function_exists('tidy_warnings')){
 function tidy_warnings()
 {
 	global $db, $config;
@@ -3079,13 +3043,11 @@ function tidy_warnings()
 	}
 
 	$config->set('warnings_last_gc', time(), false);
-	}
 }
 
 /**
 * Tidy database, doing some maintanance tasks
 */
-if (!function_exists('tidy_database')){
 function tidy_database()
 {
 	global $config, $db;
@@ -3119,11 +3081,10 @@ function tidy_database()
 
 	$config->set('database_last_gc', time(), false);
 }
-}
+
 /**
 * Add permission language - this will make sure custom files will be included
 */
-if (!function_exists('add_permission_language')){
 function add_permission_language()
 {
 	global $user, $phpEx, $phpbb_extension_manager;
@@ -3150,7 +3111,7 @@ function add_permission_language()
 		}
 	}
 }
-}
+
 /**
  * Enables a particular flag in a bitfield column of a given table.
  *
@@ -3161,7 +3122,6 @@ function add_permission_language()
  *
  * @return null
  */
-if (!function_exists('enable_bitfield_column_flag')){
 function enable_bitfield_column_flag($table_name, $column_name, $flag, $sql_more = '')
 {
 	global $db;
@@ -3171,4 +3131,133 @@ function enable_bitfield_column_flag($table_name, $column_name, $flag, $sql_more
 		' . $sql_more;
 	$db->sql_query($sql);
 }
+
+function display_ban_end_options()
+{
+	global $user, $template;
+
+	// Ban length options
+	$ban_end_text = array(0 => $user->lang['PERMANENT'], 30 => $user->lang['30_MINS'], 60 => $user->lang['1_HOUR'], 360 => $user->lang['6_HOURS'], 1440 => $user->lang['1_DAY'], 10080 => $user->lang['7_DAYS'], 20160 => $user->lang['2_WEEKS'], 40320 => $user->lang['1_MONTH'], -1 => $user->lang['UNTIL'] . ' -&gt; ');
+
+	$ban_end_options = '';
+	foreach ($ban_end_text as $length => $text)
+	{
+		$ban_end_options .= '<option value="' . $length . '">' . $text . '</option>';
 	}
+
+	$template->assign_vars(array(
+		'S_BAN_END_OPTIONS'	=> $ban_end_options
+	));
+}
+
+/**
+* Display ban options
+*/
+function display_ban_options($mode)
+{
+	global $user, $db, $template;
+
+	switch ($mode)
+	{
+		case 'user':
+
+			$field = 'username';
+
+			$sql = 'SELECT b.*, u.user_id, u.username, u.username_clean
+				FROM ' . BANLIST_TABLE . ' b, ' . USERS_TABLE . ' u
+				WHERE (b.ban_end >= ' . time() . '
+						OR b.ban_end = 0)
+					AND u.user_id = b.ban_userid
+				ORDER BY u.username_clean ASC';
+		break;
+
+		case 'ip':
+
+			$field = 'ban_ip';
+
+			$sql = 'SELECT *
+				FROM ' . BANLIST_TABLE . '
+				WHERE (ban_end >= ' . time() . "
+						OR ban_end = 0)
+					AND ban_ip <> ''
+				ORDER BY ban_ip";
+		break;
+
+		case 'email':
+
+			$field = 'ban_email';
+
+			$sql = 'SELECT *
+				FROM ' . BANLIST_TABLE . '
+				WHERE (ban_end >= ' . time() . "
+						OR ban_end = 0)
+					AND ban_email <> ''
+				ORDER BY ban_email";
+		break;
+	}
+	$result = $db->sql_query($sql);
+
+	$banned_options = $excluded_options = array();
+	while ($row = $db->sql_fetchrow($result))
+	{
+		$option = '<option value="' . $row['ban_id'] . '">' . $row[$field] . '</option>';
+
+		if ($row['ban_exclude'])
+		{
+			$excluded_options[] = $option;
+		}
+		else
+		{
+			$banned_options[] = $option;
+		}
+
+		$time_length = ($row['ban_end']) ? ($row['ban_end'] - $row['ban_start']) / 60 : 0;
+
+		if ($time_length == 0)
+		{
+			// Banned permanently
+			$ban_length = $user->lang['PERMANENT'];
+		}
+		else if (isset($ban_end_text[$time_length]))
+		{
+			// Banned for a given duration
+			$ban_length = $user->lang('BANNED_UNTIL_DURATION', $ban_end_text[$time_length], $user->format_date($row['ban_end'], false, true));
+		}
+		else
+		{
+			// Banned until given date
+			$ban_length = $user->lang('BANNED_UNTIL_DATE', $user->format_date($row['ban_end'], false, true));
+		}
+
+		$template->assign_block_vars('bans', array(
+			'BAN_ID'		=> (int) $row['ban_id'],
+			'LENGTH'		=> $ban_length,
+			'A_LENGTH'		=> addslashes($ban_length),
+			'REASON'		=> $row['ban_reason'],
+			'A_REASON'		=> addslashes($row['ban_reason']),
+			'GIVE_REASON'	=> $row['ban_give_reason'],
+			'A_GIVE_REASON'	=> addslashes($row['ban_give_reason']),
+		));
+	}
+	$db->sql_freeresult($result);
+
+	$options = '';
+	if ($excluded_options)
+	{
+		$options .= '<optgroup label="' . $user->lang['OPTIONS_EXCLUDED'] . '">';
+		$options .= implode('', $excluded_options);
+		$options .= '</optgroup>';
+	}
+
+	if ($banned_options)
+	{
+		$options .= '<optgroup label="' . $user->lang['OPTIONS_BANNED'] . '">';
+		$options .= implode('', $banned_options);
+		$options .= '</optgroup>';
+	}
+
+	$template->assign_vars(array(
+		'S_BANNED_OPTIONS'	=> ($banned_options || $excluded_options) ? true : false,
+		'BANNED_OPTIONS'	=> $options,
+	));
+}

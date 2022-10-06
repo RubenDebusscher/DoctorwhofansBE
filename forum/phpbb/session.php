@@ -49,7 +49,7 @@ class session
 		// If we are unable to get the script name we use REQUEST_URI as a failover and note it within the page array for easier support...
 		if (!$script_name)
 		{
-			$script_name = htmlspecialchars_decode($request->server('REQUEST_URI'), ENT_COMPAT);
+			$script_name = html_entity_decode($request->server('REQUEST_URI'), ENT_COMPAT);
 			$script_name = (($pos = strpos($script_name, '?')) !== false) ? substr($script_name, 0, $pos) : $script_name;
 			$page_array['failover'] = 1;
 		}
@@ -166,7 +166,7 @@ class session
 		global $config, $request;
 
 		// Get hostname
-		$host = htmlspecialchars_decode($request->header('Host', $request->server('SERVER_NAME')), ENT_COMPAT);
+		$host = html_entity_decode($request->header('Host', $request->server('SERVER_NAME')), ENT_COMPAT);
 
 		// Should be a string and lowered
 		$host = (string) strtolower($host);
@@ -289,7 +289,7 @@ class session
 
 		// Why no forwarded_for et al? Well, too easily spoofed. With the results of my recent requests
 		// it's pretty clear that in the majority of cases you'll at least be left with a proxy/cache ip.
-		$ip = htmlspecialchars_decode($request->server('REMOTE_ADDR'), ENT_COMPAT);
+		$ip = html_entity_decode($request->server('REMOTE_ADDR'), ENT_COMPAT);
 		$ip = preg_replace('# {2,}#', ' ', str_replace(',', ' ', $ip));
 
 		/**
@@ -1457,7 +1457,7 @@ class session
 	*/
 	function set_login_key($user_id = false, $key = false, $user_ip = false)
 	{
-		global $db;
+		global $db, $phpbb_dispatcher;
 
 		$user_id = ($user_id === false) ? $this->data['user_id'] : $user_id;
 		$user_ip = ($user_ip === false) ? $this->ip : $user_ip;
@@ -1489,6 +1489,29 @@ class session
 		{
 			$sql = 'INSERT INTO ' . SESSIONS_KEYS_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
 		}
+
+		/**
+		 * Event to adjust autologin keys process
+		 *
+		 * @event core.set_login_key
+		 * @var	string|false	key			Current autologin key if exists, false otherwise
+		 * @var	string			key_id		New autologin key
+		 * @var	string			sql			SQL query to update/insert autologin key
+		 * @var	array			sql_ary		Aray with autologin key data
+		 * @var	int				user_id		Current user's ID
+		 * @var	string			user_ip		Current user's IP address
+		 * @since 3.3.2-RC1
+		 */
+		$vars = [
+			'key',
+			'key_id',
+			'sql',
+			'sql_ary',
+			'user_id',
+			'user_ip',
+		];
+		extract($phpbb_dispatcher->trigger_event('core.set_login_key', compact($vars)));
+
 		$db->sql_query($sql);
 
 		$this->cookie_data['k'] = $key_id;

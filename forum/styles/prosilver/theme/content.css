@@ -15,20 +15,7 @@ ul.topiclist li {
 
 ul.topiclist dl {
 	position: relative;
-	min-width:97%;
-	max-width: 100%;
 }
-.header .topics {margin-left: -2.5vw;min-width: 7vw;}
-@media (max-width: 1024px) {
-	.header .topics {margin-left: -1vw;}
-}
-
-@media (min-width: 2000px) {
-	.header .topics {margin-left: -3vw;}
-  }
-
-
-
 
 ul.topiclist li.row dl {
 	margin: 2px 0;
@@ -40,14 +27,9 @@ ul.topiclist dt, ul.topiclist dd {
 }
 
 ul.topiclist dt {
-	width: 94%;
+	width: 100%;
 	margin-right: -440px;
-	margin-left:4em;
 	font-size: 1.1em;
-}
-
-.topicageday + div{
-	display: inline-flex;
 }
 
 ul.topiclist.missing-column dt {
@@ -65,6 +47,7 @@ ul.topiclist.two-columns dt {
 ul.topiclist dt .list-inner {
 	margin-right: 440px;
 	padding-left: 5px;
+	padding-right: 5px;
 }
 
 ul.topiclist.missing-column dt .list-inner {
@@ -129,7 +112,6 @@ li.header dt {
 	font-weight: bold;
 	width: 100%;
 	margin-right: -440px;
-	display: inline-flex;
 }
 
 li.header dt .list-inner {
@@ -168,6 +150,9 @@ dl.row-item dt {
 	background-size: 17px;
 }
 
+dl.row-item dt .list-inner {
+	padding-left: 52px;			/* Space for folder icon */
+}
 
 dl.row-item dt, dl.row-item dd {
 	min-height: 35px;
@@ -177,7 +162,7 @@ dl.row-item dt a {
 	display: inline;
 }
 
-dl a.row-item-link {						/* topic row icon links */
+dl a.row-item-link {				/* topic row icon links */
 	display: block;
 	width: 30px;
 	height: 30px;
@@ -213,7 +198,7 @@ dl.row-item dt li {
 }
 
 dd.lastpost, dd.redirect, dd.moderation, dd.time, dd.info {
-	width: 20em;
+	width: 250px;
 	font-size: 1.1em;
 }
 
@@ -228,7 +213,6 @@ dd.time {
 dd.lastpost > span, ul.topiclist dd.info > span, ul.topiclist dd.time > span, dd.redirect > span, dd.moderation > span {
 	display: block;
 	padding-left: 5px;
-	font-family:Verdana, Helvetica, Arial, sans-serif;
 }
 
 dd.extra, dd.mark {
@@ -375,6 +359,17 @@ dd.option {
 	font-size: 1.2em;
 	margin-bottom: 1em;
 	line-height: 1.4em;
+}
+
+.agreement {
+	font-size: 12px;
+	line-height: 17px;
+	margin-bottom: 10px;
+}
+
+.agreement-text {
+	line-height: 17px;
+	margin-bottom: 10px;
 }
 
 dl.faq {
@@ -582,8 +577,7 @@ blockquote .codebox {
 	clear: left;
 }
 
-.attachbox p.stats
-{
+.attachbox p.stats {
 	line-height: 110%;
 	font-weight: normal;
 	clear: left;
@@ -596,7 +590,6 @@ blockquote .codebox {
 
 .attach-image img {
 	border: 1px solid transparent;
-/*	cursor: move; */
 	cursor: default;
 }
 

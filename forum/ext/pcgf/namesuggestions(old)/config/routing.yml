@@ -1,3 +1,0 @@
-pcgf_namesuggestions_controller:
-    path: /pcgf/namesuggestions
-    defaults: { _controller: pcgf.namesuggestions.controller:get_suggestions }

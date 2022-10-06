@@ -35,17 +35,17 @@ if ( !defined('DATAFACE_EXTENSION_LOADED_APC') ){
 
 }
 
-import( 'PEAR.php');
-import( 'Dataface/Error.php');
-import( 'Dataface/Globals.php');
-import( 'Dataface/Relationship.php');
-import( 'Dataface/converters/date.php');
-import( 'Dataface/Application.php');
+import( XFROOT.'PEAR.php');
+import( XFROOT.'Dataface/Error.php');
+import( XFROOT.'Dataface/Globals.php');
+import( XFROOT.'Dataface/Relationship.php');
+import( XFROOT.'Dataface/converters/date.php');
+import( XFROOT.'Dataface/Application.php');
 //require_once dirname(__FILE__).'/../config.inc.php';
-import( 'SQL/Parser.php');
-import( 'SQL/Parser/wrapper.php');
-import( 'Dataface/Serializer.php');
-import( 'Dataface/ConfigTool.php');
+import( XFLIB.'SQL/Parser.php');
+import( XFROOT.'SQL/Parser/wrapper.php');
+import( XFROOT.'Dataface/Serializer.php');
+import( XFROOT.'Dataface/ConfigTool.php');
 
 define('Dataface_Table_UseCache', false);
 
@@ -531,7 +531,7 @@ class Dataface_Table {
 			throw new Exception("Invalid character found in table '$tablename'.", E_USER_ERROR);
 
 		}
-		import('Dataface/Record.php');
+		import(XFROOT.'Dataface/Record.php');
 		$this->app =& Dataface_Application::getInstance();
 		// register this table name with the application object so we can keep
 		// track of which tables are used on each request.  This helps with
@@ -550,16 +550,28 @@ class Dataface_Table {
 
         if (strpos($this->tablename, '_tmp_') === 0) {
             // This is just a temporary table.
-            $iniPath = realpath(DATAFACE_SITE_PATH.'/tables/'.basename($this->tablename).'/fields.ini');
+            $iniPath = realpath($this->basePath().'/tables/'.basename($this->tablename).'/fields.ini');
 			if (!$iniPath) {
-				$iniPath = realpath(DATAFACE_SITE_PATH.'/tables/'.basename($this->tablename).'/fields.ini.php');
+				$iniPath = realpath($this->basePath().'/tables/'.basename($this->tablename).'/fields.ini.php');
 			}
-			$delegateClass = realpath(DATAFACE_SITE_PATH.'/tables/'.basename($this->tablename).'/'.basename($this->tablename).'.php');
-
+			$delegateClass = $this->_delegateFilePath();
+			
 			$sqlQuery = null;
+            if ($this->tablename == '_tmp_null') {
+                $sqlQuery = "select NULL as `id`";
+            }
 			//echo "ini path $iniPath ".$this->tablename;
-            if (file_exists($iniPath)) {
-                $conf = parse_ini_file($iniPath, true);
+            if ((XF_USE_OPCACHE and xf_opcache_is_script_cached($iniPath)) or file_exists($iniPath)) {
+                if (XF_USE_OPCACHE and xf_opcache_is_script_cached($iniPath)) {
+                    include(xf_opcache_path($iniPath));
+                    $conf = $xf_opcache_export;
+                } else {
+                    $conf = parse_ini_file($iniPath, true);
+                    if (XF_USE_OPCACHE) {
+                        xf_opcache_cache_array($iniPath, $conf);
+                    }
+                }
+                
                 if (isset($conf['__sql__'])) {
                     $sqlQuery = $conf['__sql__'];
                 }
@@ -567,16 +579,20 @@ class Dataface_Table {
             if (file_exists($delegateClass)) {
                 import($delegateClass);
                 $delClassName = 'tables_'.basename($this->tablename);
-
+				
                 if (!class_exists($delClassName)) {
                     throw new Exception("Delegate class ".$delegateClass." file exists but no class is defined in it");
                 }
 
-                $delObj = new $delClassName;
-                if (method_exists($delObj, '__sql__')) {
+				$delObj = new $delClassName;
+				$this->_delegate = $delObj;
+                if (isset($delObj) and method_exists($delObj, '__sql__')) {
+					
                     $sqlQuery = $delObj->__sql__();
                 }
             }
+            
+            
 			//echo "here $sqlQuery";exit;
             if (!isset($sqlQuery)) {
                 throw new Exception("No SQL query found for temp table ".$this->tablename);
@@ -599,15 +615,19 @@ class Dataface_Table {
 		$this->_atts = array();
 		$this->_atts['name'] = $this->tablename;
 
-		$this->_atts['label'] = (isset( $this->app->_tables[$this->tablename] ) ? $this->app->_tables[$this->tablename] : $this->tablename);
+		$this->_atts['label'] = (isset( $this->app->_tables[$this->tablename] ) ? 
+            $this->app->_tables[$this->tablename] : 
+            ucwords(str_replace('_', ' ', $this->tablename)));
+        if (!XF_USE_OPCACHE and DATAFACE_EXTENSION_LOADED_APC) {
+    		$mod_times =& self::getTableModificationTimes();
 
-		$mod_times =& self::getTableModificationTimes();
-
-		$apc_key = DATAFACE_SITE_PATH.'-Table.php-'.$this->tablename.'-columns';
-		$apc_key_fields = $apc_key.'-fields';
-		$apc_key_keys = $apc_key.'-keys';
-		$apc_key_mtime = $apc_key.'__mtime';
-		if ( DATAFACE_EXTENSION_LOADED_APC
+    		$apc_key = DATAFACE_SITE_PATH.'-Table.php-'.$this->tablename.'-columns';
+    		$apc_key_fields = $apc_key.'-fields';
+    		$apc_key_keys = $apc_key.'-keys';
+    		$apc_key_mtime = $apc_key.'__mtime';
+        }
+		
+		if (!XF_USE_OPCACHE and DATAFACE_EXTENSION_LOADED_APC
 			and
 				( !@$_GET['--refresh-apc'] )
 			and
@@ -623,20 +643,36 @@ class Dataface_Table {
 		} else {
 
 
+            $sql = "SHOW COLUMNS FROM `".$this->tablename."`";
+            if (XF_USE_OPCACHE and xf_opcache_is_query_cached($sql)) {
+                include(xf_opcache_query_path($sql));
+                $showColumnsRows = $xf_opcache_export;
+            } else {
+    			$res = xf_db_query($sql, $this->db);
+    			if ( !$res ){
+    				if ( $quiet ){
+    					return PEAR::raiseError("Error performing mysql query to get column information from table '".$this->tablename."'.  The mysql error returned was : '".xf_db_error($this->db));
+    				} else {
+    					throw new Exception("Error performing mysql query to get column information from table '".$this->tablename."'.  The mysql error returned was : '".xf_db_error($this->db), E_USER_ERROR);
+    				}
 
+    			}
+                $showColumnsRows = [];
+    			if ( xf_db_num_rows($res) > 0 ){
+    				while ( $row = xf_db_fetch_assoc($res) ){
+                        $showColumnsRows[] = $row;
+                    }
+                    xf_db_free_result($res);
+                    if (XF_USE_OPCACHE) {
+                        xf_opcache_cache_query($sql, $showColumnsRows);
+                    }
+                }
+                
+            }
+			
 
-			$res = xf_db_query("SHOW COLUMNS FROM `".$this->tablename."`", $this->db);
-			if ( !$res ){
-				if ( $quiet ){
-					return PEAR::raiseError("Error performing mysql query to get column information from table '".$this->tablename."'.  The mysql error returned was : '".xf_db_error($this->db));
-				} else {
-					throw new Exception("Error performing mysql query to get column information from table '".$this->tablename."'.  The mysql error returned was : '".xf_db_error($this->db), E_USER_ERROR);
-				}
-
-			}
-
-			if ( xf_db_num_rows($res) > 0 ){
-				while ( $row = xf_db_fetch_assoc($res) ){
+			if ( $showColumnsRows){
+				foreach ($showColumnsRows as $row){
 					/*
 					 Example row as follows:
 					 Array
@@ -702,10 +738,14 @@ class Dataface_Table {
 					unset($widget);
 				}
 			}
+            if ($tablename == '_tmp_null') {
+                //print_r($this->_fields);
+                //echo "here";exit;
+                $this->_fields['id']['Key'] = 'PRI';
+                $this->_keys = ['id' => $this->_fields['id'] ];
 
-			xf_db_free_result($res);
-
-
+            }
+            
 
 
 
@@ -713,7 +753,6 @@ class Dataface_Table {
 			$fieldnames = array_keys($this->_fields);
 			foreach ($fieldnames as $key){
 				$matches = array();
-
 				if ( preg_match( '/^(.*)_mimetype$/', $key, $matches) and
 					isset( $this->_fields[$matches[1]] ) /*and
 					($this->isBlob($matches[1]) or $this->isContainer($matches[1]))*/ ){
@@ -722,8 +761,8 @@ class Dataface_Table {
 					$this->_fields[$matches[1]]['mimetype'] = $key;
 					$this->_fields[$key]['metafield'] = true;
 				} else if ( preg_match( '/^(.*)_filename$/', $key, $matches) and
-					isset( $this->_fields[$matches[1]] ) and
-					$this->isBlob($matches[1]) ){
+					isset( $this->_fields[$matches[1]] ) /*and
+					$this->isBlob($matches[1])*/ ){
 					$this->_fields[$key]['widget']['type'] = 'hidden';
 					$this->_fields[$matches[1]]['filename'] = $key;
 					$this->_fields[$key]['metafield'] = true;
@@ -757,6 +796,7 @@ class Dataface_Table {
 			}
 		}
 
+        
 		$this->_loadFieldsIniFile();
 
 		$parent =& $this->getParent();
@@ -1197,7 +1237,114 @@ class Dataface_Table {
 		return $this->descriptionField;
 
 	}
+    
+	
+	
+	private $logoField;
+	
+    /**
+     * Gets the name of the logo field.  The logo field is marked by the 'logo' property in the
+     * fields.ini file.
+     * @return string The nameof the logo field.  Or an empty string for none.
+     *
+     */
+	function getLogoField(){
+		if ( !isset($this->logoField) ){
+            $this->logoField = '';
+    		foreach ($this->fields(false,true) as $field){
+    			if (@$field['logo']) {
+    			    $this->logoField = $field['name'];
+                    break;
+    			}
+    		}
 
+		}
+		return $this->logoField;
+
+	}
+    
+    private $imageFields;
+    function getImageFields() {
+        if (!isset($this->imageFields)) {
+            $this->imageFields = [];
+    		foreach ($this->fields(false,true) as $field){
+    			if (@$field['logo'] or @$field['image']) {
+    			    $this->imageFields[] = $field['name'];
+                    break;
+    			}
+    		}
+        }
+        return $this->imageFields;
+    }
+    
+	private $bylineField;
+	
+	function getBylineField(){
+		if ( !isset($this->bylineField) ){
+            $this->bylineField = '';
+    		foreach ($this->fields(false,true) as $field){
+    			if (@$field['byline']) {
+    			    $this->bylineField = $field['name'];
+                    break;
+    			}
+    		}
+
+		}
+		return $this->bylineField;
+
+	}
+
+    private $statusField;
+
+	/**
+	 * @brief Makes a best guess at which field in this table stores the record
+	 * status.  The record status is a space-delimited string with tokens denoting
+     * status markers.  These are akin to CSS classes in HTML tags.
+	 *
+	 * @return string The name of the best candidate column to be the status.
+	 * @see Dataface_Record::getStatus()
+	 */
+	function getStatusField(){
+		if ( !isset($this->statusField) ){
+            $this->statusField = '';
+    		foreach ($this->fields(false,true) as $field){
+    			if (@$field['status']) {
+    			    $this->statusField = $field['name'];
+                    break;
+    			}
+    		}
+
+		}
+		return $this->statusField;
+
+	}
+    private $enclosureField;
+    
+    /**
+     * Gets the field that contains an 'enclosure' for RSS feeds.  An enclosure is
+     * generally an audio or video file that is used for podcasting.
+     * @return string The name of the best candidate column to be the enclosure field or null
+     */
+    function getEnclosureField() {
+        if (!isset($this->enclosureField)) {
+            $this->enclosureField = '';
+            foreach ($this->fields(false, true) as $field) {
+                if (@$field['enclosure']) {
+                    $this->enclosureField = $field['name'];
+                    break;
+                }
+                if ($this->isBlob($field['name']) or $this->isContainer($field['name'])) {
+                    $this->enclosureField = $field['name'];
+                }
+            }
+        }
+        if ($this->enclosureField) {
+            return $this->enclosureField;
+        } else {
+            return null;
+        }
+        
+    }
 
 	/**
 	 * @brief Makes a best guess at which field stores the creation date of the record.
@@ -1237,6 +1384,28 @@ class Dataface_Table {
 		}
 		return $this->creatorField;
 	}
+    
+    private $userFields;
+    /**
+     * For caching primarily, a table may mark a field as referencing a user for which
+     * a particular record is targeted.  This will cause a "phantom" table to be created
+     * named _my_{$tablename} that will be "marked" via Dataface_Application::markCache()
+     * for the user any time the record is modified.
+     *
+     * @since 3.0
+     */
+    function getUserFields() {
+        if (!isset($this->userFields)) {
+            $this->userFields = [];
+    		foreach ($this->fields(false,true) as $field){
+    			if (!empty($field['username']) or !empty($field['userid'])) {
+    			    $this->userFields[] = $field['name'];
+    			}
+    		}
+            
+        }
+        return $this->userFields;
+    }
 
 	/**
 	 * @brief Gets the field that is used to track the version of this record, if one
@@ -1346,25 +1515,35 @@ class Dataface_Table {
 	function &getIndexes(){
 		if ( !isset( $this->_indexes) ){
 			$this->_indexes = array();
-			$res = xf_db_query("SHOW index FROM `".$this->tablename."`", $this->db);
-			if ( !$res ){
-				throw new Exception("Failed to get index list due to a mysql error: ".xf_db_error($this->db), E_USER_ERROR);
-			}
+            $sql = "SHOW index FROM `".$this->tablename."`";
+            if (XF_USE_OPCACHE and xf_opcache_is_query_cached($sql)) {
+                include(xf_opcache_query_path($sql));
+                $this->_indexes = $xf_opcache_export;
+            } else {
+    			$res = xf_db_query($sql, $this->db);
+    			if ( !$res ){
+    				throw new Exception("Failed to get index list due to a mysql error: ".xf_db_error($this->db), E_USER_ERROR);
+    			}
 
-			while ( $row = xf_db_fetch_array($res) ){
-				if ( !isset( $this->_indexes[ $row['Key_name'] ] ) )
-					$this->_indexes[ $row['Key_name'] ] = array();
-				$index =& $this->_indexes[$row['Key_name']];
-				$index['name'] = $row['Key_name'];
-				if ( !isset( $index['columns'] ) )
-					$index['columns'] = array();
-				$index['columns'][] = $row['Column_name'];
-				$index['unique'] = ( $row['Non_unique'] ? false : true );
-				$index['type'] = $row['Index_type'];
-				$index['comment'] = $row['Comment'];
-				unset($index);
-			}
-			xf_db_free_result($res);
+    			while ( $row = xf_db_fetch_array($res) ){
+    				if ( !isset( $this->_indexes[ $row['Key_name'] ] ) )
+    					$this->_indexes[ $row['Key_name'] ] = array();
+    				$index =& $this->_indexes[$row['Key_name']];
+    				$index['name'] = $row['Key_name'];
+    				if ( !isset( $index['columns'] ) )
+    					$index['columns'] = array();
+    				$index['columns'][] = $row['Column_name'];
+    				$index['unique'] = ( $row['Non_unique'] ? false : true );
+    				$index['type'] = $row['Index_type'];
+    				$index['comment'] = $row['Comment'];
+    				unset($index);
+    			}
+    			xf_db_free_result($res);
+                if (XF_USE_OPCACHE) {
+                    xf_opcache_cache_query($sql, $this->_indexes);
+                }
+            }
+			
 
 		}
 
@@ -1456,6 +1635,7 @@ class Dataface_Table {
 				 	$field['metafield'] = true;
 				 	break;
 				 }
+				 
 			}
 			if ( !isset($field['metafield']) ){
 				$field['metafield'] = false;
@@ -1481,19 +1661,30 @@ class Dataface_Table {
 		if ( !isset($this->metadataColumns) ){
 			$metatablename = $this->tablename.'__metadata';
 			$sql = "SHOW COLUMNS FROM `{$metatablename}`";
-			$res = xf_db_query($sql, $this->db);
-			if ( !$res || xf_db_num_rows($res) == 0){
-				Dataface_MetadataTool::refreshMetadataTable($this->tablename);
-				$res = xf_db_query($sql, $this->db);
-			}
-			if ( !$res ) throw new Exception(xf_db_error($this->db), E_USER_ERROR);
-			if ( xf_db_num_rows($res) == 0 ) throw new Exception("No metadata table set up for table '{$this->tablename}'", E_USER_ERROR);
-			$this->metadataColumns = array();
-			while ($row = xf_db_fetch_assoc($res) ){
-				if ( substr($row['Field'],0,2) == '__' ){
-					$this->metadataColumns[] =  $row['Field'];
-				}
-			}
+            if (XF_USE_OPCACHE and xf_opcache_is_query_cached($sql)) {
+                include(xf_opcache_query_path($sql));
+                $this->metadataColumns = $xf_opcache_export;
+            } else {
+    			$res = xf_db_query($sql, $this->db);
+    			if ( !$res || xf_db_num_rows($res) == 0){
+    				$metadataTool = new Dataface_MetadataTool();
+					$metadataTool->refreshMetadataTable($this->tablename);
+    				$res = xf_db_query($sql, $this->db);
+    			}
+    			if ( !$res ) throw new Exception(xf_db_error($this->db), E_USER_ERROR);
+    			if ( xf_db_num_rows($res) == 0 ) throw new Exception("No metadata table set up for table '{$this->tablename}'", E_USER_ERROR);
+    			$this->metadataColumns = array();
+    			while ($row = xf_db_fetch_assoc($res) ){
+    				if ( substr($row['Field'],0,2) == '__' ){
+    					$this->metadataColumns[] =  $row['Field'];
+    				}
+    			}
+                xf_db_free_result($res);
+                if (XF_USE_OPCACHE) {
+                    xf_opcache_cache_query($sql, $this->metadataColumns);
+                }
+            }
+			
 
 		}
 		return $this->metadataColumns;
@@ -1649,7 +1840,7 @@ class Dataface_Table {
 			if (isset($tsql)){
 
 				$this->_grafted_fields = array();
-				import('SQL/Parser.php');
+				import(XFLIB.'SQL/Parser.php');
 				$parser = new SQL_Parser(null,'MySQL');
 				$data = $parser->parse($tsql);
 				foreach ( $data['columns'] as $col ){
@@ -1713,6 +1904,9 @@ class Dataface_Table {
                         if ( isset($widget['question']) ){
                             $widget['question'] = df_translate('tables.'.$curr['tablename'].'.fields.'.$fieldname.'.widget.question',$widget['question']);
 
+                        }
+                        if (@$curr['ajax_value']) {
+                            $curr['widget']['atts']['data-xf-update-url'] = $curr['ajax_value'];
                         }
                         unset($widget);
 						$this->_transient_fields[$fieldname] = $curr;
@@ -1894,23 +2088,39 @@ class Dataface_Table {
 		// Check if view already exists
 		//$res = xf_db_query("select TABLE_NAME from information_schema.tables where TABLE_SCHEMA='".addslashes($dbname)."' and TABLE_NAME='".addslashes($viewName)."' limit 1", df_db());
 
-		$res = xf_db_query("show tables like '".addslashes($viewName)."'", df_db());
-		if ( !$res ) throw new Exception(xf_db_error(df_db()));
-		if ( xf_db_num_rows($res) < 1 ){
-			@xf_db_free_result($res);
-			// The view doesn't exist yet
-			$res = xf_db_query("create view `".str_replace('`','', $viewName)."` as ".$sql, df_db());
-			if ( !$res ){
-				error_log(xf_db_error(df_db()));
-				$this->_proxyViews[$viewName] = false;
-				return null;
-			}
+        $showSql = "show tables like '".addslashes($viewName)."'";
+        if (XF_USE_OPCACHE and xf_opcache_is_query_cached($showSql)) {
+            include(xf_opcache_query_path($showSql));
+            list($this->_proxyViews[$viewName]) = $xf_opcache_export;
+            if (!@$this->_proxyViews[$viewName]) {
+                return null;
+            }
+        } else {
+    		$res = xf_db_query($showSql, df_db());
+    		if ( !$res ) throw new Exception(xf_db_error(df_db()));
+    		if ( xf_db_num_rows($res) < 1 ){
+    			@xf_db_free_result($res);
+    			// The view doesn't exist yet
+    			$res = xf_db_query("create view `".str_replace('`','', $viewName)."` as ".$sql, df_db());
+    			if ( !$res ){
+    				error_log(xf_db_error(df_db()));
+    				$this->_proxyViews[$viewName] = false;
+                    if (XF_USE_OPCACHE) {
+                        xf_opcache_cache_query($showSql, [false]);
+                    }
+    				return null;
+    			}
 
 
-		} else {
-			@xf_db_free_result($res);
-		}
-		$this->_proxyViews[$viewName] = true;
+    		} else {
+    			@xf_db_free_result($res);
+    		}
+    		$this->_proxyViews[$viewName] = true;
+            if (XF_USE_OPCACHE) {
+                xf_opcache_cache_query($showSql, [true]);
+            }
+        }
+		
 
 		return $viewName;
 
@@ -1991,6 +2201,25 @@ class Dataface_Table {
 			$table =& self::loadTable($field['tablename']);
 			return $table->getDefaultValue($fieldname);
 		}
+        if (@$field['ownerstamp']) {
+            if (class_exists('Dataface_AuthenticationTool')) {
+                $auth = Dataface_AuthenticationTool::getInstance();
+                if ($this->isText($fieldname)) {
+                    return $auth->getLoggedInUserName();
+                } else {
+                    $user = $auth->getLoggedInUser();
+                    if ($user) {
+                        $keys = array_keys($user->table()->keys());
+                        if (count($keys) == 1) {
+                            $id = $user->val($keys[0]);
+                            return $id;
+                        }
+                    }
+                }
+                
+            }
+            
+        }
 		$delegate =& $this->getDelegate();
 		if ( isset($delegate) and method_exists($delegate, $fieldname.'__default') ){
 			return call_user_func(array(&$delegate, $fieldname.'__default'));
@@ -2041,7 +2270,7 @@ class Dataface_Table {
 		$schema = array("Field"=>$fieldname, "Type"=>$type, "Null"=>'', "Key"=>'', "Default"=>'', "Extra"=>'');
 		$schema = array_merge_recursive_unique($this->_global_field_properties, $schema);
 		$widget = array();
-		$widget['label'] = ucfirst($schema['Field']);
+		$widget['label'] = ucwords(str_replace('_', ' ', $schema['Field']));
 		$widget['description'] = '';
 		$widget['label_i18n'] = $tablename.'.'.$fieldname.'.label';
 		$widget['description_i18n'] = $tablename.'.'.$fieldname.'.description';
@@ -2148,8 +2377,89 @@ class Dataface_Table {
 		return $this->_atts['title'];
 
 	}
+	
+	/**
+	 * Cache used for the getFieldsWithTag() and getFieldWithTag() methods.
+	 */
+	private $taggedFieldCache = [];
 
-
+	/**
+	 * Gets all fields containing the given tag.
+	 * @param string $tag The tag to search for
+	 * @return array list of field definitions of fields containing the given tag.
+	 */
+	function getFieldsWithTag($tag) {
+		if (strpos($tag, ',') !== false) {
+			$tags = explode(',', $tag);
+			$out = [];
+			foreach ($tags as $tag) {
+				$tag = trim($tag);
+				$out = array_merge($out, $this->getFieldsWithTag($tag));
+			}
+			return $out;
+		}
+		if (!isset($this->taggedFieldCache[$tag])) {
+			$this->taggedFieldCache[$tag] = [];
+			foreach ($this->fields(false, true, true) as $key => $field) {
+				if (@$field[$tag]) {
+					$this->taggedFieldCache[$tag][] =& $this->getField($key);
+				}
+			}
+		}
+		return $this->taggedFieldCache[$tag];
+		
+		
+		
+	}
+	
+	/**
+	 * Gets a field with the given tag.
+	 * @param string $tag The tag to search for. If a field contains this property in its field definition, that field will be returned.
+	 * @return array Field definition or null if no field field.
+	 */
+	function getFieldWithTag($tag) {
+		$fields = $this->getFieldsWithTag($tag);
+		if ($fields) return $fields[0];
+		return null;
+	}
+	
+	/**
+     * Gets a list of the types of thumbnails that are defined for this field.
+     * Types of thumbnails are defined in the "transform" directive of the fields.ini file,
+     * and thumbnails are generated at the time that the file is uploaded.
+     * @since 3.0
+     */ 
+	function getThumbnailTypes($fieldname) {
+		$field = $this->getField($fieldname);
+		if (!$field) {
+			throw new Exception("Field not found $fieldname when looking for thumbnail types");
+		}
+		$out = [];
+		if (@$field['transform']) {
+			
+			// Transform format example
+			// itunes300 fill:300x300; itunes1400 fill:1400x1400
+			$commands = array_map('trim', explode(';', $field['transform']));
+			foreach ($commands as $command) {
+				if (!trim($command)) {
+					continue;
+				}
+				list($nameAndOp, $arg) = array_map('trim', explode(':', $command));
+				if (!$nameAndOp) {
+					continue;
+				}
+				
+				$op = null;
+				list($thumbName, $op) = @explode(' ', $nameAndOp);
+				if (!$thumbName) {
+					continue;
+				}
+				$out[] = $thumbName;
+			}
+		}
+		return $out;
+				
+	}
 
 	/**
 	 * @brief Returns a field structure with the given name.  This can also be related field. Simply prepend
@@ -2260,7 +2570,7 @@ class Dataface_Table {
 		// First we will see if the delegate class defines as custom description.
 		$delegate =& $this->getDelegate();
 		$delegate_property_name = str_replace(':', '_', $propertyName);
-		if ( method_exists($delegate, $fieldname.'__'.$delegate_property_name) ){
+		if (isset($delgate) and method_exists($delegate, $fieldname.'__'.$delegate_property_name) ){
 
 			if ( !isset( $params['record'] ) ) $params['record'] = null;
 			$methodname = $fieldname.'__'.$delegate_property_name;
@@ -2307,7 +2617,7 @@ class Dataface_Table {
 	public static function &getGlobalFieldsConfig(){
 		if ( !isset(self::$globalFieldsConfig) ){
 			//self::$globalFieldsConfig = array();
-			import( 'Dataface/ConfigTool.php');
+			import( XFROOT.'Dataface/ConfigTool.php');
 			$configTool =& Dataface_ConfigTool::getInstance();
 			self::$globalFieldsConfig =& $configTool->loadConfig('fields', null);
 
@@ -2325,14 +2635,14 @@ class Dataface_Table {
 	function _loadFieldsIniFile(){
 
 
-		import( 'Dataface/ConfigTool.php');
+		import( XFROOT.'Dataface/ConfigTool.php');
 		$configTool =& Dataface_ConfigTool::getInstance();
 		$conf =& $configTool->loadConfig('fields', $this->tablename); //$temp['root'];
 		$gConf =& self::getGlobalFieldsConfig();
 		$conf = array_merge($gConf, $conf);
 		$app =& Dataface_Application::getInstance();
 		$appDel =& $app->getDelegate();
-		if ( method_exists($appDel,'decorateFieldsINI') ){
+		if (isset($appDel) and method_exists($appDel,'decorateFieldsINI') ){
 			$appDel->decorateFieldsINI($conf, $this);
 		}
 
@@ -2423,7 +2733,7 @@ class Dataface_Table {
 					}
 				}
 
-				if ( !isset( $grp['label'] ) ) $grp['label'] = ucfirst($grp['name']);
+				if ( !isset( $grp['label'] ) ) $grp['label'] = ucwords(str_replace('_', ' ', $grp['name']));
 				if ( !isset( $grp['description']) ) $grp['description'] = '';
 				if ( !isset( $grp['display_style']) ) $grp['display_style'] = "block";
 				if ( !isset( $grp['element_label_visible'])) {
@@ -2449,7 +2759,7 @@ class Dataface_Table {
 				$tabarr =& $this->_tabs[$tabname];
 				$tabarr['name'] = $tabname;
 
-				if ( !isset($tabarr['label']) ) $tabarr['label'] = ucfirst($tabname);
+				if ( !isset($tabarr['label']) ) $tabarr['label'] = ucwords(str_replace('_', ' ', $tabname));
 				if ( !isset($tabarr['description']) ) $tabarr['description'] = '';
 
 				unset($tabarr);
@@ -2462,6 +2772,10 @@ class Dataface_Table {
 				$this->_filters=$value;
 
 			}
+            
+            else if (strpos($key, 'table.') === 0) {
+                $this->_atts[substr($key, 6)] = $value;
+            }
 
 			else if ($key == "__title__"){
 				$this->_atts['title'] = $value;
@@ -2599,6 +2913,9 @@ class Dataface_Table {
 		foreach (array_keys($this->_fields) as $key){
 		    if (isset($field)) unset($field);
 		    $field =&  $this->_fields[$key];
+		    if ($key == 'xf_inserted_record_id') {
+		    	$field['widget']['type'] = 'hidden';
+		    }
 
 			if ( isset($this->_fields[$key]['group'])  ){
 				$grpname = $this->_fields[$key]['group'];
@@ -2614,27 +2931,33 @@ class Dataface_Table {
 					);
 				}
 			}
-			if ( strcasecmp($this->_fields[$key]['Type'], 'container') === 0){
+            if (@$field['ownerstamp'] or @$field['uuid'] or @$field['timestamp'] == 'insert' or @$field['timestamp'] == 'update') {
+                $field['widget']['type'] = 'hidden';
+            }
+            if (@$field['ajax_value']) {
+                $field['widget']['atts']['data-xf-update-url'] = $field['ajax_value'];
+            }
+			if ( strcasecmp($field['Type'], 'container') === 0){
 				/*
 				 * This field is a Container field.  We will need to set up the save path.
 				 * If no save path is specified we will create a directory by the name
 				 * of this field inside the table's directory.
 				 */
-				if ( $this->_fields[$key]['widget']['type'] == 'text' ) $this->_fields[$key]['widget']['type'] = 'file';
-				if ( !isset( $this->_fields[$key]['savepath'] ) ){
-					$this->_fields[$key]['savepath'] = $this->basePath().'/tables/'.$this->tablename.'/'.$key;
-				} else if ( strpos($this->_fields[$key]['savepath'], '/') !== 0 and !preg_match('/^[a-z0-9]{1,5}:\/\//', $this->_fields[$key]['savepath']) ) {
-					$this->_fields[$key]['savepath'] = DATAFACE_SITE_PATH.'/'.$this->_fields[$key]['savepath'];
+				if ( $field['widget']['type'] == 'text' or $field['widget']['type'] == 'textarea') $field['widget']['type'] = 'file';
+				if ( !isset( $field['savepath'] ) ){
+					$field['savepath'] = $this->basePath().'/tables/'.$this->tablename.'/'.$key;
+				} else if ( strpos($field['savepath'], '/') !== 0 and !preg_match('/^[a-z0-9]{1,5}:\/\//', $field['savepath']) ) {
+					$field['savepath'] = DATAFACE_SITE_PATH.'/'.$field['savepath'];
 				}
 
-				if ( !isset($this->_fields[$key]['url']) ){
-					$this->_fields[$key]['url'] = str_replace(DATAFACE_SITE_PATH, DATAFACE_SITE_URL, $this->_fields[$key]['savepath']);
+				if ( !isset($field['url']) ){
+					$field['url'] = str_replace(DATAFACE_SITE_PATH, DATAFACE_SITE_URL, $field['savepath']);
 
-				} else if ( strpos( $this->_fields[$key]['url'], '/') !== 0 and strpos($this->_fields[$key]['url'], 'http://') !== 0 ){
-					$this->_fields[$key]['url'] = DATAFACE_SITE_URL.'/'.$this->_fields[$key]['url'];
+				} else if ( strpos( $field['url'], '/') !== 0 and strpos($field['url'], 'http://') !== 0 ){
+					$field['url'] = DATAFACE_SITE_URL.'/'.$field['url'];
 				}
-                                if ( !isset($this->_fields[$key]['noLinkFromListView']) ){
-                                    $this->_fields[$key]['noLinkFromListView'] = 1;
+                                if ( !isset($field['noLinkFromListView']) ){
+                                    $field['noLinkFromListView'] = 1;
                                 }
 			}
 
@@ -2769,7 +3092,7 @@ class Dataface_Table {
 
 			foreach ($this->_filters as $key=>$value){
 				if ( isset($this->_securityFilter[$key]) ) continue;
-				if ( $value{0} == '$' ){
+				if ( $value[0] == '$' ){
 					if ( !$user and strpos($value, '$user') !== false ) continue;
 					eval('$filter[$key] = "=".'.$value.';');
 				} else if ( substr($value,0,4) == 'php:' ){
@@ -3038,45 +3361,55 @@ class Dataface_Table {
 	function &getTranslations(){
         if ( $this->translations === null ){
 			$this->translations = array();
-			$res = xf_db_query("SHOW TABLES LIKE '".addslashes($this->tablename)."%'", $this->db);
-			if ( !$res ){
+            $sql = "SHOW TABLES LIKE '".addslashes($this->tablename)."%'";
+            if (XF_USE_OPCACHE and xf_opcache_is_query_cached($sql)) {
+                include(xf_opcache_query_path($sql));
+                $this->translations = $xf_opcache_export;
+            } else {
+    			$res = xf_db_query($sql, $this->db);
+    			if ( !$res ){
 
-				throw new Exception(
-					Dataface_LanguageTool::translate(
-						'MySQL query error loading translation tables',
-						'MySQL query error while trying to find translation tables for table "'.addslashes($this->tablename).'". '.xf_db_error($this->db).'. ',
-						array('sql_error'=>xf_db_error($this->db), 'stack_trace'=>'', 'table'=>$this->tablename)
-					),
-					E_USER_ERROR
+    				throw new Exception(
+    					Dataface_LanguageTool::translate(
+    						'MySQL query error loading translation tables',
+    						'MySQL query error while trying to find translation tables for table "'.addslashes($this->tablename).'". '.xf_db_error($this->db).'. ',
+    						array('sql_error'=>xf_db_error($this->db), 'stack_trace'=>'', 'table'=>$this->tablename)
+    					),
+    					E_USER_ERROR
 
-				);
-			}
-			if (xf_db_num_rows($res) <= 0 and substr($this->tablename, 0, 5) != '_tmp_' ){
-				// there should at least be the current table returned.. there is a problem
-				// if nothing was returned.
-				throw new Exception(
-					Dataface_LanguageTool::translate(
-						'Not enough results returned loading translation tables',
-						'No tables were returned when trying to load translation tables for table "'.$this->tablename.'".  This query should have at least returned one record (the current table) so there must be a problem with the query.',
-						array('table'=>$this->tablename)
-					),
-					E_USER_ERROR
-				);
-			}
+    				);
+    			}
+    			if (xf_db_num_rows($res) <= 0 and substr($this->tablename, 0, 5) != '_tmp_' ){
+    				// there should at least be the current table returned.. there is a problem
+    				// if nothing was returned.
+    				throw new Exception(
+    					Dataface_LanguageTool::translate(
+    						'Not enough results returned loading translation tables',
+    						'No tables were returned when trying to load translation tables for table "'.$this->tablename.'".  This query should have at least returned one record (the current table) so there must be a problem with the query.',
+    						array('table'=>$this->tablename)
+    					),
+    					E_USER_ERROR
+    				);
+    			}
 
-			while ( $row = xf_db_fetch_array($res ) ){
-				$tablename = $row[0];
-				if ( $tablename == $this->tablename ){
-					continue;
-				}
+    			while ( $row = xf_db_fetch_array($res ) ){
+    				$tablename = $row[0];
+    				if ( $tablename == $this->tablename ){
+    					continue;
+    				}
 
-				$matches = array();
-				if ( preg_match( '/^'.$this->tablename.'_([a-zA-Z]{2})$/', $tablename, $matches) ){
-					$this->translations[$matches[1]] = 0;
-				}
+    				$matches = array();
+    				if ( preg_match( '/^'.$this->tablename.'_([a-zA-Z]{2})$/', $tablename, $matches) ){
+    					$this->translations[$matches[1]] = 0;
+    				}
 
-			}
-			xf_db_free_result($res);
+    			}
+    			xf_db_free_result($res);
+                if (XF_USE_OPCACHE) {
+                    xf_opcache_cache_query($sql, $this->translations);
+                }
+            }
+			
 
 
 		}
@@ -3096,22 +3429,32 @@ class Dataface_Table {
 			// the translation exists
 			if ( !$translations[$name]  ){
 				// the columns are not loaded yet, we need to load them.
-				$res = xf_db_query("SHOW COLUMNS FROM `".addslashes($this->tablename)."_".addslashes($name)."`", $this->db);
-				if ( !$res ){
-					throw new Exception(
-						Dataface_LanguageTool::translate(
-							'Problem loading columns from translation table',
-							'Problem loading columns from translation table for table "'.$this->tablename.'" in language "'.$name.'". ',
-							array('table'=>$this->tablename,'langauge'=>$name,'stack_trace'=>'','sql_error'=>xf_db_error($this->db))
-						),
-						E_USER_ERROR
-					);
-				}
-				$translations[$name] = array();
-				while ( $row = xf_db_fetch_assoc($res) ){
-					$translations[$name][] = $row['Field'];
-				}
-				xf_db_free_result($res);
+                $sql = "SHOW COLUMNS FROM `".addslashes($this->tablename)."_".addslashes($name)."`";
+                if (XF_USE_OPCACHE and xf_opcache_is_query_cached($sql)) {
+                    include(xf_opcache_query_path($sql));
+                    $translations[$name] = $xf_opcache_export;
+                } else {
+    				$res = xf_db_query($sql, $this->db);
+    				if ( !$res ){
+    					throw new Exception(
+    						Dataface_LanguageTool::translate(
+    							'Problem loading columns from translation table',
+    							'Problem loading columns from translation table for table "'.$this->tablename.'" in language "'.$name.'". ',
+    							array('table'=>$this->tablename,'langauge'=>$name,'stack_trace'=>'','sql_error'=>xf_db_error($this->db))
+    						),
+    						E_USER_ERROR
+    					);
+    				}
+    				$translations[$name] = array();
+    				while ( $row = xf_db_fetch_assoc($res) ){
+    					$translations[$name][] = $row['Field'];
+    				}
+    				xf_db_free_result($res);
+                    if (XF_USE_OPCACHE) {
+                        xf_opcache_cache_query($sql, $translations[$name]);
+                    }
+                }
+				
 			}
 
 			return $translations[$name];
@@ -3158,16 +3501,52 @@ class Dataface_Table {
 	 * @return string The table's label.
 	 */
 	function getLabel(){
-            if ( !@$this->_atts['label'] ){
-                $this->_atts['label'] = $this->tablename;
-            }
-            if ( !@$this->_atts['label__translated']){
-                $this->_atts['label__translated'] = true;
-                $this->_atts['label'] = df_translate('tables.'.$this->tablename.'.label', $this->_atts['label']);
+        if ( !@$this->_atts['label'] ){
+            $this->_atts['label'] = ucwords(str_replace('_', ' ', $this->tablename));
+        }
+        if ( !@$this->_atts['label__translated']){
+            $this->_atts['label__translated'] = true;
+            $this->_atts['label'] = df_translate('tables.'.$this->tablename.'.label', $this->_atts['label']);
 
-            }
-            return $this->_atts['label'];
+        }
+        return $this->_atts['label'];
 
+	}
+    
+    function getPageTitleForAction($actionName) {
+        $key = $actionName.'.pageTitle';
+        if (@$this->_atts[$key]) {
+            return $this->_atts[$key];
+        }
+        return $this->getLabel();
+    }
+    
+    function getListStyle() {
+        if (@$this->_atts and !empty($this->_atts['listStyle'])) {
+            return $this->_atts['listStyle'];
+        }
+        $app = Dataface_Application::getInstance();
+        if (!empty($app->_conf['listStyle'])) {
+            return $app->_conf['listStyle'];
+        }
+        return 'auto';
+    }
+    
+	
+	/**
+	 * Gets the name of the table used for the new record form on this
+	 * table.  This is handy if you want to use a "dummy" table to handle
+	 * new record insertion into this table.
+	 *
+	 * The dummy table is responsible for adding the appropriate record into
+	 * this table, and it should contain a "xf_inserted_record_id" field, which
+	 * will must be populated with the record from *this* table.
+	 */
+	function getNewRecordFormTable() {
+		if (@$this->_atts['new_record_form']) {
+			return $this->_atts['new_record_form'];
+		}
+		return $this->tablename;
 	}
 
 
@@ -3183,6 +3562,7 @@ class Dataface_Table {
 	 * @return string
 	 */
 	function getSingularLabel(){
+            
             if ( !@$this->_atts['singular_label'] ){
                 $this->_atts['singular_label'] = df_singularize($this->getLabel());
             }
@@ -3241,6 +3621,30 @@ class Dataface_Table {
 		}
 		return $this->_cache[__FUNCTION__];
 	}
+    
+    /**
+     * Gets a table attribute.  Table attributes are defined in the fields.ini file in the global
+     * scope.  They can be overridden in the delegate class via the attribute__attname methods.
+     * @since 3.0
+     */
+    function getAttribute($attname) {
+        if (!array_key_exists($attname, $this->_atts)) {
+            $del = $this->getDelegate();
+            $method = 'attribute__'.$attname;
+            if ($del and method_exists($del, $method)) {
+                $this->_atts[$attname] = $del->$method($this);
+            } else {
+                $this->_atts[$attname] = null;
+            }
+        }
+        
+        return @$this->_atts[$attname];
+    }
+    
+    
+    function setAttribute($attname, $attval) {
+        $this->_atts[$attname] = $attval;
+    }
 
 
 
@@ -3290,18 +3694,32 @@ class Dataface_Table {
 			 * Get the table status - when was it last updated, etc...
 			 */
 			if ( Dataface_Application::getInstance()->getMySQLMajorVersion() < 5 ){
-				$res = xf_db_query("SHOW TABLE STATUS LIKE '".addslashes($this->tablename)."'",$this->db);
+				
+                $sql = "SHOW TABLE STATUS LIKE '".addslashes($this->tablename)."'";
 			} else {
+                
 				$dbname = Dataface_Application::getInstance()->_conf['_database']['name'];
-				$res = xf_db_query("select CREATE_TIME as Create_time, UPDATE_TIME as Update_time from information_schema.tables where TABLE_SCHEMA='".addslashes($dbname)."' and TABLE_NAME='".addslashes($this->tablename)."' limit 1", df_db());
+                $sql = "select CREATE_TIME as Create_time, UPDATE_TIME as Update_time from information_schema.tables where TABLE_SCHEMA='".addslashes($dbname)."' and TABLE_NAME='".addslashes($this->tablename)."' limit 1";
+                
 
 			}
-			if ( !$res ){
-				throw new Exception("Error performing mysql query to obtain status for table '".$this->tablename."': ".xf_db_error($this->db), E_USER_ERROR);
-			}
+            if (XF_USE_OPCACHE and xf_opcache_is_query_cached($sql)) {
+                include(xf_opcache_query_path($sql));
+                $this->status = $xf_opcache_export;
+            } else {
+                $res = xf_db_query($sql, df_db());
+            
+    			if ( !$res ){
+    				throw new Exception("Error performing mysql query to obtain status for table '".$this->tablename."': ".xf_db_error($this->db), E_USER_ERROR);
+    			}
 
-			$this->status = xf_db_fetch_array($res);
-			xf_db_free_result($res);
+    			$this->status = xf_db_fetch_array($res);
+    			xf_db_free_result($res);
+                if (XF_USE_OPCACHE) {
+                    xf_opcache_cache_query($sql, $this->status);
+                }
+            }
+            
 		}
 
 		return $this->status;
@@ -3337,7 +3755,7 @@ class Dataface_Table {
 		if ( $backup_times === 0 or $refresh ){
 			$res = xf_db_query("select * from dataface__mtimes", df_db());
 			if ( !$res ){
-				import('Dataface/IO.php');
+				import(XFROOT.'Dataface/IO.php');
 				Dataface_IO::createModificationTimesTable();
 				$res = xf_db_query("select * from dataface__mtimes", df_db());
 				if ( !$res ) throw new Exception(xf_db_error(df_db()));
@@ -3372,22 +3790,28 @@ class Dataface_Table {
 	public static function &getTableModificationTimes($refresh=false){
 		static $mod_times = 0;
 		if ( $mod_times === 0 or $refresh ){
+            $prev_mod_times = $mod_times;
 			$mod_times = array();
 
 			$app = Dataface_Application::getInstance();
 			$dbname = $app->_conf['_database']['name'];
-			//if ( $app->getMySQLMajorVersion() < 5 ){
-			//	$res = xf_db_query("show table status", df_db());
-			//} else {
-			//	$res = xf_db_query("select TABLE_NAME as Name, UPDATE_TIME as Update_time from information_schema.tables where TABLE_SCHEMA='".addslashes($dbname)."'", df_db());
-			//}
-			$res = xf_db_query("show tables", df_db());
+			$sql = "show tables";
+
+			$res = xf_db_query($sql, df_db());
 			if ( !$res ){
 				throw new Exception(xf_db_error(df_db()));
 			}
+            $tables = [];
+            while ($row = xf_db_fetch_row($res) ){
+                $tables[] = $row;
+            }
+            xf_db_free_result($res);
+                
+            
+			
 			$backup_times = null;
 			//while ( $row = xf_db_fetch_assoc($res) ){
-			while ($row = xf_db_fetch_row($res) ){
+			foreach ($tables as $row) {
 				$row['Name'] = $row[0];
 				if ( @$row['Update_time'] ){
 					$mod_times[$row['Name']] = @strtotime($row['Update_time']);
@@ -3399,7 +3823,7 @@ class Dataface_Table {
 						$mod_times[$row['Name']] = $backup_times[$row['Name']];
 					} else {
 						$mod_times[$row['Name']] = time();
-						import('Dataface/IO.php');
+						import(XFROOT.'Dataface/IO.php');
 						Dataface_IO::touchTable($row['Name']);
 
 					}
@@ -3517,7 +3941,7 @@ class Dataface_Table {
 	 */
 	private function &_loadValuelistsIniFile(){
 		if ( !isset($this->_valuelistsConfig) ){
-			import( 'Dataface/ConfigTool.php');
+			import( XFROOT.'Dataface/ConfigTool.php');
 			$configTool =& Dataface_ConfigTool::getInstance();
 			$this->_valuelistsConfig =& $configTool->loadConfig('valuelists', $this->tablename);
 		}
@@ -3603,75 +4027,6 @@ class Dataface_Table {
 
 	}
 
-	function _loadValuelistsIniFile_old(){
-		if ( !isset( $this->_valuelists ) ){
-			$this->_valuelists = array();
-		}
-		$valuelists =& $this->_valuelists;
-
-		import( 'Dataface/ConfigTool.php');
-		$configTool =& Dataface_ConfigTool::getInstance();
-		$conf =& $configTool->loadConfig('valuelists', $this->tablename);
-
-
-		foreach ( $conf as $vlname=>$vllist ){
-			$valuelists[$vlname] = array();
-			if ( is_array( $vllist ) ){
-				foreach ( $vllist as $key=>$value ){
-					if ( $key == '__import__' ){
-						// we import the values from another value list.  The value of this
-						// entry should be in the form tablename.valuelistname
-						list( $ext_table, $ext_valuelist ) = explode('.', $value);
-						if ( isset( $ext_table ) && isset( $ext_valuelist ) ){
-							$ext_table =& self::loadTable($ext_table, $this->db);
-						} else if ( isset( $ext_table ) ){
-							$ext_valuelist = $ext_table;
-							$ext_table =& $this;
-						}
-
-						if ( isset( $ext_table ) ){
-							$ext_valuelist = $ext_table->getValuelist( $ext_valuelist );
-							foreach ( $ext_valuelist as $ext_key=>$ext_value ){
-								$valuelists[$vlname][$ext_key] = $ext_value;
-							}
-						}
-						// clean up temp variables so they don't confuse us
-						// in the next iteration.
-						unset($ext_table);
-						unset($ext_table);
-						unset($ext_valuelist);
-					} else if ( $key == '__sql__' ) {
-						// we perform the sql query specified to produce our valuelist.
-						// the sql query should return two columns only.  If more are
-						// returned, only the first two will be used.   If one is returned
-						// it will be used as both the key and value.
-						$res = df_query($value, null, true, true);
-						if ( is_array($res) ){
-							//while ($row = xf_db_fetch_row($res) ){
-							foreach ($res as $row){
-								$valuekey = $row[0];
-								$valuevalue = count($row)>1 ? $row[1] : $row[0];
-								$valuelists[$vlname][$valuekey] = $valuevalue;
-
-								if ( count($row)>2 ){
-									$valuelists[$vlname.'__meta'][$valuekey] = $row[2];
-								}
-							}
-							//xf_db_free_result($res);
-						} else {
-							throw new Exception("Valuelist query '".$value."' failed. ", E_USER_NOTICE);
-						}
-
-					} else {
-						$valuelists[$vlname][$key] = $value;
-					}
-				}
-			}
-
-
-		}
-
-	}
 
 
 	/**
@@ -3704,7 +4059,7 @@ class Dataface_Table {
 		if ( !isset($this->_cookedValuelists[$name]) ){
 			$this->_cookedValuelists[$name] = null;
 			$delegate =& $this->getDelegate();
-			if ( method_exists($delegate, 'valuelist__'.$name) ){
+			if (isset($delegate) and method_exists($delegate, 'valuelist__'.$name) ){
 				$res = call_user_func(array(&$delegate, 'valuelist__'.$name));
 				if ( is_array($res) ) $this->_cookedValuelists[$name] = $res;
 			}
@@ -3732,7 +4087,7 @@ class Dataface_Table {
 
 			}
 
-			import( 'Dataface/ValuelistTool.php');
+			import( XFROOT.'Dataface/ValuelistTool.php');
 			if ( !isset($this->_cookedValuelists[$name]) and Dataface_ValuelistTool::getInstance()->hasValuelist($name) ){
 
 				$this->_cookedValuelists[$name] = Dataface_ValuelistTool::getInstance()->getValuelist($name);
@@ -3785,7 +4140,7 @@ class Dataface_Table {
 				$valuelists[] = substr($method, 11);
 			}
 		}
-		import( 'Dataface/ValuelistTool.php');
+		import( XFROOT.'Dataface/ValuelistTool.php');
 
 		$valuelists = array_merge($valuelists, array_keys(Dataface_ValuelistTool::getInstance()->valuelists()));
 		return $valuelists;
@@ -3862,7 +4217,7 @@ class Dataface_Table {
 	function _loadRelationshipsIniFile(){
 
 
-		import( 'Dataface/ConfigTool.php');
+		import( XFROOT.'Dataface/ConfigTool.php');
 		$configTool =& Dataface_ConfigTool::getInstance();
 		$conf =& $configTool->loadConfig('relationships', $this->tablename);
 
@@ -4096,7 +4451,7 @@ class Dataface_Table {
 			 $this->_cache['getRelationshipsAsActions'] = $actions;
 		 }
 
-		 import('Dataface/ActionTool.php');
+		 import(XFROOT.'Dataface/ActionTool.php');
 		 $actionsTool =& Dataface_ActionTool::getInstance();
 		 $out = $actionsTool->getActions($params, $actions);
 		 if ( isset($relationshipName) ) {
@@ -4177,7 +4532,7 @@ class Dataface_Table {
 	 */
 
 
-
+    private $checkedDelegate;
 	/**
 	 * @brief Returns a reference to the Table's delegate class.
 	 * @return DelegateClass
@@ -4185,7 +4540,8 @@ class Dataface_Table {
 	 */
 	function &getDelegate(){
 		$out = null;
-		if ( !isset( $this->_delegate ) ){
+		if ( !$this->checkedDelegate ){
+            $this->checkedDelegate = true;
 			if ( $this->_hasDelegateFile() ){
 
 				$this->_loadDelegate();
@@ -4251,7 +4607,7 @@ class Dataface_Table {
 				}
 			}
 
-			if ( method_exists($this->_delegate, 'tablePermissions') ){
+			if ( isset($this->_delegate) and method_exists($this->_delegate, 'tablePermissions') ){
 				// table permissions are now just done inside the getPermissions() method.
 				// so the tablePermissions() method is no longer supported.  Let the developer
 				// know in case he has old code.
@@ -4547,18 +4903,20 @@ class Dataface_Table {
                 }
             }
         }
-        if (!isset(self::$knownImportFilters[$this->_tablename])) {
+        if (!isset(self::$knownImportFilters[$this->tablename])) {
             $filters = $this->getImportFilters();
-            self::$knownImportFilters[$this->_tablename] = count($filters)>0;
+            self::$knownImportFilters[$this->tablename] = count($filters)>0;
             if (DATAFACE_EXTENSION_LOADED_APC) {
                 apc_store(DATAFACE_SITE_PATH.'/import_filters', self::$knownImportFilters);
             } else if (@$_SESSION) {
                 $_SESSION['import_filters'] = self::$knownImportFilters;
             }
         }
-        return self::$knownImportFilters[$this->_tablename];
+        return self::$knownImportFilters[$this->tablename];
 	}
 
+    
+    
 	/**
 	 * @brief Import filters facilitate the importing of data into the table.
 	 * @return array Array of Dataface_ImportFilter objects
@@ -4568,7 +4926,7 @@ class Dataface_Table {
 	 */
 
 	function &getImportFilters(){
-		import( 'Dataface/ImportFilter.php');
+		import( XFROOT.'Dataface/ImportFilter.php');
 		if ( $this->_importFilters === null ){
 			$this->_importFilters = array();
 			/*
@@ -4657,7 +5015,7 @@ class Dataface_Table {
 	 *
 	 */
 	function createImportTable(){
-		import('Dataface/QueryBuilder.php');
+		import(XFROOT.'Dataface/QueryBuilder.php');
 		/*
 		 * It is a good idea to clean the import tables before we create them.
 		 * That way they don't get cluttered
@@ -4787,7 +5145,7 @@ class Dataface_Table {
 			 * that works.
 			 */
 			foreach (array_keys($filters) as $filtername){
-				$parsed =& $filters[$filtername]->import($data, $defaultValues);
+				$parsed = $filters[$filtername]->import($data, $defaultValues);
 				if ( PEAR::isError($parsed) ){
 					/*
 					 * This filter encountered an error.
@@ -5221,7 +5579,7 @@ class Dataface_Table {
 			} else if ( !$isEmpty and isset($field['money_format']) ){
 
 				$fieldLocale = null;
-				if ( method_exists($delegate, 'getFieldLocale') ){
+				if ( isset($delegate) and method_exists($delegate, 'getFieldLocale') ){
 					$fieldLocale = $delegate->getFieldLocale($this, $fieldname);
 
 				}
@@ -5260,7 +5618,7 @@ class Dataface_Table {
 
 
 			$fieldLocale = null;
-			if ( method_exists($delegate, 'getFieldLocale') ){
+			if ( isset($delegate) and method_exists($delegate, 'getFieldLocale') ){
 				$fieldLocale = $delegate->getFieldLocale($this, $fieldname);
 
 			}
@@ -5350,7 +5708,7 @@ class Dataface_Table {
 			//error_log("\nAbout to parse $fieldname for value $value",3,'log.txt');
 			//if ( is_string($value) and strlen($value)> 10){
 				//error_log('About to serialize '.$fieldname, 3, 'log.txt');
-				import( 'XML/Unserializer.php');
+				import( XFLIB.'XML/Unserializer.php');
 				$unserializer = new XML_Unserializer();
 				$parsed = $unserializer->unserialize($value);
 
@@ -5415,7 +5773,7 @@ class Dataface_Table {
 				$replacement = $this->normalize($matches[1], $values[$matches[1]]);
 
 			} else {
-				$replacement = '\$0';
+				$replacement = '';
 			}
 			$str = preg_replace( '/(?<!\\\)\$'.$matches[1].'/', $replacement, $str);
 			$blackString = preg_replace( '/(?<!\\\)\$'.$matches[1].'/', "", $blackString);
@@ -5796,11 +6154,11 @@ class Dataface_Table {
 	 *
 	 */
 	function getActions(&$params,$noreturn=false){
-		import( 'Dataface/ActionTool.php');
+		import( XFROOT.'Dataface/ActionTool.php');
 		$actionsTool =& Dataface_ActionTool::getInstance();
 		if ( !$this->_actionsLoaded  ){
 			$this->_actionsLoaded = true;
-			import( 'Dataface/ConfigTool.php');
+			import( XFROOT.'Dataface/ConfigTool.php');
 			$configTool =& Dataface_ConfigTool::getInstance();
 			$actions =& $configTool->loadConfig('actions',$this->tablename);
 			//print_r($actions);

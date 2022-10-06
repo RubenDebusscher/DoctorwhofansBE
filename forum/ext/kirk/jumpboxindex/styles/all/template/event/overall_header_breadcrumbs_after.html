@@ -1,0 +1,3 @@
+{% if JUMPBOX_INDEX_UCP && JUMPBOX_POSITION == 1 %}
+	<li data-skip-responsive="true" class="{% if JUMPBOX_RIGHT %}right{% else %}left{% endif %}side jumpbox-navbar-top">{% INCLUDE 'jumpbox_modern.html' %}</li>
+{% endif %}

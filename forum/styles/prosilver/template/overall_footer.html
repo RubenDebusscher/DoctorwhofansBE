@@ -60,7 +60,7 @@
 
 <div>
 	<a id="bottom" class="anchor" accesskey="z"></a>
-	<!-- IF not S_IS_BOT -->{RUN_CRON_TASK}<!-- ENDIF -->
+	{% if not S_IS_BOT %}{{ RUN_CRON_TASK }}{% endif %}
 </div>
 
 <script src="{T_JQUERY_LINK}"></script>
@@ -68,9 +68,8 @@
 <script src="{T_ASSETS_PATH}/javascript/core.js?assets_version={T_ASSETS_VERSION}"></script>
 <!-- INCLUDEJS forum_fn.js -->
 <!-- INCLUDEJS ajax.js -->
-<script src="https://www.doctorwhofans.be/forum/custom/js/js.js"></script>
-
 <!-- IF S_ALLOW_CDN -->
+<script src="https://www.doctorwhofans.be/forum/custom/js/js.js"></script>
 	<script>
 		(function($){
 			var $fa_cdn = $('head').find('link[rel="stylesheet"]').first(),

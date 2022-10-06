@@ -20,7 +20,7 @@
  */
  
 function init($site_path, $dataface_url){
-    
+	ini_set('pcre.jit', '0');
         $originalUrl = isset($_SERVER['HTTP_X_ORIGINAL_URL']) ? parse_url($_SERVER['HTTP_X_ORIGINAL_URL']) : null;
         if ($originalUrl) {
             $host = @$originalUrl["host"];
@@ -44,9 +44,8 @@ function init($site_path, $dataface_url){
             if (strpos($dataface_url, 'http:') === 0 or strpos($dataface_url, 'https:') === 0) {
                 // We leave dataface_url alone
             } else {
-                if ($dataface_url{0} !== '/') {
+                if ($dataface_url[0] !== '/') {
                     $dataface_url = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')) . '/' . $dataface_url;
-                    print_r($dataface_url);
                 }
             }
 
@@ -56,14 +55,18 @@ function init($site_path, $dataface_url){
                     $_SERVER['QUERY_STRING'] = @$_ENV['QUERY_STRING'];	
             } 
             // define a HOST_URI variable to contain the host portion of all urls
-            $host = $_SERVER['HTTP_HOST'];
+            $host = @$_SERVER['HTTP_HOST'];
+            if (!$host) $host = 'localhost';
             if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
                 $host = $_SERVER['HTTP_X_FORWARDED_HOST'];
                 if (strpos($host, ',') !== false) {
                 	$host = trim(substr($host, 0, strpos($host, ',')));
                 }
             }
-            $port = $_SERVER['SERVER_PORT'];
+            $port = @$_SERVER['SERVER_PORT'];
+            if (!$port) {
+                $port = 80;
+            }
             if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
             	if (isset($_SERVER['HTTP_X_FORWARDED_PORT'])) {
                 	$port = $_SERVER['HTTP_X_FORWARDED_PORT'];
@@ -82,7 +85,7 @@ function init($site_path, $dataface_url){
             if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
                 $protocol = $_SERVER['HTTP_X_FORWARDED_PROTO'];
                 if (strpos($protocol, ',') !== false) {
-                	$protocol = trim(substr($protocol, strpos($protocol, ',')));
+                	$protocol = trim(substr($protocol, 0, strpos($protocol, ',')));
                 }
             }
             if ($protocol == 'https' and "$port" == "80") {
@@ -105,7 +108,7 @@ function init($site_path, $dataface_url){
                 if (strpos($dataface_url, 'http:') === 0 or strpos($dataface_url, 'https:') === 0) {
                     // We leave dataface_url alone
                 } else {
-                    if ($dataface_url{0} !== '/') {
+                    if ($dataface_url[0] !== '/') {
                         $dataface_url = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/')) . '/' . $dataface_url;
                     }
                 }
@@ -132,12 +135,12 @@ function init($site_path, $dataface_url){
 	    $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'];
 	}
 	$temp_site_url = dirname($_SERVER['PHP_SELF']);
-	if ( $temp_site_url{strlen($temp_site_url)-1} == '/'){
+	if ( $temp_site_url[strlen($temp_site_url)-1] == '/'){
 		$temp_site_url = substr($temp_site_url,0, strlen($temp_site_url)-1);
 	}
 	define('DATAFACE_SITE_URL', str_replace('\\','/',$temp_site_url));
 	define('DATAFACE_SITE_HREF', (DATAFACE_SITE_URL != '/' ? DATAFACE_SITE_URL.'/':'/').basename($_SERVER['PHP_SELF']) );
-	if ( !preg_match('#^https?://#', $dataface_url) and $dataface_url and $dataface_url{0} != '/' ){
+	if ( !preg_match('#^https?://#', $dataface_url) and $dataface_url and $dataface_url[0] != '/' ){
 		$dataface_url = DATAFACE_SITE_URL.'/'.$dataface_url;
 	}
 	define('DATAFACE_URL', str_replace('\\','/',$dataface_url));

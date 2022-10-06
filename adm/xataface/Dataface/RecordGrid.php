@@ -1,5 +1,23 @@
 <?php
-
+/*-------------------------------------------------------------------------------
+ * Xataface Web Application Framework
+ * Copyright (C) 2005-2008 Web Lite Solutions Corp (shannah@sfu.ca)
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *-------------------------------------------------------------------------------
+ */
 
 /******************************************************************************************************************
  * File: 	Dataface/RecordGrid.php
@@ -53,7 +71,7 @@ class Dataface_RecordGrid {
 	var $actionCellCallbacks = array();
 	var $cellFilters = array();
 	
-	function __construct($records, $columns=null, $labels=null){
+	function __construct(&$records, $columns=null, $labels=null){
 		$this->records =& $records;
 		if ( !is_array($this->records) ){
 			throw new Exception('In Dataface_RecordGrid the first parameter is expected to be an array but received "'.get_class($records).'"', E_USER_ERROR);
@@ -62,14 +80,14 @@ class Dataface_RecordGrid {
 		$this->columns = $columns;
 		$this->labels = $labels;
 	}
-		function Dataface_RecordGrid($records, $columns=null, $labels=null) { self::__construct($records, $columns, $labels); }
+		function Dataface_RecordGrid(&$records, $columns=null, $labels=null) { self::__construct($records, $columns, $labels); }
 	
 	function addActionCellCallback($callback){
 		$this->actionCellCallbacks[] = $callback;
 	}
 	
 	function toHTML(){
-		import('Dataface/SkinTool.php');
+		import(XFROOT.'Dataface/SkinTool.php');
 		$recKeys = array_keys($this->records);
 		$sampleRecord =& $this->records[$recKeys[0]];
 		if ( $this->columns === null ){
@@ -93,7 +111,6 @@ class Dataface_RecordGrid {
 		//print_r($columns);
 		
 		$gridContent = array();
-
 		foreach ($this->records as $record){
 			if ( $hasCallbacks ) $row[RecordGrid_ActionLabel] = '';
 			if ( is_a($record, 'Dataface_Record') or is_a($record, 'Dataface_RelatedRecord') ){
@@ -140,7 +157,7 @@ class Dataface_RecordGrid {
 		
 		if ( $this->labels === null ){
 			$this->labels = array();
-			foreach ($this->columns as $column){
+			foreach ($columns as $column){
 				if ( $column == RecordGrid_ActionLabel ){
 					$labels[$column] = '';
 					continue;
