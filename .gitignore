@@ -33,3 +33,5 @@ push.js
 **/templates_c
 debug.log
 MC
+/images/**/.dataface_history
+/images/**/uploads
