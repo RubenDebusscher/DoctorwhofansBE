@@ -35,7 +35,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	// page titel
 	'JUMPBOXINDEX'						=> 'Jumpbox on Index',
-	'JUMPBOXINDEX_EXPLAIN'				=> 'Various settings (eg the position of the Jumpbox) can be made here.',
+	'JUMPBOXINDEX_EXPLAIN'				=> 'Various settings (e.g. the position of the Jumpbox) can be made here.',
 	'JUMPBOXINDEX_DEFAULT'				=> 'Display of the jumpbox on the Board index',
 
 	// jumpbox design
@@ -63,6 +63,8 @@ $lang = array_merge($lang, [
 	'JUMPBOX_FORUMLIST_BEFORE'			=> 'Above the Forumlist',
 	'JUMPBOX_STATISTICS_AFTER'			=> 'Below the Statistics',
 	'JUMPBOX_NAVBAR_BOTTOM'				=> 'In the bottom navbar',
+
+	// jumpbox icon
 	'JUMPBOX_FONT_ICON'					=> 'Jumpbox Icon',
 	'JUMPBOX_FONT_ICON_EXPLAIN'			=> 'Enter here the name of a <a href="https://fontawesome.com/v4.7.0/icons/" target="_blank" rel="noopener noreferrer">Font Awesome</a> symbol (e.g. <strong>fa-map-o</strong>).<br />Leave this field blank to use the default Font Awesome-Symbol.',
 

@@ -216,13 +216,13 @@ class acp_controller
 					break;
 
 					case 't':
-						$subscribe_sql = "user_digest_type = 'NONE' AND user_digest_has_unsubscribed = 1 AND";
+						$subscribe_sql = "user_digest_type = 'NONE' AND user_digest_has_unsubscribed = 1 AND ";
 						$stopped_subscribing = ' selected="selected"';
 						$context = $this->language->lang('DIGESTS_STOPPED_SUBSCRIBING');
 					break;
 
 					case 's':
-						$subscribe_sql = "user_digest_type <> 'NONE' AND user_digest_send_hour_gmt >= 0 AND user_digest_send_hour_gmt < 24 AND user_digest_has_unsubscribed = 0 AND";
+						$subscribe_sql = "user_digest_type <> 'NONE' AND user_digest_send_hour_gmt >= 0 AND user_digest_send_hour_gmt < 24 AND user_digest_has_unsubscribed = 0 AND ";
 						$subscribe_selected = ' selected="selected"';
 						$context = $this->language->lang('DIGESTS_SUBSCRIBED');
 					break;
@@ -345,7 +345,7 @@ class acp_controller
 				$this->db->sql_freeresult($result);
 
 				// Create pagination logic
-				$pagination_url = append_sid("index.$this->phpEx?i=-phpbbservices-digests-acp-main_module&amp;mode=digests_edit_subscribers&amp;sortby=$sortby&amp;subscribe=$subscribe&amp;member=$member&amp;selected=$selected&amp;sortorder=$sortorder");
+				$pagination_url = append_sid("index.{$this->phpEx}?i=-phpbbservices-digests-acp-main_module&amp;mode=digests_edit_subscribers&amp;sortby={$sortby}&amp;subscribe={$subscribe}&amp;member={$member}&amp;selected={$selected}&amp;sortorder={$sortorder}");
 				$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_users, $this->config['phpbbservices_digests_rows_per_page'], $start);
 
 				// Stealing some code from my Smartfeed extension so I can get a list of forums that a particular user can access
@@ -741,24 +741,14 @@ class acp_controller
 							}
 
 							// Check this forum's checkbox? Only if they have forum subscriptions.
+							$check = true;
 							if (!$all_by_default)
 							{
 								$check = false;
-								if ($forum_type == FORUM_POST)	// Categories can't be checked, as they are wrappers
+								if ($forum_type == FORUM_POST && in_array($forum_id, $subscribed_forums))	// Categories can't be checked, as they are wrappers
 								{
-									foreach($subscribed_forums as $this_row)
-									{
-										if ($this_row['forum_id'] == $forum_id)
-										{
-											$check = true;
-											break;
-										}
-									}
+									$check = true;
 								}
-							}
-							else
-							{
-								$check = true;
 							}
 
 							// Show the forum or category
@@ -821,7 +811,7 @@ class acp_controller
 						USERS_TABLE		=> 'u',
 					),
 
-					'WHERE'		=> "user_digest_type <> '" . constants::DIGESTS_NONE_VALUE . "' AND user_type <> " . USER_IGNORE,
+					'WHERE'		=> "user_digest_type <> '" . constants::DIGESTS_NONE_VALUE . "' AND " . $this->db->sql_in_set('user_type', array(USER_NORMAL, USER_FOUNDER)),
 
 					'GROUP_BY'	=> 'user_digest_send_hour_gmt',
 
@@ -1025,7 +1015,7 @@ class acp_controller
 
 				// Create pagination logic
 				$start = $this->request->variable('start', 0);
-				$pagination_url = append_sid("./index.$this->phpEx?i=-phpbbservices-digests-acp-main_module&amp;mode=digests_report&amp;sort={$sort_dir}&amp;sort_field={$sort_field}");
+				$pagination_url = append_sid("./index.{$this->phpEx}?i=-phpbbservices-digests-acp-main_module&amp;mode=digests_report&amp;sort={$sort_dir}&amp;sort_field={$sort_field}");
 				$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_rows, $this->config['phpbbservices_digests_rows_per_page'], $start);
 
 				// Get report data, show from most recent date/hour to least recent
@@ -1034,7 +1024,7 @@ class acp_controller
 					'FROM'	=> [
 						$this->report_table => 'r',
 					],
-					'ORDER_BY' => "$sort_field $sort_dir{$more_sorts} LIMIT {$start},{$this->config['phpbbservices_digests_rows_per_page']}"
+					'ORDER_BY' => "{$sort_field} {$sort_dir}{$more_sorts} LIMIT {$start},{$this->config['phpbbservices_digests_rows_per_page']}"
 				];
 				$sql = $this->db->sql_build_query('SELECT', $sql_array);
 				$result = $this->db->sql_query($sql);
@@ -1161,14 +1151,14 @@ class acp_controller
 				// If config variable phpbbservices_digests_min_popularity_size value is more than any row in the phpbb_users table for the
 				// column user_digest_popularity_size, adjust this column
 				$sql = 'UPDATE ' . USERS_TABLE . ' 
-							SET user_digest_popularity_size = ' . (int) $this->request->variable('phpbbservices_digests_min_popularity_size', 0) . '
-							WHERE user_digest_popularity_size < ' . (int) $this->request->variable('phpbbservices_digests_min_popularity_size', 0);
+							SET user_digest_popularity_size = ' . $this->request->variable('phpbbservices_digests_min_popularity_size', 0) . '
+							WHERE user_digest_popularity_size < ' . $this->request->variable('phpbbservices_digests_min_popularity_size', 0);
 				$this->db->sql_query($sql);
 
 				// Also adjust the digest default so new digest subscriptions will have this value if it is lower than the new value.
-				if ((int) $this->config['phpbbservices_digests_user_digest_popularity_size'] < (int) $this->request->variable('phpbbservices_digests_min_popularity_size', 0))
+				if ((int) $this->config['phpbbservices_digests_user_digest_popularity_size'] < $this->request->variable('phpbbservices_digests_min_popularity_size', 0))
 				{
-					$this->config->set('phpbbservices_digests_user_digest_popularity_size', (int) $this->request->variable('phpbbservices_digests_min_popularity_size', 0));
+					$this->config->set('phpbbservices_digests_user_digest_popularity_size', $this->request->variable('phpbbservices_digests_min_popularity_size', 0));
 				}
 			}
 
@@ -1805,9 +1795,9 @@ class acp_controller
 				{
 
 					// Call the mailer's run method. The logic for sending a digest is embedded in this method, which is normally run as a cron task.
-					$success = $this->mailer->run();
+					$processed_count = $this->mailer->run();
 
-					if (!$success)
+					if ($processed_count === false)
 					{
 						$message_type = E_USER_WARNING;
 						$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_MAILER_RAN_WITH_ERROR');
@@ -1932,10 +1922,12 @@ class acp_controller
 				$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_' . strtoupper($mode));
 			}
 
-			if ($mode == 'digests_test')
+			if ($mode == 'digests_test' && isset($processed_count) && $processed_count > 0)
 			{
 				// This code will place the module links in the ACP sidebar if they have disappeared. They can disappear
-				// when the digests mailer uses the templating system (any digests are processed for an hour).
+				// when the digests mailer uses the templating system (any digests are processed for an hour). It appears
+				// to occur only if one or more digests were processed (either mailed or run but filters prevented a digest
+				// from going out.)
 				if (!isset($module))
 				{
 					$module_id	= $this->request->variable('i', '');
@@ -1997,7 +1989,7 @@ class acp_controller
 				USERS_TABLE		=> 'u',
 			),
 
-			'WHERE' 	=> $this->db->sql_in_set('user_digest_send_hour_gmt', array($hour_utc)),
+			'WHERE' 	=> $this->db->sql_in_set('user_digest_send_hour_gmt', array($hour_utc)) . ' AND ' . $this->db->sql_in_set('user_digest_type', array(constants::DIGESTS_NONE_VALUE), true),
 
 			'ORDER_BY'	=> 'username'
 		);

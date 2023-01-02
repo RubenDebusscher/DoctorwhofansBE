@@ -33,7 +33,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, [
-	// MODULE
+	// module
 	'ACP_JUMPBOXINDEX'				=> 'Jumpbox on Index',
 	'ACP_JUMPBOXINDEX_SETTINGS'		=> 'Settings',
 ]);

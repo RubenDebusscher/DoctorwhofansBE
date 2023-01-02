@@ -36,4 +36,5 @@ $lang = array_merge($lang, [
 	'JUMPBOXINDEX'										=> 'Jumpbox on Index',
 	'ERROR_JUMPBOXINDEX_EXTENSION_NOT_ENABLEABLE'		=> 'Die Erweiterung „%1$s“ kann nicht aktiviert werden. Bitte prüfe die Voraussetzungen, die für die Erweiterung notwendig sind.',
 	'ERROR_MSG_PHPBB_WRONG_VERSION'						=> 'Minimum phpBB %2$s aber kleiner als %3$s',
+	'ERROR_MSG_PHP_WRONG_VERSION'						=> 'Minimum PHP %2$s aber kleiner als %3$s',
 ]);

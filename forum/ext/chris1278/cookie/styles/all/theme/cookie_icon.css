@@ -3,12 +3,12 @@
 	font-style: normal;
 	font-weight: 900;
 	font-display: block;
-	src: url("https://raw.githubusercontent.com/chris1278/fonts/main/fa-solid-900.eot");
-	src: url("https://raw.githubusercontent.com/chris1278/fonts/main/fa-solid-900.eot?#iefix") format("embedded-opentype"),
-	url("https://raw.githubusercontent.com/chris1278/fonts/main/fa-solid-900.woff2") format("woff2"),
-	url("https://raw.githubusercontent.com/chris1278/fonts/main/fa-solid-900.woff") format("woff"),
-	url("https://raw.githubusercontent.com/chris1278/fonts/main/fa-solid-900.ttf") format("truetype"),
-	url("https://raw.githubusercontent.com/chris1278/fonts/main/fa-solid-900.svg#fontawesome") format("svg");
+	src: url("./font-awesome-5/fa-solid-900.eot");
+	src: url("./font-awesome-5/fa-solid-900.eot?#iefix") format("embedded-opentype"),
+	url("./font-awesome-5/fa-solid-900.woff2") format("woff2"),
+	url("./font-awesome-5/fa-solid-900.woff") format("woff"),
+	url("./font-awesome-5/fa-solid-900.ttf") format("truetype"),
+	url("./font-awesome-5/fa-solid-900.svg#fontawesome") format("svg");
 }
 
 .opt-in-cookie-icon::before {

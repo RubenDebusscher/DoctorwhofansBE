@@ -1,0 +1,56 @@
+{% INCLUDECSS 'acp_dsgvo.css' %}
+{% include 'overall_header.html' %}
+<h1>{{ lang('ACP_DSGVO_SETTINGS') }}</h1>
+<p>{{ lang('DSGVO_DESC', DSGVO_EXT_NAME, DSGVO_EXT_VER) }}</p>
+<br>
+	{% if DSGVO_NOTES %}
+	<div class="errorbox notice">
+		{{ DSGVO_NOTES }}
+	</div>
+	{% endif %}
+{% if S_ERROR %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+{% endif %}
+
+<form id="chris1278_dsgvo_acp" name="chris1278_dsgvo_acp" method="post" action="{{ U_ACTION }}">
+
+	<fieldset>
+	<legend>{{ lang('ACP_DSGVO_DOWNLOAD_OPTIONS') }}</legend>
+	<dl>
+		<dt><label>{{ lang('ACP_DSGVO_POST_FORMAT') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_FORMAT_EXPLAIN') }}</span></dt>
+	<dd><label><input type="radio" class="radio" id="dsgvo_post_format" name="dsgvo_post_format" value="1"{% if DSGVO_POST_FORMAT %} checked="checked"{% endif %}/> {{ lang('DSGVO_ALL') }}</label>
+		<label><input type="radio" class="radio" name="dsgvo_post_format" value="0"{% if not DSGVO_POST_FORMAT %} checked="checked" {% endif %} /> {{ lang('DSGVO_META') }}</label></dd>
+	</dl>
+	<dl>
+		<dt><label>{{ lang('ACP_DSGVO_POST_READ') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_READ_EXPLAIN') }}</span></dt>
+		<dd><label><input type="radio" class="radio" name="dsgvo_post_read" value="0"{% if not DSGVO_POST_READ %} checked="checked" {% endif %}/> {{ lang('ALL_POSTS') }}</label>
+			<label><input type="radio" class="radio" id="dsgvo_post_read" name="dsgvo_post_read" value="1" {% if DSGVO_POST_READ %} checked="checked" {% endif %} /> {{ lang('DSGVO_READ') }}</label></dd>
+	</dl>
+	<dl>
+		<dt><label>{{ lang('ACP_DSGVO_POST_UNAPPROVED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_UNAPPROVED_EXPLAIN') }}</span></dt>
+		<dd><label><input type="radio" class="radio" id="dsgvo_post_unapproved" name="dsgvo_post_unapproved" value="1"{% if DSGVO_POST_UNAPPROVED %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="dsgvo_post_unapproved" value="0"{% if not DSGVO_POST_UNAPPROVED %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+	</dl>
+	<dl>
+		<dt><label>{{ lang('ACP_DSGVO_POST_DELETED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_DELETED_EXPLAIN') }}</span></dt>
+		<dd><label><input type="radio" class="radio" id="dsgvo_post_deleted" name="dsgvo_post_deleted" value="1"{% if DSGVO_POST_DELETED %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="dsgvo_post_deleted" value="0"{% if not DSGVO_POST_DELETED %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+	</dl>
+	</fieldset>
+
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+		<input class="button2" type="submit" id="reset" name="reset" value="{{ lang('RESET') }}" />
+	<p class="dsgvo_acp_copyright">
+		{{ DSGVO_EXT_NAME }} &copy; Chris1278<br />
+		{{ lang('DSGVO_LANG_DESC') }} {{ lang('DSGVO_LANG_EXT_VER') }} &bull; {{ lang('DSGVO_LANG_AUTHOR') }}
+	</p>
+	{{ S_FORM_TOKEN }}
+	</fieldset>
+
+</form>
+
+{% include 'overall_footer.html' %}

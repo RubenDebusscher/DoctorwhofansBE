@@ -70,4 +70,8 @@ input[type="submit"]:disabled {
 		margin-left: -6px;
 		padding: 2px 5px;
 	}
+
+	#acp_jumpboxindex dd {
+		margin-top: .5em;
+	}
 }

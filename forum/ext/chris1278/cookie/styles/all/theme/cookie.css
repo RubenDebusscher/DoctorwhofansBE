@@ -106,7 +106,9 @@ p.cm-list-description span {
 	color: #999999 !important;
 }
 
-/* thie settings for the fontawesome icon and the SVG Icon for the Box */
+/*
+* thie settings for the fontawesome icon and the SVG Icon for the Box
+*/
 .cok_nav {
 	padding: 1px;
 	font-size: 12px;
@@ -125,7 +127,46 @@ p.cm-list-description span {
 }
 
 @media (max-width: 600px) {
-#cookie_svg {
-	display: none;
+	#cookie_svg {
+		display: none;
+	}
 }
+
+/*
+* These settings are for formatting the information boxes of each switch. This formatting and the html code for the info boxes are in the cookie.php file.
+*/
+.collapsible_summary {
+	cursor: pointer;
+	text-decoration: underline solid #00cc66;
+}
+
+.cookie_arrow {
+	color: #00cc66 !important;
+	text-decoration: underline solid #00cc66;
+}
+
+
+.cookie_tbody {
+	background-color: inherit;
+	border: 3px solid #61676d;
+	word-break: break-word;
+}
+
+.cookie_tr {
+	border-bottom: 1px solid #61676d;
+}
+
+.cookie_th {
+	color: #33CCFF !important;
+	padding: 5px;
+	width: 30%;
+}
+
+.cookie_label {
+	color: #ACA3A3 !important;
+}
+
+.cookie_td {
+	padding: 5px;
+	width: 70%;
 }

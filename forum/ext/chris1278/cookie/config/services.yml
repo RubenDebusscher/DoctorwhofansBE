@@ -16,6 +16,7 @@ services:
     chris1278.cookie.listener:
         class: chris1278\cookie\event\main_listener
         arguments:
+            - '@ext.manager'
             - '@config'
             - '@template'
             - '@language'

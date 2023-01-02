@@ -2,9 +2,9 @@
     "name": "kirk/jumpboxindex",
     "type": "phpbb-extension",
     "description": "Displays the jumpbox on the Board index or additional on User Control Panel.",
-    "homepage": "https://reyno41.bplaced.net/phpbb/viewtopic.php?t=487",
-    "version": "1.0.2",
-    "time": "2022-01-28",
+    "homepage": "https://www.phpbb.com/community/viewtopic.php?t=2623131",
+    "version": "1.0.3",
+    "time": "2022-07-09",
     "license": "GPL-2.0-only",
     "authors": [
         {

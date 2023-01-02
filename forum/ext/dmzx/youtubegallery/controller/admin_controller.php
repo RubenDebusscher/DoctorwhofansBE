@@ -139,7 +139,7 @@ class admin_controller
 		$lang_mode			= $this->user->lang['ACP_VIDEO_CATEGORY'];
 		$video_cat_id 		= $this->request->variable('video_cat_id', 0);
 		$video_cat_title 	= $this->request->variable('video_cat_title', '', true);
-		$action				= ($this->request->is_set_post('add') ? 'add' : ($this->request->is_set_post('delete')) ? 'delete' : $this->request->variable('action', ''));
+		$action				= (($this->request->is_set_post('add')) ? 'add' : (($this->request->is_set_post('delete')))) ? 'delete' : ($this->request->variable('action', ''));
 
 		$sql_ary = array(
 			'video_cat_id'		=> $video_cat_id,

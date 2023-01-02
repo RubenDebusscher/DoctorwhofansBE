@@ -31,7 +31,7 @@ class jumpboxindex_module
 		$this->tpl_name = 'acp_jumpboxindex_' . $mode;
 
 		// Set the page title for our ACP page
-		$this->page_title	= $this->language->lang('ACP_JUMPBOXINDEX') . ' &hyphen; ' . $this->language->lang('ACP_JUMPBOXINDEX_' . utf8_strtoupper($mode));
+		$this->page_title	= $this->language->lang('ACP_JUMPBOXINDEX') . ' &hyphen; ' . $this->language->lang('ACP_JUMPBOXINDEX_' . strtoupper($mode));
 
 		$acp_controller->{'jumpbox_' . $mode}($this->u_action);
 	}

@@ -15,7 +15,7 @@ var klaroConfig =
     default: false,
 	//noch schalter anlegen in acp
 	styling: {
-        theme: [klarostyle],
+		theme: [klarostylecolor, klarostyleposition1, klarostyleposition2],
     },
     // From here the values are set in the ACP.
     mustConsent: windowposition,
@@ -54,8 +54,8 @@ var klaroConfig =
             },
             consentNotice:
 			{
+				description: first_infos,
                 changeDescription: new_changes,
-                description: first_infos,
                 learnMore: the_cookie_settings,
             },
             save: save,
@@ -117,21 +117,39 @@ var klaroConfig =
                     description: another_ext_explain,
                     title: another_ext
                 },
+				extra_service:
+				{
+                    description: extra_services_explain,
+                    title: extra_services
+                },
             },
         },
     },
 
     // This is a list of third-party services that Klaro will manage for you.
-    services: [
-	{
-        name: 'essential',
-        default: true,
-        optOut: false,
-        required: true,
-        title: cs_techcookie,
-        purposes: ['essential'],
-        cookies: [],
-    }, ],
+    services:
+	[
+		{
+			name: 'phpbb',
+			default: true,
+			optOut: false,
+			required: true,
+			title: cs_techcookie,
+			description: ds_techcookie,
+			purposes: ['essential'],
+			cookies: ['111'],
+		},
+		{
+			name: 'Klaro',
+			default: true,
+			optOut: false,
+			required: true,
+			title: cs_klarocookie,
+			description: ds_klarocookie,
+			purposes: ['essential'],
+			cookies: ['111'],
+		},
+	],
 };
 var switch_1 = false;
 var switch_2 = false;
@@ -139,6 +157,9 @@ var switch_3 = false;
 var switch_4 = false;
 var switch_5 = false;
 var switch_6 = false;
+var switch_7 = false;
+var switch_8 = false;
+var switch_9 = false;
 
 // YouTube
 if (youtube_bbcode_switch == true)
@@ -152,6 +173,7 @@ if (youtube_bbcode_switch == true)
             title: cs_youtube,
             purposes: ['media'],
 			description: ds_youtube,
+			cookies: ['111'],
         },
     };
 }
@@ -167,7 +189,7 @@ if (google_translator_switch == true)
 	{
         services:
 		{
-            name: 'googletranslate',
+            name: data_name_googletranslate,
             default: false,
             title: cs_google_translator,
             purposes: ['another_ext'],
@@ -202,8 +224,8 @@ if (google_analytics_no_tm_switch == true)
     var part3 =
 	{
         services:
-		{
-            name: 'g-analytics',
+		{			
+            name: data_name_googleanalytics,
             default: false,
             title: cs_google_analytics,
             purposes: ['extern'],
@@ -272,7 +294,7 @@ if (matomo_switch == true)
 	{
         services:
 		{
-            name: 'matomo',
+            name: data_name_matomo,
             default: false,
             title: cs_matomo,
             purposes: ['extern'],
@@ -335,6 +357,63 @@ else
     part6 = null
 };
 
+if (google_webfont_switch == true)
+{
+    var part7 =
+	{
+        services:
+		{
+            name: data_name_googlewebfont,
+            default: false,
+            title: cs_google_webfont_switch,
+            purposes: ['extra_service'],
+			description: ds_google_webfont_switch,
+        },
+    };
+}
+else
+{
+    part7 = null
+};
+
+if (google_adsense_switch == true)
+{
+    var part8 =
+	{
+        services:
+		{
+            name: data_name_googleadsense,
+            default: false,
+            title: cs_google_adsense_switch,
+            purposes: ['extra_service'],
+			description: ds_google_adsense_switch,
+        },
+    };
+}
+else
+{
+    part8 = null
+};
+
+if (google_maps_switch == true)
+{
+    var part9 =
+	{
+        services:
+		{
+            name: data_name_googlemaps,
+            default: false,
+            title: cs_google_maps_switch,
+            purposes: ['extra_service'],
+			description: ds_google_maps_switch,
+        },
+    };
+}
+else
+{
+    part9 = null
+};
+
 if (part1 != null)
 {
     klaroConfig.services.push(part1.services);
@@ -358,4 +437,16 @@ if (part5 != null)
 if (part6 != null)
 {
     klaroConfig.services.push(part6.services);
+};
+if (part7 != null)
+{
+    klaroConfig.services.push(part7.services);
+};
+if (part8 != null)
+{
+    klaroConfig.services.push(part8.services);
+};
+if (part9 != null)
+{
+    klaroConfig.services.push(part9.services);
 };

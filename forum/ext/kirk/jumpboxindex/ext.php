@@ -22,25 +22,43 @@ class ext extends \phpbb\extension\base
 	{
 		$phpbb_min_ver		= '3.2.6';
 		$phpbb_below_ver	= '3.4.0@dev';
+		$php_min_ver		= '7.0.0';
+		$php_below_ver		= '8.1.0@dev';
+		$error_message		= [];
 
 		if (!(phpbb_version_compare(PHPBB_VERSION, $phpbb_min_ver, '>=') && phpbb_version_compare(PHPBB_VERSION, $phpbb_below_ver, '<')))
 		{
 			if (phpbb_version_compare(PHPBB_VERSION, $phpbb_min_ver, '<'))
 			{
 				$user = $this->container->get('user');
-				$user->add_lang_ext('ext_jumpboxindex_enable_error', 'kirk/jumpboxindex');
+				$user->add_lang_ext('kirk/jumpboxindex', 'ext_jumpboxindex_enable_error');
 				$jumpboxindex = $user->lang('JUMPBOXINDEX');
-				trigger_error(sprintf($user->lang('ERROR_JUMPBOXINDEX_EXTENSION_NOT_ENABLEABLE') . '<br>' . $user->lang('ERROR_MSG_PHPBB_WRONG_VERSION'), $jumpboxindex, $phpbb_min_ver, $phpbb_below_ver) . $this->get_adm_back_link(), E_USER_WARNING);
+				$error_message = ['error' => (sprintf($user->lang('ERROR_JUMPBOXINDEX_EXTENSION_NOT_ENABLEABLE') . '<br>' . $user->lang('ERROR_MSG_PHPBB_WRONG_VERSION'), $jumpboxindex, $phpbb_min_ver, $phpbb_below_ver)),];
 			}
 			else
 			{
 				$language  = $this->container->get('language');
 				$language ->add_lang('ext_jumpboxindex_enable_error', 'kirk/jumpboxindex');
 				$jumpboxindex = $language->lang('JUMPBOXINDEX');
-				trigger_error(sprintf($language->lang('ERROR_JUMPBOXINDEX_EXTENSION_NOT_ENABLEABLE') . '<br>' . $language->lang('ERROR_MSG_PHPBB_WRONG_VERSION'), $jumpboxindex, $phpbb_min_ver, $phpbb_below_ver) . $this->get_adm_back_link(), E_USER_WARNING);
+				$error_message = ['error' => (sprintf($language->lang('ERROR_JUMPBOXINDEX_EXTENSION_NOT_ENABLEABLE') . '<br>' . $language->lang('ERROR_MSG_PHPBB_WRONG_VERSION'), $jumpboxindex, $phpbb_min_ver, $phpbb_below_ver)),];
 			}
 		}
-		return true;
+
+		if (!(phpbb_version_compare(PHP_VERSION, $php_min_ver, '>=') && phpbb_version_compare(PHP_VERSION, $php_below_ver, '<')) && (phpbb_version_compare(PHPBB_VERSION, $phpbb_min_ver, '>=') && phpbb_version_compare(PHPBB_VERSION, $phpbb_below_ver, '<')))
+		{
+			$language  = $this->container->get('language');
+			$language ->add_lang('ext_jumpboxindex_enable_error', 'kirk/jumpboxindex');
+			$jumpboxindex = $language->lang('JUMPBOXINDEX');
+			$error_message = ['error' => (sprintf($language->lang('ERROR_JUMPBOXINDEX_EXTENSION_NOT_ENABLEABLE') . '<br>' . $language->lang('ERROR_MSG_PHP_WRONG_VERSION'), $jumpboxindex, $php_min_ver, $php_below_ver)),];
+		}
+
+		if (phpbb_version_compare(PHPBB_VERSION, '3.3.0', '<') && !empty($error_message))
+		{
+			$error_message = implode('<br>', $error_message);
+			trigger_error($error_message . $this->get_adm_back_link(), E_USER_WARNING);
+		}
+
+		return empty($error_message) ? true : $error_message;
 	}
 
 	private function get_adm_back_link()

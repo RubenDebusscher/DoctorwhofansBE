@@ -1,10 +1,9 @@
 <?php
 /**
 *
-* Snowstorm and Lights extension for the phpBB Forum Software package.
-*
+* @package Snowstorm and Lights
 * @copyright (c) 2021 Prosk8er <https://www.gotskillslounge.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
 
@@ -18,7 +17,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,13 +36,16 @@ if (empty($lang) || !is_array($lang))
 // ’ » “ ” …
 //
 
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'ACP_SNOWSTORM_LIGHTS'		=> 'Snowstorm and Lights',
 	'ACP_SNOWSTORM_LIGHTS_SETTINGS'	=> 'Snowstorm and Lights Settings',
-	'SCL_ENABLED'			=> 'Enable "Smashable Christmas Lights"',
-	'SNOW_ENABLED'			=> 'Enable "Snowstorm"',
-	'SANTAHAT_ENABLED'		=> 'Enable "Santa Hat"',
+	'SCL_ENABLED'			=> 'Enable “Smashable Christmas Lights”',
+	'LIGHTSCSS_ENABLED'		=> 'Enable “Christmas Lights CSS”',
+	'SNOW_ENABLED'			=> 'Enable “Snowstorm”',
+	'SNOWCSS_ENABLED'		=> 'Enable “Snowflakes CSS”',
+	'SNOWBG_ENABLED'		=> 'Enable Snow on forum headers.',
+	'SANTAHAT_ENABLED'		=> 'Enable “Santa Hat”',
 	'SNOWSTORM_LIGHTS'		=> 'Snowstorm and Lights',
 	'SNOWSTORM_LIGHTS_EXPLAIN'	=> 'Configure Snowstorm and Lights.',
 	'SNOWSTORM_LIGHTS_SAVED'	=> 'Changes Saved.',
-));
+]);

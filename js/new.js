@@ -373,8 +373,12 @@ function GetContent(menu, id) {
         populateEpisodesOfTheDay(response.EpisodesOf_The_day);
         populateActorsOfTheDay(response.ActorsOf_The_day);
         footerAlign();
+        var Title="Category: "+ response.PagesForTag[0].category_Name;
+        $('#SiteContent article').append("<h1>"+Title+"</h1>")
+        $('#SiteContent article').append("<div class='Overzicht'></div>")
          //TODO: #55 set default title for Category, replace with content of content Function, but after content, add an item to put categories in (that is excluded for replacement when content is not null),
-        Content(response.Content);
+         ChildPages(response.PagesForTag);
+        //Content(response.Content);
       }else{
         populatePath(response.Path);
         populateEpisodesOfTheDay(response.EpisodesOf_The_day);

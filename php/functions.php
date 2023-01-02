@@ -18,10 +18,13 @@ function getRichContent(&$conn,&$prefix,&$API_Item,&$antwoord){
 		case "Doctor":
 			getDoctor($conn,$API_Item,$antwoord);
 			getFirstAndLastEpisodeForCharacter($conn,$API_Item,$antwoord);
+			getCharacter($conn,$API_Item,$antwoord);
+			getRegenerationForCharacter($conn,$API_Item,$antwoord);
 			break;
 		case "Character":
 			getCharacter($conn,$API_Item,$antwoord);
 			getFirstAndLastEpisodeForCharacter($conn,$API_Item,$antwoord);
+			getRegenerationForCharacter($conn,$API_Item,$antwoord);
 			break;
 		case "Book":
 			echo "Zoek de data van een Book: ".$prefix;
@@ -110,9 +113,10 @@ function getDoctor(&$conn,&$API_Item,&$resultset){
 		die('Statement execution failed: ' . $stmtActorsForDoctor->error);
 	}else{
 		$result = $stmtActorsForDoctor->get_result();
-		if($result->num_rows === 0){
+		if($result && ($result->num_rows === 0)){
 			$resultset['Doctor'][0]['ActorList']='No rows';
 		} else{
+			$resultset['Doctor'][0]['ActorList'] = array();
 			$resultset['Doctor'][0]['ActorList']= $result->fetch_all(MYSQLI_ASSOC);
 		}
 	}
@@ -146,23 +150,23 @@ function getFirstAndLastEpisodeForCharacter(&$conn, &$API_Item, &$resultset)
 
 function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 {
-    $stmtFALEpisode = $conn->prepare("call GetRegenerationEpisode(?)");
-    if (!$stmtFALEpisode) {
+    $stmtREGENpisode = $conn->prepare("call GetRegenerationEpisode(?)");
+    if (!$stmtREGENpisode) {
         die("Statement prepare failed: " . $conn->connect_error);
     }
-    if (!$stmtFALEpisode->bind_param("i", $API_Item)) {
+    if (!$stmtREGENpisode->bind_param("i", $API_Item)) {
         die("Statement binding failed: " . $conn->connect_error);
     }
-    if (!$stmtFALEpisode->execute()) {
-        die("Statement execution failed: " . $stmtFALEpisode->error);
+    if (!$stmtREGENpisode->execute()) {
+        die("Statement execution failed: " . $stmtREGENpisode->error);
     } else {
         //return de json data
-        $result = $stmtFALEpisode->get_result();
+        $result = $stmtREGENpisode->get_result();
         if ($result->num_rows === 0) {
-            $resultset['FALEpisode']="No Regeneration Episode found";
+            $resultset['REGENepisode']="No Regeneration Episode found";
         } else {
-            $resultset['FALEpisode'] = $result->fetch_all(MYSQLI_ASSOC);
-            $stmtFALEpisode->close();
+            $resultset['REGENepisode'] = $result->fetch_all(MYSQLI_ASSOC);
+            $stmtREGENpisode->close();
         }
     }
 }
@@ -397,7 +401,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 	}
 
 	function getSubPages(&$conn,&$current_Page_Id,&$resultset){
-		$stmtChildPages = $conn->prepare('SELECT page_Link,page_Name FROM management__pages where page_Parent_Id=? order by page_Order,page_Name');
+		$stmtChildPages = $conn->prepare('SELECT page_Link,page_Name FROM management__pages where page_Parent_Id=? AND Page_Active=1 order by page_Order,page_Name');
 			if(!$stmtChildPages){
 				die('Statement preparing failed: ' . $conn->error);
 			}
@@ -430,7 +434,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 			}else{
 					//return de json data
 				$result = $stmtPathArray->get_result();
-				if($result->num_rows === 0){
+				if($result && ($result->num_rows === 0)){
 					$parents = $antwoord['Path'][0]['parents']=0;
 				}else{
 					$antwoord['Path'] = $result->fetch_all(MYSQLI_ASSOC);

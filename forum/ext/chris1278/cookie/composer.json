@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "Loads scripts with which you give the users of the forum page the opportunity to reject or accept cookies!",
     "homepage": "https://christian-esch.de",
-    "version": "2.0.1",
+    "version": "2.0.3",
     "time": "2020-12-28",
     "license": "GPL-2.0-only",
     "authors": [
@@ -33,7 +33,7 @@
     },
     "extra": {
         "display-name": "Opt-In Cookie Manager",
-        "lang-min-ver": "2.0.0",
+        "lang-min-ver": "2.0.3",
         "soft-require": {
             "phpbb/phpbb": ">=3.2.10,<3.4.0@dev"
         },

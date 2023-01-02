@@ -19,7 +19,6 @@ class main_module
 	public function main($id, $mode)
 	{
 		global $phpbb_container;
-
 		$admin_controller = $phpbb_container->get('chris1278.cookie.admin.controller');
 		$language = $phpbb_container->get('language');
 		$admin_controller->set_page_url($this->u_action);
@@ -30,7 +29,6 @@ class main_module
 				$this->page_title = $language->lang('ACP_COOKIE_GENERAL');
 				$this->tpl_name = 'acp_cookie_general';
 				$admin_controller->display_general();
-
 			break;
 
 			case 'manage':

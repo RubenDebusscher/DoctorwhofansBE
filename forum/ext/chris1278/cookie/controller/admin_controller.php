@@ -37,6 +37,7 @@ class admin_controller
 		$php_ext
 	)
 	{
+		$this->ext_manager			= $ext_manager;
 		$this->md_manager 			= $ext_manager->create_extension_metadata_manager('chris1278/cookie');
 		$this->admin_path 			= $path_helper->get_phpbb_root_path() . $path_helper->get_adm_relative_path();
 		$this->config				= $config;
@@ -56,6 +57,7 @@ class admin_controller
 		$ext_display_name 			= $this->md_manager->get_metadata('display-name');
 		$ext_display_ver 			= $this->md_manager->get_metadata('version');
 		$lang_ver 					= ($this->language->lang('CM_LANG_EXT_VER') !== 'CM_LANG_EXT_VER') ? $this->language->lang('CM_LANG_EXT_VER') : '0.0.0';
+		$bannerinfo					= append_sid("{$this->admin_path}index.$this->php_ext", '&i=acp_board&mode=cookie');
 		$notes 						= '';
 		$this->language->add_lang('acp_cookie_general', 'chris1278/cookie');
 		add_form_key('cookie_general');
@@ -84,7 +86,9 @@ class admin_controller
 				$this->config->set('window_fix_in_the_middle', $this->request->variable('window_fix_in_the_middle', 0));
 				$this->config->set('klaro_note', $this->request->variable('klaro_note', 0));
 				$this->config->set('storage_version', $this->request->variable('storage_version', '', true));
-				$this->config->set('klarostyle', $this->request->variable('klarostyle', '', true));
+				$this->config->set('klarostylecolor', $this->request->variable('klarostylecolor', '', true));
+				$this->config->set('klarostyleposition', $this->request->variable('klarostyleposition', '', true));
+				$this->config->set('klarostylewidth', $this->request->variable('klarostylewidth', '', true));
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ACP_COOKIE_GENERAL');
 				trigger_error($this->language->lang('ACP_COOKIE_SETTING_SAVED') . adm_back_link($this->u_action));
 			}
@@ -98,28 +102,30 @@ class admin_controller
 		}
 
 		$this->template->assign_vars([
-			'S_ERROR'					=>	$s_errors,
-			'ERROR_MSG'					=>	$s_errors ? implode('<br />', $errors) : '',
-			'CM_NOTES'					=>	$notes,
-			'CM_EXT_NAME'				=>	$ext_display_name,
-			'CM_EXT_VER'				=>	$ext_display_ver,
-			'WINDOW_POSITION'			=>	$this->config['window_position'],
-			'NAME_OF_COOKIE'			=>	$this->config['name_of_cookie'],
-			'KLARO_DIV_CONTAINER'		=>	$this->config['klaro_div_container'],
-			'KLARO_HIDDEN_WINDOWS'		=>	$this->config['klaro_hidden_windows'],
-			'HTML_CODE_PROCESSING'		=>	$this->config['html_code_processing'],
-			'GROUP_FORMATION'			=>	$this->config['group_formation'],
-			'COOKIE_ICON_SELECTION'		=>	$this->config['cookie_icon_selection'],
-			'SAVE_ALL_BUTTON'			=>	$this->config['save_all_button'],
-			'COOKIE_RUNTIME'			=>	$this->config['cookie_runtime'],
-			'SHOW_DECLINE_BUTTON'		=>	$this->config['show_decline_button'],
-			'TO_THE_COOKIE_SETTINGS'	=>	$this->config['to_the_cookie_settings'],
-			'WINDOW_FIX_IN_THE_MIDDLE'	=>	$this->config['window_fix_in_the_middle'],
-			'KLARO_NOTE'				=> 	$this->config['klaro_note'],
-			'STORAGE_VERSION'			=> 	$this->config['storage_version'],
-			'KLAROSTYLE'				=> 	$this->config['klarostyle'],
-			'U_COOKIE_BANNER'			=>	append_sid("{$this->admin_path}index.$this->php_ext", '&i=acp_board&mode=cookie'),
-			'U_ACTION'					=>	$this->u_action,
+			'S_ERROR'						=> $s_errors,
+			'ERROR_MSG'						=> $s_errors ? implode('<br />', $errors) : '',
+			'CM_NOTES'						=> $notes,
+			'CM_EXT_NAME'					=> $ext_display_name,
+			'CM_EXT_VER'					=> $ext_display_ver,
+			'COOKIE_WARN_INFO'				=> sprintf($this->language->lang('COOKIE_WARN'), $bannerinfo),
+			'WINDOW_POSITION'				=> $this->config['window_position'],
+			'NAME_OF_COOKIE'				=> $this->config['name_of_cookie'],
+			'KLARO_DIV_CONTAINER'			=> $this->config['klaro_div_container'],
+			'KLARO_HIDDEN_WINDOWS'			=> $this->config['klaro_hidden_windows'],
+			'HTML_CODE_PROCESSING'			=> $this->config['html_code_processing'],
+			'GROUP_FORMATION'				=> $this->config['group_formation'],
+			'COOKIE_ICON_SELECTION'			=> $this->config['cookie_icon_selection'],
+			'SAVE_ALL_BUTTON'				=> $this->config['save_all_button'],
+			'COOKIE_RUNTIME'				=> $this->config['cookie_runtime'],
+			'SHOW_DECLINE_BUTTON'			=> $this->config['show_decline_button'],
+			'TO_THE_COOKIE_SETTINGS'		=> $this->config['to_the_cookie_settings'],
+			'WINDOW_FIX_IN_THE_MIDDLE'		=> $this->config['window_fix_in_the_middle'],
+			'KLARO_NOTE'					=> $this->config['klaro_note'],
+			'STORAGE_VERSION'				=> $this->config['storage_version'],
+			'KLAROSTYLECOLOR'				=> $this->config['klarostylecolor'],
+			'KLAROSTYLEPOSITION'			=> $this->config['klarostyleposition'],
+			'KLAROSTYLEWIDTH'				=> $this->config['klarostylewidth'],
+			'U_ACTION'						=> $this->u_action,
 
 		]);
 	}
@@ -132,14 +138,15 @@ class admin_controller
 
 	public function display_switches()
 	{
-		$ext_display_name 			= $this->md_manager->get_metadata('display-name');
+		$ext_display_name = $this->md_manager->get_metadata('display-name');
 		$this->language->add_lang('acp_cookie_switches', 'chris1278/cookie');
+		$own_scipts_header				= generate_board_url() . '/ext/chris1278/styles/all/template/own_scipts_header.html';
+		$own_scipts_footer				= generate_board_url() . '/ext/chris1278/styles/all/template/own_scipts_footer.html';
 		add_form_key('cookie_switches');
 		$errors = [];
 
 		if ($this->request->is_set_post('submit'))
 		{
-
 			if (!check_form_key('cookie_switches'))
 			{
 				$errors[] = $this->language->lang('FORM_INVALID');
@@ -147,16 +154,29 @@ class admin_controller
 
 			if (empty($errors))
 			{
+				$this->config->set('cookie_impressum_intern_extern', $this->request->variable('cookie_impressum_intern_extern', '', true));
+				$this->config->set('cookie_impressum_link_extern', $this->request->variable('cookie_impressum_link_extern', '', true));
 				$this->config->set('youtube_bbcode_switch', $this->request->variable('youtube_bbcode_switch', 0));
 				$this->config->set('google_translator_switch', $this->request->variable('google_translator_switch', 0));
+				$this->config->set('ganalytics_own_script', $this->request->variable('ganalytics_own_script', 0));
 				$this->config->set('google_analytics_no_tm_switch', $this->request->variable('google_analytics_no_tm_switch', 0));
 				$this->config->set('google_analytics_id', $this->request->variable('google_analytics_id', ''));
 				$this->config->set('vimeo_bbcode_switch', $this->request->variable('vimeo_bbcode_switch', 0));
 				$this->config->set('spotify_bbcode_switch', $this->request->variable('spotify_bbcode_switch', 0));
+				$this->config->set('matomo_own_script', $this->request->variable('matomo_own_script', 0));
 				$this->config->set('matomo_switch', $this->request->variable('matomo_switch', 0));
 				$this->config->set('matomo_url', $this->request->variable('matomo_url', ''));
 				$this->config->set('matomo_side_id', $this->request->variable('matomo_side_id', '1'));
 				$this->config->set('matomo_in_out', $this->request->variable('matomo_in_out', 0));
+				$this->config->set('google_webfont_switch', $this->request->variable('google_webfont_switch', 0));
+				$this->config->set('google_adsense_switch', $this->request->variable('google_adsense_switch', 0));
+				$this->config->set('google_maps_switch', $this->request->variable('google_maps_switch', 0));
+				$this->config->set('data_name_googleanalytics', $this->request->variable('data_name_googleanalytics', ''));
+				$this->config->set('data_name_googleadsense', $this->request->variable('data_name_googleadsense', ''));
+				$this->config->set('data_name_googletranslate', $this->request->variable('data_name_googletranslate', ''));
+				$this->config->set('data_name_googlewebfont', $this->request->variable('data_name_googlewebfont', ''));
+				$this->config->set('data_name_googlemaps', $this->request->variable('data_name_googlemaps', ''));
+				$this->config->set('data_name_matomo', $this->request->variable('data_name_matomo', ''));
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ACP_COOKIE_SWITCHES');
 				trigger_error($this->language->lang('ACP_COOKIE_SETTING_SAVED') . adm_back_link($this->u_action));
 			}
@@ -166,29 +186,60 @@ class admin_controller
 
 		if (empty($this->config['matomo_side_id']))
 		{
-			$matomoacpsideid					=	'1';
+			$matomoacpsideid				= '1';
 		}
 		else
 		{
-			$matomoacpsideid					=	$this->config['matomo_side_id'];
+			$matomoacpsideid				= $this->config['matomo_side_id'];
+		}
+
+		if ($this->ext_manager->is_enabled('crizzo/aboutus'))
+		{
+			if ($this->config['acp_aboutus_enable'] == 1)
+			{
+				$impressum_link_for_klaro	= true;
+			}
+			else
+			{
+				$impressum_link_for_klaro	= false;
+			}
+		}
+		else
+		{
+			$impressum_link_for_klaro		= false;
 		}
 
 		$this->template->assign_vars([
-			'S_ERROR'									=>	$s_errors,
-			'ERROR_MSG'									=>	$s_errors ? implode('<br />', $errors) : '',
-			'CM_EXT_NAME'								=>	$ext_display_name,
-			'MATOMO_SWITCH'								=>	$this->config['matomo_switch'],
-			'MATOMO_URL'								=>	$this->config['matomo_url'],
-			'MATOMO_SIDE_ID'							=>	$matomoacpsideid,
-			'MATOMO_IN_OUT'								=>	$this->config['matomo_in_out'],
-			'YOUTUBE_BBCODE_SWITCH'						=>	$this->config['youtube_bbcode_switch'],
-			'GOOGLE_TRANSLATOR_SWITCH'					=>	$this->config['google_translator_switch'],
-			'GOOGLE_ANALYTICS_NO_TM_SWITCH'				=>	$this->config['google_analytics_no_tm_switch'],
-			'GOOGLE_ANALYTICS_ID'						=>	$this->config['google_analytics_id'],
-			'VIMEO_BBCODE_SWITCH'						=>	$this->config['vimeo_bbcode_switch'],
-			'SPOTIFY_BBCODE_SWITCH'						=>	$this->config['spotify_bbcode_switch'],
-			'U_ACTION'									=>	$this->u_action,
-
+			'S_ERROR'									=> $s_errors,
+			'ERROR_MSG'									=> $s_errors ? implode('<br />', $errors) : '',
+			'CM_EXT_NAME'								=> $ext_display_name,
+			'COOKIE_ABOUT_US_CHECK'						=> $impressum_link_for_klaro,
+			'ACP_CM_SETTINGS_PAGE_TITLE_EXPLAIN'		=> sprintf($this->language->lang('ACP_CM_SETTINGS_PAGE_TITLE_EXPLAIN'), $own_scipts_header, $own_scipts_footer),
+			'DATA_NAME_GOOGLEADSENSE'					=> $this->config['data_name_googleadsense'],
+			'DATA_NAME_GOOGLEANALYTICS'					=> $this->config['data_name_googleanalytics'],
+			'DATA_NAME_GOOGLEMAPS'						=> $this->config['data_name_googlemaps'],
+			'DATA_NAME_GOOGLETRANSLATE'					=> $this->config['data_name_googletranslate'],
+			'DATA_NAME_GOOGLEWEBFONT'					=> $this->config['data_name_googlewebfont'],
+			'DATA_NAME_MATOMO'							=> $this->config['data_name_matomo'],
+			'COOKIE_IMPRESSUM_INTERN_EXTERN'			=> $this->config['cookie_impressum_intern_extern'],
+			'COOKIE_IMPRESSUM_LINK_EXTERN'				=> $this->config['cookie_impressum_link_extern'],
+			'GANALYTICS_OWN_SCRIPT'						=> $this->config['ganalytics_own_script'],
+			'MATOMO_OWN_SCRIPT'							=> $this->config['matomo_own_script'],
+			'MATOMO_SWITCH'								=> $this->config['matomo_switch'],
+			'MATOMO_URL'								=> $this->config['matomo_url'],
+			'MATOMO_SIDE_ID'							=> $matomoacpsideid,
+			'MATOMO_IN_OUT'								=> $this->config['matomo_in_out'],
+			'GOOGLE_WEBFONT_SWITCH'						=> $this->config['google_webfont_switch'],
+			'YOUTUBE_BBCODE_SWITCH'						=> $this->config['youtube_bbcode_switch'],
+			'GOOGLE_TRANSLATOR_SWITCH'					=> $this->config['google_translator_switch'],
+			'GOOGLE_ANALYTICS_NO_TM_SWITCH'				=> $this->config['google_analytics_no_tm_switch'],
+			'GOOGLE_ANALYTICS_ID'						=> $this->config['google_analytics_id'],
+			'VIMEO_BBCODE_SWITCH'						=> $this->config['vimeo_bbcode_switch'],
+			'SPOTIFY_BBCODE_SWITCH'						=> $this->config['spotify_bbcode_switch'],
+			'GOOGLE_ADSENSE_SWITCH'						=> $this->config['google_adsense_switch'],
+			'GOOGLE_MAPS_SWITCH'						=> $this->config['google_maps_switch'],
+			'GOOGLE_ADSENSE_ID'							=> $this->config['google_adsense_id'],
+			'U_ACTION'									=> $this->u_action,
 		]);
 	}
 

@@ -33,3 +33,80 @@ legend {
 	text-align: center;
 	font-size: .75em;
 }
+
+.general_info {
+	padding: 5px;
+	text-align: center;
+	font-weight: bold;
+	font-style: italic;
+	border-radius: 5px;
+	border: 2px solid #767676;
+}
+
+.acp_style_info {
+	padding: 5px;
+	text-align: center;
+	border-radius: 5px;
+	border: 2px solid #767676;
+	margin-bottom: 10px;
+}
+
+.opt_klarostylewidth {
+	border: 1px solid #767676;
+	margin-bottom: 10px;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.oicmb_form_buttons {
+	display: flex;
+	text-align: center;
+	margin: 0;
+	margin-top: 0px;
+	padding: 4px;
+	margin-top: 10px;
+}
+
+.oicmb_col_left {
+	flex-basis: 25%;
+	text-align: left;
+}
+
+.oicmb_col_center {
+	flex-basis: 50%;
+	text-align: center;
+	font-size: 0.9em;
+}
+
+.oicm_button1, .oicm_button2 {
+	padding: 3px 2px !important;
+}
+
+.oicmb_col_right {
+	flex-basis: 25%;
+	text-align: right;
+}
+
+.oicmb_back_to_top {
+	font-size: 1.3em;
+}
+
+.oicmb_back_to_top:hover {
+	text-decoration: none;
+}
+
+.one_thing {
+	border: 1px solid #767676;
+	margin-bottom: 10px;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+
+@media only screen and (max-width: 700px), only screen and (max-device-width: 700px)
+{
+	.oicm-no-border {
+		border: none;
+	}
+
+}

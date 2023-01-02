@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Member Avatar & Status",
     "homepage": "https://phpbb.com/customise/db/extension/member_avatar_status",
-    "version": "3.2.6",
-    "time": "2022-01-23",
+    "version": "3.2.7",
+    "time": "2022-07-21",
     "keywords": [
         "phpbb",
         "extension",
@@ -16,7 +16,7 @@
     "license": "GPL-2.0-only",
     "authors": [
         {
-            "name": "Dark❶ [dark1]",
+            "name": "Dark❶",
             "email": "phpbb@dark1.tech",
             "homepage": "https://dark1.tech",
             "role": "Lead Developer"

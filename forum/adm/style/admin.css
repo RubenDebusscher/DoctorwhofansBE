@@ -1,4 +1,4 @@
-/*  phpBB 3.3 Admin Style Sheet
+/*  phpBB 3.2 Admin Style Sheet
 	------------------------------------------------------------------------
 	Original author:	subBlue ( http://www.subblue.com/ )
 	Copyright (c) phpBB Limited <https://www.phpbb.com>
@@ -191,15 +191,17 @@ li {
 
 #page-header {
 	text-align: right;
-	background: url("../images/phpbb_logo.svg") top left no-repeat;
+    background: url("https://www.doctorwhofans.be/images/gallifreyan_black.png") top left no-repeat;
 	height: 54px;
 	font-size: 0.85em;
 	margin-bottom: 10px;
+    background-size: contain;
 }
 
 .rtl #page-header {
 	text-align: left;
-	background: url("../images/phpbb_logo.svg") top right no-repeat;
+	background: url("https://www.doctorwhofans.be/images/gallifreyan_black.png") top right no-repeat;
+	background-size: contain;
 }
 
 #page-header h1 {
@@ -224,6 +226,7 @@ li {
 .copyright {
 	font-size: 0.75em;
 	text-align: center;
+	display: none
 }
 
 #content {
@@ -700,6 +703,11 @@ table {
 	padding: 1px;
 }
 
+.table2{min-width:50%;}
+
+.lside{display: inline-flex;
+    width: 100%;}
+
 th {
 	padding: 3px 4px;
 	color: #FFFFFF;
@@ -723,25 +731,9 @@ td {
 }
 
 .table1 {
+	border-collapse: separate;
+	border-spacing: 1px;
 	clear: both;
-	border-spacing: 1px;
-	border-collapse: separate;
-}
-
-.table2 {
-	display: inline-block;
-	border-spacing: 1px;
-	border-collapse: separate;
-}
-
-.lside {
-	display: flex;
-	align-items: stretch;
-	width: 100%;
-}
-
-.tabled {
-	width: 1%;
 }
 
 dt#color_palette_placeholder table {
@@ -2032,8 +2024,8 @@ fieldset.permissions .permissions-switch {
 	float: left;
 }
 
-fieldset.permissions .padding {
-}
+/*fieldset.permissions .padding {
+}*/
 
 .permissions-switch {
 	margin-top: -6px;

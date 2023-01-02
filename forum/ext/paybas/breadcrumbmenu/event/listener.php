@@ -284,18 +284,22 @@ class listener implements EventSubscriberInterface
 		{
 			$next = next($list);
 			if (empty($tree['forum_id'])){$var = 0;}else{$var = $tree['forum_id'];}
-			if (!($tree['forum_id'] == $next['parent_id']))
-			{
-				// The current node isn't our child, so we backwards and we return the current tree
-				prev($list);
+			if(($tree) && ($next)){
+				if (!($tree['forum_id'] == $next['parent_id']))
+				{
+					// The current node isn't our child, so we backwards and we return the current tree
+					prev($list);
+	
+					return $tree;
+				}
+				else
+				{
+					// Let our child retrieve its own ones
+					$tree['children'][] = $this->build_tree_rec($list, $length);
+				}
 
-				return $tree;
 			}
-			else
-			{
-				// Let our child retrieve its own ones
-				$tree['children'][] = $this->build_tree_rec($list, $length);
-			}
+			
 		}
 
 		return $tree;

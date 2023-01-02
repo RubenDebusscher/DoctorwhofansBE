@@ -38,13 +38,19 @@ class listener implements EventSubscriberInterface
 	* @param \phpbb\php_ext				$php_ext			php_ext
 	*
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
+	public function __construct(
+		\phpbb\config\config $config,
+		\phpbb\template\template $template,
+		\phpbb\user $user,
+		$phpbb_root_path,
+		$php_ext
+	)
 	{
-		$this->config		= $config;
-		$this->template		= $template;
-		$this->user			= $user;
-		$this->root_path	= $phpbb_root_path;
-		$this->php_ext		= $php_ext;
+		$this->config			= $config;
+		$this->template			= $template;
+		$this->user				= $user;
+		$this->phpbb_root_path	= $phpbb_root_path;
+		$this->php_ext			= $php_ext;
 	}
 
 	/**

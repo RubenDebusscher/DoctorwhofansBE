@@ -1,7 +1,8 @@
+{% INCLUDE '@chris1278_cookie/own_scipts_header.html' %}
 {% if GOOGLE_ANALYTICS_NO_TM_SWITCH %}
 <!-- Start Global site tag (gtag.js) - Google Analytics -->
 <script type="text/plain" data-type="application/javascript" async data-src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}" data-name="g-analytics"></script>
-<script type="text/plain" data-type="application/javascript"data-name="g-analytics">
+<script type="text/plain" data-type="application/javascript" data-name="{{ DATA_NAME_GOOGLEANALYTICS }}">
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -13,7 +14,7 @@
 
 {% if MATOMO_SWITCH %}
 <!-- Start Matomo script -->
-<script type="opt-in" data-type="application/javascript" data-name="matomo">
+<script type="opt-in" data-type="application/javascript" data-name="{{ DATA_NAME_MATOMO }}">
   var _paq = window._paq = window._paq || [];
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(['trackPageView']);
@@ -28,3 +29,5 @@
 </script>
 <!-- End Matomo script -->
 {% endif %}
+
+
