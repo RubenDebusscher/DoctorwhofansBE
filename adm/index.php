@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 'off');
+
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'on');
 // Include the Xataface API
