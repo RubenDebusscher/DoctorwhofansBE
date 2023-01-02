@@ -56,6 +56,11 @@ CKEDITOR.addTemplates('default', {
   {title: 'Episode Full',
   image: 'template3.gif',
   description: 'Default voor een episode pagina. Voeg deze toe aan een bestaande pagina.',
-  html: '<h1>Titel</h1><div class="bordered DarkBlueBackground" id="Inhoud">Inhoud</div><h2>Episodes</h2><div style="overflow-x:auto"><table align="left" border="1" cellpadding="0" cellspacing="0" id="EpisodeTable"><thead><tr><th scope="col">Episode</th><th scope="col">Title</th><th scope="col">Run Time</th><th scope="col">Original Air date</th><th scope="col">Original Network</th><th scope="col">UK viewers</th><th scope="col">Appreciation Index</th><th scope="col">Status</th></tr></thead><tbody></tbody></table></div><hr /><h2>Downloads</h2><div id="Downloads"></div><hr /><h2>Quotes</h2><div id="Quotes"></div>'}
+  html: '<h1>Titel</h1><div class="bordered DarkBlueBackground" id="Inhoud">Inhoud</div><h2>Episodes</h2><div style="overflow-x:auto"><table align="left" border="1" cellpadding="0" cellspacing="0" id="EpisodeTable"><thead><tr><th scope="col">Episode</th><th scope="col">Title</th><th scope="col">Run Time</th><th scope="col">Original Air date</th><th scope="col">Original Network</th><th scope="col">UK viewers</th><th scope="col">Appreciation Index</th><th scope="col">Status</th></tr></thead><tbody></tbody></table></div><hr /><h2>Downloads</h2><div id="Downloads"></div><hr /><h2>Quotes</h2><div id="Quotes"></div>'},
+  {title: 'Overzicht',
+  image: 'template3.gif',
+  description: 'Default voor een overzicht. Voeg deze toe aan een bestaande pagina.',
+  html: '<div class="Overzicht"><p>&nbsp;</p></div><br />'}
 ]
+
 });

@@ -6,7 +6,7 @@ function xf_db_connect($host,$user,$pass){
         return mysqli_connect($host, $user, $pass);
     } else {
         $parts = explode(':', $host);
-        return mysqli_connect($parts[0], $user, $pass, "", intval($parts[1]));
+        return mysqli_connect("p:"+$parts[0], $user, $pass, "", intval($parts[1]));
     }
 }
 function xf_db_connect_errno(){ return mysqli_connect_errno();}
