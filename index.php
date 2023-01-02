@@ -2,15 +2,16 @@
 $_SESSION["Menu"]="";?>
 <!Doctype>
 <?php
+
     if(isset($_GET['menu'])){
-        $menu=$_GET['menu'];
+        $menu=htmlentities($_GET['menu'], ENT_QUOTES | ENT_IGNORE, "UTF-8");
     }else if ($_SESSION["Menu"] !==""){
         $menu=$_SESSION["Menu"];
     }else{
         $menu= "Home";
     }
     if(isset($_GET['id'])){
-        $id= $_GET['id'];
+        $id= htmlentities($_GET['id'], ENT_QUOTES | ENT_IGNORE, "UTF-8");
     }else{$id=0;}
 ?>
 <html lang="nl-BE">
@@ -51,6 +52,15 @@ $_SESSION["Menu"]="";?>
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'UA-107369097-3');
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH80PEG0ZG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-WH80PEG0ZG');
 </script>
 
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">

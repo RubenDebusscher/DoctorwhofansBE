@@ -35,3 +35,4 @@ debug.log
 MC
 /images/**/.dataface_history
 /images/**/uploads
+/php.log
