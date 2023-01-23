@@ -28,11 +28,9 @@ Adminold
 admin
 ftp-sync.json
 push.js
-.env
-**/xataface_new
-**/templates_c
-debug.log
+.dataface_history
 MC
-/images/**/.dataface_history
-/images/**/uploads
-/php.log
+php.log
+*.env
+templates_c
+uploads

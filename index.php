@@ -1,5 +1,7 @@
 <?php session_start();
-$_SESSION["Menu"]="";?>
+$_SESSION["Menu"]="";
+$_SESSION["EmailSent"]="";
+?>
 <!Doctype>
 <?php
 

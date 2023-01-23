@@ -31,7 +31,7 @@ DirectoryIndex index.php
 # BROWSER CACHING USING CACHE-CONTROL HEADERS
 <ifModule mod_headers.c> 
     Header set X-XSS-Protection "1; mode=block"
-    Header always append X-Frame-Options SAMEORIGIN
+    Header always set X-Frame-Options SAMEORIGIN
     Header set X-Content-Type-Options nosniff
    
 
