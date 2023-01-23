@@ -4,5 +4,6 @@
     header('Access-Control-Max-Age: 1000');
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
+    header("Content-Security-Policy:default-src 'self' https://www.facebook.com sharethis.com googletagmanager.com ; img-src *; media-src 'self'; script-src facebook.com")
     
 ?>

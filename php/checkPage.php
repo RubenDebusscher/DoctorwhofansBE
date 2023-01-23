@@ -12,28 +12,21 @@
 		@param $session					==>			the php session ID
 	*/
 	// * set cors and make connection
-	error_reporting(E_ALL);
-
+	error_reporting(E_ALL ^ E_WARNING);
+	$antwoord = [];
 	require("cors.php");
 	require("connect.php");
 	require("functions.php");
-	$antwoord = [];
+
 	// * check if connection can be made, else Die
-	if (($conn==false)||($conn->connect_error)) {
-		error_log(print_r($conn, TRUE), 3, 'php.log');
-
-		$antwoord['Err']="Something went wrong, please contact the owner on contact@doctorwhofans.be";
-		echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
-		die("Connection failed: " . $conn);
-
-	}
+	
 	$stmtConn = $conn->prepare("show status where `variable_name` = 'Threads_connected';");
 	if(!$stmtConn){
 		die("Statement prepare failed: " . $conn->connect_error);
 	}
 	if(!$stmtConn->execute()){
 		die("Statement execution failed: " . $stmtConn->error);
-		$conn->close();
+		//$conn->close();
 	}else{
 		$result = $stmtConn->get_result();
 		$resultSet = $result->fetch_all(MYSQLI_ASSOC);
@@ -57,12 +50,12 @@
 			//	* bind parameters to query, if it fails, die
 			if(!$stmt->bind_param("sss",$menu,$ip,$session)){
 				die("Statement binding failed: " . $stmt->error);
-				$conn->close();
+				//$conn->close();
 			}
 			// * voer query uit, if it fails, die
 			if(!$stmt->execute()){
 				die("Statement execution failed: " . $stmt->error);
-				$conn->close();
+				//$conn->close();
 			}else{
 				//	* get Results
 				$result = $stmt->get_result();
@@ -75,7 +68,7 @@
 						getContent($conn,$page,$language,$antwoord);
 						getEpisodeOfTheDay($conn,$antwoord);
 					getActorsOfTheDay($conn,$antwoord);
-					$conn->close();
+					//$conn->close();
 
 					}else{
 						$stmt->close();
@@ -102,6 +95,7 @@
 					getDownloads($conn,$current_Page_Id,$antwoord);
 				}
 
+				
 				echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
 				//$conn->close();
 			}

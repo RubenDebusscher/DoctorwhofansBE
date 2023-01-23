@@ -1,5 +1,5 @@
 <?php
-	$antwoord = [];
+	//$antwoord = [];
 function processPageData(&$resultset,&$current_Page_Id,&$prefix,&$Page_Name){
 	$current_Page=$resultset['Page'][0]['page_Link'];
 	$current_Page_Id =$resultset['Page'][0]['page_Id'];
