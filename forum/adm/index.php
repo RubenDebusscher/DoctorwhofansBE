@@ -13,6 +13,10 @@
 
 /**
 */
+require_once realpath("../../vendor/autoload.php");
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable("..");
+$dotenv->load();
 define('IN_PHPBB', true);
 define('ADMIN_START', true);
 define('NEED_SID', true);

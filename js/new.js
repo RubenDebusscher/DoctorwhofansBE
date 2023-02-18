@@ -395,6 +395,9 @@ function GetContent(menu, id) {
           case "Episode":
             Serial(response);
             break;
+          case "Magazine":
+            Magazine(response);
+            break;
           case "Doctor":
             Doctor(response);
             break;
@@ -593,7 +596,7 @@ function Doctor(DoctorData) {
   CreateWikiDetails();
   var DoctorKeys = ['Actor'];
   var DoctorStrings = ['Actor'];
-  PopulateWikiDetailsStatic(DoctorKeys, DoctorStrings);
+  PopulateWikiDetailsStatic(DoctorKeys, DoctorStrings,"");
   WikiImage(DoctorData.Doctor[0].character_Image, 'api__characters');
   //Info(DoctorData);
 
@@ -603,10 +606,42 @@ function Character(CharacterData){
   CreateWikiDetails();
   var CharacterKeys = ['Actor'];
   var CharacterStrings = ['Actor'];
-  PopulateWikiDetailsStatic(CharacterKeys, CharacterStrings);
+  PopulateWikiDetailsStatic(CharacterKeys, CharacterStrings,"");
   WikiImage(CharacterData.Character[0].character_Image, 'api__characters');
   //Info(DoctorData);
 }
+
+
+
+function Magazine(MagazineData){
+  //$('main article h1').html(DoctorData.Doctor[0].doctor_Incarnation);
+  CreateWikiDetails();
+  var MagazineKeys = ['Issue','CoverDate','Order'];
+  var MagazineStrings = ['Issue','Cover Date','Order'];
+  PopulateWikiDetailsStatic(MagazineKeys, MagazineStrings,"Issue");
+  WikiImage(MagazineData.Magazine[0].magazine_Image, 'api__magazines');
+  $('#WikiIssue p').html(MagazineData.Magazine[0].magazine_Issue);
+  $('#WikiCoverDate p').html(LocalDate(MagazineData.Magazine[0].magazine_CoverDate));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  $('#Previous p').html(PreviousNextLink(MagazineData.Magazine[0].Prev_Name, MagazineData.Magazine[0].Prev_Link));
+  $('#Next p').html(PreviousNextLink(MagazineData.Magazine[0].Next_Name, MagazineData.Magazine[0].Next_Link));
+  //Info(DoctorData);
+}
+
+
 
 function Serial(EpisodeData) {
   //$('main article h1').html(EpisodeData.Serial[0].serial_Title);
@@ -614,7 +649,7 @@ function Serial(EpisodeData) {
   var episodeKeys = ['Overall_Story_Number','Doctors', 'Companions', 'First_Aired_on', 'Last_Aired_On', 'Total_Runtime','Average_UK','Average_AI','Production_code', 'Order', ];
   var episodestrings = ['Overall Story Number','Doctors', 'Companions', 'First episode aired on', 'Last episode aired on', 'Total Runtime','Average UK viewers','Average AI', 'Production Code', 'Order'];
 
-  PopulateWikiDetailsStatic(episodeKeys, episodestrings);
+  PopulateWikiDetailsStatic(episodeKeys, episodestrings,"Episode");
   WikiImage(EpisodeData.Serial[0].serial_Image, 'api__serials');
   $('#WikiOverall_Story_Number p').html(EpisodeData.Serial[0].serial_Story);
   $('#WikiDoctors p').html(DoctorsForEpisode(EpisodeData.Serial.Characters));
@@ -764,10 +799,10 @@ function CreateWikiDetails() {
 
 }
 
-function PopulateWikiDetailsStatic(keys, params) {
+function PopulateWikiDetailsStatic(keys, params,type) {
   for (var i = 0; i < params.length; i++) {
     if (keys[i] == "Order") {
-      $('#WikiDetails').append('<section id="Wiki' + keys[i] + '"><hr><div id="Previous"><span>Previous Episode</span><p></p></div><div id="Next"><span>Next Episode</span><p></p></div></section>');
+      $('#WikiDetails').append('<section id="Wiki' + keys[i] + '"><hr><div id="Previous"><span>Previous '+type+'</span><p></p></div><div id="Next"><span>Next '+type+'</span><p></p></div></section>');
 
     } else {
       $('#WikiDetails').append('<section id="Wiki' + keys[i] + '"><span>' + params[i] + '</span><p></p></section>');
@@ -799,6 +834,12 @@ function LocalDate(original) {
     second: '2-digit',
     timeZoneName: 'short'
   });
+  if((rawDate.getHours()==1||rawDate.getHours()==0)&&rawDate.getMinutes()==0 && rawDate.getSeconds()==0){
+
+    newDate=rawDate.toLocaleString(langFormat, {
+    dateStyle:"long"
+    });
+  }
   return newDate;
 }
 

@@ -29,6 +29,7 @@ admin
 ftp-sync.json
 push.js
 .dataface_history
+.vscode
 MC
 php.log
 *.env

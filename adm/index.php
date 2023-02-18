@@ -1,9 +1,9 @@
 <?php
-ini_set('display_errors', 'off');
-require_once realpath("../vendor/autoload.php");
-use Dotenv\Dotenv;
-$dotenv = Dotenv::createImmutable("..");
-$dotenv->load();
+//ini_set('display_errors', 'off');
+//require_once realpath("../vendor/autoload.php");
+//use Dotenv\Dotenv;
+//$dotenv = Dotenv::createImmutable("..");
+//$dotenv->load();
 //echo $_ENV["dbMain"];
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'on');

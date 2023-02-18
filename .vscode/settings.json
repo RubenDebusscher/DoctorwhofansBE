@@ -52,7 +52,9 @@
   ],
   "discord.enabled": true,
   "phpcs.errorSeverity": 10,
-  "files.exclude": {},
+  "files.exclude": {
+    ".history": true
+  },
   "cSpell.customDictionaries": {
     "custom-dictionary-folder-doctorwhofansbe": {
       "name": "custom-dictionary-folder-doctorwhofansbe",

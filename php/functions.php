@@ -29,6 +29,9 @@ function getRichContent(&$conn,&$prefix,&$API_Item,&$antwoord){
 		case "Book":
 			echo "Zoek de data van een Book: ".$prefix;
 			break;
+		case "Magazine":
+			getMagazine($conn,$API_Item,$antwoord);
+			break;
 		case "Crew":
 			echo "Zoek de data van een Crewlid: ".$prefix;
 			break;
@@ -42,6 +45,33 @@ function getRichContent(&$conn,&$prefix,&$API_Item,&$antwoord){
 
 	}
 }
+function getMagazine(&$conn,&$API_Item,&$resultset){
+	$stmtMagagazine = $conn->prepare('select * from Magazines where Magazine_Id=?');
+	if(!$stmtMagagazine){
+		die('Statement preparing failed: ' . $conn->error);
+	}
+	if(!$stmtMagagazine->bind_param("i",$API_Item)){
+		die('Statement binding failed: ' . $conn->connect_error);
+	}
+	if(!$stmtMagagazine->execute()){
+		die('Statement execution failed: ' . $stmtMagagazine->error);
+	}else{
+		$result = $stmtMagagazine->get_result();
+		if($result->num_rows === 0){
+			$resultset['Magazine']='No rows';
+		} else{
+			$resultset['Magazine'] = $result->fetch_all(MYSQLI_ASSOC);
+		}
+	}
+
+
+}
+
+
+
+
+
+
 function getCharacter(&$conn,&$API_Item,&$resultset){
 	$stmtCharacter = $conn->prepare("select * from api__characters where character_Id=?");
 					if(!$stmtCharacter){
