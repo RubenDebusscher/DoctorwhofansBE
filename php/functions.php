@@ -275,7 +275,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 						}
 						$VideoIdFromURL=rand(1,$resultMaxVideoId[0]['max']);
 					}
-					$stmtMainVideo = $conn->prepare('select * from content__videos where video_Id=?');
+					$stmtMainVideo = $conn->prepare('select *,IF(`video_Spoiler`=1, "SPOILER", "") as Spoiler from content__videos where video_Id=?');
 					if(!$stmtMainVideo){
 						die('Statement preparing failed: ' . $conn->error);
 					}
@@ -292,7 +292,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 							$resultset['MainVideo'] = $result->fetch_all(MYSQLI_ASSOC);
 						}
 					}
-					$stmtOtherVideos = $conn->prepare('select * from content__videos where video_Id !=?');
+					$stmtOtherVideos = $conn->prepare('select *,IF(`video_Spoiler`=1, "SPOILER", "") as Spoiler from content__videos where video_Id !=?');
 					if(!$stmtOtherVideos){
 						die('Statement preparing failed: ' . $conn->error);
 					}
@@ -556,7 +556,8 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 	if(!$stmtPagesByTags){
 		die('Statement preparing failed: ' . $conn->error);
 	}
-	if(!$stmtPagesByTags->bind_param("is",$current_Page_Id,$RawCategory)){
+	$cat=str_replace("_", " ", $RawCategory);
+	if(!$stmtPagesByTags->bind_param("is",$current_Page_Id,$cat)){
 		die('Statement binding failed: ' . $conn->connect_error);
 	}
 	if(!$stmtPagesByTags->execute()){
@@ -564,7 +565,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 	}else{
 		$rsltPagesByTag = $stmtPagesByTags->get_result();
 		if($rsltPagesByTag->num_rows === 0){
-			$resultset['PagesForTag']='No rows';
+			$resultset['PagesForTag']='';
 		} else{
 			$resultset['PagesForTag'] = $rsltPagesByTag->fetch_all(MYSQLI_ASSOC);
 		}

@@ -1,7 +1,7 @@
 <?php
 class tables_api__magazines {
   function getTitle($record){
-		return $record->val('magazine_Issue').': '.$record->val('magazine_CoverDate');
+		return $record->val('magazine_Issue');//.': '.$record->val('magazine_CoverDate');
   }
   function beforeInsert(Dataface_Record $record){
     $user = Dataface_AuthenticationTool::getInstance()->getLoggedInUser();
@@ -21,7 +21,7 @@ class tables_api__magazines {
     $records = array();
     $rows = explode("\n", $data);
     foreach ( $rows as $row ){
-      list($magazine_Issue,$magazine_Type,$magazine_CoverDate,$magazine_ReleaseDate,$magazine_Format) = explode(',', $row);
+      list($magazine_Issue,$magazine_Type,$magazine_CoverDate,$magazine_ReleaseDate,$magazine_Format,$magazine_Editor,$magazine_Publisher) = explode(',', $row);
       $record = new Dataface_Record('api__magazines', array());
       $record->setValues($defaultValues);
       $record->setValues(
@@ -32,8 +32,8 @@ class tables_api__magazines {
           'magazine_ReleaseDate'=>$magazine_ReleaseDate,
 
           'magazine_Format'=>$magazine_Format,
-          'magazine_ReleaseDate'=>$magazine_ReleaseDate,
-          'magazine_Image'=>''
+          'magazine_Editor'=>$magazine_Editor,
+          'magazine_Publisher'=>$magazine_Publisher,
         )
       );
       $records[] = $record;

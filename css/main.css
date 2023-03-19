@@ -3058,7 +3058,13 @@ h1 {
     max-width: 50%;
 }
 
-
+#phasingIMG {
+    width: 100%;
+    background-size: 29em;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 41vh;
+}
 .trumbowyg-button-pane {
     isolation: isolate;
     z-index: 0 !important;
@@ -3468,12 +3474,41 @@ main article a:hover,
 main article a:focus {
     text-decoration: none
 }
+.VidWrapper{
+    width: 50%;
+}
+.Vidcontainer {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+  }
+  
+  /* Then style the iframe to fit in the container div with full height and width */
+  .responsive-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .thumbnail{
+    width: 19vw;
+}
 
 @media screen and (max-width:600px) {
     .timeline::after {
         left: 31px
     }
-
+    .VidWrapper{
+        width: 100%;
+    }
+    .thumbnail{
+        max-width: 100%;
+    }
+    .VideoChoice div {width: 100%;}
     .container {
         width: 100%;
         padding-left: 70px;
@@ -3516,4 +3551,10 @@ main article a:focus {
     background-color: var(--bg-color-darkBlue);
     color: var(--font-color-darkblue-white);
     font-size: 1.5em; margin-top: 1em;
+}
+
+.SPOILER{
+background-color:#A64D4D !important;
+
+
 }

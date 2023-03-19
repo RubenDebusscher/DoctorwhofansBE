@@ -37,9 +37,12 @@ var varlist;
 
   var createList = function (wrapper, count) {
     while (count--) {
-      wrapper = wrapper.appendChild(
-        document.createElement('ol')
-      );
+      if (wrapper !==null){
+        wrapper = wrapper.appendChild(
+          document.createElement('ol')
+        );
+      }
+      
 
       if (count) {
         wrapper = wrapper.appendChild(
@@ -475,15 +478,16 @@ function AddQuoteSelectionToDom(quotes){
 function AddMainVideoToDom(mainVideo,Parentelem,replace){
   var MainVideoElem = "";
   var MainVideoImage="";
-  
+  $(Parentelem).addClass(mainVideo[0].Spoiler)
 
   if(replace=="replace"){
-    MainVideoImage="<iframe src='"+mainVideo[0].video_URL+"' allowfullscreen width='420' height='315'></iframe>";
+    MainVideoImage="<div class='VidWrapper'><div class='Vidcontainer'><iframe src='"+mainVideo[0].video_URL+"' allowfullscreen class='responsive-iframe'></iframe></div></div>";
     MainVideoElem +="<h2>"+mainVideo[0].video_Name+"</h2>";
     MainVideoElem += MainVideoImage;
     $(Parentelem).html(MainVideoElem);
+    
   }else{
-    MainVideoImage="<iframe src='"+mainVideo[0].video_URL+"' allowfullscreen width='420' height='315'></iframe>";
+    MainVideoImage="<div class='VidWrapper'><div class='Vidcontainer'><iframe src='"+mainVideo[0].video_URL+"' allowfullscreen class='responsive-iframe'></iframe></div></div>";
     MainVideoElem +="<h2>"+mainVideo[0].video_Name+"</h2>";
     MainVideoElem += MainVideoImage;
     $(Parentelem).append(MainVideoElem);
@@ -491,11 +495,36 @@ function AddMainVideoToDom(mainVideo,Parentelem,replace){
 }
 function AddVideoSelectionToDom(videos){
   let Videoselection = "";
+  var elements =[];
   if(videos.length >0){
     for (var i = 0; i < videos.length; i++) {
-      Videoselection += " <a href='" + window.location.origin + "/Video/" + videos[i].video_Id + ".html'>" + videos[i].video_Name + "</a>";
+      var image 
+      if(videos[i].video_Image!==null){
+        element="";
+        var image ="<img class='thumbnail' src='"+  window.location.origin +"/images/content__videos/"+videos[i].video_Image+"'/>";
+
+
+      }else{
+        var element="#VidNoPic_"+videos[i].video_Id;
+        elements.push(element);
+        image="<div style='width:100%; height:13em' id='"+element+"'></div>"
+        
+      }
+      
+      Videoselection += "<div class='bordered DarkBlueBackground TimeDiv padded max_20 "+videos[i].Spoiler+"'><a href='" + window.location.origin + "/Video/" + videos[i].video_Id + ".html'>";
+       
+      Videoselection+=image;
+      
+      Videoselection+= "<br>"+videos[i].video_Name + "</a></div>";
+      
     }
     $('.VideoChoice').html(Videoselection);
+    
+    for(var i=0;i<elements.length;i++){
+      buildLogo(elements[i],'#ffff00');
+
+    }
+    
 
   }
 
@@ -585,29 +614,35 @@ function Content(Content) {
   for (var item = 0; item < Content.length; item++) {
     ContentString += Content[item].item_Value;
   }
-  if (ContentString.length > 0) {
-    $('main article').append(ContentString);
+  if (ContentString.length <= 0) {
+    ContentString="<div id='phasingIMG'></div><h1>Engines are phasing, or we are still building on this page.</h1>"
   }
-
+  $('main article').append(ContentString);
+  buildLogo('#phasingIMG', '#306090');
 }
 
 function Doctor(DoctorData) {
   //$('main article h1').html(DoctorData.Doctor[0].doctor_Incarnation);
   CreateWikiDetails();
-  var DoctorKeys = ['Actor'];
-  var DoctorStrings = ['Actor'];
+  var DoctorKeys = ['Species','Actor'];
+  var DoctorStrings = ['Species','Actor'];
   PopulateWikiDetailsStatic(DoctorKeys, DoctorStrings,"");
   WikiImage(DoctorData.Doctor[0].character_Image, 'api__characters');
+  $('#WikiSpecies p').html(DoctorData.Doctor[0].character_Species);
+  $('#WikiActor p').html(ActorsforCharacter(DoctorData.Doctor[0].ActorList));
   //Info(DoctorData);
 
 }
 function Character(CharacterData){
   //$('main article h1').html(DoctorData.Doctor[0].doctor_Incarnation);
   CreateWikiDetails();
-  var CharacterKeys = ['Actor'];
-  var CharacterStrings = ['Actor'];
+  var CharacterKeys = ['Species','Actor'];
+  var CharacterStrings = ['Species','Actor'];
   PopulateWikiDetailsStatic(CharacterKeys, CharacterStrings,"");
   WikiImage(CharacterData.Character[0].character_Image, 'api__characters');
+  $('#WikiSpecies p').html(CharacterData.Character[0].character_Species);
+  $('#WikiActor p').html(ActorsforCharacter(CharacterData.Character[0].ActorList));
+  
   //Info(DoctorData);
 }
 
@@ -616,25 +651,16 @@ function Character(CharacterData){
 function Magazine(MagazineData){
   //$('main article h1').html(DoctorData.Doctor[0].doctor_Incarnation);
   CreateWikiDetails();
-  var MagazineKeys = ['Issue','CoverDate','Order'];
-  var MagazineStrings = ['Issue','Cover Date','Order'];
+  var MagazineKeys = ['Issue','CoverDate','ReleaseDate','Format','Publisher','Editor','Order'];
+  var MagazineStrings = ['Issue','Cover Date','Release Date','Format','Publisher','Editor','Order'];
   PopulateWikiDetailsStatic(MagazineKeys, MagazineStrings,"Issue");
   WikiImage(MagazineData.Magazine[0].magazine_Image, 'api__magazines');
   $('#WikiIssue p').html(MagazineData.Magazine[0].magazine_Issue);
   $('#WikiCoverDate p').html(LocalDate(MagazineData.Magazine[0].magazine_CoverDate));
-
-
-
-
-
-
-
-
-
-
-
-
-
+  $('#WikiReleaseDate p').html(LocalDate(MagazineData.Magazine[0].magazine_ReleaseDate));
+  $('#WikiFormat p').html(MagazineData.Magazine[0].magazine_Format);
+  $('#WikiPublisher p').html(MagazineData.Magazine[0].magazine_Publisher);
+  $('#WikiEditor p').html(MagazineData.Magazine[0].magazine_Editor);
 
   $('#Previous p').html(PreviousNextLink(MagazineData.Magazine[0].Prev_Name, MagazineData.Magazine[0].Prev_Link));
   $('#Next p').html(PreviousNextLink(MagazineData.Magazine[0].Next_Name, MagazineData.Magazine[0].Next_Link));
@@ -767,6 +793,19 @@ function DoctorsForEpisode(Doctors) {
     }
   }
   return drList.slice(0, -2);
+}
+
+function ActorsforCharacter(Actors){
+  var actorList = "";
+  if(Actors !=="No rows"){
+    for (var act = 0; act < Actors.length; act++) {
+      var name = Actors[act].actor_First_name;
+      name += (Actors[act].actor_Last_name == null) ? '' : " " + Actors[act].actor_Last_name;
+      actorList += "<a href='" + window.location.origin + "/" + Actors[act].page_Link + ".html'>" + name + "</a>, ";
+    }
+    actorlist =actorList.slice(0, -2);
+  }
+  return actorList;
 }
 
 function CompanionsForEpisode(Companions) {

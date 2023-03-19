@@ -19,7 +19,7 @@ $_SESSION["EmailSent"]="";
 <html lang="nl-BE">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
     <title>
         Doctor Who Fans België
     </title>
@@ -30,11 +30,14 @@ $_SESSION["EmailSent"]="";
     <link rel="manifest" href="https://www.doctorwhofans.be/manifest.json">
     <meta name="theme-color" content="#306090"/>
     <link rel="apple-touch-icon" href="https://ww.doctorwhofans.be/images/logo/apple-icon.png">
-    <script>
+    <script
+    src='https://platform-api.sharethis.com/js/sharethis.js#property=5e66a481fb4445001239b600&product=privacy-policy-generator&source=platform&cms=website' 
+    async='async' type='application/javascript' ></script>
+    <script type='application/javascript' >
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async ()=> {
-                let sw = await navigator.serviceWorker.register('https://www.doctorwhofans.be/sw.js');
-                console.log(sw);
+                let sw = await navigator.serviceWorker.register('sw.js');
+                //console.log(sw);
             })
         }
         async function subscribe(){
@@ -48,15 +51,15 @@ $_SESSION["EmailSent"]="";
         }
         </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107369097-3"></script>
-<script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107369097-3" type="application/javascript"  nonce="Rand0m0123"></script>
+<script type='application/javascript' >
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'UA-107369097-3');
 </script>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH80PEG0ZG"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH80PEG0ZG"  type="application/javascript" nonce="Rand0m0123"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -65,7 +68,7 @@ $_SESSION["EmailSent"]="";
   gtag('config', 'G-WH80PEG0ZG');
 </script>
 
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!--     <script>window.jQuery || document.write('<script src="https://www.doctorwhofans.be/trumbowyg/js/vendor/jquery-3.3.1.min.js"><\/script>')</script> -->
 
@@ -74,9 +77,9 @@ $_SESSION["EmailSent"]="";
 
 
     <link rel="stylesheet" href="https://www.doctorwhofans.be/css/main.css" />
-    <script type="text/javascript"
+    <script type="application/javascript"
         src="https://platform-api.sharethis.com/js/sharethis.js#property=5e66a481fb4445001239b600&product=inline-share-buttons"
-        async="async" async defer></script>
+        async="async" async defer nonce="Rand0m0123"></script>
 </head>
 
 <body>
@@ -111,7 +114,7 @@ $_SESSION["EmailSent"]="";
         //getAvailableLangcodes();
         //checkCookie()
     </script>
-    <script type="application/javascript" src="https://sdki.truepush.com/sdk/v2.0.3/app.js" async></script>
+    <script type="application/javascript" src="https://sdki.truepush.com/sdk/v2.0.3/app.js" async="async" async defer></script>
     <script>
     var truepush = window.truepush || [];
     truepush.push(function(){
