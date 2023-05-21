@@ -31,5 +31,5 @@ $lang = array_merge($lang, [
 	'ACP_DSGVO_POST_UNAPPROVED'					=> 'Messages pending approval',
 	'ACP_DSGVO_POST_UNAPPROVED_EXPLAIN'			=> 'Shall messages still pending approval be included in the download?',
 	'ACP_DSGVO_POST_DELETED'					=> 'Deleted messages',
-	'ACP_DSGVO_POST_DELETED_EXPLAIN'			=> 'Shall deleted messages be included in the download?',
+	'ACP_DSGVO_POST_DELETED_EXPLAIN'			=> 'Shall deleted messages be included in the download?<br><br><b>Note: </b>Unfortunately, posts that have been permanently deleted are not included, only the deleted ones that are provisionally marked as deleted.',
 ]);

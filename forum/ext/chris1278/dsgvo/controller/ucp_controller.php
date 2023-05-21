@@ -55,15 +55,13 @@ class ucp_controller
 
 	public function dsgvo_profile_download ()
 	{
-		$u_not_allowed_profil	= append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&mode=profile_download');
-		$u_dsgvo_overview		= append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&mode=dsgvo_overview');
 		$this->language->add_lang('ucp_profil_donwload', 'chris1278/dsgvo');
 
 		if ($this->request->is_set_post('prof-down'))
 		{
 			if (!$this->auth->acl_get('u_dsgvo_profile_download'))
 			{
-				trigger_error (sprintf($this->language->lang('PROFIL_DOWNLOAD_NOT_ALLOWED'), $u_not_allowed_profil));
+				trigger_error ($this->language->lang('PROFIL_DOWNLOAD_NOT_ALLOWED', append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&amp;mode=profile_download')));
 			}
 
 			$sql = 'SELECT user_id, user_ip, user_regdate, username, user_email, user_lastvisit, user_posts, user_lang, user_timezone, user_dateformat,
@@ -125,23 +123,23 @@ class ucp_controller
 			exit_handler();
 		}
 
+		$dsgvo_overview_info	= append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&amp;mode=dsgvo_overview');
+
 		$this->template->assign_vars([
-			'DSGVO_LANG_OVERVIEW'			=> sprintf($this->language->lang('DSGVO_PROFILE_DOWNLOAD_INFO'), $u_dsgvo_overview),
+			'DSGVO_LANG_OVERVIEW'			=> $this->language->lang('DSGVO_PROFILE_DOWNLOAD_INFO', $dsgvo_overview_info),
 			'DSGVO_PROFILE_DOWNLOAD'		=> $this->auth->acl_get('u_dsgvo_profile_download'),
 		]);
 	}
 
 	public function dsgvo_posts_download ()
 	{
-		$u_not_allowed_data		= append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&mode=data_download');
-		$u_dsgvo_overview		= append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&mode=dsgvo_overview');
 		$this->language->add_lang('ucp_data_download', 'chris1278/dsgvo');
 
 		if ($this->request->is_set_post('post-down'))
 		{
 			if (!$this->auth->acl_get('u_dsgvo_posts_download'))
 			{
-				trigger_error (sprintf($this->language->lang('DATA_DOWNLOAD_NOT_ALLOWED'), $u_not_allowed_data));
+				trigger_error ($this->language->lang('DATA_DOWNLOAD_NOT_ALLOWED', append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&amp;mode=data_download')));
 			}
 			header("Content-type: text/csv");
 			header("Content-Disposition: attachment; filename=dsgvo_my_post_data.csv");
@@ -198,10 +196,12 @@ class ucp_controller
 			exit_handler();
 		}
 
+		$dsgvo_overview_info	= append_sid("{$this->phpbb_root_path}ucp.$this->php_ext", 'i=-chris1278-dsgvo-ucp-main_module&amp;mode=dsgvo_overview');
+
 		$this->template->assign_vars([
 		'FORMAT_OF_POST'				=> $this->config['dsgvo_post_format'],
 		'DSGVO_POSTS_DOWNLOAD'			=> $this->auth->acl_get('u_dsgvo_posts_download'),
-		'DSGVO_LANG_OVERVIEW'			=> sprintf($this->language->lang('DSGVO_DATA_DOWNLOAD_INFO'), $u_dsgvo_overview),
+		'DSGVO_LANG_OVERVIEW'			=> $this->language->lang('DSGVO_DATA_DOWNLOAD_INFO', $dsgvo_overview_info),
 		]);
 	}
 
@@ -214,8 +214,4 @@ class ucp_controller
 		return '"' . $data . '"';
 	}
 
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
-	}
 }

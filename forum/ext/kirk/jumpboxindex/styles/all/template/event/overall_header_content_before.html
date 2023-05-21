@@ -1,7 +1,7 @@
 {% if JUMPBOX_UCP && JUMPBOX_POSITION == 2 %}
 	{% if JUMPBOX_DEFAULT %}
-		{% INCLUDE 'jumpbox_default.html' %}
+		{% include '@kirk_jumpboxindex/jumpbox_default.html' %}
 	{% else %}
-		{% INCLUDE 'jumpbox_modern.html' %}
+		{% include '@kirk_jumpboxindex/jumpbox_modern.html' %}
 	{% endif %}
 {% endif %}

@@ -31,5 +31,5 @@ $lang = array_merge($lang, [
 	'ACP_DSGVO_POST_UNAPPROVED'					=> 'Ungeprüfte Beiträge',
 	'ACP_DSGVO_POST_UNAPPROVED_EXPLAIN'			=> 'Sollen ungeprüfte Beiträge enthalten sein?',
 	'ACP_DSGVO_POST_DELETED'					=> 'Gelöschte Beiträge',
-	'ACP_DSGVO_POST_DELETED_EXPLAIN'			=> 'Sollen gelöschte Beiträge enthalten sein?',
+	'ACP_DSGVO_POST_DELETED_EXPLAIN'			=> 'Sollen gelöschte Beiträge enthalten sein?<br><br><b>Hinweis: </b>Beiträge die endgültig gelöscht wurden sind leider nicht enthalten, sondern nur die gelöschten die vorläufig als gelöscht markiert sind.',
 ]);

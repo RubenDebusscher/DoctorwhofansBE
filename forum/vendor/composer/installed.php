@@ -7,7 +7,7 @@
         'aliases' => array(
             0 => '3.3.x-dev',
         ),
-        'reference' => 'b3d593b62637c744243ffefbb608af1ef93fa531',
+        'reference' => '81f67f3a6e30aa474c9749949e817cc426dae77c',
         'name' => 'phpbb/phpbb',
         'dev' => false,
     ),
@@ -107,7 +107,7 @@
             'aliases' => array(
                 0 => '3.3.x-dev',
             ),
-            'reference' => 'b3d593b62637c744243ffefbb608af1ef93fa531',
+            'reference' => '81f67f3a6e30aa474c9749949e817cc426dae77c',
             'dev_requirement' => false,
         ),
         'phpbb/phpbb-core' => array(

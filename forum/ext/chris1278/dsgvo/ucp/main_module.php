@@ -25,7 +25,6 @@ class main_module
 
 		$ucp_controller = $phpbb_container->get('chris1278.dsgvo.controller.ucp');
 		$language = $phpbb_container->get('language');
-		$ucp_controller->set_page_url($this->u_action);
 
 		switch ($mode)
 		{

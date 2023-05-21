@@ -1,7 +1,7 @@
 {% INCLUDE 'ucp_header.html' %}
 {% INCLUDECSS 'dsgvo_ucp.css' %}
-{% if DSGVO_PROFILE_DOWNLOAD %}
 <h2>{{ lang('UCP_DSGVO_PROFILE_DOWNLOAD') }}</h2>
+{% if DSGVO_PROFILE_DOWNLOAD %}
 <div class="panel">
 <p>{{ DSGVO_LANG_OVERVIEW }}</p>
 	<fieldset>
@@ -16,7 +16,6 @@
 	</fieldset>
 </div>
 {% else %}
-<h2>{{ lang('UCP_DSGVO_PROFILE_DOWNLOAD') }}</h2>
 <div class="panel">
 <br>
 {{ lang('NO_PERM_DGSVO') }}

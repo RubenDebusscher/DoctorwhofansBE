@@ -160,6 +160,7 @@ var switch_6 = false;
 var switch_7 = false;
 var switch_8 = false;
 var switch_9 = false;
+var switch_10 = false;
 
 // YouTube
 if (youtube_bbcode_switch == true)
@@ -224,7 +225,7 @@ if (google_analytics_no_tm_switch == true)
     var part3 =
 	{
         services:
-		{			
+		{
             name: data_name_googleanalytics,
             default: false,
             title: cs_google_analytics,
@@ -414,6 +415,25 @@ else
     part9 = null
 };
 
+if (amazon_switch == true)
+{
+    var part10 =
+	{
+        services:
+		{
+            name: data_name_amazon,
+            default: false,
+            title: cs_amazon_switch,
+            purposes: ['extra_service'],
+			description: ds_amazon_switch,
+        },
+    };
+}
+else
+{
+    part10 = null
+};
+
 if (part1 != null)
 {
     klaroConfig.services.push(part1.services);
@@ -449,4 +469,8 @@ if (part8 != null)
 if (part9 != null)
 {
     klaroConfig.services.push(part9.services);
+};
+if (part10 != null)
+{
+    klaroConfig.services.push(part10.services);
 };

@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension - Jumpbox on Index
-* @copyright (c) 2020 - 2022 Kirk https://reyno41.bplaced.net/phpbb
+* @copyright (c) 2020 - 2023 Kirk https://reyno41.bplaced.net/phpbb
 * @license GNU General Public License, version 2 (GPL-2.0-only)
 *
 */
@@ -33,7 +33,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, [
-	// module
+	// Module
 	'ACP_JUMPBOXINDEX'				=> 'Jumpbox on Index',
 	'ACP_JUMPBOXINDEX_SETTINGS'		=> 'Einstellungen',
 ]);

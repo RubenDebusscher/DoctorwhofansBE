@@ -46,7 +46,7 @@ $lang = array_merge($lang, [
 	'FONTAWESOME_FOR_COOKIE'	=> '<i class="opt-in-cookie-icon cok_men"></i>',
 	'SVG_FOR_COOKIE'			=> '<span id="cookie_svg"></span>',
 	'NEW_LINE'					=> '<br>',
-	'SECOND_INFOS'				=> 'The settings for cookies can be made here, which may be set.<br><br> For general notes and information, please refer to our <a href="%1$s" target="_blank"><strong>Privacy policy</strong></a> respectively <a href="%2$s" target="_blank"><strong> Terms of Use</strong></a>.',
+	'SECOND_INFOS'				=> 'The settings for cookies can be made here, which may be set.<br><br>General notes and information can be found in our <a href="%1$s" target="_blank"><strong>Privacy policy</strong></a> and <a href="%2$s" target="_blank"><strong> Terms of Use</strong></a>.',
 	'COOKIES_MUST_HAVE'			=> 'These cookies are preset values and must be accepted as they are necessary for the website to operate.',
 	'TECHNICAL_COOKIES'			=> 'Technically necessary cookies',
 	'EXTERN_COOKIES_EXPLAIN'	=> 'Options are provided here that make it possible to play videos or external media directly in the forum.',
@@ -453,6 +453,38 @@ $lang = array_merge($lang, [
 														<th class="cookie_th">Privacy policy:</th>
 														<td class="cookie_td">
 															<label class="cookie_label"><a href="https://policies.google.com/privacy" target="_blank">https://policies.google.com/privacy</a></label>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+									</details>',
+	'CS_AMAZON'					=> 'Amazon',
+	'DS_AMAZON'					=> '<details>
+										<summary class="collapsible_summary"><span class="cookie_arrow">&#9660;</span> >>> More information <<< <span class="cookie_arrow">&#9660;</span></summary><br>
+											<table>
+												<tbody class="cookie_tbody">
+													<tr class="cookie_tr">
+														<th class="cookie_th">Name:</th>
+														<td class="cookie_td">
+															<label class="cookie_label">Amazon</label>
+														</td>
+													</tr>
+													<tr class="cookie_tr">
+														<th class="cookie_th">Offerer:</th>
+														<td class="cookie_td">
+															<label class="cookie_label">Amazon Europe Core S.à r.l.</label>
+														</td>
+													</tr>
+													<tr class="cookie_tr">
+														<th class="cookie_th">Purpose:</th>
+														<td class="cookie_td">
+															<label class="cookie_label">With the permission of this switch, entries for Amazon are displayed. Data is also exchanged with the Amazon servers.</label>
+														</td>
+													</tr>
+													<tr class="cookie_tr">
+														<th class="cookie_th">Privacy policy:</th>
+														<td class="cookie_td">
+															<label class="cookie_label"><a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=201909010&ref_=footer_privacy" target="_blank">https://www.amazon.com/gp/help/customer/display.html?nodeId=201909010&ref_=footer_privacy</a></label>
 														</td>
 													</tr>
 												</tbody>

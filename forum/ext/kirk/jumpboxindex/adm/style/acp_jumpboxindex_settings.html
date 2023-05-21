@@ -1,5 +1,4 @@
 {% INCLUDE 'overall_header.html' %}
-{% INCLUDECSS 'css/jumpboxindex_acp.css' %}
 
 {% if JUMPBOX_NOTES %}
 	<div class="successbox jumpbox-notebox">{{ JUMPBOX_NOTES }}</div>
@@ -11,62 +10,63 @@
 <form id="acp_jumpboxindex" method="post" action="{{ U_ACTION }}">
 	<fieldset class="acp-jumpboxindex">
 		<legend>{{ lang('ACP_JUMPBOXINDEX_SETTINGS') }}</legend>
-		<dl id="opt_jumpbox_font_icon_jumpbox_default" onchange="jumpboxindex.setConfig()">
-			<dt class="ext-jumpboxindex nojs" id="opt_jumpboxindex_default"><label>{{ lang('JUMPBOXINDEX_DEFAULT') ~ lang('COLON') }}</label><br /><span>{{ lang('JUMPBOX_DEFAULT_EXPLAIN') }}</span></dt>
-			<dt id="opt_jumpbox_default"><label>{{ lang('JUMPBOX_DEFAULT') ~ lang('COLON') }}</label><br /><span>{{ lang('JUMPBOX_DEFAULT_EXPLAIN') }}</span></dt>
+		<dl id="jumpbox_default">
+			<dt><label>{{ lang('JUMPBOX_DEFAULT') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_DEFAULT_EXPLAIN') }}</span></dt>
 			<dd>
-				<label><input type="radio" class="radio" name="jumpbox_default" id="jumpbox_default_yes" value="1" {{ JUMPBOX_DEFAULT == 1 ? 'checked' }}>  {{ lang('DEFAULTDESIGN') }}</label>
-				<label><input type="radio" class="radio" name="jumpbox_default" id="jumpbox_default_no" value="0" {{ JUMPBOX_DEFAULT == 0 ? 'checked' }}>  {{ lang('FONT_AWESOME_SYMBOL') }}</label>
+				{{ _self.jumpbox_toggle_switch('jumpbox_default', JUMPBOX_DEFAULT) }}
 			</dd>
 		</dl>
 
-		<dl id="jumpbox_ucp" onchange="jumpboxindex.setConfig()">
-			<dt><label>{{ lang('JUMPBOX_UCP') ~ lang('COLON') }}</label><br /><span>{{ lang('JUMPBOX_UCP_EXPLAIN') }}</span></dt>
+		<dl>
+			<dt><label>{{ lang('JUMPBOX_UCP') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_UCP_EXPLAIN') }}</span></dt>
 			<dd>
-				<label><input type="radio" class="radio" name="jumpbox_ucp" id="jumpbox_ucp_yes" value="1" {{ JUMPBOX_UCP == 1 ? 'checked' }}>  {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="jumpbox_ucp" id="jumpbox_ucp_no" value="0" {{ JUMPBOX_UCP == 0 ? 'checked' }}>  {{ lang('NO') }}</label>
+				{{ _self.jumpbox_toggle_switch('jumpbox_ucp', JUMPBOX_UCP) }}
 			</dd>
 		</dl>
 
-		<dl id="jumpbox_left">
-			<dt><label>{{ lang('JUMPBOX_LEFT_RIGHT') ~ lang('COLON') }}</label><br /><span>{{ lang('JUMPBOX_LEFT_RIGHT_EXPLAIN') }}</span></dt>
+		<dl>
+			<dt><label>{{ lang('JUMPBOX_LEFT_RIGHT') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_LEFT_RIGHT_EXPLAIN') }}</span></dt>
 			<dd>
-				<label><input type="radio" class="radio" name="jumpbox_left" id="jumpbox_left_yes" value="1" {{ JUMPBOX_LEFT == 1 ? 'checked' }}>  {{ lang('JUMPBOX_LEFT') }}</label>
-				<label><input type="radio" class="radio" name="jumpbox_left" id="jumpbox_left_no" value="0" {{ JUMPBOX_LEFT == 0 ? 'checked' }}>  {{ lang('JUMPBOX_RIGHT') }}</label>
+				{{ _self.jumpbox_toggle_switch('jumpbox_left', JUMPBOX_LEFT) }}
 			</dd>
 		</dl>
 
-		<dl id="jumpbox_position" onchange="jumpboxindex.setConfig()">
-			<dt class="ext-jumpboxindex nojs" id="opt_jumpbox_ucp_yes"><label>{{ lang('JUMPBOXINDEX_POSITION') ~ lang('COLON') }}</label><br /><span>{{ lang('JUMPBOXINDEX_POSITION_EXPLAIN') }}</span></dt>
-			<dt id="opt_jumpbox_ucp_no"><label>{{ lang('JUMPBOX_POSITION') ~ lang('COLON') }}</label><br /><span>{{ lang('JUMPBOX_POSITION_EXPLAIN') }}</span></dt>
+		<dl>
+			<dt><label>{{ lang('JUMPBOX_POSITION') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_POSITION_EXPLAIN') }}</span></dt>
 			<dd>
 				<select name="jumpbox_position">
-					<option id="jumpbox_position_navbar_top" value="1" {{ JUMPBOX_POSITION == 1 ? 'selected' }}>{{ lang('JUMPBOX_NAVBAR_TOP') }}</option>
-					<option id="jumpbox_position_forumlist_before" value="2" {{ JUMPBOX_POSITION == 2 ? 'selected' }}>{{ lang('JUMPBOX_FORUMLIST_BEFORE') }}</option>
-					<option id="jumpbox_position_statistics_after" value="3" {{ JUMPBOX_POSITION == 3 ? 'selected' }}>{{ lang('JUMPBOX_STATISTICS_AFTER') }}</option>
-					<option id="jumpbox_position_navbar_bottom" value="4" {{ JUMPBOX_POSITION == 4 ? 'selected' }}>{{ lang('JUMPBOX_NAVBAR_BOTTOM') }}</option>
+					<option value="1" {{ JUMPBOX_POSITION == 1 ? 'selected' }}>{{ lang('JUMPBOX_NAVBAR_TOP') }}</option>
+					<option value="2" {{ JUMPBOX_POSITION == 2 ? 'selected' }}>{{ lang('JUMPBOX_FORUMLIST_BEFORE') }}</option>
+					<option value="3" {{ JUMPBOX_POSITION == 3 ? 'selected' }}>{{ lang('JUMPBOX_STATISTICS_AFTER') }}</option>
+					<option value="4" {{ JUMPBOX_POSITION == 4 ? 'selected' }}>{{ lang('JUMPBOX_NAVBAR_BOTTOM') }}</option>
 				</select>
 			</dd>
 		</dl>
 
 		<dl id="jumpbox_font_icon">
-			<dt><label>{{ lang('JUMPBOX_FONT_ICON') ~ lang('COLON') }}</label><br /><span>{{ lang('JUMPBOX_FONT_ICON_EXPLAIN') }}</span></dt>
-			<dd><input type="text" name="jumpbox_font_icon" id="jb_font_icon" maxlength="38" size="31" value="{{ JUMPBOX_FONT_ICON }}" placeholder="{{ lang('JUMPBOX_FONT_ICON') }}" /> <span id="fa-icon-preview" class="icon {{ JUMPBOX_FONT_ICON }}"></span></dd>
+			<dt><label>{{ lang('JUMPBOX_FONT_ICON') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_FONT_ICON_EXPLAIN') }}</span></dt>
+			<dd><input type="text" name="jumpbox_font_icon" id="jb_font_icon" maxlength="57" size="31" value="{{ JUMPBOX_FONT_ICON }}" placeholder="{{ lang('JUMPBOX_FONT_ICON') }}" /> <span id="fa-icon-preview" class="icon {{ JUMPBOX_FONT_ICON }}"></span></dd>
 		</dl>
 	</fieldset>
 
 	<p class="submit-buttons">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}"{{ (JUMPBOX_DISABLED) ? ' disabled' }}>&nbsp;
-		<input class="button2" type="reset" id="form_reset" name="form_reset" value="{{ lang('RESET') }}" onclick="jumpboxindex.customFormReset()" />
+		<input class="button1" type="submit" name="submit" value="{{ lang('SUBMIT') }}"{{ (JUMPBOX_DISPLAY_DEACTIVATED) ? ' disabled' }}>&nbsp;
+		<input class="button2" type="reset" name="form_reset" value="{{ lang('RESET') }}">
 	</p>
+
 	{{ S_FORM_TOKEN }}
 
 <p class="copy-jumpboxindex">{{ JUMPBOXINDEX_VERSION }}</p>
 </form>
 
-<script>
-	var jumpboxindex= {};
-</script>
+{% INCLUDEJS '@kirk_jumpboxindex/js/jb_acp.js' %}
+{% INCLUDECSS '@kirk_jumpboxindex/css/jb_acp.css' %}
+{% INCLUDECSS '@kirk_jumpboxindex/css/jb_toggle_acp.css' %}
 
-{% INCLUDEJS 'js/acp_jumpboxindex.js' %}
 {% INCLUDE 'overall_footer.html' %}
+
+{% macro jumpbox_toggle_switch(name, checked = true) %}
+{% spaceless %}
+	<input type="checkbox" class="toggle" name="{{ name }}"{{ checked ? ' checked' }}>
+{% endspaceless %}
+{% endmacro %}

@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "Loads scripts with which you give the users of the forum page the opportunity to reject or accept cookies!",
     "homepage": "https://christian-esch.de",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "time": "2020-12-28",
     "license": "GPL-2.0-only",
     "authors": [

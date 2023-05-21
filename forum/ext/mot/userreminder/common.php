@@ -2,8 +2,8 @@
 
 /**
 *
-* @package UserReminder v1.4.0
-* @copyright (c) 2019, 2020 Mike-on-Tour
+* @package UserReminder v1.7.0
+* @copyright (c) 2019 - 2023 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
@@ -53,11 +53,11 @@ class common
 		$this->phpEx = $phpEx;
 		$this->mot_userreminder_remind_queue = $mot_userreminder_remind_queue;
 
-		$this->sitename = htmlspecialchars_decode($this->config['sitename']);
+		$this->sitename = htmlspecialchars_decode($this->config['sitename'], ENT_COMPAT);
 		$script_path = (strlen($this->config['script_path']) > 1) ? $this->config['script_path'] : '';
 		$this->forgot_pass = $this->config['server_protocol'] . $this->config['server_name'] . $script_path . "/ucp.".$this->phpEx."?mode=sendpassword";
 		$this->admin_mail = $this->config['board_contact'];
-		$this->email_sig = str_replace('<br />', "\n", "-- \n" . htmlspecialchars_decode($this->config['board_email_sig']));
+		$this->email_sig = str_replace('<br>', "\n", "-- \n" . htmlspecialchars_decode($this->config['board_email_sig'], ENT_COMPAT));
 		$this->days_inactive = $this->config['mot_ur_inactive_days'];
 		$this->days_til_delete = $this->config['mot_ur_days_until_deleted'];
 		$this->days_del_sleepers = $this->config['mot_ur_sleeper_deletetime'];
@@ -92,9 +92,10 @@ class common
 	/**
 	* Remind users
 	*
-	* @param	array	$users_marked	Users selected for reminding identified by their user_id
+	* @param	array		$users_marked	Users selected for reminding identified by their user_id
+	*		boolean	$zeroposters	marks whether inactive users or zeroposters are to be handled, default is false to mark inactive users, set to true for handling zeroposters, necessary due to different config variables
 	**/
-	public function remind_users($users_marked)
+	public function remind_users($users_marked, $zeroposters = false)
 	{
 		if (count($users_marked) > 0)					// lets check for an empty array; just to be certain that none of the called functions throws an error or an exception
 		{
@@ -116,7 +117,8 @@ class common
 			*/
 			$this->email_arr = json_decode($this->config_text->get('mot_ur_email_texts'), true);
 			$now = time();
-			$reminder1 = $now - (self::SECS_PER_DAY * $this->config['mot_ur_days_reminded']);
+			// Since inactive users and zeroposters may have different time frames we have to distinguish here
+			$reminder1 = $zeroposters ? $now - (self::SECS_PER_DAY * $this->config['mot_ur_zp_days_reminded']) : $now - (self::SECS_PER_DAY * $this->config['mot_ur_days_reminded']);
 			// since we only have an array of user ids we need to get all the other user data from the DB and we start to select the users supposed to get the second reminder mail
 			// get only users we have selected before
 			// and who have been reminded once before
@@ -168,8 +170,8 @@ class common
 			}
 
 			//--------------------------------------------------------------------------------------
-			// and now we start to select the users supposed to get the first reminder mail
-			$day_limit = $now - (self::SECS_PER_DAY * $this->config['mot_ur_inactive_days']);
+			// and now we start to select the users supposed to get the first reminder mail, for this we have to calculate $day_limit depending on the type of user (inactive or zerooster)
+			$day_limit = $zeroposters ? $now - (self::SECS_PER_DAY * $this->config['mot_ur_zp_inactive_days']) : $now - (self::SECS_PER_DAY * $this->config['mot_ur_inactive_days']);
 			$query = 'SELECT user_id, username, user_email, mot_last_login, user_lang, user_timezone, user_dateformat, user_jabber, user_notify_type, mot_reminded_one, user_regdate, mot_sleeper_remind
 					FROM  ' . USERS_TABLE . '
 					WHERE ' . $this->db->sql_in_set('user_id', $users_marked) . '
@@ -204,10 +206,14 @@ class common
 
 				// all mails have been sent, let's set the reminder time(s)
 				$query = 'UPDATE ' . USERS_TABLE . ' SET mot_reminded_one = ' . $now;
-
-				if ($this->config['mot_ur_days_reminded'] == 0)		// if the admin selected to have only one reminder by setting this time frame to Zero ...
+				// if the admin selected to have only one reminder by setting this time frame to Zero we have to set this column too to enable deletion depending on the type of user
+				if ($zeroposters)
 				{
-					$query .= ', mot_reminded_two = ' . $now;		// ... we have to set this column too to enable deletion
+					$query .= $this->config['mot_ur_zp_days_reminded'] == 0 ? ', mot_reminded_two = ' . $now : '';
+				}
+				else
+				{
+					$query .= $this->config['mot_ur_days_reminded'] == 0 ? ', mot_reminded_two = ' . $now : '';
 				}
 
 				$query .= ' WHERE ' . $this->db->sql_in_set('user_id', $first_reminders_ary);
@@ -315,6 +321,12 @@ class common
 		}
 		$messenger->anti_abuse_headers($this->config, $this->user);
 
+		// Set FROM address if applicable
+		if ($this->config['mot_ur_email_from'] != '')
+		{
+			$messenger->from($this->config['mot_ur_email_from']);
+		}
+
 		// check whether the user's language exists in the extension
 		$lang_dir = $this->root_path . 'ext/mot/userreminder/language';
 		$dirs = $this->load_dirs($lang_dir);
@@ -329,7 +341,7 @@ class common
 		{
 			$ur_email_text = $this->email_arr[$row['user_lang']][$reminder_type];
 
-			$username = htmlspecialchars_decode($row['username']);
+			$username = htmlspecialchars_decode($row['username'], ENT_COMPAT);
 			$last_visit = $this->format_date_time($row['user_lang'], $row['user_timezone'], $row['user_dateformat'], $row['mot_last_login']);
 			$last_remind = $this->format_date_time($row['user_lang'], $row['user_timezone'], $row['user_dateformat'], $row['mot_reminded_one']);
 			$reg_date = $this->format_date_time($row['user_lang'], $row['user_timezone'], $row['user_dateformat'], $row['user_regdate']);
@@ -366,7 +378,7 @@ class common
 			$messenger->template($reminder_type, $row['user_lang'], $mail_template_path);
 
 			$messenger->assign_vars([
-				'USERNAME'			=> htmlspecialchars_decode($row['username']),
+				'USERNAME'			=> htmlspecialchars_decode($row['username'], ENT_COMPAT),
 				'LAST_VISIT'		=> $this->format_date_time($row['user_lang'], $row['user_timezone'], $row['user_dateformat'], $row['mot_last_login']),
 				'LAST_REMIND'		=> $this->format_date_time($row['user_lang'], $row['user_timezone'], $row['user_dateformat'], $row['mot_reminded_one']),
 				'DAYS_INACTIVE'		=> $this->days_inactive,

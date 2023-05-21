@@ -113,7 +113,7 @@ class who_was_here
 	*/
 
 	// Update the users session in the table.
-	public function update_session()
+	public function update_session(): void
 	{
 		if ($this->user->data['user_id'] != ANONYMOUS)
 		{
@@ -207,7 +207,7 @@ class who_was_here
 	}
 
 	// Fetching the user-list and putting the stuff into the template.
-	public function display()
+	public function display(): void
 	{
 		$is_index = ($this->user->page['page_name'] == 'index.' . $this->php_ext);
 		$force_display = false;
@@ -258,7 +258,7 @@ class who_was_here
 					$wwh_disp_permission_total = true;
 					$wwh_disp_permission_users = true;
 				}
-				else if ($this->user->data['is_bot']) // bot
+				else if (!empty($this->user->data['is_bot'])) // bot
 				{
 					$wwh_disp_permission_total = (
 						$this->config['lfwwh_perm_for_bots'] == self::PERM_STATS
@@ -540,7 +540,7 @@ class who_was_here
 	}
 
 	// Deletes the users from the list, whose visit is to old.
-	public function prune()
+	public function prune(): bool
 	{
 		if ($this->config['lfwwh_time_mode'] == self::TIME_MODE_TODAY)
 		{
@@ -572,7 +572,7 @@ class who_was_here
 	}
 
 	// Cleans up the table and delete the cache when user accounts have been deleted. Inserts also a notification if clean up was necessary. (LukeWCS)
-	public function clear_up($event)
+	public function clear_up($event): void
 	{
 		if (!$this->config['lfwwh_clear_up'])
 		{
@@ -610,7 +610,7 @@ class who_was_here
 	}
 
 	// Adds permissions. (LukeWCS)
-	public function add_permissions($event)
+	public function add_permissions($event): void
 	{
 		$permissions = $event['permissions'];
 		$lang_show_users = $this->language->lang('ACL_U_LFWWH_SHOW_USERS'); // needs phpBB >=3.2.10
@@ -626,7 +626,7 @@ class who_was_here
 	}
 
 	// Returns the users array
-	private function view_state()
+	private function view_state(): array
 	{
 		switch ($this->config['lfwwh_sort_by'])
 		{
@@ -751,12 +751,12 @@ class who_was_here
 		}
 		if ($mode == 1) // today
 		{
-			return sprintf($this->language->lang('LFWWH_RECORD_DAY'), $this->config['lfwwh_record_ips'], $this->get_formatted_record_time((int) $this->config['lfwwh_record_time']));
+			return $this->language->lang('LFWWH_RECORD_DAY', $this->config['lfwwh_record_ips'], $this->get_formatted_record_time((int) $this->config['lfwwh_record_time']));
 		}
 		else // period of time
 		{
 			$record_time_start = (int) $this->config['lfwwh_record_time'] - (3600 * $this->config['lfwwh_period_of_time_h']) - (60 * $this->config['lfwwh_period_of_time_m']) - $this->config['lfwwh_period_of_time_s'];
-			return sprintf($this->language->lang('LFWWH_RECORD_TIME'), $this->config['lfwwh_record_ips'], $this->get_formatted_record_time($record_time_start), $this->get_formatted_record_time((int) $this->config['lfwwh_record_time']));
+			return $this->language->lang('LFWWH_RECORD_TIME', $this->config['lfwwh_record_ips'], $this->get_formatted_record_time($record_time_start), $this->get_formatted_record_time((int) $this->config['lfwwh_record_time']));
 		}
 	}
 

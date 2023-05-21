@@ -1,7 +1,7 @@
 {% INCLUDE 'ucp_header.html' %}
 {% INCLUDECSS 'dsgvo_ucp.css' %}
-{% if DSGVO_PROFILE_DOWNLOAD || DSGVO_POSTS_DOWNLOAD %}
 <h2>{{ lang('UCP_DSGVO_OVERVIEW') }}</h2>
+{% if DSGVO_PROFILE_DOWNLOAD || DSGVO_POSTS_DOWNLOAD %}
 <div class="panel">
 <p>{{ lang('UCP_DSGVO_OVERVIEW_EXPLAIN') }}</p>
 	<fieldset class="dgsvo-info">
@@ -121,7 +121,6 @@
 {% endif %}
 </div>
 {% else %}
-<h2>{{ lang('UCP_DSGVO_OVERVIEW') }}</h2>
 <div class="panel">
 <br>
 {{ lang('NO_PERM_DGSVO') }}
@@ -129,6 +128,3 @@
 </div>
 {% endif %}
 {% INCLUDE 'ucp_footer.html' %}
-
-
-

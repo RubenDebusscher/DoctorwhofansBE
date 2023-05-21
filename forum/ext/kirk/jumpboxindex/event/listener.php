@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension - Jumpbox on Index
-* @copyright (c) 2020 - 2022 Kirk https://reyno41.bplaced.net/phpbb
+* @copyright (c) 2020 - 2023 Kirk https://reyno41.bplaced.net/phpbb
 * @license GNU General Public License, version 2 (GPL-2.0-only)
 *
 */
@@ -70,8 +70,7 @@ class listener implements EventSubscriberInterface
 	public function jumpbox_settings()
 	{
 		$jumpbox_default = $this->config['jumpbox_default'];
-		$jumpbox_left = $this->config['jumpbox_left'] == 1;
-		$jumpbox_right = $this->config['jumpbox_left'] == 0;
+		$jumpbox_left = $this->config['jumpbox_left'];
 		$jumpbox_position = $this->config['jumpbox_position'];
 		$jumpbox_position_navbar = $this->config['jumpbox_position'] == 1 || $this->config['jumpbox_position'] == 4;
 		$jumpbox_position_top = $this->config['jumpbox_position'] == 2;
@@ -82,15 +81,15 @@ class listener implements EventSubscriberInterface
 
 		$this->template->assign_vars([
 			'JUMPBOX_DEFAULT'				=> $jumpbox_default,
-			'JUMPBOX_RIGHT'					=> $jumpbox_right,
+			'JUMPBOX_RIGHT'					=> $jumpbox_left,
 			'JUMPBOX_POSITION'				=> $jumpbox_position,
 			'JUMPBOX_POSITION_DOWN'			=> $jumpbox_position_down,
 			'JUMPBOX_POSITION_DOWN_LEFT'	=> $jumpbox_position_down && $jumpbox_left,
-			'JUMPBOX_POSITION_DOWN_RIGHT'	=> $jumpbox_position_down && $jumpbox_right,
-			'JUMPBOX_TOP_LEFT'				=> $jumpbox_position_top && $jumpbox_left,
-			'JUMPBOX_TOP_RIGHT'				=> $jumpbox_right && $jumpbox_position_top,
-			'JUMPBOX_DOWN_LEFT'				=> $jumpbox_position_down && $jumpbox_left,
-			'JUMPBOX_DOWN_RIGHT'			=> $jumpbox_position_down && $jumpbox_right,
+			'JUMPBOX_POSITION_DOWN_RIGHT'	=> $jumpbox_position_down && $jumpbox_left,
+			'JUMPBOX_TOP_LEFT'				=> $jumpbox_position_top,
+			'JUMPBOX_TOP_RIGHT'				=> $jumpbox_position_top && $jumpbox_left,
+			'JUMPBOX_DOWN_LEFT'				=> $jumpbox_position_down,
+			'JUMPBOX_DOWN_RIGHT'			=> $jumpbox_position_down && $jumpbox_left,
 			'JUMPBOX_NAVBAR'				=> $jumpbox_position_navbar,
 			'JUMPBOX_FONT_ICON'				=> $jumpbox_font_icon,
 			'JUMPBOX_INDEX_UCP'				=> $show_jumpbox_index || $show_jumpbox_ucp,
@@ -107,7 +106,7 @@ class listener implements EventSubscriberInterface
 	// Display of whether the jumpbox should be displayed in the user control panel
 	public function make_jumpbox_ucp()
 	{
-		if ($this->config['jumpbox_ucp'] == 1)
+		if ($this->config['jumpbox_ucp'])
 		{
 			make_jumpbox(append_sid("{$this->phpbb_root_path}viewforum.$this->php_ext"));
 		}
