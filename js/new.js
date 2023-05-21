@@ -1038,8 +1038,9 @@ function secondsToDhms(seconds) {
  */
 function GetSecondsForEpisodes(dataURL) {
   $.ajax({
-    type: "GET",
-    url: 'https://www.doctorwhofans.be/php/' + dataURL,
+    type: "POST",
+    url: 'https://www.doctorwhofans.be/php/Totals.php',
+    data: {'TOTAL':dataURL},
     dataType: 'json',
     cache: false
   }).done(function (resultaat) {
