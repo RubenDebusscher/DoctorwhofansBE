@@ -365,7 +365,7 @@ function GetContent(menu, id) {
 
     // @ts-ignore
     $.ajax(settings).done(function (response) {
-      if(response.Page == false && menu.startsWith('Category:')==false){
+      if(response.Page == false &&Response.Page[0].pageType==9 && menu.startsWith('Category:')==false){
         var myHeaders = new Headers(); // Currently empty
         //myHeaders.set('Status Code', '404');
         // @ts-ignore
@@ -705,6 +705,7 @@ function Serial(EpisodeData) {
   $('#Next p').html(PreviousNextLink(EpisodeData.Serial[0].Next_Episode, EpisodeData.Serial[0].Next_Link));
 
   Episodes(EpisodeData.Serial.Episodes);
+  $('#Cast').html(CastForEpisode(EpisodeData.Serial.Characters));
   $('#Downloads').html(DownloadsForEpisode(EpisodeData.Downloads));
   for(var i=0;i<EpisodeData.Serial.EpisodeQuotes.length;i++){
     AddMainQuoteToDom(EpisodeData.Serial.EpisodeQuotes[i],"#Quotes","add");
@@ -819,6 +820,22 @@ function CompanionsForEpisode(Companions) {
     }
   }
   return compList.slice(0, -2);
+}
+
+
+function CastForEpisode(Characters){
+  var castList = "<ul>";
+  for (var cast = 0; cast < Characters.length; cast++) {
+    var firstName = (Characters[cast].character_First_name === null) ? '' :Characters[cast].character_First_name;
+    var lastName = (Characters[cast].character_Last_name === null) ? '' :Characters[cast].character_Last_name;
+    var link = (Characters[cast].Character_Link === null) ? '#' :window.location.origin +'/'+Characters[cast].Character_Link+".html";
+    castList += "<li><a href='"+link+"'>"+firstName+" "+lastName+"</a></li>";
+
+    
+  }
+  castList += "</ul>";
+  return castList;
+
 }
 
 function DownloadsForEpisode(Downloads) {

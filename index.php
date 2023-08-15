@@ -27,7 +27,7 @@ $_SESSION["EmailSent"]="";
     <meta charset=UTF-8 />
     <meta http-equiv=X-UA-Compatible content="chrome=1, IE=edge">
     <meta name=viewport content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="https://www.doctorwhofans.be/manifest.json">
+    <link rel="manifest" href="https://www.doctorwhofans.be/manifest.json"crossorigin="use-credentials">
     <meta name="theme-color" content="#306090"/>
     <link rel="apple-touch-icon" href="https://ww.doctorwhofans.be/images/logo/apple-icon.png">
     <script
@@ -80,6 +80,9 @@ $_SESSION["EmailSent"]="";
     <script type="application/javascript"
         src="https://platform-api.sharethis.com/js/sharethis.js#property=5e66a481fb4445001239b600&product=inline-share-buttons"
         async="async" async defer nonce="Rand0m0123"></script>
+
+        <link href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" rel="stylesheet" />
+<script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
 </head>
 
 <body>

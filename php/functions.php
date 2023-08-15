@@ -637,6 +637,6 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 			$stmtDownloads->close();
 	}
 
-
+	
 
 ?>
