@@ -45,7 +45,7 @@ class Dataface_LanguageTool {
 	 * Like addRealm except that it only adds the realm if the realm
 	 * isn't already loaded.
 	 */
-	public function loadRealm($name){
+	public static function loadRealm($name){
 		return self::getInstance($this->app->_conf['default_language'])->loadRealm($name);
 		
 		

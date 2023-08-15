@@ -258,7 +258,7 @@ function nextToken()
                     break;
                 }
 
-                if (ctype_alpha(ord($c))) { // keyword or ident
+                if (ctype_alpha($c)) { // keyword or ident
                     $state = 1;
                     $quote = '';
                     break;
@@ -270,7 +270,7 @@ function nextToken()
                 	break;
                 }
 
-                if (ctype_digit(ord($c))) { // real or int number
+                if (ctype_digit($c)) { // real or int number
                     $state = 5;
                     break;
                 }
@@ -343,7 +343,7 @@ function nextToken()
                		} 
                	}
 
-                if (ctype_alnum(ord($c)) || ($c == '_') || ($c == '.') || ($quote == '`' and $c != '`') ) {
+                if (ctype_alnum($c) || ($c == '_') || ($c == '.') || ($quote == '`' and $c != '`') ) {
                     $state = 1;
                     break;
                 }

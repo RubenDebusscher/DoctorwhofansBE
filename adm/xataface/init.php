@@ -21,7 +21,11 @@
  
 function init($site_path, $dataface_url){
 	ini_set('pcre.jit', '0');
-        $originalUrl = isset($_SERVER['HTTP_X_ORIGINAL_URL']) ? parse_url($_SERVER['HTTP_X_ORIGINAL_URL']) : null;
+        
+        $rawURL=$_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+        //echo $rawURL;
+        //$originalUrl = isset($_SERVER['HTTP_X_ORIGINAL_URL']) ? parse_url($_SERVER['HTTP_X_ORIGINAL_URL']) : null;
+        $originalUrl = isset( $rawURL) ? parse_url( $rawURL) :  $rawURL;
         if ($originalUrl) {
             $host = @$originalUrl["host"];
             $port = @$originalUrl["port"];

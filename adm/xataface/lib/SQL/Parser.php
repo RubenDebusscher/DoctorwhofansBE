@@ -55,6 +55,9 @@ class SQL_Parser
     var $reserved = array();
     var $units = array();
     var $dialect;
+    var $commands = null;
+    var $quantifiers = null;
+    var $all_tables; 
     
     /**
      * A flag to see if there has been an interval that has not been closed

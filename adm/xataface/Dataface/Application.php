@@ -4022,7 +4022,7 @@ END
 	 */
 	function parseString($expression, $context=null){
 		// make sure that the expression doesn't try to break the double quotes.
-		if ( strpos($expression, '"') !== false ){
+		if ( strpos($expression ?? '', '"') !== false ){
 			throw new Exception(
 				df_translate(
 					'scripts.Dataface.Application.parseString.ERROR_PARSING_EXPRESSION_DBL_QUOTE',
@@ -4064,7 +4064,7 @@ END
 			//unset($tableObj);
 		}
         if (defined('XF_PHP8') and !defined('XF_PHP8_STRICT')) {
-            $expression = preg_replace('/\[([a-zA-Z_][a-zA-Z0-9_]*)\]/', '[\'$1\']', $expression);
+            $expression = preg_replace('/\[([a-zA-Z_][a-zA-Z0-9_]*)\]/', '[\'$1\']', $expression ??'');
         }
         
 		if ( empty($app->_conf['debug']) ){
