@@ -4,15 +4,23 @@ RewriteRule ^([a-zA-Z0-9_-]+)/$ index.php
 
 
 <FilesMatch "\.ini$">
-Deny from all
+  Deny from all
 </FilesMatch>
 
 
 #ErrorDocument 404 https://www.doctorwhofans.be/notfound.html
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+#RewriteEngine On
+#RewriteCond %{HTTPS} off
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 #Rewrite everything to https
+
+
+
+
+
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/://:80
+RewriteRule ^/://:80(.*)$ https://adm.doctorwhofans.be/$1 [L,NC,R=301]
 
 #Header set Access-Control-Allow-Origin "https://www.doctorwhofans.be"
 #Header set Access-Control-Allow-Origin "https://doctorwhofans.be"

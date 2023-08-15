@@ -2,6 +2,17 @@ html,
 body {
   max-width: 100% !important;
 }
+
+
+#xf-logo {
+  height:12em !important;
+  background-size: contain;
+  margin: auto;
+}
+
+
+
+
 #main_table {
   width: 100%;
 }
@@ -32,7 +43,7 @@ tr[id$='_form_row']{
 @media only screen and (max-width: 900px) {
 
   #xf-logo {
-    display: none
+    display: none;
   }
 
   #main_table {
@@ -95,3 +106,5 @@ tr[id$='_form_row']{
   .table-headings{display: none;}
 }
 
+
+ .relatedList--api__serials--CharactersActors .mobile-row-content{display:none}
