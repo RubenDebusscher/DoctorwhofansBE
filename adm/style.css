@@ -40,6 +40,9 @@ tr[id$='_form_row']{
 
 .gutter.gutter-vertical{display: none;}
 
+
+.xf-RecordBrowser-select-field{height: 30em;}
+
 @media only screen and (max-width: 900px) {
 
   #xf-logo {

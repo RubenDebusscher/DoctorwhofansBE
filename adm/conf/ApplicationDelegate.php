@@ -87,6 +87,17 @@ class conf_ApplicationDelegate {
         return null;
     }
 
-    
+    public function getNavItem($key, $label)
+    {
+        # Use your own conditionals here
+        if ( $user and $user->val('user_Role') !== 'ADMIN' ) {
+            # key is the table you want to hide
+            if ($key == 'api__nicknames') {
+                return null;
+            }
+           
+        }
+        throw new Exception("Use default rendering");
+    }
 }
 ?>

@@ -22,7 +22,16 @@ class tables_management__users {
     }
 
   }
-  
+  function user_Role__permissions($record){
+    $auth =& Dataface_AuthenticationTool::getInstance();
+    $user =& $auth->getLoggedInUser();
+    if ( $user and  $user->val('user_Role') != 'ADMIN' ){
+        // We apply the security filter to non admin users.
+        return array('edit'=>0);
+
+    }
+
+  }
 }
 
 ?>
