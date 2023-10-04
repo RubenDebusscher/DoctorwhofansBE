@@ -1,37 +1,37 @@
 /* jb_acp.js
 ------------ */
 
-'use strict';
-
-var jumpboxindex= {};
+jumpboxindex = {};
 
 jumpboxindex.constants = Object.freeze({
-	DispJumpboxPosition_nb_top		: 1,
-	DispJumpboxPosition_nb_bottom	: 4,
+	Disp_Jumpbox_Position_nb_top		: 1,
+	Disp_Jumpbox_Position_nb_bottom		: 4,
 
-	OpacityEnabled					: '1',
-	OpacityDisabled					: '0.35',
+	Opacity_Enabled						: '1',
+	Opacity_Disabled					: '0.35',
 });
 
 jumpboxindex.setConfig = function () {
+	'use strict';
 
 	var jb = jumpboxindex.constants;
 
 	$('#jumpbox_font_icon').css('opacity', (
 			$('input[name="jumpbox_default"]').prop('checked') == true
-			&& $('select[name="jumpbox_position"]').prop('value') != jb.DispJumpboxPosition_nb_top
-			&& $('select[name="jumpbox_position"]').prop('value') != jb.DispJumpboxPosition_nb_bottom
-		) ? jb.OpacityDisabled : jb.OpacityEnabled
+			&& $('select[name="jumpbox_position"]').prop('value') != jb.Disp_Jumpbox_Position_nb_top
+			&& $('select[name="jumpbox_position"]').prop('value') != jb.Disp_Jumpbox_Position_nb_bottom
+		) ? jb.Opacity_Disabled : jb.Opacity_Enabled
 	);
 
 	$('#jumpbox_default').css('opacity', (
-			$('select[name="jumpbox_position"]').prop('value') == jb.DispJumpboxPosition_nb_top
-			|| $('select[name="jumpbox_position"]').prop('value') == jb.DispJumpboxPosition_nb_bottom
-		) ? jb.OpacityDisabled : jb.OpacityEnabled
+			$('select[name="jumpbox_position"]').prop('value') == jb.Disp_Jumpbox_Position_nb_top
+			|| $('select[name="jumpbox_position"]').prop('value') == jb.Disp_Jumpbox_Position_nb_bottom
+		) ? jb.Opacity_Disabled : jb.Opacity_Enabled
 	);
 };
 
 jumpboxindex.customFormReset = function () {
+	'use strict';
 
 	$('#acp_jumpboxindex').trigger("reset");
 
@@ -39,11 +39,13 @@ jumpboxindex.customFormReset = function () {
 };
 
 $(window).ready(function() {
+	'use strict';
 
 	jumpboxindex.setConfig();
 
 	$('input[name="jumpbox_default"]'		).on('change',	jumpboxindex.setConfig);
 	$('input[name="jumpbox_ucp"]'			).on('change',	jumpboxindex.setConfig);
+	$('input[name="jumpbox_left"]'			).on('change',	jumpboxindex.setConfig);
 	$('select[name="jumpbox_position"]'		).on('change',	jumpboxindex.setConfig);
 	$('input[name="form_reset"]'			).on('click',	jumpboxindex.customFormReset);
 });

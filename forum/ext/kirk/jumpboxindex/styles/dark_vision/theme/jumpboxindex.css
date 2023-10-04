@@ -32,7 +32,8 @@
 	padding-right: 0;
 }
 
-.jumpbox-navbar .dropdown-visible .dropdown-select, .nojs .dropdown-container:hover .dropdown-select {
+.jumpbox-navbar .dropdown-visible .dropdown-select,
+.nojs .dropdown-container:hover .dropdown-select {
 	background-image: none;
 }
 
@@ -40,7 +41,8 @@
 	background-image: none;
 }
 
-.dropdown-left .dropdown .jb-pointer-navbar, .nojs .rightside .dropdown .jb-pointer-navbar {
+.dropdown-left .dropdown .jb-pointer-navbar,
+.nojs .rightside .dropdown .jb-pointer-navbar {
 	right: 0;
 }
 

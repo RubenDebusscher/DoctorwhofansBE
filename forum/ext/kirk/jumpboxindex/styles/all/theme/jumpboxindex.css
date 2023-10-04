@@ -28,7 +28,8 @@
 	padding-right: 0;
 }
 
-.dropdown-left .dropdown .jb-pointer-navbar, .nojs .rightside .dropdown .jb-pointer-navbar {
+.dropdown-left .dropdown .jb-pointer-navbar,
+.nojs .rightside .dropdown .jb-pointer-navbar {
 	right: 0;
 }
 

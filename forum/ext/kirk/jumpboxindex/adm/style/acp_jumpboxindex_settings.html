@@ -4,30 +4,37 @@
 	<div class="successbox jumpbox-notebox">{{ JUMPBOX_NOTES }}</div>
 {% endif %}
 
-<h1>{{ lang('JUMPBOXINDEX') }}</h1>
+<h1 class="jumpbox-page-title">{{ lang('JUMPBOXINDEX') }}</h1>
 <p>{{ lang('JUMPBOXINDEX_EXPLAIN') }}</p>
 
 <form id="acp_jumpboxindex" method="post" action="{{ U_ACTION }}">
-	<fieldset class="acp-jumpboxindex">
+	<fieldset>
 		<legend>{{ lang('ACP_JUMPBOXINDEX_SETTINGS') }}</legend>
+		<dl>
+			<dt><label>{{ lang('JUMPBOX_TOGGLE_ACTIVATE') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_TOGGLE_ACTIVATE_EXPLAIN') }}</span></dt>
+			<dd>
+				{{ _self.toggle_switch('jumpbox_toggle_activated', JUMPBOX_TOGGLE_ACTIVATED, JUMPBOX_TOGGLE_ACTIVATED) }}
+			</dd>
+		</dl>
+
 		<dl id="jumpbox_default">
 			<dt><label>{{ lang('JUMPBOX_DEFAULT') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_DEFAULT_EXPLAIN') }}</span></dt>
 			<dd>
-				{{ _self.jumpbox_toggle_switch('jumpbox_default', JUMPBOX_DEFAULT) }}
+				{{ _self.toggle_switch('jumpbox_default', JUMPBOX_DEFAULT, JUMPBOX_TOGGLE_ACTIVATED) }}
 			</dd>
 		</dl>
 
 		<dl>
 			<dt><label>{{ lang('JUMPBOX_UCP') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_UCP_EXPLAIN') }}</span></dt>
 			<dd>
-				{{ _self.jumpbox_toggle_switch('jumpbox_ucp', JUMPBOX_UCP) }}
+				{{ _self.toggle_switch('jumpbox_ucp', JUMPBOX_UCP, JUMPBOX_TOGGLE_ACTIVATED) }}
 			</dd>
 		</dl>
 
 		<dl>
 			<dt><label>{{ lang('JUMPBOX_LEFT_RIGHT') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_LEFT_RIGHT_EXPLAIN') }}</span></dt>
 			<dd>
-				{{ _self.jumpbox_toggle_switch('jumpbox_left', JUMPBOX_LEFT) }}
+				{{ _self.toggle_switch('jumpbox_left', JUMPBOX_LEFT, JUMPBOX_TOGGLE_ACTIVATED) }}
 			</dd>
 		</dl>
 
@@ -45,7 +52,10 @@
 
 		<dl id="jumpbox_font_icon">
 			<dt><label>{{ lang('JUMPBOX_FONT_ICON') ~ lang('COLON') }}</label><br><span>{{ lang('JUMPBOX_FONT_ICON_EXPLAIN') }}</span></dt>
-			<dd><input type="text" name="jumpbox_font_icon" id="jb_font_icon" maxlength="57" size="31" value="{{ JUMPBOX_FONT_ICON }}" placeholder="{{ lang('JUMPBOX_FONT_ICON') }}" /> <span id="fa-icon-preview" class="icon {{ JUMPBOX_FONT_ICON }}"></span></dd>
+			<dd>
+				<input type="text" name="jumpbox_font_icon" id="jb_font_icon" maxlength="57" size="31" value="{{ JUMPBOX_FONT_ICON }}" placeholder="{{ lang('JUMPBOX_FONT_ICON') }}" />
+				<span id="fa-icon-preview" class="icon {{ JUMPBOX_FONT_ICON }}"></span>
+			</dd>
 		</dl>
 	</fieldset>
 
@@ -61,12 +71,17 @@
 
 {% INCLUDEJS '@kirk_jumpboxindex/js/jb_acp.js' %}
 {% INCLUDECSS '@kirk_jumpboxindex/css/jb_acp.css' %}
-{% INCLUDECSS '@kirk_jumpboxindex/css/jb_toggle_acp.css' %}
+{% if JUMPBOX_TOGGLE_ACTIVATED %}
+	{% INCLUDECSS '@kirk_jumpboxindex/css/jb_toggle_acp.css' %}
+{% endif %}
 
 {% INCLUDE 'overall_footer.html' %}
 
-{% macro jumpbox_toggle_switch(name, checked = true) %}
-{% spaceless %}
-	<input type="checkbox" class="toggle" name="{{ name }}"{{ checked ? ' checked' }}>
-{% endspaceless %}
+{% macro toggle_switch(name, checked = true, toggle = true) %}
+	{%- if toggle -%}
+		<input type="checkbox" class="toggle" name="{{ name }}"{{ checked ? ' checked' }}>
+	{%- else -%}
+		<label><input type="radio" class="radio" name="{{ name }}" value="1"{{ checked ? ' checked' }}> {{ lang('YES') }}</label>
+		<label><input type="radio" class="radio" name="{{ name }}" value="0"{{ !checked ? ' checked' }}> {{ lang('NO') }}</label>
+	{%- endif -%}
 {% endmacro %}

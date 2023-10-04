@@ -21,11 +21,11 @@ class ext extends \phpbb\extension\base
 	public function is_enableable()
 	{
 		$phpbb_min_ver		= '3.2.6';
-		$phpbb_below_ver	= '3.4.0@dev';
+		$phpbb_below_ver	= '3.4.0-dev';
 		$php_min_ver		= '7.0.0';
-		$php_below_ver		= '8.2.0';
+		$php_below_ver		= '8.3.0-dev';
 
-		if (phpbb_version_compare(PHPBB_VERSION, '3.2.0@dev', '<'))
+		if (phpbb_version_compare(PHPBB_VERSION, '3.2.0-dev', '<'))
 		{
 			$lang = $this->container->get('user');
 			$lang->add_lang_ext('kirk/jumpboxindex', 'jumpboxindex_enable_error');
@@ -47,7 +47,7 @@ class ext extends \phpbb\extension\base
 			$error_message[] = $lang->lang('ERROR_JB_MSG_PHP_WRONG_VERSION', $php_min_ver, $php_below_ver);
 		}
 
-		if (phpbb_version_compare(PHPBB_VERSION, '3.3.0@dev', '<') && count($error_message) > 1)
+		if (phpbb_version_compare(PHPBB_VERSION, '3.3.0-dev', '<') && count($error_message) > 1)
 		{
 			$error_message = implode('<br>', $error_message);
 			trigger_error($error_message . $this->get_adm_back_link(), E_USER_WARNING);

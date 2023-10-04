@@ -69,15 +69,15 @@ class listener implements EventSubscriberInterface
 
 	public function jumpbox_settings()
 	{
-		$jumpbox_default = $this->config['jumpbox_default'];
-		$jumpbox_left = $this->config['jumpbox_left'];
-		$jumpbox_position = $this->config['jumpbox_position'];
-		$jumpbox_position_navbar = $this->config['jumpbox_position'] == 1 || $this->config['jumpbox_position'] == 4;
-		$jumpbox_position_top = $this->config['jumpbox_position'] == 2;
-		$jumpbox_position_down = $this->config['jumpbox_position'] == 3 || $this->config['jumpbox_position'] == 4;
-		$jumpbox_font_icon = $this->config['jumpbox_font_icon'];
-		$show_jumpbox_index = ($this->user->page['page_name'] == 'index.' .$this->php_ext);
-		$show_jumpbox_ucp = ($this->user->page['page_name'] == 'ucp.' .$this->php_ext);
+		$jumpbox_default			= $this->config['jumpbox_default'];
+		$jumpbox_left				= $this->config['jumpbox_left'];
+		$jumpbox_position			= $this->config['jumpbox_position'];
+		$jumpbox_position_navbar	= $this->config['jumpbox_position'] == 1 || $this->config['jumpbox_position'] == 4;
+		$jumpbox_position_top		= $this->config['jumpbox_position'] == 2;
+		$jumpbox_position_down		= $this->config['jumpbox_position'] == 3 || $this->config['jumpbox_position'] == 4;
+		$jumpbox_font_icon			= $this->config['jumpbox_font_icon'];
+		$show_jumpbox_index			= ($this->user->page['page_name'] == 'index.' .$this->php_ext);
+		$show_jumpbox_ucp			= ($this->user->page['page_name'] == 'ucp.' .$this->php_ext);
 
 		$this->template->assign_vars([
 			'JUMPBOX_DEFAULT'				=> $jumpbox_default,

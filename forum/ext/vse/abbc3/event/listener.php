@@ -67,10 +67,9 @@ class listener implements EventSubscriberInterface
 	 * @param helper          $helper
 	 * @param language        $language
 	 * @param template        $template
-	 * @param user            $user
 	 * @access public
 	 */
-	public function __construct(bbcodes_config $bbcodes_config, bbcodes_display $bbcodes_display, bbcodes_help $bbcodes_help, config $config, db_text $db_text, helper $helper, language $language, template $template, user $user)
+	public function __construct(bbcodes_config $bbcodes_config, bbcodes_display $bbcodes_display, bbcodes_help $bbcodes_help, config $config, db_text $db_text, helper $helper, language $language, template $template)
 	{
 		$this->bbcodes_config = $bbcodes_config;
 		$this->bbcodes_display = $bbcodes_display;
@@ -79,7 +78,6 @@ class listener implements EventSubscriberInterface
 		$this->config_text = $db_text;
 		$this->helper = $helper;
 		$this->template = $template;
-		$this->user = $user;
 		$this->language = $language;
 	}
 
@@ -168,11 +166,11 @@ class listener implements EventSubscriberInterface
 	public function setup_custom_bbcodes()
 	{
 		$this->template->assign_vars([
-			'ABBC3_USERNAME'			=> $this->user->data['username'],
 			'ABBC3_BBCODE_ICONS'		=> $this->bbcodes_display->get_icons(),
 			'ABBC3_BBCODE_FONTS'		=> ext::ABBC3_BBCODE_FONTS,
 
 			'S_ABBC3_BBCODES_BAR'		=> $this->config['abbc3_bbcode_bar'],
+			'S_ABBC3_BCSTYLE_BAR'		=> phpbb_version_compare(PHPBB_VERSION, ext::PHPBB_LEGACY_MAX, '<='),
 
 			'UA_ABBC3_BBVIDEO_WIZARD'	=> $this->helper->route('vse_abbc3_bbcode_wizard', ['mode' => 'bbvideo']),
 			'UA_ABBC3_PIPES_WIZARD'		=> $this->helper->route('vse_abbc3_bbcode_wizard', ['mode' => 'pipes']),
@@ -222,9 +220,11 @@ class listener implements EventSubscriberInterface
 	{
 		$configurator = $event['configurator'];
 		$configurator->registeredVars['abbc3.pipes_enabled'] = $this->config['abbc3_pipes'];
+		$configurator->registeredVars['abbc3.auto_video_enabled'] = $this->config['abbc3_auto_video'];
 
 		$this->bbcodes_config->pipes($configurator);
 		$this->bbcodes_config->bbvideo($configurator);
+		$this->bbcodes_config->auto_video($configurator);
 		$this->bbcodes_config->hidden($configurator);
 	}
 

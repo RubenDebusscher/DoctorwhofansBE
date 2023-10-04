@@ -58,12 +58,13 @@ $lang = array_merge($lang, array(
 	'ABBC3_OFFTOPIC_HELPLINE'	=> 'Message hors-sujet : [offtopic]texte[/offtopic]',
 	'ABBC3_PREFORMAT_HELPLINE'	=> 'Texte préformaté : [pre]texte[/pre]',
 	'ABBC3_SHADOW_HELPLINE'		=> 'Ombres sur le texte : [shadow=color]text[/shadow]',
-	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'Son SoundCloud : [soundcloud]http://soundcloud.com/user-name/song-title[/soundcloud]',
+	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'Son SoundCloud : [soundcloud]https://soundcloud.com/user-name/song-title[/soundcloud]',
 	'ABBC3_SPOILER_HELPLINE'	=> 'Spoiler le message : [spoil]texte[/spoil]',
 	'ABBC3_STRIKE_HELPLINE'		=> 'Texte barré : [s]texte[/s]',
 	'ABBC3_SUB_HELPLINE'		=> 'Texte en indice : [sub]texte[/sub]',
 	'ABBC3_SUP_HELPLINE'		=> 'Texte en exposant : [sup]texte[/sup]',
 	'ABBC3_YOUTUBE_HELPLINE'	=> 'Vidéo YouTube : [youtube]http://youtube_url[/youtube]',
+	'ABBC3_AUTOVIDEO_HELPLINE'	=> 'Embed MP4/OGG/WEBM video files: URL must start with <samp class="error">https</samp> or <samp class="error">http</samp> and end with <samp class="error">.mp4</samp>, <samp class="error">.ogg</samp> or <samp class="error">.webm</samp> (no BBCode needed). Note that browser support and GUI implementation varies.',
 
 	// Utility BBCodes
 	'ABBC3_COPY_BBCODE'			=> 'Copier le texte sélectionné',
@@ -78,7 +79,7 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBVIDEO_SITES'		=> 'Sites autorisés pour vidéo',
 	'ABBC3_URL_LINK'			=> 'Ajouter une adresse URL',
 	'ABBC3_URL_DESCRIPTION'		=> 'Description facultative',
-	'ABBC3_URL_EXAMPLE'			=> 'http://www.phpbb.com',
+	'ABBC3_URL_EXAMPLE'			=> 'https://www.phpbb.com',
 
 	// Pipe tables
 	'ABBC3_PIPE_TABLES'			=> 'Créer des tables',
@@ -97,23 +98,9 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBCODE_ORDERED'		=> 'L’ordre des BBcode a été mis à jour.',
 	'ABBC3_BBCODE_GROUP'		=> 'Gestion des groupes pouvant utiliser ce BBCode',
 	'ABBC3_BBCODE_GROUP_INFO'	=> 'Si aucun groupe n’est sélectionné, tous les utilisateurs pourront utiliser ce BBCode. Appuyer sur la touche <samp>CTRL</samp> (ou <samp>&#8984;CMD</samp> sur Mac) tout en cliquant pour sélectionner / désélectionner plus d’un groupe.',
-	'ABBC3_GOOGLE_FONTS_INFO'	=> 'Add <strong><a href="https://fonts.google.com" target="_blank">Google Fonts</a></strong> to the <samp class="error">[font]</samp> BBCode. Use exact spelling and case sensitivity. Place each font name on a separate line. Example: <samp>Droid Sans</samp><br><br>Note that “Allow usage of third party content delivery networks” must be enabled under “Load settings” to use this feature.',
-	'ABBC3_SETTINGS_EXPLAIN'	=> 'Ici, vous pouvez configurer les paramètres de Advanced BBCode Box. Pour plus d’informations sur la personnalisation de la barre d’icônes, visitez le site <a href="https://www.phpbb.com/customise/db/extension/advanced_bbcode_box/faq/1551" target="_blank">ABBC3 FAQ <i class="icon fa-external-link fa-fw" aria-hidden="true"></i></a>.',
-	'ABBC3_PIPES'				=> 'Activer le PlugIn Pipe Table',
-	'ABBC3_PIPES_EXPLAIN'		=> 'Le Pipes Table PlugIn permet aux utilisateurs de créer des tableaux dans leurs messages et leurs messages privés en utilisant la syntaxe de démarquage.',
-	'ABBC3_BBCODE_BAR'			=> 'Activer la barre d’icônes BBCode',
-	'ABBC3_BBCODE_BAR_EXPLAIN'	=> 'Cela affichera la barre d’outils BBCode d’ABBC3. Désactivez cette option pour afficher les boutons BBCode par défaut de phpBB.',
-	'ABBC3_QR_BBCODES'			=> 'Activer les BBCodes dans la réponse rapide',
-	'ABBC3_QR_BBCODES_EXPLAIN'	=> 'Cela affichera la barre d’outils BBCode d’ABBC3 dans la réponse rapide.',
-	'ABBC3_ICONS_TYPE'			=> 'Format de d’image de la barre d’icônes',
-	'ABBC3_ICONS_TYPE_EXPLAIN'	=> 'Choisissez le format d’image à utiliser pour les icônes d’ABBC3. Notez que vous ne pouvez choisir qu’un seul format pour toutes vos icônes.',
-	'ABBC3_LEGEND_ICON_BAR'		=> 'Barre d’icônes du BBCode',
-	'ABBC3_LEGEND_ADD_ONS'		=> 'Paramètres supplémentaires',
-	'PNG' => 'PNG',
-	'SVG' => 'SVG',
 
 	// BBCode FAQ
 	'ABBC3_FAQ_TITLE'			=> 'Boite des BBCodes avancés',
 	'ABBC3_FAQ_SAMPLE_TEXT'		=> 'Le renard brun et rapide saute sur le chien paresseux.',
-	'ABBC3_FAQ_ANSWER'			=> '%1$s<br /><br /><strong>Exemple :</strong><br />%2$s<br /><br /><strong>Résultat :</strong><br />%3$s<hr />',
+	'ABBC3_FAQ_ANSWER'			=> '%1$s<br><br><strong>Exemple :</strong><br>%2$s<br><br><strong>Résultat :</strong><br>%3$s<hr />',
 ));

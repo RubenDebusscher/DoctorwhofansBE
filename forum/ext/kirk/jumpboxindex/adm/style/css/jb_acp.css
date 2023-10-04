@@ -20,7 +20,11 @@
 	text-decoration: underline;
 }
 
-fieldset.acp-jumpboxindex {
+h1.jumpbox-page-title {
+	font-size: 1.4em;
+}
+
+fieldset {
 	border-radius: 10px;
 	box-shadow: 2px 3px 0 #B9B6B1;
 }
@@ -35,6 +39,14 @@ legend {
 	background-color: inherit;
 }
 
+label {
+	cursor: inherit;
+}
+
+dd label input {
+	margin: 2px 0 0 0;
+}
+
 input[type="submit"]:disabled {
 	opacity: .35;
 	cursor: url("./images/not_allowed.png"), auto;
@@ -44,6 +56,11 @@ input[type="submit"]:disabled {
 	margin-top: 1em;
 	font-size: 1em;
 	text-align: center;
+}
+
+select[name="jumpbox_position"] {
+	padding-left: 4px;
+	border-radius: 3px;
 }
 
 #jumpbox_font_icon a {

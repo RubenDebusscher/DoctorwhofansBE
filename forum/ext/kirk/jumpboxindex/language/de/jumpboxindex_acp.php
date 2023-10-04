@@ -37,6 +37,10 @@ $lang = array_merge($lang, [
 	'JUMPBOXINDEX'						=> 'Jumpbox on Index',
 	'JUMPBOXINDEX_EXPLAIN'				=> 'Hier können diverse Einstellungen (z. B. die Position der Jumpbox) vorgenommen werden.',
 
+	// Jumpbox Toggle Activated
+	'JUMPBOX_TOGGLE_ACTIVATE'			=> 'Toggle Switch aktivieren',
+	'JUMPBOX_TOGGLE_ACTIVATE_EXPLAIN'	=> 'Wenn aktiviert, werden die Radio Buttons Ja/Nein durch ein Toggle Switch ersetzt.',
+
 	// Jumpbox design
 	'JUMPBOX_DEFAULT'					=> 'Anzeige der Jumpbox im Standard-Design',
 	'JUMPBOX_DEFAULT_EXPLAIN'			=> 'Wenn deaktiviert, wird die Jumpbox in Form eines Font Awesome Symbols angezeigt.',

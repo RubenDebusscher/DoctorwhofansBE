@@ -42,7 +42,7 @@ $lang = array_merge($lang, array(
 
 	// BBCode help lines
 	'ABBC3_ALIGN_HELPLINE'		=> 'Ausrichten von Text: [align=center|left|right|justify]Text[/align] (zentriert, linksbündig, rechtsbündig und blocksatz)',
-	'ABBC3_BBVIDEO_HELPLINE'	=> 'Webvideo hinzufügen: [bbvideo]http://Video URL[/bbvideo]',
+	'ABBC3_BBVIDEO_HELPLINE'	=> 'Webvideo hinzufügen: [bbvideo]http://Video_URL[/bbvideo]',
 	'ABBC3_BLUR_HELPLINE'		=> 'Unscharfer Text: [blur=color]Text[/blur]',
 	'ABBC3_DIR_HELPLINE'		=> 'Text Richtung (links nach rechts/rechts nach links): [dir=ltr|rtl]Text[/dir]',
 	'ABBC3_DROPSHADOW_HELPLINE'	=> 'Text mit Schattenfall: [dropshadow=color]Text[/dropshadow]',
@@ -58,12 +58,13 @@ $lang = array_merge($lang, array(
 	'ABBC3_OFFTOPIC_HELPLINE'	=> 'Off-topic Nachricht: [offtopic]Text[/offtopic]',
 	'ABBC3_PREFORMAT_HELPLINE'	=> 'Vorformatierter Text: [pre]Text[/pre]',
 	'ABBC3_SHADOW_HELPLINE'		=> 'Text mit Schatten: [shadow=color]Text[/shadow]',
-	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'SoundCloud-Link: [soundcloud]http://soundcloud.com/Benutzername/Lied-Titel[/soundcloud]',
+	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'SoundCloud-Link: [soundcloud]https://soundcloud.com/Benutzername/Lied-Titel[/soundcloud]',
 	'ABBC3_SPOILER_HELPLINE'	=> 'Spoiler Nachricht: [spoil]Text[/spoil]',
 	'ABBC3_STRIKE_HELPLINE'		=> 'Durchgestrichen: [s]Text[/s]',
 	'ABBC3_SUB_HELPLINE'		=> 'Tiefgestellt: [sub]Text[/sub]',
 	'ABBC3_SUP_HELPLINE'		=> 'Hochgestellt: [sup]Text[/sup]',
-	'ABBC3_YOUTUBE_HELPLINE'	=> 'YouTube-Video: [youtube]http://Youtube Url[/youtube]',
+	'ABBC3_YOUTUBE_HELPLINE'	=> 'YouTube-Video: [youtube]http://Youtube_Url[/youtube]',
+	'ABBC3_AUTOVIDEO_HELPLINE'	=> 'Embed MP4/OGG/WEBM video files: URL must start with <samp class="error">https</samp> or <samp class="error">http</samp> and end with <samp class="error">.mp4</samp>, <samp class="error">.ogg</samp> or <samp class="error">.webm</samp> (no BBCode needed). Note that browser support and GUI implementation varies.',
 
 	// Utility BBCodes
 	'ABBC3_COPY_BBCODE'			=> 'Markierten Text kopieren',
@@ -78,7 +79,7 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBVIDEO_SITES'		=> 'Zugelassene Websites',
 	'ABBC3_URL_LINK'			=> 'Website-URL einfügen',
 	'ABBC3_URL_DESCRIPTION'		=> 'Optionale Beschreibung',
-	'ABBC3_URL_EXAMPLE'			=> 'http://www.phpbb.com',
+	'ABBC3_URL_EXAMPLE'			=> 'https://www.phpbb.com',
 
 	// Pipe tables
 	'ABBC3_PIPE_TABLES'			=> 'Tabellen erstellen',
@@ -97,23 +98,9 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBCODE_ORDERED'		=> 'Der BBCode Auftrag wurde neu synchronisiert.',
 	'ABBC3_BBCODE_GROUP'		=> 'Gruppen verwalten, die diesen BBCode verwenden können.',
 	'ABBC3_BBCODE_GROUP_INFO'	=> 'Wenn keine Gruppen ausgewählt sind, können alle Benutzer diesen BBCode verwenden. Verwende STRG+CLICK (oder CMD+CLICK auf Mac) mehr als eine Gruppe zu aktivieren/deaktivieren.',
-	'ABBC3_GOOGLE_FONTS_INFO'	=> 'Add <strong><a href="https://fonts.google.com" target="_blank">Google Fonts</a></strong> to the <samp class="error">[font]</samp> BBCode. Use exact spelling and case sensitivity. Place each font name on a separate line. Example: <samp>Droid Sans</samp><br><br>Note that “Allow usage of third party content delivery networks” must be enabled under “Load settings” to use this feature.',
-	'ABBC3_SETTINGS_EXPLAIN'	=> 'Hier kannst du die Einstellungen für die Advanced BBCode Box verändern. Für weitere Informationen, wie du die Menüleiste verändern kannst, rufe bitte die <a href="https://www.phpbb.com/customise/db/extension/advanced_bbcode_box/faq/1551" target="_blank">ABBC3 FAQ <i class="icon fa-external-link fa-fw" aria-hidden="true"></i></a> auf.',
-	'ABBC3_PIPES'				=> 'Aktiviere das „Pipe Table“-Plug-in.',
-	'ABBC3_PIPES_EXPLAIN'		=> 'Mit dem „Pipe Table“-Plug-in können Benutzer Tabellen in ihren Beiträgen und Privaten Nachrichten mit Hilfe der Markdown-Syntax erstellen.',
-	'ABBC3_BBCODE_BAR'			=> 'Aktiviere die BBCode-Menüleiste',
-	'ABBC3_BBCODE_BAR_EXPLAIN'	=> 'Falls aktiviert, wird die ABBC3s iconbasierte BBCode-Menüleiste angezeigt. Sofern deaktiviert, wird die Standard phpBB BBCode-Menüleiste verwendet.',
-	'ABBC3_QR_BBCODES'			=> 'Aktiviere BBCodes bei der Schnellantwort',
-	'ABBC3_QR_BBCODES_EXPLAIN'	=> 'Falls aktiviert, wird bei der Schnellantwort die BBCode-Menüleiste angezeigt.',
-	'ABBC3_ICONS_TYPE'			=> 'Iconformat der Menüleiste',
-	'ABBC3_ICONS_TYPE_EXPLAIN'	=> 'Wähle das Iconformat, das für die ABBC3s Icons verwendet wird. Bitte beachte, dass nur ein Format für alle Icons gewählt werden kann.',
-	'ABBC3_LEGEND_ICON_BAR'		=> 'BBCode-Menüleiste',
-	'ABBC3_LEGEND_ADD_ONS'		=> 'Add-Ons',
-	'PNG' => 'PNG',
-	'SVG' => 'SVG',
 
 	// BBCode FAQ
 	'ABBC3_FAQ_TITLE'			=> 'Advanced BBCode Box BBCodes',
 	'ABBC3_FAQ_SAMPLE_TEXT'		=> 'Der schnelle braune Fuchs springt über den faulen Hund',
-	'ABBC3_FAQ_ANSWER'			=> '%1$s<br /><br /><strong>Beispiel:</strong><br />%2$s<br /><br /><strong>Ergebnis:</strong><br />%3$s<hr />',
+	'ABBC3_FAQ_ANSWER'			=> '%1$s<br><br><strong>Beispiel:</strong><br>%2$s<br><br><strong>Ergebnis:</strong><br>%3$s<hr />',
 ));

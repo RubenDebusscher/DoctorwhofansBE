@@ -37,17 +37,21 @@ $lang = array_merge($lang, [
 	'JUMPBOXINDEX'						=> 'Jumpbox on Index',
 	'JUMPBOXINDEX_EXPLAIN'				=> 'Various settings (e.g. the position of the Jumpbox) can be made here.',
 
+	// Jumpbox Toggle Activated
+	'JUMPBOX_TOGGLE_ACTIVATE'			=> 'Activate Toggle Switch',
+	'JUMPBOX_TOGGLE_ACTIVATE_EXPLAIN'	=> 'If activated, the radio buttons Yes/No are replaced with a toggle switch.',
+
 	// Jumpbox design
 	'JUMPBOX_DEFAULT'					=> 'Display of jumpbox in the default display',
 	'JUMPBOX_DEFAULT_EXPLAIN'			=> 'When deactivated, the Jumpbox display for as a Font Awesome icon.',
 
 	// Jumpbox ucp
 	'JUMPBOX_UCP'						=> 'Display the Jumpbox on User Control Panel',
-	'JUMPBOX_UCP_EXPLAIN'				=> 'When activated, display the Jumpbox additional on User Control Panel.',
+	'JUMPBOX_UCP_EXPLAIN'				=> 'When activated, also displays the Jumpbox on User Control Panel.',
 
 	// Jumpbox left right
 	'JUMPBOX_LEFT_RIGHT'				=> 'Display the Jumpbox Right',
-	'JUMPBOX_LEFT_RIGHT_EXPLAIN'		=> 'Show the Jumpbox left or right.',
+	'JUMPBOX_LEFT_RIGHT_EXPLAIN'		=> 'Show the Jumpbox on the righthand side or on the lefthand side.',
 
 	// Jumpbox position
 	'JUMPBOXINDEX_POSITION'				=> 'Jumpbox position on the Board index',

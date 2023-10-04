@@ -23,8 +23,8 @@ class jumpboxindex_acp_controller
 	/** @var \phpbb\template\template */
 	protected $template;
 
-	/** @var \phpbb\extension\manager */
-	protected $phpbb_extension_manager;
+	/** @var string */
+	protected $md_manager;
 
 	/** @var string */
 	protected $phpbb_admin_path;
@@ -55,18 +55,18 @@ class jumpboxindex_acp_controller
 		\phpbb\language\language $language,
 		\phpbb\request\request $request,
 		\phpbb\template\template $template,
-		$ext_manager,
-		$path_helper,
+		\phpbb\extension\manager $ext_manager,
+		\phpbb\path_helper $path_helper,
 		$php_ext
 	)
 	{
-		$this->config			= $config;
-		$this->language			= $language;
-		$this->request			= $request;
-		$this->template			= $template;
-		$this->php_ext			= $php_ext;
-		$this->admin_path		= $path_helper->get_phpbb_root_path() . $path_helper->get_adm_relative_path();
-		$this->md_manager		= $ext_manager->create_extension_metadata_manager('kirk/jumpboxindex');
+		$this->config		= $config;
+		$this->language		= $language;
+		$this->request		= $request;
+		$this->template		= $template;
+		$this->php_ext		= $php_ext;
+		$this->admin_path	= $path_helper->get_phpbb_root_path() . $path_helper->get_adm_relative_path();
+		$this->md_manager	= $ext_manager->create_extension_metadata_manager('kirk/jumpboxindex');
 	}
 
 	public function jumpbox_settings($u_action)
@@ -92,6 +92,7 @@ class jumpboxindex_acp_controller
 			{
 				trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
+			$this->config->set('jumpbox_toggle_activated', $this->request->variable('jumpbox_toggle_activated', ''));
 			$this->config->set('jumpbox_default', $this->request->variable('jumpbox_default', ''));
 			$this->config->set('jumpbox_ucp', $this->request->variable('jumpbox_ucp', ''));
 			$this->config->set('jumpbox_left', $this->request->variable('jumpbox_left', ''));
@@ -107,15 +108,16 @@ class jumpboxindex_acp_controller
 		}
 
 		$this->template->assign_vars([
-			'JUMPBOX_NOTES'						=> $jumpbox_notes,
-			'JUMPBOX_DISPLAY_DEACTIVATED'		=> $jumpbox_display_deactivated,
-			'JUMPBOX_DEFAULT'					=> $this->config['jumpbox_default'],
-			'JUMPBOX_UCP'						=> $this->config['jumpbox_ucp'],
-			'JUMPBOX_LEFT'						=> $this->config['jumpbox_left'],
-			'JUMPBOX_POSITION'					=> $this->config['jumpbox_position'],
-			'JUMPBOX_FONT_ICON'					=> $this->config['jumpbox_font_icon'],
-			'JUMPBOXINDEX_VERSION'				=> $this->language->lang('JUMPBOXINDEX_VERSION_COPY', $disp_ext_name, $jumpboxindex_version),
-			'U_ACTION'							=> $this->u_action
+			'JUMPBOX_NOTES'					=> $jumpbox_notes,
+			'JUMPBOX_DISPLAY_DEACTIVATED'	=> $jumpbox_display_deactivated,
+			'JUMPBOX_TOGGLE_ACTIVATED'		=> $this->config['jumpbox_toggle_activated'],
+			'JUMPBOX_DEFAULT'				=> $this->config['jumpbox_default'],
+			'JUMPBOX_UCP'					=> $this->config['jumpbox_ucp'],
+			'JUMPBOX_LEFT'					=> $this->config['jumpbox_left'],
+			'JUMPBOX_POSITION'				=> $this->config['jumpbox_position'],
+			'JUMPBOX_FONT_ICON'				=> $this->config['jumpbox_font_icon'],
+			'JUMPBOXINDEX_VERSION'			=> $this->language->lang('JUMPBOXINDEX_VERSION_COPY', $disp_ext_name, $jumpboxindex_version),
+			'U_ACTION'						=> $this->u_action
 		]);
 	}
 

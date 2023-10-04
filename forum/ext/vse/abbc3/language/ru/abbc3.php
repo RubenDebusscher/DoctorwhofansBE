@@ -57,12 +57,13 @@ $lang = array_merge($lang, array(
 	'ABBC3_OFFTOPIC_HELPLINE'	=> 'Сообщение не по теме: [offtopic]текст[/offtopic]',
 	'ABBC3_PREFORMAT_HELPLINE'	=> 'Предварительно отформатированный текст: [pre]текст[/pre]',
 	'ABBC3_SHADOW_HELPLINE'		=> 'Размытая тень: [shadow=цвет]текст[/shadow]',
-	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'Музыка с SoundCloud: [soundcloud]http://soundcloud.com/user-name/song-title[/soundcloud]',
+	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'Музыка с SoundCloud: [soundcloud]https://soundcloud.com/user-name/song-title[/soundcloud]',
 	'ABBC3_SPOILER_HELPLINE'	=> 'Спойлер: [spoil]текст[/spoil]',
 	'ABBC3_STRIKE_HELPLINE'		=> 'Зачёркнутый текст: [s]текст[/s]',
 	'ABBC3_SUB_HELPLINE'		=> 'Подстрочный текст: [sub]текст[/sub]',
 	'ABBC3_SUP_HELPLINE'		=> 'Надстрочный текст: [sup]текст[/sup]',
 	'ABBC3_YOUTUBE_HELPLINE'	=> 'Видео с YouTube: [youtube]http://youtube_url[/youtube]',
+	'ABBC3_AUTOVIDEO_HELPLINE'	=> 'Embed MP4/OGG/WEBM video files: URL must start with <samp class="error">https</samp> or <samp class="error">http</samp> and end with <samp class="error">.mp4</samp>, <samp class="error">.ogg</samp> or <samp class="error">.webm</samp> (no BBCode needed). Note that browser support and GUI implementation varies.',
 
 	// Utility BBCodes
 	'ABBC3_COPY_BBCODE'			=> 'Копировать выделенный текст',
@@ -77,7 +78,7 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBVIDEO_SITES'		=> 'Разрешённые сайты',
 	'ABBC3_URL_LINK'			=> 'Введите URL',
 	'ABBC3_URL_DESCRIPTION'		=> 'Дополнительное описание',
-	'ABBC3_URL_EXAMPLE'			=> 'http://www.phpbb.com',
+	'ABBC3_URL_EXAMPLE'			=> 'https://www.phpbb.com',
 
 	// Pipe tables
 	'ABBC3_PIPE_TABLES'			=> 'Создание таблиц',
@@ -96,23 +97,9 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBCODE_ORDERED'		=> 'Порядок BBCode изменён.',
 	'ABBC3_BBCODE_GROUP'		=> 'Группы, которые могут использовать BBCode',
 	'ABBC3_BBCODE_GROUP_INFO'	=> 'Если группа выбрана, то все её пользователи могут использовать BBCode. Используйте CTRL+клик (или CMD+клик на Mac) для выбора нескольких групп.',
-	'ABBC3_GOOGLE_FONTS_INFO'	=> 'Add <strong><a href="https://fonts.google.com" target="_blank">Google Fonts</a></strong> to the <samp class="error">[font]</samp> BBCode. Use exact spelling and case sensitivity. Place each font name on a separate line. Example: <samp>Droid Sans</samp><br><br>Note that “Allow usage of third party content delivery networks” must be enabled under “Load settings” to use this feature.',
-	'ABBC3_SETTINGS_EXPLAIN'	=> 'Здесь можно изменить настройки расширения «Advanced BBCode Box». Для получения дополнительной информации о настройке панели с иконками, откройте <a href="https://www.phpbb.com/customise/db/extension/advanced_bbcode_box/faq/1551" target="_blank">ABBC3 FAQ <i class="icon fa-external-link fa-fw" aria-hidden="true"></i></a>.',
-	'ABBC3_PIPES'				=> 'Включить плагин таблиц',
-	'ABBC3_PIPES_EXPLAIN'		=> 'Плагин таблиц позволяет пользователям добавлять в свои сообщения на форуме, а так же в личные сообщения таблицы, используя соответствующий синтаксис.',
-	'ABBC3_BBCODE_BAR'			=> 'Включить панель с иконками ББ-кодами',
-	'ABBC3_BBCODE_BAR_EXPLAIN'	=> 'Эта опция позволяет вам включить панель с иконками ББ-кодов расширения ABBC3. Отключите эту панель для использования панели, установленной в phpBB по умолчанию.',
-	'ABBC3_QR_BBCODES'			=> 'Включить ББ-коды в «Быстром ответе»',
-	'ABBC3_QR_BBCODES_EXPLAIN'	=> 'Эта опция добавить панель с иконками ББ-кодов в форму «Быстрый ответ».',
-	'ABBC3_ICONS_TYPE'			=> 'Формат иконок на панели с иконками',
-	'ABBC3_ICONS_TYPE_EXPLAIN'	=> 'Выберите формат иконок на панели с иконками ABBC3. Вы можете выбрать только один формат сразу для всех иконок на панели.',
-	'ABBC3_LEGEND_ICON_BAR'		=> 'Панель ББ-кодов',
-	'ABBC3_LEGEND_ADD_ONS'		=> 'Дополнения',
-	'PNG' => 'PNG',
-	'SVG' => 'SVG',
 
 	// BBCode FAQ
 	'ABBC3_FAQ_TITLE'			=> 'Advanced BBCode Box',
 	'ABBC3_FAQ_SAMPLE_TEXT'		=> 'В чащах юга жил бы цитрус? Да, но фальшивый экземпляр!',
-	'ABBC3_FAQ_ANSWER'			=> '%1$s<br /><br /><strong>Пример:</strong><br />%2$s<br /><br /><strong>Результат:</strong><br />%3$s<hr />',
+	'ABBC3_FAQ_ANSWER'			=> '%1$s<br><br><strong>Пример:</strong><br>%2$s<br><br><strong>Результат:</strong><br>%3$s<hr />',
 ));

@@ -38,8 +38,8 @@ $lang = array_merge($lang, array(
 
 	// Font BBCode
 	'ABBC3_FONT_BBCODE'			=> 'Danh sách font chữ',
-	'ABBC3_FONT_SAFE'			=> 'Safe fonts',
-	'ABBC3_GOOGLE_FONTS'		=> 'Google fonts',
+	'ABBC3_FONT_SAFE'			=> 'System Fonts',
+	'ABBC3_GOOGLE_FONTS'		=> 'Google Fonts',
 
 	// BBCode help lines
 	'ABBC3_ALIGN_HELPLINE'		=> 'Căn lề đoạn văn: [align=center|left|right|justify]đoạn văn[/align]',
@@ -59,12 +59,13 @@ $lang = array_merge($lang, array(
 	'ABBC3_OFFTOPIC_HELPLINE'	=> 'Chủ đề đóng: [offtopic]đoạn văn[/offtopic]',
 	'ABBC3_PREFORMAT_HELPLINE'	=> 'Preformatted: [pre]đoạn văn[/pre]',
 	'ABBC3_SHADOW_HELPLINE'		=> 'Tạo hiệu ứng bóng đổ: [shadow=color]đoạn văn[/shadow]',
-	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'SoundCloud: [soundcloud]http://soundcloud.com/user-name/song-title[/soundcloud]',
+	'ABBC3_SOUNDCLOUD_HELPLINE'	=> 'SoundCloud: [soundcloud]https://soundcloud.com/user-name/song-title[/soundcloud]',
 	'ABBC3_SPOILER_HELPLINE'	=> 'Ẩn/ hiện nội dung đoạn văn: [spoil]đoạn văn[/spoil]',
 	'ABBC3_STRIKE_HELPLINE'		=> 'Chữ gạch ngang thân: [s]đoạn văn[/s]',
 	'ABBC3_SUB_HELPLINE'		=> 'Subscript: [sub]đoạn văn[/sub]',
 	'ABBC3_SUP_HELPLINE'		=> 'Superscript: [sup]đoạn văn[/sup]',
 	'ABBC3_YOUTUBE_HELPLINE'	=> 'YouTube Video: [youtube]http://youtube_url[/youtube]',
+	'ABBC3_AUTOVIDEO_HELPLINE'	=> 'Embed MP4/OGG/WEBM video files: URL must start with <samp class="error">https</samp> or <samp class="error">http</samp> and end with <samp class="error">.mp4</samp>, <samp class="error">.ogg</samp> or <samp class="error">.webm</samp> (no BBCode needed). Note that browser support and GUI implementation varies.',
 
 	// Utility BBCodes
 	'ABBC3_COPY_BBCODE'			=> 'Sao chép đoạn đã bôi đen',
@@ -98,23 +99,9 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBCODE_ORDERED'		=> 'Thứ tự BBCode đã được cập nhật.',
 	'ABBC3_BBCODE_GROUP'		=> 'Quản lý những nhóm có khả năng sử dụng BBCode này',
 	'ABBC3_BBCODE_GROUP_INFO'	=> 'Nếu không có nhóm nào được chọn, tất cả mọi thành viên đều được sử dụng BBCode này. Sử dụng CTRL+CLICK (hoặc CMD+CLICK trên các máy Mac) để chọn hoặc bỏ chọn nhiều hơn 1 nhóm.',
-	'ABBC3_GOOGLE_FONTS_INFO'	=> 'Add <strong><a href="https://fonts.google.com" target="_blank">Google Fonts</a></strong> to the <samp class="error">[font]</samp> BBCode. Use exact spelling and case sensitivity. Place each font name on a separate line. Example: <samp>Droid Sans</samp><br><br>Note that “Allow usage of third party content delivery networks” must be enabled under “Load settings” to use this feature.',
-	'ABBC3_SETTINGS_EXPLAIN'	=> 'Here you can configure settings for Advanced BBCode Box. For information about customizing the icon bar, visit the <a href="https://www.phpbb.com/customise/db/extension/advanced_bbcode_box/faq/1551" target="_blank">ABBC3 FAQ <i class="icon fa-external-link fa-fw" aria-hidden="true"></i></a>.',
-	'ABBC3_PIPES'				=> 'Enable the Pipe Table PlugIn',
-	'ABBC3_PIPES_EXPLAIN'		=> 'The Pipes Table PlugIn allows users to create tables in their posts and private messages using markdown syntax.',
-	'ABBC3_BBCODE_BAR'			=> 'Enable BBCode icon bar',
-	'ABBC3_BBCODE_BAR_EXPLAIN'	=> 'This will display ABBC3’s icon-based BBCode toolbar. Disable this to display phpBB’s default BBCode buttons.',
-	'ABBC3_QR_BBCODES'			=> 'Enable BBCodes in Quick Reply',
-	'ABBC3_QR_BBCODES_EXPLAIN'	=> 'This will add BBCode buttons to Quick Reply.',
-	'ABBC3_ICONS_TYPE'			=> 'Icon bar image format',
-	'ABBC3_ICONS_TYPE_EXPLAIN'	=> 'Choose the image format to use for ABBC3’s icons. Note that you can only choose one format for all your icons.',
-	'ABBC3_LEGEND_ICON_BAR'		=> 'BBCode Icon Bar',
-	'ABBC3_LEGEND_ADD_ONS'		=> 'Add Ons',
-	'PNG' => 'PNG',
-	'SVG' => 'SVG',
 
 	// BBCode FAQ
 	'ABBC3_FAQ_TITLE'			=> 'Advanced BBCode Box BBCodes',
 	'ABBC3_FAQ_SAMPLE_TEXT'		=> 'The quick brown fox jumps over the lazy dog',
-	'ABBC3_FAQ_ANSWER'			=> '%1$s<br /><br /><strong>Example:</strong><br />%2$s<br /><br /><strong>Result:</strong><br />%3$s<hr />',
+	'ABBC3_FAQ_ANSWER'			=> '%1$s<br><br><strong>Example:</strong><br>%2$s<br><br><strong>Result:</strong><br>%3$s<hr />',
 ));

@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Displays the jumpbox on the Board index or additional on User Control Panel.",
     "homepage": "https://www.phpbb.com/community/viewtopic.php?t=2623131",
-    "version": "1.0.4",
-    "time": "2023-01-01",
+    "version": "1.0.5",
+    "time": "2023-04-29",
     "license": "GPL-2.0-only",
     "authors": [
         {
@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0,<8.2.0",
+        "php": ">=7.0.0,<8.3.0",
         "phpbb/phpbb": "3.2.6,<3.4.0@dev",
         "composer/installers": "~1.0.0"
     },

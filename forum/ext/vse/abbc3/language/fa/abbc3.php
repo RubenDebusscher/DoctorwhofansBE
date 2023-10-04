@@ -38,7 +38,7 @@ $lang = array_merge($lang, array(
 	// Font BBCode
 	'ABBC3_FONT_BBCODE'			=> 'منو فونت',
 	'ABBC3_FONT_SAFE'			=> 'فونت های عمومی',
-	'ABBC3_GOOGLE_FONTS'		=> 'Google fonts',
+	'ABBC3_GOOGLE_FONTS'		=> 'Google Fonts',
 
 	// BBCode help lines
 	'ABBC3_ALIGN_HELPLINE'		=> 'تراز متن: [align=center|left|right|justify]متن[/align]',
@@ -58,12 +58,13 @@ $lang = array_merge($lang, array(
 	'ABBC3_OFFTOPIC_HELPLINE'	=> 'پیام بسته شدن موضوع: [offtopic]text[/offtopic]',
 	'ABBC3_PREFORMAT_HELPLINE'	=> 'متن تنظیم شده: [pre]text[/pre]',
 	'ABBC3_SHADOW_HELPLINE'		=> 'سایه متن: [shadow=color]text[/shadow]',
-	'ABBC3_SOUNDCLOUD_HELPLINE'	=> '[soundcloud]http://soundcloud.com/user-name/song-title[/soundcloud]',
+	'ABBC3_SOUNDCLOUD_HELPLINE'	=> '[soundcloud]https://soundcloud.com/user-name/song-title[/soundcloud]',
 	'ABBC3_SPOILER_HELPLINE'	=> 'متن مخفی: [spoil]text[/spoil]',
 	'ABBC3_STRIKE_HELPLINE'		=> 'متن خط خورده: [s]text[/s]',
 	'ABBC3_SUB_HELPLINE'		=> 'متن زیرنویس شده: [sub]text[/sub]',
 	'ABBC3_SUP_HELPLINE'		=> 'متن بالانویس شده: [sup]text[/sup]',
 	'ABBC3_YOUTUBE_HELPLINE'	=> 'ویدیو یوتیوب: [youtube]http://youtube_url[/youtube]',
+	'ABBC3_AUTOVIDEO_HELPLINE'	=> 'Embed MP4/OGG/WEBM video files: URL must start with <samp class="error">https</samp> or <samp class="error">http</samp> and end with <samp class="error">.mp4</samp>, <samp class="error">.ogg</samp> or <samp class="error">.webm</samp> (no BBCode needed). Note that browser support and GUI implementation varies.',
 
 	// Utility BBCodes
 	'ABBC3_COPY_BBCODE'			=> 'کپی متن انتخاب شده',
@@ -78,7 +79,7 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBVIDEO_SITES'		=> 'فرمت های ویدیویی مجاز',
 	'ABBC3_URL_LINK'			=> 'اضافه کردن URL',
 	'ABBC3_URL_DESCRIPTION'		=> 'توضیحات اختیاری',
-	'ABBC3_URL_EXAMPLE'			=> 'http://www.phpbb.com',
+	'ABBC3_URL_EXAMPLE'			=> 'https://www.phpbb.com',
 
 	// Pipe tables
 	'ABBC3_PIPE_TABLES'			=> 'Create tables',
@@ -97,23 +98,9 @@ $lang = array_merge($lang, array(
 	'ABBC3_BBCODE_ORDERED'		=> 'بی بی کد دستور داده شده به روز رسانی شد',
 	'ABBC3_BBCODE_GROUP'		=> 'مدیریت گروه های مجاز برای دسترسی به بی بی کدها',
 	'ABBC3_BBCODE_GROUP_INFO'	=> 'اگر گروهی انتخاب نشده باشد ، تمام اعضا به بی بی کدها دسترسی دارند و برای انتخاب گروه های بیشتر کلید کنترل و کلیک را فشار دهید',
-	'ABBC3_GOOGLE_FONTS_INFO'	=> 'Add <strong><a href="https://fonts.google.com" target="_blank">Google Fonts</a></strong> to the <samp class="error">[font]</samp> BBCode. Use exact spelling and case sensitivity. Place each font name on a separate line. Example: <samp>Droid Sans</samp><br><br>Note that “Allow usage of third party content delivery networks” must be enabled under “Load settings” to use this feature.',
-	'ABBC3_SETTINGS_EXPLAIN'	=> 'Here you can configure settings for Advanced BBCode Box. For information about customizing the icon bar, visit the <a href="https://www.phpbb.com/customise/db/extension/advanced_bbcode_box/faq/1551" target="_blank">ABBC3 FAQ <i class="icon fa-external-link fa-fw" aria-hidden="true"></i></a>.',
-	'ABBC3_PIPES'				=> 'Enable the Pipe Table PlugIn',
-	'ABBC3_PIPES_EXPLAIN'		=> 'The Pipes Table PlugIn allows users to create tables in their posts and private messages using markdown syntax.',
-	'ABBC3_BBCODE_BAR'			=> 'Enable BBCode icon bar',
-	'ABBC3_BBCODE_BAR_EXPLAIN'	=> 'This will display ABBC3’s icon-based BBCode toolbar. Disable this to display phpBB’s default BBCode buttons.',
-	'ABBC3_QR_BBCODES'			=> 'Enable BBCodes in Quick Reply',
-	'ABBC3_QR_BBCODES_EXPLAIN'	=> 'This will add BBCode buttons to Quick Reply.',
-	'ABBC3_ICONS_TYPE'			=> 'Icon bar image format',
-	'ABBC3_ICONS_TYPE_EXPLAIN'	=> 'Choose the image format to use for ABBC3’s icons. Note that you can only choose one format for all your icons.',
-	'ABBC3_LEGEND_ICON_BAR'		=> 'BBCode Icon Bar',
-	'ABBC3_LEGEND_ADD_ONS'		=> 'Add Ons',
-	'PNG' => 'PNG',
-	'SVG' => 'SVG',
 
 	// BBCode FAQ
 	'ABBC3_FAQ_TITLE'			=> 'Advanced BBCode Box BBCodes',
 	'ABBC3_FAQ_SAMPLE_TEXT'		=> 'The quick brown fox jumps over the lazy dog',
-	'ABBC3_FAQ_ANSWER'			=> '%1$s<br /><br /><strong>Example:</strong><br />%2$s<br /><br /><strong>Result:</strong><br />%3$s<hr />',
+	'ABBC3_FAQ_ANSWER'			=> '%1$s<br><br><strong>Example:</strong><br>%2$s<br><br><strong>Result:</strong><br>%3$s<hr />',
 ));
