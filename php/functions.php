@@ -42,7 +42,7 @@ function getRichContent(&$conn,&$prefix,&$API_Item,&$antwoord){
 			getVideos($conn,$id,$antwoord);
 			break;
 
-
+		
 	}
 }
 function getMagazine(&$conn,&$API_Item,&$resultset){
@@ -406,7 +406,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 	}
 
 	function buildSiteMap(&$conn,&$resultset){
-		$stmtMap = $conn->prepare("SELECT page_Id,page_Link,page_Name,page_parent_id,exists(select 1 from management__pages t1 where t1.page_Parent_Id = management__pages.page_Id) collapsible FROM `management__pages` order by page_parent_id asc,collapsible desc,page_Order asc,page_Name asc");
+		$stmtMap = $conn->prepare("SELECT page_Id,page_Link,page_Name,page_parent_id,exists(select 1 from management__pages t1 where t1.page_Parent_Id = management__pages.page_Id) collapsible FROM `management__pages` where page_Active=1 order by page_parent_id asc,collapsible desc,page_Order asc,page_Name asc");
 						if(!$stmtMap){
 								die("Statement preparing failed: " . $conn->error);
 						}
