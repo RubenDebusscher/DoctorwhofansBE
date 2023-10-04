@@ -35,3 +35,4 @@ php.log
 *.env
 templates_c
 uploads
+*.code-workspace

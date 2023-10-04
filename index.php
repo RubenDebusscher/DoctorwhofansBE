@@ -26,6 +26,7 @@ $_SESSION["EmailSent"]="";
     <meta name=author content="Ruben Debusscher" />
     <meta charset=UTF-8 />
     <meta http-equiv=X-UA-Compatible content="chrome=1, IE=edge">
+    <meta name="referrer" content="no-referrer-when-downgrade" />
     <meta name=viewport content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="https://www.doctorwhofans.be/manifest.json"crossorigin="use-credentials">
     <meta name="theme-color" content="#306090"/>
