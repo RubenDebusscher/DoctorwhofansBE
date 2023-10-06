@@ -78,34 +78,34 @@ class tables_content__items {
 
     $app = Dataface_Application::getInstance();
 
-$ligne=2; // starting line for reading cells
-while ($objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $ligne)!=""){
+    $ligne=2; // starting line for reading cells
+    while ($objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $ligne)!=""){
 
-  $record = new Dataface_Record('content__items', array());
+    $record = new Dataface_Record('content__items', array());
 
-  // Start out with the default values and build from there.
-        $record->setValues($defaultValues);
+    // Start out with the default values and build from there.
+    $record->setValues($defaultValues);
 
-  $record->setValues(
-            array(
-                'item_Page'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $ligne)->getValue(),
-                'item_Type'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(1, $ligne)->getValue(),
-                'item_Value'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $ligne)->getValue(),
-                'item_Level'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $ligne)->getValue(),
-                'item_Active'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $ligne)->getValue(),
-                'item_Class'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $ligne)->getValue(),
-                'item_Belongs_To'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(6, $ligne)->getValue()
-                    )
-            );
-            $records[] =$record;
+    $record->setValues(
+              array(
+                  'item_Page'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $ligne)->getValue(),
+                  'item_Type'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(1, $ligne)->getValue(),
+                  'item_Value'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $ligne)->getValue(),
+                  'item_Level'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $ligne)->getValue(),
+                  'item_Active'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $ligne)->getValue(),
+                  'item_Class'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $ligne)->getValue(),
+                  'item_Belongs_To'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(6, $ligne)->getValue()
+                      )
+              );
+              $records[] =$record;
 
-            //unset($record);  // necessary to prevent PHP from writing over the last record
+              //unset($record);  // necessary to prevent PHP from writing over the last record
 
-      $ligne++;
-    } 
+        $ligne++;
+      } 
    
-    // Return our array of records and let Xataface handle the rest.
-    return $records;
+      // Return our array of records and let Xataface handle the rest.
+      return $records;
 
   }
 }
