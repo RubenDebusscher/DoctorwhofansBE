@@ -10,7 +10,8 @@ body {
   margin: auto;
 }
 
-
+.dormant-row{
+  background-color:#FF8080 !important;}
 
 
 #main_table {
@@ -111,3 +112,5 @@ tr[id$='_form_row']{
 
 
  .relatedList--api__serials--CharactersActors .mobile-row-content{display:none}
+
+

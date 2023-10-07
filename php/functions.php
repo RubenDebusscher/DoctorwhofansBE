@@ -636,7 +636,48 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 			}
 			$stmtDownloads->close();
 	}
-
+	function getGalleries(&$conn,&$current_Page_Id,&$resultset) {
+		$stmtGalleries = $conn->prepare('select * from content__gallery left join content__event on Event_Id = Gallery_Event left join content__gallery__images ON content__gallery.CG_Id=content__gallery__images.Gallery_Id where CG_Page=?');
+			if(!$stmtGalleries){
+				die('Statement preparing failed: ' . $conn->error);
+			}
+			if(!$stmtGalleries->bind_param('i',$current_Page_Id)){
+				die('Statement binding failed: ' . $conn->connect_error);
+			}
+			if(!$stmtGalleries->execute()){
+				die('Statement execution failed: ' . $stmtGalleries->error);
+			}else{
+				$resultGalleries = $stmtGalleries->get_result();
+				if($resultGalleries->num_rows === 0){
+					$resultset['Galleries']='No rows';
+				} else{
+					while ($row = $resultGalleries->fetch_assoc()) {
+						$galleryId = $row['CG_Id'];
+						$galleryName = $row['CG_Name'];
+		
+						if (!isset($galleries[$galleryId])) {
+								$galleries[$galleryId] = [
+										'id' => $galleryId,
+										'name' => $galleryName,
+										'event_Start'=>$row['Event_Start'],
+										'event_End'=>$row['Event_End'],
+										'images' => [],
+								];
+						}
+		
+						if ($row['image_Id']) {
+								$galleries[$galleryId]['images'][] = [
+										'id' => $row['image_Id'],
+										'filename' => $row['image_File'],
+								];
+						}
+				}
+				}
+			}
+			$stmtGalleries->close();
+			$resultset['Galleries']=$galleries;
+		
+	}
 	
 
 ?>

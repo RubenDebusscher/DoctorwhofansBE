@@ -2,7 +2,7 @@
 $_SESSION["Menu"]="";
 $_SESSION["EmailSent"]="";
 ?>
-<!Doctype>
+<!Doctype html>
 <?php
 
     if(isset($_GET['menu'])){
@@ -37,7 +37,7 @@ $_SESSION["EmailSent"]="";
     <script type='application/javascript' >
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async ()=> {
-                let sw = await navigator.serviceWorker.register('sw.js');
+                let sw = await navigator.serviceWorker.register('https://www.doctorwhofans.be/sw.js');
                 //console.log(sw);
             })
         }
@@ -78,12 +78,18 @@ $_SESSION["EmailSent"]="";
 
 
     <link rel="stylesheet" href="https://www.doctorwhofans.be/css/main.css" />
+
+    
     <script type="application/javascript"
         src="https://platform-api.sharethis.com/js/sharethis.js#property=5e66a481fb4445001239b600&product=inline-share-buttons"
         async="async" async defer nonce="Rand0m0123"></script>
 
         <link href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" rel="stylesheet" />
 <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+<script src="https://www.doctorwhofans.be/js/baguetteBox.min.js"></script>
+
+
+<link rel="stylesheet" href="https://www.doctorwhofans.be/css/baguetteBox.min.css" />
 </head>
 
 <body>

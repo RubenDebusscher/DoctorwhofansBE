@@ -3087,6 +3087,13 @@ h1 {
     color: var(--font-color-darkblue-white);
     margin-right:-4em;
 }
+.noImage{
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 10em;
+    background-position: center;
+}
 
 #WikiDetails img {
     max-width: 100%;
@@ -3366,7 +3373,7 @@ span hr {
 
 @media (max-width:1440px) {
 
-    table {
+    table,#Inhoud,#WikiDetails {
         max-width: 100%;
     }
 
@@ -3557,4 +3564,22 @@ main article a:focus {
 background-color:#A64D4D !important;
 
 
+}
+
+.Gallery_Items {
+    display: flex;
+    gap: 2em;
+
+}
+.Thumbnail_Link{
+    width: 10em;
+    height: 10em;
+    border-radius: 5em;
+    
+}
+.Gallery_Thumbnail{
+    width: 10em;
+    height: 10em;
+    object-fit: cover; object-position: 100% 0;
+    border-radius: 5em;
 }

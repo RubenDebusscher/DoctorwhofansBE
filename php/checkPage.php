@@ -66,8 +66,9 @@
 						$stmt->close();
 						$page = 1603;
 						getContent($conn,$page,$language,$antwoord);
+						getPath($conn,$page,$antwoord);
 						getEpisodeOfTheDay($conn,$antwoord);
-					getActorsOfTheDay($conn,$antwoord);
+						getActorsOfTheDay($conn,$antwoord);
 					//$conn->close();
 
 					}else{
@@ -93,6 +94,7 @@
 					getContent($conn,$current_Page_Id,$language,$antwoord);
 					getTags($conn,$current_Page_Id,$antwoord);
 					getDownloads($conn,$current_Page_Id,$antwoord);
+					getGalleries($conn,$current_Page_Id,$antwoord);
 				}
 
 				

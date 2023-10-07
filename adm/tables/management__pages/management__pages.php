@@ -23,6 +23,12 @@
     function page_Owner_Id__default(){
       return 0;
     }
+
+
+    function css__tableRowClass( $record ){
+      if ( $record->val('page_Active') == 1 ) return 'active-row';
+      else return 'dormant-row';
+    }
     function __import__csv($data, $defaultValues=array()){
       $records = array();
       $rows = explode("\n", $data);

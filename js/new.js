@@ -365,11 +365,13 @@ function GetContent(menu, id) {
 
     // @ts-ignore
     $.ajax(settings).done(function (response) {
-      if(response.Page == false &&Response.Page[0].pageType==9 && menu.startsWith('Category:')==false){
+      //if ((typeof response.Page == 'undefined')&& (menu.startsWith('Category:')==false)){
+      if (((typeof response.Page == 'undefined') && (menu.startsWith('Category:')==false))||(typeof response.Page !== 'undefined')&&(response.Page[0].pageType==9 )){
+        console.log("redirect");
         var myHeaders = new Headers(); // Currently empty
         //myHeaders.set('Status Code', '404');
         // @ts-ignore
-        window.location = "http://www.doctorwhofans.be/notfound.html";
+        window.location.href = "http://www.doctorwhofans.be/notfound.html";
       }
       if(menu.startsWith('Category:')){
         console.log("This is a Category, WIP");
@@ -388,7 +390,9 @@ function GetContent(menu, id) {
         populateActorsOfTheDay(response.ActorsOf_The_day);
 
         footerAlign();
-        document.title = response.Page[0].page_Name;
+        if(response.Page){
+          document.title = response.Page[0].page_Name;
+        }
         Content(response.Content);
         ChildPages(response.ChildPages);
         GetSecondsForEpisodes($('#Tiles').attr('data-srcFile'));
@@ -426,6 +430,8 @@ function GetContent(menu, id) {
             // code block
         }
         Tags(response.Tags);
+        //$('#Galleries').html("TEST"));
+        GalleriesForPage(response.Galleries);
 
         replaceRelativeLinks();
         // @ts-ignore
@@ -851,7 +857,9 @@ function DownloadsForEpisode(Downloads) {
 }
 
 function CreateWikiDetails() {
-  $('main article').prepend("<aside id='WikiDetails' class='bordered DarkBlueBackground '><img src='https://www.doctorwhofans.be/images/gallifreyan_black.png'/></aside>");
+  $('main article').prepend("<aside id='WikiDetails' class='bordered DarkBlueBackground '><div id='ImageHolder'></div></aside>");
+  buildLogo("#ImageHolder",'#ffff00')
+  $("#ImageHolder").addClass("noImage")
 
 }
 
@@ -868,7 +876,8 @@ function PopulateWikiDetailsStatic(keys, params,type) {
 
 function WikiImage(image, table) {
   if (image != null) {
-    $('#WikiDetails img').attr('src', "https://www.doctorwhofans.be/images/" + table + "/" + image);
+    $('#WikiDetails').prepend("<img src='https://www.doctorwhofans.be/images/" + table + "/" + image+"'/>");
+    $("#ImageHolder").remove()
   }
 }
 
@@ -1234,4 +1243,27 @@ $(document).ready(
       });
     });
   });
+
+function GalleriesForPage(Galleries){
+  
+  //add title of Gallery
+  //when applicable, add event data
+  //get images for Gallery
+
+
+  for (let [key, value] of Object.entries(Galleries)) {
+    var Gallery = "";
+    Gallery += "<div>";
+    Gallery +="<h1>"+value.name+"</h1><div class='Gallery_Items' id='gal_"+value.id+"'>";
+    
+    for (let [Imgkey, Imgvalue] of Object.entries(value.images)) {
+      let src = "https://www.doctorwhofans.be/images/content__gallery__images/"+Imgvalue.filename;
+      Gallery +='<a class="Thumbnail_Link" href="'+src+'"><img src="'+src+'" class="Gallery_Thumbnail"></a>';
+
+    }
+    Gallery+= "</div></div>";
+    $("#Gallery_"+value.id).html(Gallery);
+    baguetteBox.run('#gal_'+value.id);
+  }
+}
 
