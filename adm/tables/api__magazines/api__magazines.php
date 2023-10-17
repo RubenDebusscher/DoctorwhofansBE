@@ -21,26 +21,20 @@ class tables_api__magazines {
     $records = array();
     $rows = explode("\n", $data);
     foreach ( $rows as $row ){
-      list($magazine_Issue,$magazine_Type,$magazine_CoverDate,$magazine_ReleaseDate,$magazine_Format,$magazine_Editor,$magazine_Publisher) = explode(',', $row);
+      list($magazine_Issue,$magazine_Type,$magazine_CoverDate,$magazine_ReleaseDate,$magazine_Format,$magazine_Editor,$magazine_Publisher,$Page_Id) = explode(',', $row);
       $record = new Dataface_Record('api__magazines', array());
       $record->setValues($defaultValues);
       $record->setValues(
         array(
           'magazine_Issue'=>$magazine_Issue,
-          'magazine_Type'=>$magazine_Type,
-          'magazine_CoverDate'=>$magazine_CoverDate,
-          'magazine_ReleaseDate'=>$magazine_ReleaseDate,
-
-          'magazine_Format'=>$magazine_Format,
-          'magazine_Editor'=>$magazine_Editor,
-          'magazine_Publisher'=>$magazine_Publisher,
+          'Page_Id'=>$Page_Id
         )
       );
       $records[] = $record;
     }
     return $records;
   }
-/*
+
   function __import__excel_spreadsheet($data, $defaultValues=array()){
     import(DATAFACE_SITE_PATH."/include/PHPExcel/Classes/PHPExcel.php");
     $records = array();  // the array that will hold the records to be imported.
@@ -63,8 +57,8 @@ class tables_api__magazines {
           'magazine_Issue'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $ligne)->getValue(),
           'magazine_Type'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(1, $ligne)->getValue(),
           'magazine_CoverDate'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $ligne)->getValue(),
-          'magazine_ReleaseDate'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $ligne)->getValue()
-
+          'magazine_ReleaseDate'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $ligne)->getValue(),
+          'page_Id'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $ligne)->getValue()
           )
       );
       $records[] =$record;
@@ -73,7 +67,7 @@ class tables_api__magazines {
       // Return our array of records and let Xataface handle the rest.
       return $records;
   }
- */
+ 
   
 }
 ?>

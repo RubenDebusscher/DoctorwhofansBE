@@ -33,7 +33,7 @@ $_SESSION["EmailSent"]="";
     <link rel="apple-touch-icon" href="https://ww.doctorwhofans.be/images/logo/apple-icon.png">
     <script
     src='https://platform-api.sharethis.com/js/sharethis.js#property=5e66a481fb4445001239b600&product=privacy-policy-generator&source=platform&cms=website' 
-    async='async' type='application/javascript' ></script>
+    async='async' type='application/javascript' defer nonce="Rand0m0123"></script>
     <script type='application/javascript' >
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async ()=> {

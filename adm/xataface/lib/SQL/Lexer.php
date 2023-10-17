@@ -343,7 +343,7 @@ function nextToken()
                		} 
                	}
 
-                if (ctype_alnum($c) || ($c == '_') || ($c == '.') || ($quote == '`' and $c != '`') ) {
+                if (ctype_alnum((string)$c) || ($c == '_') || ($c == '.') || ($quote == '`' and $c != '`') ) {
                     $state = 1;
                     break;
                 }

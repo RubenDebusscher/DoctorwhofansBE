@@ -25,7 +25,7 @@ class HTML_QuickForm_optionalelement extends HTML_QuickForm_element {
 	 * The fields that there are to choose from to add to the form.
 	 */
 	var $fields = array();
-	
+	var $name = '';
 	/**
 	 * The name of this field.
 	var $name = '';

@@ -346,7 +346,9 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 								}else{
 									$resultset['Serial']['Episodes'] = $result->fetch_all(MYSQLI_ASSOC);
 									$stmtEpisodes->close();
-									$stmtCharacters = $conn->prepare("select Characters_With_Actor.*,SC_Type from api__serials_characters inner join Characters_With_Actor on Characters_With_Actor.character_Id=api__serials_characters.SC_Character_Id where api__serials_characters.SC_Serial_Id=?");
+									$stmtCharacters = $conn->prepare("select SC_Type,AC_Type,character_First_name,character_Last_name,actor_First_name,actor_Last_name,t1.Page_Link as Character_Link,t2.Page_Link as ActorLink,character_Page_Id,actor_Page_Id,CT_Name from api__serials_charactersActors inner join api__characters_actors on SC_CA_ID=api__characters_actors.AC_Id inner join api__characters on api__characters_actors.AC_Character_Id=api__characters.character_Id inner join api__actors on api__actors.actor_Id=api__characters_actors.AC_actor_Id  inner join api__character_Types on api__characters.character_Type=api__character_Types.CT_Id
+									inner join  management__pages t1 on t1.page_Id=character_Page_Id 
+									inner join management__pages t2 on t2.page_Id=actor_Page_Id where SC_Serial_Id=? order by SCA_Order;");
 									if(!$stmtCharacters){
 										die("Statement prepare failed: " . $conn->connect_error);
 									}
@@ -637,6 +639,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 			$stmtDownloads->close();
 	}
 	function getGalleries(&$conn,&$current_Page_Id,&$resultset) {
+		$resultset['Galleries']="";
 		$stmtGalleries = $conn->prepare('select * from content__gallery left join content__event on Event_Id = Gallery_Event left join content__gallery__images ON content__gallery.CG_Id=content__gallery__images.Gallery_Id where CG_Page=?');
 			if(!$stmtGalleries){
 				die('Statement preparing failed: ' . $conn->error);
@@ -669,6 +672,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 								$galleries[$galleryId]['images'][] = [
 										'id' => $row['image_Id'],
 										'filename' => $row['image_File'],
+										'folder' => $row['image_Folder']
 								];
 						}
 				}

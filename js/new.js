@@ -431,7 +431,10 @@ function GetContent(menu, id) {
         }
         Tags(response.Tags);
         //$('#Galleries').html("TEST"));
-        GalleriesForPage(response.Galleries);
+        if(response.Galleries!==null){
+          GalleriesForPage(response.Galleries);
+        }
+       
 
         replaceRelativeLinks();
         // @ts-ignore
@@ -678,7 +681,7 @@ function Magazine(MagazineData){
 function Serial(EpisodeData) {
   //$('main article h1').html(EpisodeData.Serial[0].serial_Title);
   CreateWikiDetails();
-  var episodeKeys = ['Overall_Story_Number','Doctors', 'Companions', 'First_Aired_on', 'Last_Aired_On', 'Total_Runtime','Average_UK','Average_AI','Production_code', 'Order', ];
+  var episodeKeys = ['Overall_Story_Number','Doctors', 'Companions', 'First_Aired_On', 'Last_Aired_On', 'Total_Runtime','Average_UK','Average_AI','Production_code', 'Order', ];
   var episodestrings = ['Overall Story Number','Doctors', 'Companions', 'First episode aired on', 'Last episode aired on', 'Total Runtime','Average UK viewers','Average AI', 'Production Code', 'Order'];
 
   PopulateWikiDetailsStatic(episodeKeys, episodestrings,"Episode");
@@ -788,7 +791,7 @@ function getYear(original) {
 function DoctorsForEpisode(Doctors) {
   var drList = "";
   for (var dr = 0; dr < Doctors.length; dr++) {
-    if (Doctors[dr].character_Type.startsWith("Doctor")) {
+    if (Doctors[dr].CT_Name.startsWith("Doctor")) {
       if (Doctors[dr].SC_Type == "Regular") {
         drList += "<a href='" + window.location.origin + "/" + Doctors[dr].Character_Link + ".html'>" + Doctors[dr].character_First_name + " " + Doctors[dr].character_Last_name + "</a>, ";
 
@@ -818,7 +821,7 @@ function ActorsforCharacter(Actors){
 function CompanionsForEpisode(Companions) {
   var compList = "";
   for (var comp = 0; comp < Companions.length; comp++) {
-    if (Companions[comp].character_Type.startsWith("Companion")) {
+    if (Companions[comp].CT_Name.startsWith("Companion")) {
       var name = Companions[comp].character_First_name;
       name += (Companions[comp].character_Last_name == null) ? '' : " " + Companions[comp].character_Last_name;
       compList += "<a href='" + window.location.origin + "/" + Companions[comp].Character_Link + ".html'>" + name + "</a>, ";
@@ -835,7 +838,10 @@ function CastForEpisode(Characters){
     var firstName = (Characters[cast].character_First_name === null) ? '' :Characters[cast].character_First_name;
     var lastName = (Characters[cast].character_Last_name === null) ? '' :Characters[cast].character_Last_name;
     var link = (Characters[cast].Character_Link === null) ? '#' :window.location.origin +'/'+Characters[cast].Character_Link+".html";
-    castList += "<li><a href='"+link+"'>"+firstName+" "+lastName+"</a></li>";
+    var actorFirstName = (Characters[cast].actor_First_name === null) ? '' :Characters[cast].actor_First_name;
+    var actorLastName = (Characters[cast].actor_Last_name === null) ? '' :Characters[cast].character_Last_name;
+    var actorlink = (Characters[cast].ActorLink === null) ? '#' :window.location.origin +'/'+Characters[cast].ActorLink+".html";
+    castList += "<li><a href='"+link+"'>"+firstName+" "+lastName+"</a> (<a href='"+actorlink+"'>"+actorFirstName+" "+actorLastName+"</a>)</li>";
 
     
   }
@@ -1257,7 +1263,13 @@ function GalleriesForPage(Galleries){
     Gallery +="<h1>"+value.name+"</h1><div class='Gallery_Items' id='gal_"+value.id+"'>";
     
     for (let [Imgkey, Imgvalue] of Object.entries(value.images)) {
-      let src = "https://www.doctorwhofans.be/images/content__gallery__images/"+Imgvalue.filename;
+      let folder="";
+      if(Imgvalue.folder!==""){
+
+        folder=Imgvalue.folder+"/"
+
+      }
+      let src = "https://www.doctorwhofans.be/images/content__gallery__images/"+folder+Imgvalue.filename;
       Gallery +='<a class="Thumbnail_Link" href="'+src+'"><img src="'+src+'" class="Gallery_Thumbnail"></a>';
 
     }

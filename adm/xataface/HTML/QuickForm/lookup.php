@@ -47,7 +47,7 @@ require_once 'HTML/QuickForm/text.php';
  * @access       public
  */
 class HTML_QuickForm_lookup extends HTML_QuickForm_text {
-	
+	var $index_prefix;
 	var $index;
 	function __construct($elementName=null, $elementLabel=null, $attributes=null, $properties=null)
     {

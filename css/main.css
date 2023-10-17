@@ -3371,13 +3371,7 @@ span hr {
     }
 }
 
-@media (max-width:1440px) {
 
-    table,#Inhoud,#WikiDetails {
-        max-width: 100%;
-    }
-
-}
 
 
 
