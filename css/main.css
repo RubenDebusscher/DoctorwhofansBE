@@ -3562,7 +3562,9 @@ background-color:#A64D4D !important;
 
 .Gallery_Items {
     display: flex;
-    gap: 2em;
+    gap: 1.5em;
+    flex-wrap: wrap;
+
 
 }
 .Thumbnail_Link{

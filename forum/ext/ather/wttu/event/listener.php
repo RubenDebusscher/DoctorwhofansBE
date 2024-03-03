@@ -91,7 +91,7 @@ class listener implements EventSubscriberInterface
 		
         $row = $event['row'];
 		$postrow = $event['post_row'];		
-		$forum_id = (int) $row['forum_id'];
+		$forum_id = !isset($row['forum_id']) ? 0 :(int) $row['forum_id'];
 		
 		$canon_url = append_sid(generate_board_url() . '/viewtopic.' . $this->php_ext, 't=' . $event['topic_id']);	
 		$simple_url = append_sid(generate_board_url() . '/viewtopic.' . $this->php_ext, 'f=' . $event['forum_id'] . '&amp;t=' . $event['topic_id']);

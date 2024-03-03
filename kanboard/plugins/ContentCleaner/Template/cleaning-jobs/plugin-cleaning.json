@@ -1,0 +1,109 @@
+{
+    "1": {
+        "job_number": "01",
+        "plugin_title": "MetaMagik",
+        "plugin_name": "metamagik",
+        "plugin_author": "Craig Crosby",
+        "plugin_url": "https://github.com/creecros/MetaMagik",
+        "plugin_folder_name": "MetaMagik",
+        "checked_up_to_plugin_version": "1.5.5",
+        "plugin_tables": ["metadata_has_type", "metadata_types"],
+        "plugin_schema_version": 7
+    },
+    "2": {
+        "job_number": "02",
+        "plugin_title": "CostControl",
+        "plugin_name": "costcontrol",
+        "plugin_author": "aljawaid",
+        "plugin_url": "https://github.com/aljawaid/CostControl",
+        "plugin_folder_name": "CostControl",
+        "checked_up_to_plugin_version": "1.1",
+        "plugin_tables": ["hourly_rates", "budget_lines"],
+        "core_tables": ["currencies"],
+        "core_table_columns": [
+            {"currencies": ["last_modified", "comment", "live_rate", "live_rate_updated"]}
+        ],
+        "plugin_schema_version": 1
+    },
+    "3": {
+        "job_number": "03",
+        "plugin_title": "Bigboard",
+        "plugin_name": "bigboard",
+        "plugin_author": "BlueTeck",
+        "plugin_url": "https://github.com/BlueTeck/kanboard_plugin_bigboard",
+        "plugin_folder_name": "Bigboard",
+        "checked_up_to_plugin_version": "1.5.1",
+        "plugin_tables": ["bigboard_collapsed", "bigboard_selected"],
+        "plugin_schema_version": 4
+    },
+    "4": {
+        "job_number": "04",
+        "plugin_title": "Group_assign",
+        "plugin_name": "group_assign",
+        "plugin_author": "Craig Crosby",
+        "plugin_url": "https://github.com/creecros/Group_assign",
+        "plugin_folder_name": "Group_assign",
+        "checked_up_to_plugin_version": "1.8.2",
+        "plugin_tables": ["multiselect", "multiselect_has_users"],
+        "core_tables": ["tasks"],
+        "core_table_columns": [
+            {"tasks": ["owner_gp", "owner_ms"]}
+        ],
+        "plugin_schema_version": 3
+    },
+    "5": {
+        "job_number": "05",
+        "plugin_title": "SubtaskDueDate",
+        "plugin_name": "subtaskdate",
+        "plugin_author": "Manuel Raposo",
+        "plugin_url": "https://github.com/eSkiSo/Subtaskdate",
+        "plugin_folder_name": "Subtaskdate",
+        "checked_up_to_plugin_version": "1.1.3",
+        "core_tables": ["subtasks"],
+        "core_table_columns": [
+            {"subtasks": ["due_date"]}
+        ],
+        "plugin_schema_version": 1
+    },
+    "6": {
+        "job_number": "06",
+        "plugin_title": "Wiki",
+        "plugin_name": "wiki",
+        "plugin_author": "lastlink",
+        "plugin_url": "https://github.com/funktechno/kanboard-plugin-wiki",
+        "plugin_folder_name": "Wiki",
+        "checked_up_to_plugin_version": "0.3.3",
+        "plugin_tables": ["wikipage", "wikipage_has_files", "wikipage_editions"],
+        "core_tables": ["settings"],
+        "core_table_entries": [
+            {"settings": {"option": "persistEditions"}}
+        ],
+        "plugin_schema_version": 8
+    },
+    "7": {
+        "job_number": "07",
+        "plugin_title": "TemplateManager",
+        "plugin_name": "templatemanager",
+        "plugin_author": "aljawaid",
+        "plugin_url": "https://github.com/aljawaid/TemplateManager",
+        "plugin_folder_name": "TemplateManager",
+        "checked_up_to_plugin_version": "2.6",
+        "plugin_tables": ["comment_templates", "global_templates"],
+        "core_tables": ["predefined_task_descriptions"],
+        "core_table_columns": [
+            {"predefined_task_descriptions": ["topic", "note", "instructions"]}
+        ],
+        "plugin_schema_version": 1
+    },
+    "8": {
+        "job_number": "08",
+        "plugin_title": "AddressBook",
+        "plugin_name": "addressbook",
+        "plugin_author": "aljawaid",
+        "plugin_url": "https://github.com/aljawaid/AddressBook",
+        "plugin_folder_name": "AddressBook",
+        "checked_up_to_plugin_version": "1.0",
+        "plugin_tables": ["address_book_contacts_items", "address_book_contacts_contact", "address_book_contacts_task_has_contact"],
+        "plugin_schema_version": 1
+    }
+}

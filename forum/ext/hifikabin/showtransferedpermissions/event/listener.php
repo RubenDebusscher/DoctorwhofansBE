@@ -21,22 +21,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class listener implements EventSubscriberInterface
 {
 
-	protected $language;
-
-	public function __construct(\phpbb\language\language $language)
-	{
-		$this->language				= $language;
-	}
-
 	public static function getSubscribedEvents()
 	{
-		return array(
-			'core.user_setup'		=> 'load_lang',
-		);
+		return [
+			'core.user_setup'				=> 'load_language_on_setup',
+		];
 	}
-
-	public function load_lang()
+	
+	public function load_language_on_setup($event)
 	{
-		$this->language->add_lang('showtransferedpermissions', 'hifikabin/showtransferedpermissions');
+		$lang_set_ext = $event['lang_set_ext'];
+		$lang_set_ext[] = [
+			'ext_name' => 'hifikabin/showtransferedpermissions',
+			'lang_set' => 'showtransferedpermissions',
+		];
+		$event['lang_set_ext'] = $lang_set_ext;
 	}
 }

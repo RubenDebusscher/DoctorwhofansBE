@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "With this Extension you can download the information stored about you in accordance with the GDPR General Data Protection Regulation",
     "homepage": "https://christian-esch.de",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "time": "2022-08-21",
     "license": "GPL-2.0-only",
     "authors": [

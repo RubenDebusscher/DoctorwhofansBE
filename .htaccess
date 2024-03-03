@@ -32,8 +32,9 @@ ErrorDocument 404 https://www.doctorwhofans.be/notfound.html
 # BROWSER CACHING USING CACHE-CONTROL HEADERS
 <ifModule mod_headers.c> 
     Header set X-XSS-Protection "0; mode=block"
-    Header always set X-Frame-Options "SAMEORIGIN"
+    #Header always set X-Frame-Options "SAMEORIGIN"
     Header set X-Content-Type-Options nosniff
+    
    
 
     # One year for image and video files
@@ -82,6 +83,8 @@ rewriteRule ^(.*) https://www.doctorwhofans.be/ [R=301,L]
         Header set Access-Control-Allow-Origin "https://*.doctorwhofans.be"
         Header set Access-Control-Allow-Origin "https://www.doctorwhofans.be"
         Header set Access-Control-Allow-Origin "https://doctorwhofans.be"
+        Header set Access-Control-Allow-Origin "https://belgianwhovians.be"
+        Header set Access-Control-Allow-Origin "https://www.belgianwhovians.be"
         Header set Access-Control-Allow-Origin "*"
 
     </IfModule>

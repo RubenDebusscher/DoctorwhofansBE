@@ -1,0 +1,1063 @@
+/* KANBOARD PLUGIN - CSS FILE */
+
+:root {
+    --pp-blue: #007AC9;
+    --pp-blue-alt: #00ADFF;
+    --pp-red: #B71234;
+    --pp-red-alt: #DA004C;
+    --pp-red-alt-2: #AE003D;
+    --pp-red-alt-3: #D50000;
+    --pp-black: #000000;
+    --pp-light-grey: #8F8F8F;
+    --pp-grey: #4D4D4D;
+    --pp-white: #FFFFFF;
+    --pp-green: #2EA02E;
+    --pp-green-dark: #055D20;
+    --pp-orange: #FF6500;
+    --blue-icon-dark: #034CA6;
+    --ab-blue: #20369F;
+    --ab-button: rgba(32, 54, 159, .8);
+    --ab-table-green: #84D040;
+    --background-red: #FF000054;
+    --button-blue-gradient: linear-gradient(to bottom, #7892C2 80%, #476E9E 100%);
+    --blue-border-gradient-match: #476E9E;
+    --button-background-delete: #D05C84;
+    --link-color-primary: #3366CC;
+    --header-page-margin-address-book: 5px 15px 10px 15px;
+    --page-margin-address-book: 0 15px 0 15px;
+    --title-margin-address-book: 0 15px 0 15px;
+    --border-radius-address-book: 3px;
+    --panel-background-address-book: #EEEEEE;
+    --transition-address-book: ease-in-out all .3s;
+}
+
+.display-none, .d-none { display: none; }
+
+.font-weight-bold { font-weight: bold; }
+
+.text-center { text-align: center; }
+
+.relative { position: relative; }
+
+.ab-page-header {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.ab-page-header h2 {
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.ab-page-header h2.config-title {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.ab-page-header h2 span.project-contacts-icon {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    margin-right: 4px;
+    vertical-align: bottom;
+}
+
+.ab-config-page fieldset, fieldset.add-contact-profile {
+    border: 2px solid var(--ab-blue);
+    border-radius: var(--border-radius-address-book);
+}
+
+.ab-config-page fieldset legend, fieldset.add-contact-profile legend {
+    background: var(--ab-blue);
+    color: var(--pp-white);
+    border-radius: var(--border-radius-address-book);
+    padding: 3px 8px 4px 8px;
+    font-size: 1.1em;
+}
+
+fieldset.add-contact-profile legend.single-property {
+    margin-bottom: 9px;
+}
+
+.add-contact-wrapper {
+    width: fit-content;
+    margin: auto;
+}
+
+p.new-item-intro, p.contact-profile-intro {
+    margin-block: 10px;
+}
+
+fieldset.ab-new-item .input-section {
+    margin-right: 20px;
+}
+
+fieldset.ab-new-item .input-section, fieldset.ab-new-item .form-actions {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.input-section span.form-required, .property-wrapper span.form-required, .input-wrapper span.form-required, .form-group-edit span.form-required {
+    vertical-align: top;
+    transform: scale(1.7);
+    display: inline-block;
+    color: var(--pp-red-alt-3);
+    padding-top: 0;
+    padding-left: 3px;
+}
+
+.form-group-edit span.form-required {
+    /* padding: 0; */
+    /* position: absolute; */
+    /* margin-top: 9px; */
+    margin-left: -17px;
+    vertical-align: middle;
+}
+
+.input-section .form-help, .modal-form-help {
+    margin-bottom: 0;
+    max-width: 360px;
+    height: 30px;
+}
+
+form#AddPropertyForm .input-section p.form-help {
+    display: block;
+    margin-left: initial;
+}
+
+.property-fields .modal-form-help {
+    max-width: unset;
+}
+
+/* stylelint-disable selector-id-pattern */
+input#form-item_help {
+    width: 355px;
+}
+/* stylelint-enable selector-id-pattern */
+
+span.property-fields input#form-item_help {
+    width: 740px;
+}
+
+input[type="text"].property-input, input[type="number"].property-input, input[type="tel"].property-input, input[type="email"].property-input, input[type="url"].property-input, .property-fields input[type="text"], select.property-input-select {
+    border: 1px solid var(--ab-button);
+    border-radius: var(--border-radius-address-book);
+    margin-bottom: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 25px;
+    width: 300px;
+    font-size: 1em;
+    color: var(--pp-black);
+}
+
+.edit-contact-modal form.modal-form .form-group input[type="text"].property-input.property-input-disabled {
+    background: #D3D3D3;
+    width: 65px;
+    text-align: center;
+}
+
+.form-group.contact-id label {
+    text-align: center;
+}
+
+.input-wrapper textarea.property-input-address, .input-wrapper textarea.property-input-note {
+    vertical-align: top;
+}
+
+textarea.property-input-address {
+    border: 1px solid var(--ab-button);
+    border-radius: var(--border-radius-address-book);
+    margin-bottom: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 100px;
+    width: 300px;
+}
+
+textarea.property-input-note{
+    border: 1px solid var(--ab-button);
+    border-radius: var(--border-radius-address-book);
+    margin-bottom: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 75px;
+    width: 300px;
+}
+
+input[type="text"].property-input::placeholder, input[type="number"].property-input::placeholder, input[type="tel"].property-input::placeholder, input[type="email"].property-input::placeholder, input[type="url"].property-input::placeholder, textarea.property-input-address::placeholder, textarea.property-input-note::placeholder, .property-fields input[type="text"]::placeholder {
+    color: var(--pp-grey);
+}
+
+input[type="number"].property-input.property-input-decimal {
+    width: 100px;
+}
+
+input[type="tel"].property-input.property-input-telephone, input[type="number"].property-input.property-input-number {
+    width: 150px;
+}
+
+label.property-label {
+    margin-top: 0;
+    margin-bottom: 2px;
+}
+
+select.property-input-select {
+    height: 28px;
+    max-width: 100%;
+    width: 170px;
+    margin-top: 0;
+    text-align: center;
+    margin-right: -3px;
+}
+
+select.property-input-select:focus, input[type="tel"].property-input:focus, input[type="url"].property-input:focus {
+    color: var(--pp-black);
+    border: 1px solid var(--ab-blue);
+    outline: 0;
+    box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+}
+
+fieldset.ab-new-item .form-actions {
+    padding-top: 0;
+}
+
+#ContactProfileTable {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    border-collapse: unset;
+}
+
+#ContactProfileTable th, #ContactProfileTable td {
+    border: 1px solid var(--ab-blue);
+    padding-left: 5px;
+    padding-right: 5px;
+    border-left: 0;
+    border-right: 0;
+    vertical-align: middle;
+}
+
+#ContactProfileTable th {
+    border-top: 2px solid var(--ab-blue);
+    background-color: var(--ab-button);
+    color: var(--pp-white);
+    border-radius: 0;
+    width: auto;
+}
+
+#ContactProfileTable th:first-child {
+    width: 150px;
+}
+
+#ContactProfileTable td {
+    border-bottom: 0;
+    border-radius: 0;
+}
+
+#ContactProfileTable tr:last-child td {
+    border-bottom: 1px solid var(--ab-blue);
+}
+
+/*
+#ContactProfileTable th:last-child {
+    padding-left: 10px;
+}
+*/
+
+.property-note-column {
+    max-width: 450px;
+    min-width: 250px;
+}
+
+#ContactProfileTable td ul.property-action-bar {
+    list-style-type: none;
+}
+
+#ContactProfileTable td ul.property-action-bar li {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 5px;
+}
+
+/* stylelint-disable selector-id-pattern */
+#config-section .sidebar, section.sidebar-container .sidebar {
+    min-width: fit-content;
+    margin-right: 5px;
+}
+/* stylelint-enable selector-id-pattern */
+
+.property-action-bar .move-buttons {
+    float: left;
+}
+
+.property-action-bar .action-buttons {
+    float: right;
+}
+
+.property-action-item a {
+    font-size: 1em;
+}
+
+.btn-ab-delete {
+    /* Default red */
+    background: #D14836;
+    border-radius: var(--border-radius-address-book);
+    transition: var(--transition-address-book);
+    border: 1px solid #D14836;
+    color: var(--pp-white) !important;
+    text-decoration: none !important;
+}
+
+.btn-ab-move i, .btn-ab-rename, a.btn-ab-delete i.fa.fa-minus, .btn-ab-property, .btn-add-contact, a.btn.add-property-set i {
+    color: var(--pp-white) !important;
+    text-decoration: none !important;
+}
+
+.btn-ab-move i, .btn-ab-delete i, .add-property-set i {
+    pointer-events: none;
+}
+
+#ContactProfileTable td a {
+    text-decoration: none !important;
+}
+
+.btn-ab-move, .btn-ab-rename, .btn-ab-property, .btn-add-contact, .btn.add-property-set {
+    background: var(--ab-button);
+    border-radius: var(--border-radius-address-book);
+    transition: var(--transition-address-book);
+    border: 1px solid var(--ab-button);
+}
+
+.btn-ab-move:focus, .btn-ab-move:hover, .btn-ab-rename:focus, .btn-ab-rename:hover, .btn-ab-property:focus, .btn-ab-property:hover, .btn-add-contact:hover, .btn-add-contact:focus, .btn.add-property-set:hover, .btn.add-property-set:focus {
+    border: 1px solid var(--ab-button);
+    background: var(--pp-white);
+    text-decoration: none !important;
+}
+
+.btn-ab-delete:focus, .btn-ab-delete:hover {
+    border: 1px solid #D14836;
+    color: #D14836 !important;
+    background: var(--pp-white);
+    text-decoration: none !important;
+}
+
+a.btn-ab-delete:focus i.fa.fa-minus, a.btn-ab-delete:hover i.fa.fa-minus {
+    color: #D14836 !important;
+}
+
+.btn-ab-move:focus i, .btn-ab-move:hover i, .btn-ab-rename:focus, .btn-ab-rename:hover, .btn-ab-property:focus, .btn-ab-property:hover, .btn-add-contact:hover, .btn-add-contact:focus, a.btn.add-property-set:hover i.fa.fa-plus, a.btn.add-property-set:focus i.fa.fa-plus {
+    color: var(--ab-blue) !important;
+}
+
+.btn.add-property-set:hover {
+    background: var(--pp-white);
+}
+
+button.btn.cancel-btn {
+    margin-left: 2px;
+    transition: var(--transition-address-book);
+}
+
+.form-actions button.btn.cancel-btn.js-modal-close:hover {
+    border-color: var(--ab-button);
+}
+
+h2 span.address-book-icon {
+    vertical-align: top;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+}
+
+fieldset.ab-contact-profile legend span.contact-profile-icon {
+    vertical-align: bottom;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+}
+
+fieldset.ab-new-item legend span.property-icon {
+    vertical-align: sub;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+}
+
+li.property-action-item a span.rename-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: bottom;
+    transition: var(--transition-address-book);
+}
+
+.property-wrapper .property-fields {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.property-wrapper .form-group .property-input-disabled {
+    background: #D3D3D3;
+    width: 200px;
+}
+
+.rename-property-modal .property-wrapper .form-group p.form-help {
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+.modal-form .form-actions, .delete-contact-modal .confirm .form-actions, .delete-property-modal .confirm .form-actions {
+    text-align: right;
+}
+
+.rename-property-modal .ab-page-header h2 span.rename-icon {
+    vertical-align: text-top;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.delete-property-modal .ab-page-header h2 span.property-icon {
+    width: 23px;
+    height: 23px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 5px;
+}
+
+.property-fields label, .form-group label {
+    margin-bottom: 2px;
+}
+
+.property-fields p.form-help.modal-form-help {
+    height: initial;
+}
+
+.rename-property-modal .ab-page-header h2, .delete-property-modal .ab-page-header h2 {
+    border-bottom: 0;
+}
+
+.delete-property-modal .confirm p {
+    text-align: left;
+}
+
+a.address-book-btn, a.project-address-book-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px outset var(--ab-blue);
+    border-radius: var(--border-radius-address-book);
+    background: var(--ab-button);
+    color: var(--pp-white);
+    transition: var(--transition-address-book);
+    padding: 5px;
+}
+
+a.address-book-btn:hover, a.address-book-btn:focus, a.project-address-book-btn:hover, a.project-address-book-btn:focus, a.view-contact-btn:hover, a.view-contact-btn:focus, a.delink-btn:hover, a.delink-btn:focus, a.link-btn:hover, a.link-btn:focus {
+    border: 1px outset var(--ab-blue);
+    border-radius: var(--border-radius-address-book);
+    background: var(--pp-white);
+    color: var(--ab-blue);
+}
+
+a.address-book-btn span.address-book-icon, a.project-address-book-btn span.address-book-icon {
+    vertical-align: sub;
+}
+
+a.task-contacts-summary-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px outset var(--ab-blue);
+    border-radius: var(--border-radius-address-book);
+    background: var(--ab-button);
+    color: var(--pp-white);
+    transition: var(--transition-address-book);
+    padding: 2px;
+    font-size: .8em;
+}
+
+a.task-contacts-summary-btn:hover, a.task-contacts-summary-btn:focus {
+    border: 1px outset var(--ab-blue);
+    border-radius: var(--border-radius-address-book);
+    background: var(--pp-white);
+    color: var(--ab-blue);
+}
+
+a.view-contact-btn {
+    padding: 0 5px 0 3px;
+    height: 26px;
+}
+
+a.view-contact-btn.no-info {
+    background: var(--pp-light-grey);
+    border: 1px outset var(--pp-grey);
+    border-radius: var(--border-radius-address-book);
+    color: var(--pp-white);
+    transition: var(--transition-address-book);
+}
+
+a.view-contact-btn.no-info:hover {
+    background: var(--pp-white);
+}
+
+a.view-contact-btn span.contact-profile-icon {
+    width: 24px;
+    vertical-align: bottom;
+}
+
+ul.contacts-action-btns li a.js-modal-medium.view-contact-btn {
+    padding: 0 5px 4px 3px;
+}
+
+ul.contacts-action-btns li a.js-modal-medium.view-contact-btn span.contact-profile-icon {
+    width: 28px;
+}
+
+a.view-contact-btn, a.delink-btn, a.link-btn {
+    border: 1px outset var(--ab-blue);
+    border-radius: var(--border-radius-address-book);
+    background: var(--ab-button);
+    color: var(--pp-white);
+    transition: var(--transition-address-book);
+}
+
+a.delink-btn, a.link-btn {
+    padding: 3px 8px 3px 10px;
+}
+
+a.delink-btn i {
+    padding-top: 2px;
+}
+
+a.link-btn i {
+    padding-bottom: 2px;
+}
+
+a.delink-btn i, a.link-btn i {
+    color: var(--pp-white);
+}
+
+a.delink-btn:hover i, a.delink-btn:focus i, a.link-btn:hover i, a.link-btn:focus i {
+    color: var(--ab-blue);
+}
+
+.ab-info .ab-count-badge {
+    font-size: initial;
+    background: var(--ab-button);
+    color: var(--pp-white);
+    padding: 1px 5px 0 4px;
+    border-radius: var(--border-radius-address-book);
+    border: 1px inset var(--ab-button);
+    vertical-align: initial;
+}
+
+li span.ab-count-badge-sidebar.linked-badge {
+    top: 5px;
+    right: unset;
+    font-weight: normal;
+    background-color: var(--ab-button);
+    margin-left: 10px;
+    padding-right: 3px;
+}
+
+li span.ab-count-badge-sidebar {
+    top: 3px;
+    position: absolute;
+    font-size: .75em;
+    padding: 0 2px;
+    border-radius: var(--border-radius-address-book);
+    font-weight: bold;
+    right: 10px;
+    opacity: .5;
+    line-height: initial;
+    border: 1px solid var(--blue-icon-dark);
+    color: white;
+    background-color: var(--blue-icon-dark);
+}
+
+li.active span.ab-count-badge-sidebar {
+    opacity: 1;
+}
+
+.btn-count {
+    font-size: .7em;
+    vertical-align: super;
+    background: var(--pp-white);
+    color: var(--pp-black);
+    padding: 1px 4px 0 4px;
+    border-radius: var(--border-radius-address-book);
+    border: 1px inset var(--ab-button);
+}
+
+a.project-address-book-btn:hover .btn-count {
+    background: var(--ab-button);
+    color: var(--pp-white);
+}
+
+details.task-contacts-section summary.accordion-title span.btn-count {
+    background: var(--ab-button);
+    color: var(--pp-white);
+    padding: 0 3px 0 2px;
+}
+
+.ab-info {
+    margin-block: 20px;
+}
+
+form.add-contact-form .form-help {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+    width: 400px;
+    margin-left: 5px;
+}
+
+form.add-contact-form .form-actions {
+    padding-top: 0;
+    margin-top: 5px;
+}
+
+fieldset.add-contact-profile.relative span.form-help {
+    position: absolute;
+    right: 10px;
+    top: -5px;
+    margin-bottom: 0;
+}
+
+.no-contacts {
+    font-weight: 600;
+    margin-block: 15px;
+}
+
+.alert.property-warning {
+    margin-top: 15px;
+    background-color: var(--background-red);
+    color: var(--pp-red);
+    border-color: var(--background-red);
+    margin-bottom: 0;
+}
+
+button.btn-add-contact span.add-contact-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: text-bottom;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+legend span.add-contact-icon {
+    vertical-align: text-bottom;
+    width: 24px;
+    height: 24px;
+    margin-right: 4px;
+    display: inline-block;
+}
+
+section.linked-contacts-section h3 span.linked-contact-icon {
+    width: 26px;
+    height: 24px;
+    vertical-align: bottom;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+section.available-contacts-section h3 span.available-contacts-icon {
+    width: 26px;
+    height: 24px;
+    vertical-align: bottom;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.ab-section-divider {
+    margin-block: 30px;
+    border: 1px solid var(--pp-grey);
+}
+
+section.linked-contacts-section h3, section.available-contacts-section h3 {
+    color: var(--ab-blue);
+    font-weight: 600;
+}
+
+table.linked-contacts-table, table.available-contacts-table {
+    width: 98%;
+    margin: auto;
+}
+
+td.contacts-table-value {
+    vertical-align: middle;
+}
+
+.contact-count-badge {
+    font-size: .6em;
+    vertical-align: super;
+    background: var(--ab-button);
+    color: var(--pp-white);
+    padding: 1px 4px 0 3px;
+    border-radius: var(--border-radius-address-book);
+    border: 1px inset var(--ab-button);
+    margin-left: 4px;
+}
+
+#LinkedContactsTable th.contacts-table-header {
+    background: var(--ab-table-green);
+    color: var(--pp-green-dark);
+    border: 1px solid var(--pp-green);
+}
+
+#AvailableContactsTable th.contacts-table-header, #ProjectContactsTable th.contacts-table-header, #TaskContactsTable th.contacts-table-header, #TooltipContactsTable th.contacts-table-header {
+    background: var(--ab-button);
+    color: var(--pp-white);
+    border-top: 1px solid var(--ab-blue);
+    border-bottom: 1px solid var(--ab-blue);
+    padding: .3em 5px;
+    border-radius: 0;
+    font-weight: 600;
+}
+
+#LinkedContactsTable th.contacts-table-header.cell-zero, #LinkedContactsTable td.contacts-table-value.cell-zero, #AvailableContactsTable th.contacts-table-header.cell-zero, #AvailableContactsTable td.contacts-table-value.cell-zero, #TaskContactsTable th.contacts-table-header.cell-zero, #TaskContactsTable td.contacts-table-value.cell-zero {
+    border: 0;
+    background: none;
+    padding: .5em 0;
+}
+
+#LinkedContactsTable td.contacts-table-value {
+    border: 1px solid var(--pp-green);
+}
+
+#AvailableContactsTable td.contacts-table-value, #ProjectContactsTable td.contacts-table-value, #TaskContactsTable td.contacts-table-value, #TooltipContactsTable td.contacts-table-value {
+    border: 1px solid var(--ab-blue);
+}
+
+#ProjectContactsTable, #AvailableContactsTable, #LinkedContactsTable {
+    font-size: .9em;
+}
+
+#TaskContactsTable {
+    border-collapse: collapse;
+}
+
+#ProjectContactsTable th.contacts-table-header:nth-of-type(1) {
+    border-left: 1px solid var(--ab-blue);
+}
+
+#ProjectContactsTable th.contacts-table-header:nth-of-type(5) {
+    border-right: 1px solid var(--ab-blue);
+}
+
+#AvailableContactsTable th.contacts-table-header:nth-of-type(2) {
+    border-left: 1px solid var(--ab-blue);
+}
+
+#AvailableContactsTable th.contacts-table-header:nth-of-type(4) {
+    border-right: 1px solid var(--ab-blue);
+}
+
+#TaskContactsTable th.contacts-table-header:nth-of-type(2) {
+    border-left: 1px solid var(--ab-blue);
+}
+
+#TaskContactsTable th.contacts-table-header:last-child {
+    border-right: 1px solid var(--ab-blue);
+}
+
+#TooltipContactsTable th.contacts-table-header:nth-of-type(1) {
+    border-left: 1px solid var(--ab-blue);
+}
+
+#TooltipContactsTable th.contacts-table-header:nth-of-type(4) {
+    border-right: 1px solid var(--ab-blue);
+}
+
+#ContactDetailsTable tbody tr th {
+    background: var(--ab-button);
+    color: var(--pp-white);
+    border: 1px solid var(--ab-blue);
+    vertical-align: middle;
+    padding: .5em 5px;
+    border-radius: 0;
+}
+
+#ContactDetailsTable tbody tr td {
+    /* color: var(--pp-white); */
+    background: rgba(32, 54, 159, .2);
+    border: 1px solid var(--ab-blue);
+    vertical-align: middle;
+    padding: .5em 5px;
+}
+
+#ContactDetailsTable tbody tr:nth-of-type(2) td:last-child, #TaskContactsTable tbody tr td:nth-of-type(2), #LinkedContactsTable tbody tr td.contacts-table-value:nth-of-type(2), #AvailableContactsTable tbody tr td.contacts-table-value:nth-of-type(2) {
+    font-weight: 600;
+}
+
+#ContactDetailsTable td.contact-table-value textarea {
+    height: 100%;
+    width: 100%;
+    border: 0;
+    background: transparent;
+}
+
+#ContactDetailsTable td.contact-table-value a {
+    transition: var(--transition-address-book);
+    color: var(--ab-blue);
+    text-decoration: none !important;
+    font-weight: 600;
+    letter-spacing: .031em;
+}
+
+#ContactDetailsTable td.contact-table-value a:hover {
+    color: var(--pp-red-alt-2);
+}
+
+ul.contacts-action-btns {
+    list-style-type: none;
+    text-align: center;
+    display: flex;
+}
+
+ul.contacts-action-btns li {
+    /* justify-content: space-between; */
+    /* margin-inline: 12px; */
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+span.btn-disabled-wrapper {
+    cursor: not-allowed;
+}
+
+a.btn-disabled {
+    pointer-events: none;
+    opacity: .6;
+}
+
+ul.contacts-action-btns li a.btn-ab-rename span.contact-settings-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: text-bottom;
+    margin-right: 3px;
+}
+
+ul.contacts-action-btns li a.btn-ab-rename {
+    padding-left: 5px;
+    padding-right: 8px;
+}
+
+ul.contacts-action-btns li a.btn-ab-rename span.edit-text {
+    display: inline-table;
+    vertical-align: top;
+    margin-top: 2px;
+    pointer-events: none;
+}
+
+ul.contacts-action-btns li a.btn-ab-delete {
+    padding: 1px 5px 1px 5px;
+}
+
+ul.contacts-action-btns li a.btn-ab-delete span.delete-contact-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: text-bottom;
+    margin-right: 3px;
+    margin-top: 2px;
+}
+
+ul.contacts-action-btns li a.btn-ab-delete span.delete-text {
+    display: inline-table;
+    vertical-align: top;
+    margin-top: 5px;
+    pointer-events: none;
+}
+
+table#ContactDetailsTable tfoot.table-footer .table-row td {
+    /* font-size: .9em; */
+    color: var(--pp-grey);
+    background: #CACACA;
+    border: 1px solid var(--ab-blue);
+}
+
+.contact-details-modal .ab-page-header h2 span.contact-details-icon {
+    vertical-align: bottom;
+}
+
+.delete-contact-modal .ab-page-header h2 span.delete-contact-icon {
+    vertical-align: bottom;
+    margin-right: 3px;
+}
+
+.edit-contact-modal .ab-page-header h2 span.contact-settings-icon {
+    width: 26px;
+    vertical-align: bottom;
+    margin-right: 4px;
+}
+
+.edit-contact-modal form.modal-form .form-group p.form-help {
+    margin-bottom: 0;
+}
+
+.edit-contact-modal form.modal-form .form-group {
+    display: inline-block;
+    vertical-align: text-top;
+    font-size: .9em;
+    width: min-content;
+    margin-right: 8px;
+}
+
+.edit-contact-modal form.modal-form .form-group input {
+    color: var(--pp-grey);
+}
+
+.edit-contact-modal textarea.property-input-address, .edit-contact-modal textarea.property-input-note {
+    height: 50px;
+    width: 200px;
+    margin-right: .278em;
+}
+
+details.task-contacts-section summary.accordion-title {
+    cursor: pointer;
+}
+
+details.task-contacts-section summary.accordion-title span.accordion-title-text, details.task-contacts-section summary.accordion-title span.summary-wrapper {
+    background: var(--pp-white);
+    padding-right: 5px;
+}
+
+details.task-contacts-section[open] summary.accordion-title::marker, details.task-contacts-section[open] summary.accordion-title {
+    color: var(--ab-button);
+    font-weight: 600;
+}
+
+span.contact-updated-date {
+    margin-left: 4px;
+}
+
+span.contact-updated-date i {
+    margin-right: 2px;
+}
+
+span.contact-updated-user {
+    margin-left: 2px;
+}
+
+span.contact-updated-user i {
+    margin-right: 5px;
+}
+
+span.contact-updated-date i, span.contact-updated-user i {
+    font-size: 1.1em;
+    color: var(--ab-blue);
+}
+
+span.footer-icon.tooltip {
+    opacity: 1;
+    color: var(--ab-blue);
+    transition: var(--transition-address-book);
+}
+
+span.footer-icon.tooltip:focus, span.footer-icon.tooltip:hover {
+    color: var(--ab-button);
+}
+
+span.footer-icon.tooltip span.address-book-icon {
+    opacity: 1;
+    width: 18px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: text-bottom;
+    margin-right: 1px;
+}
+
+.property-set-wrapper p {
+    margin-block: 15px;
+}
+
+.property-set-wrapper h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--ab-blue);
+}
+
+section.property-set-section {
+    margin-block: 3px;
+}
+
+.property-set-name {
+    width: 110px;
+    margin-left: 10px;
+    color: var(--ab-blue);
+}
+
+.property-set-name, .add-property-set, .remove-property-set {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+a.btn.add-property-set {
+    margin-right: 5px;
+}
+
+a.btn.add-property-set, a.btn.remove-property-set {
+    padding: 3px 6px 0 10px;
+}
+
+ul.property-set-items {
+    display: inline-block;
+}
+
+ul.property-set-items li {
+    /* font-weight: 600; */
+    display: inline-block;
+    font-size: .8em;
+    background: var(--pp-light-grey);
+    padding: 2px 5px;
+    color: var(--pp-white);
+    border-radius: var(--border-radius-address-book);
+    opacity: .9;
+    vertical-align: middle;
+}
+
+hr.property-set-divider {
+    border-color: var(--ab-button);
+    border-top: 0;
+    margin-bottom: 1em;
+}
+
+.property-set-section a.btn.btn-ab-move {
+    padding: 3px 6px 0 10px;
+}
+
+.property-set-name span.property-sets-icon, .property-set-wrapper h4 span.property-sets-icon {
+    vertical-align: bottom;
+}
+
+.footer-tooltip .ab-page-header {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.footer-tooltip .ab-page-header h3 {
+    margin: 0;
+}
+
+.footer-tooltip .ab-page-header h3 span.linked-contact-icon {
+    vertical-align: sub;
+    margin-right: 4px;
+}
+
+.footer-tooltip #TooltipContactsTable {
+    margin-bottom: 0;
+}
+
+.ab-page-header a.task-contacts-summary-btn {
+    text-decoration: none;
+}
+
+a.task-contacts-summary-btn span.address-book-icon {
+    width: 18px;
+    height: 18px;
+}

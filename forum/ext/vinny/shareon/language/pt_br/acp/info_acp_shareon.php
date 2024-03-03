@@ -49,15 +49,10 @@ $lang = array_merge($lang, array(
 	'SO_STATUS'		=> 'Ativar',
 	'SO_FACEBOOK'	=> 'Facebook',
 	'SO_TWITTER'	=> 'Twitter',
-	'SO_DIGG'		=> 'Digg',
 	'SO_REDDIT'		=> 'Reddit',
-	'SO_DELICIOUS' 	=> 'Delicious',
 	'SO_VK'			=> 'VK',
-	'SO_TUENTI'		=> 'Tuenti',
 	'SO_TUMBLR'		=> 'Tumblr',
-	'SO_GOOGLE'		=> 'Google+',
 	'SO_WHATSAPP'	=> 'Whatsapp',
-	'SO_POCKET'		=> 'Pocket',
 
 	// Share Type
 	'SO_TYPE'			=> 'Tipo de Compartilhamento',

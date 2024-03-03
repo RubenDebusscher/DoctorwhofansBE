@@ -2,6 +2,6 @@ services:
     hifikabin.showtransferedpermissions.listener:
         class: hifikabin\showtransferedpermissions\event\listener
         arguments:
-            - '@language'
+        - '@user'
         tags:
             - { name: event.listener }

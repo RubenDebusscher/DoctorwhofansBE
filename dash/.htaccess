@@ -1,0 +1,7 @@
+DirectoryIndex login.php
+
+RewriteRule ^([a-zA-Z0-9_-]+)/$ index.php
+
+RewriteEngine On
+RewriteCond %{HTTPS} off
+rewriteRule ^(.*) https://dash.doctorwhofans.be/ [R=301,L]

@@ -9,23 +9,24 @@
 *
 */
 
-var lfwwhIndex = {
-	isShowInfo: {
-		'users' : false,
-		'bots' : false
-	},
-	ShowHide: function (e) {
-		'use strict';
+(function ($) {	// IIFE start
 
-		lfwwhIndex.isShowInfo[e.data.ButtonType] = !lfwwhIndex.isShowInfo[e.data.ButtonType];
-		$('.lfwwh_info_' + e.data.ButtonType.slice(0, 1)).css('display', (lfwwhIndex.isShowInfo[e.data.ButtonType] ? '' : 'none'));
-		$('.lfwwh_button_' + e.data.ButtonType).css('opacity', (lfwwhIndex.isShowInfo[e.data.ButtonType] ? '1.0' : '0.5'));
-	}
+'use strict';
+
+let isShowInfo = {
+	'users':	false,
+	'bots':		false
 };
 
-$(window).ready(function() {
-	'use strict';
+function ShowHide(e) {
+	isShowInfo[e.data.ButtonType] = !isShowInfo[e.data.ButtonType];
+	$('.lfwwh_info_' + e.data.ButtonType.slice(0, 1)).toggle(isShowInfo[e.data.ButtonType]);
+	$('.lfwwh_button_' + e.data.ButtonType).css('opacity', (isShowInfo[e.data.ButtonType] ? '1.0' : '0.5'));
+}
 
-	$('.lfwwh_button_users'	).on('click', {ButtonType: 'users'}	, lfwwhIndex.ShowHide);
-	$('.lfwwh_button_bots'	).on('click', {ButtonType: 'bots'}	, lfwwhIndex.ShowHide);
+$(window).ready(function() {
+	$('.lfwwh_button_users'	).on('click', {ButtonType: 'users'}	, ShowHide);
+	$('.lfwwh_button_bots'	).on('click', {ButtonType: 'bots'}	, ShowHide);
 });
+
+})(jQuery);	// IIFE end

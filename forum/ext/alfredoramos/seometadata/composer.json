@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "SEO Metadata extension for phpBB",
     "homepage": "https://github.com/AlfredoRamos/phpbb-ext-seo-metadata",
-    "version": "1.4.1",
-    "time": "2021-04-07",
+    "version": "1.4.2",
+    "time": "2023-12-22",
     "keywords": [
         "phpbb",
         "extension",
@@ -22,8 +22,8 @@
     "authors": [
         {
             "name": "Alfredo Ramos",
-            "email": "alfredo.ramos@yandex.com",
-            "homepage": "https://alfredoramos.mx/",
+            "email": "alfredo.ramos@protonmail.com",
+            "homepage": "https://alfredoramos.mx",
             "role": "Lead Developer"
         }
     ],
@@ -46,6 +46,11 @@
             "directory": "/customise/db/extension/seo_metadata",
             "filename": "version_check",
             "ssl": true
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
         }
     }
 }

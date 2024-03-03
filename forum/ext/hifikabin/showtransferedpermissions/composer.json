@@ -2,7 +2,7 @@
     "name": "hifikabin/showtransferedpermissions",
     "type": "phpbb-extension",
     "description": "Adds a reminder panel when you have transfered permissions from another user",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "time": "2020-08-17",
     "license": "GPL-2.0-only",
     "authors": [

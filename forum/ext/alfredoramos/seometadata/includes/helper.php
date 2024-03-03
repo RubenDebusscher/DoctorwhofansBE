@@ -2,7 +2,7 @@
 
 /**
  * SEO Metadata extension for phpBB.
- * @author Alfredo Ramos <alfredo.ramos@yandex.com>
+ * @author Alfredo Ramos <alfredo.ramos@protonmail.com>
  * @copyright 2018 Alfredo Ramos
  * @license GNU GPL-2.0-only
  */
@@ -174,6 +174,7 @@ class helper
 					'url' => $default['url'],
 					'headline' => '',
 					'description' => $default['description'],
+					'text' => $default['description'],
 					'image' => $default['image']['url'],
 					'author' => [
 						'@type' => 'Person',
@@ -221,10 +222,18 @@ class helper
 
 				case 'description':
 					$value = $this->clean_description($value);
+
+					// Prefix with topic title if description length is < 25 to satisfy SEO recommendations
+					if (mb_strlen($value, 'UTF-8') < 25 && !empty($data['title']))
+					{
+						$value = trim($data['title'] . ' ' . $value);
+					}
+
 					$this->metadata['meta_description']['description'] = $value;
 					$this->metadata['open_graph']['og:description'] = $value;
 					$this->metadata['twitter_cards']['twitter:description'] = $value;
 					$this->metadata['json_ld']['description'] = $value;
+					$this->metadata['json_ld']['text'] = $value;
 				break;
 
 				case 'image':
@@ -303,17 +312,6 @@ class helper
 	{
 		$this->template->destroy_block_vars('SEO_METADATA');
 		$data = $this->get_metadata();
-
-		// Twitter Cards can use Open Graph data
-		if ((int) $this->config['seo_metadata_open_graph'] === 1 &&
-			(int) $this->config['seo_metadata_twitter_cards'] === 1)
-		{
-			unset(
-				$data['twitter_cards']['twitter:title'],
-				$data['twitter_cards']['twitter:description'],
-				$data['twitter_cards']['twitter:image']
-			);
-		}
 
 		// Open Graph extra check for default image
 		if (empty($data['open_graph']['og:image']))
@@ -791,17 +789,35 @@ class helper
 			// Get image URL
 			$url = trim($node->getAttribute('src'));
 
+			// Get image path
+			$components = parse_url($url);
+
+			// Failed to parse image URL
+			if (empty($components))
+			{
+				continue;
+			}
+
 			// Only JPEG, PNG and GIF images are supported
-			if (!preg_match('#\.(?:jpe?g|png|gif)$#', $url))
+			if (empty($components['path']) || !preg_match('#\.(?:jpe?g|png|gif)$#', $components['path']))
 			{
 				continue;
 			}
 
 			// Get only local images
-			if ($local_images &&
-				!preg_match('#^https?://(?:\w+\.)?' . preg_quote($server_name) . '#', $url))
+			if ($local_images)
 			{
-				continue;
+				// Invalid server or image host
+				if (empty($server_name) || empty($components['host']))
+				{
+					continue;
+				}
+
+				// Server and image host do not match
+				if (!preg_match('#\.?' . preg_quote($server_name) . '$#', $components['host']))
+				{
+					continue;
+				}
 			}
 
 			$images[] = $url;

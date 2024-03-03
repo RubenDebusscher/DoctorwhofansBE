@@ -228,7 +228,9 @@ function setCookie(cname, cvalue, exdays) {
   var d = new Date();
   d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
   var expires = "expires=" + d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:doctorwhofans.be";
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:belgianwhovians.be";
+  //document.cookie = "lang=nl;expires=Fri, 08 Mar 2024 19:42:10 GMT;path=/;domain.belgianwhovians.be";
   if (cname == "lang") {
     $('meta[name=language]').attr('content', cvalue.replace('_', '-'));
     $('html').attr('lang', cvalue.replace('_', '-'));
@@ -240,15 +242,18 @@ function setCookie(cname, cvalue, exdays) {
 function getAvailableLangcodes() {
   $.ajax({
     type: "GET",
-    url: "https://www.doctorwhofans.be/php/getAvaliableLanguages.php",
+    url: "/php/getAvaliableLanguages.php",
     dataType: 'json',
     crossDomain: true,
+    xhrFields: {
+      withCredentials: true
+    },
     cache: false
   }).done(
     function (resultaat) {
       AvailableLangCodes = resultaat;
       
-      checkLangCookie();
+      var tempLang= checkLangCookie();
       populateLangChoice(resultaat);
     }).fail(function (response, statusText, xhr) {}).always(function () {});
 }
@@ -285,12 +290,16 @@ function checkLangCookie() {
 
   var lang = getCookie("lang");
   if (lang == "") {
-    if (AvailableLangCodes.data.language_Name.includes(navigator.language) === true) {
+    if ((AvailableLangCodes.length<0)&&(AvailableLangCodes.data.language_Name.includes(navigator.language) === true)) {
       setCookie("lang", navigator.language, 30);
+      lang=navigator.language
     } else {
       setCookie("lang", "nl", 30);
+      lang="nl";
+
     }
   }
+  return lang;
 }
 
 
@@ -298,7 +307,9 @@ function Search() {
   event.preventDefault();
   var searchString = $('#searchString').val();
   var form = new FormData();
-  form.append('lang', getCookie('lang'));
+  var localLang=checkLangCookie();
+  
+  form.append('lang', localLang);
   form.append('search', searchString.toString());
   form.append("content-type", "application/json");
   var settings = {
@@ -307,6 +318,10 @@ function Search() {
     "timeout": 0,
     "dataType": 'json',
     "processData": false,
+    "crossDomain":true,
+    "xhrFields": {
+      "withCredentials": true
+    },
     "mimeType": "multipart/form-data",
     "contentType": false,
     "data": form
@@ -340,23 +355,26 @@ function Search() {
 
 function GetContent(menu, id) {
 
-  if (getCookie("lang") == "") {
-    setCookie("lang", "nl", 30);
-  }
+ 
   
   if (menu != "") {
 
     var form = new FormData();
     form.append("menu", menu);
-    form.append('lang', getCookie('lang'));
+    var localLang=checkLangCookie();
+    form.append('lang', localLang);
     form.append('Itemid', id);
     form.append("content-type", "application/json");
 
     var settings = {
-      "url": "https://www.doctorwhofans.be/php/checkPage.php",
+      "url": "/php/checkPage.php",
       "method": "POST",
       "timeout": 0,
       "dataType": 'json',
+      "crossDomain":true,
+      "xhrFields": {
+        "withCredentials": true
+      },
       "processData": false,
       "mimeType": "multipart/form-data",
       "contentType": false,
@@ -839,7 +857,7 @@ function CastForEpisode(Characters){
     var lastName = (Characters[cast].character_Last_name === null) ? '' :Characters[cast].character_Last_name;
     var link = (Characters[cast].Character_Link === null) ? '#' :window.location.origin +'/'+Characters[cast].Character_Link+".html";
     var actorFirstName = (Characters[cast].actor_First_name === null) ? '' :Characters[cast].actor_First_name;
-    var actorLastName = (Characters[cast].actor_Last_name === null) ? '' :Characters[cast].character_Last_name;
+    var actorLastName = (Characters[cast].actor_Last_name === null) ? '' :Characters[cast].actor_Last_name;
     var actorlink = (Characters[cast].ActorLink === null) ? '#' :window.location.origin +'/'+Characters[cast].ActorLink+".html";
     castList += "<li><a href='"+link+"'>"+firstName+" "+lastName+"</a> (<a href='"+actorlink+"'>"+actorFirstName+" "+actorLastName+"</a>)</li>";
 
@@ -1071,9 +1089,12 @@ function secondsToDhms(seconds) {
 function GetSecondsForEpisodes(dataURL) {
   $.ajax({
     type: "POST",
-    url: 'https://www.doctorwhofans.be/php/Totals.php',
+    url: '/php/Totals.php',
     data: {'TOTAL':dataURL},
     dataType: 'json',
+    xhrFields: {
+      withCredentials: true
+    },crossDomain:true,
     cache: false
   }).done(function (resultaat) {
     var Tiles = "";
@@ -1175,14 +1196,15 @@ $(document).ready(
       var optionSelected = $("#lang-select option:selected", this);
       var valueSelected = this.value;
       setCookie("lang",this.value,30);
-      $(".main__path,#Tags,#SiteContent article").html('');
-      GetContent(menu, id);
+      location.reload();
+      //$(".main__path,#Tags,#SiteContent article").html('');
+      //GetContent(menu, id);
 
 
-      $("#lang-select option").attr("disabled",false);
-      $("#lang-select option").attr("selected",false);
-      $("#lang-select option[value='"+this.value+"']").attr("disabled","disabled");
-      $("#lang-select option[value='"+this.value+"']").attr("selected","selected");
+      //$("#lang-select option").attr("disabled",false);
+      //$("#lang-select option").attr("selected",false);
+      //$("#lang-select option[value='"+this.value+"']").attr("disabled","disabled");
+      //$("#lang-select option[value='"+this.value+"']").attr("selected","selected");
   });
 
       $('#font-select').on( 'change',
@@ -1260,7 +1282,7 @@ function GalleriesForPage(Galleries){
   for (let [key, value] of Object.entries(Galleries)) {
     var Gallery = "";
     Gallery += "<div>";
-    Gallery +="<h1>"+value.name+"</h1><div class='Gallery_Items' id='gal_"+value.id+"'>";
+    Gallery +="<div class='Gallery_Items' id='gal_"+value.id+"'>";
     
     for (let [Imgkey, Imgvalue] of Object.entries(value.images)) {
       let folder="";
@@ -1269,13 +1291,18 @@ function GalleriesForPage(Galleries){
         folder=Imgvalue.folder+"/"
 
       }
+      let caption="";
+      if(Imgvalue.caption!==null){
+
+        caption=Imgvalue.caption;
+      }
       let src = "https://www.doctorwhofans.be/images/content__gallery__images/"+folder+Imgvalue.filename;
-      Gallery +='<a class="Thumbnail_Link" href="'+src+'"><img src="'+src+'" class="Gallery_Thumbnail"></a>';
+      Gallery +='<a class="Thumbnail_Link" data-caption="'+caption+'" href="'+src+'"><img src="'+src+'" class="Gallery_Thumbnail"></a>';
 
     }
     Gallery+= "</div></div>";
     $("#Gallery_"+value.id).html(Gallery);
-    baguetteBox.run('#gal_'+value.id);
+    baguetteBox.run('#gal_'+value.id,{async:true,titleTag:true});
   }
 }
 

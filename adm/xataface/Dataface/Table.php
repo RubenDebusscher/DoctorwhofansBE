@@ -5638,8 +5638,8 @@ class Dataface_Table {
 			}
 
 			if ( !strtotime($out) ) return '';
-			$out = strftime($fmt, strtotime($out));
-
+			//$out = strftime($fmt, strtotime($out));
+			$out  = date('Y-m-d', strtotime($out));
 			if ( isset($fieldLocale) ){
 				setlocale(LC_TIME, $oldLocale);
 			}

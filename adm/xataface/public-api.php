@@ -777,33 +777,36 @@ function df_editable($content, $id){
  * @param boolean $long Whether to include the formatted date and the offset in the output.
  * @return string The date offset.
  */
-function df_offset($date, $long=true){
-	if ( !$date ){
-		return df_translate('scripts.global.MESSAGE_UNKNOWN','Unknown');
+function df_offset($date, $long = true) {
+	if (!$date) {
+			return df_translate('scripts.global.MESSAGE_UNKNOWN', 'Unknown');
 	}
 	
 	$xWeeksAgoStr = df_translate('x weeks ago', "%d weeks ago");
 	$xDaysAgoStr = df_translate('x days ago', "%d days ago");
-	$todayStr = df_translate('Today',"Today");
+	$todayStr = df_translate('Today', "Today");
 	$yesterdayStr = df_translate('Yesterday', "Yesterday");
 	$aWeekAgoStr = df_translate("a week ago", "a week ago");
 	
 	$date = strtotime($date);
-	$offset = (strftime("%j")+strftime("%Y")*365)-
-	(strftime("%j",$date)+strftime("%Y",$date)*365);
-	if ($offset>7){
-	$offset = (strftime("%W")+strftime("%Y")*52)-
-	(strftime("%W",$date)+strftime("%Y",$date)*52);
-	$end=($offset!=0?($offset>1?sprintf($xWeeksAgoStr, $offset):$aWeekAgoStr):$todayStr);
-	} else
-	$end=($offset!=0?($offset>1?sprintf($xDaysAgoStr, $offset):$yesterdayStr):$todayStr);
-    if ($long) {
-        return strftime("%A, %B %d, %Y",$date)." - ". $end;
-    } else {
-        return $end;
-    }
+	$offset = (date("z") + date("Y") * 365) -
+						(date("z", $date) + date("Y", $date) * 365);
 	
+	if ($offset > 7) {
+			$offset = (date("W") + date("Y") * 52) -
+								(date("W", $date) + date("Y", $date) * 52);
+			$end = ($offset != 0 ? ($offset > 1 ? sprintf($xWeeksAgoStr, $offset) : $aWeekAgoStr) : $todayStr);
+	} else {
+			$end = ($offset != 0 ? ($offset > 1 ? sprintf($xDaysAgoStr, $offset) : $yesterdayStr) : $todayStr);
+	}
+	
+	if ($long) {
+			return date("l, F d, Y", $date) . " - " . $end;
+	} else {
+			return $end;
+	}
 }
+
 /**
  * @see Dataface_IO::getByID()
  */

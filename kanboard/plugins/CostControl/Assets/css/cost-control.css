@@ -1,0 +1,581 @@
+/* KANBOARD PLUGIN - CSS FILE */
+
+:root {
+    --pp-blue: #007AC9;
+    --pp-blue-alt: #00ADFF;
+    --pp-red: #B71234;
+    --pp-red-alt: #DA004C;
+    --pp-red-alt-2: #AE003D;
+    --pp-black: #000000;
+    --pp-light-grey: #8F8F8F;
+    --pp-grey: #4D4D4D;
+    --pp-white: #FFFFFF;
+    --pp-green: #2EA02E;
+    --pp-green-dark: #055D20;
+    --pp-orange: #FF6500;
+    --pp-brown: #800000;
+    --blue-icon-dark: #034CA6;
+    --button-blue-gradient: linear-gradient(to bottom, #7892C2 80%, #476E9E 100%);
+    --blue-border-gradient-match: #476E9E;
+    --button-background-delete: #D05C84;
+    --link-color-primary: #3366CC;
+    --header-page-margin-cost-control: 5px 15px 10px 15px;
+    --page-margin-cost-control: 0 15px 0 15px;
+    --page-modal-cost-control: 10px 10px 10px 10px;
+    --title-margin-cost-control: 0 15px 0 15px;
+    --border-radius-cost-control: 3px;
+    --panel-background-cost-control: #EEEEEE;
+    --transition-cost-control: ease-in-out all .3s;
+}
+
+.pp-blue { color: var(--pp-blue); fill: var(--pp-blue); }
+.pp-blue-alt { color: var(--pp-blue-alt); fill: var(--pp-blue-alt); }
+.pp-red { color: var(--pp-red); fill: var(--pp-red); }
+.pp-red-alt { color: var(--pp-red-alt); fill: var(--pp-red-alt); }
+.pp-red-alt-2 { color: var(--pp-red-alt-2); fill: var(--pp-red-alt-2); }
+.pp-black { color: var(--pp-black); fill: var(--pp-black); }
+.pp-light-grey { color: var(--pp-light-grey); fill: var(--pp-light-grey); }
+.pp-grey { color: var(--pp-grey); fill: var(--pp-grey); }
+.pp-white { color: var(--pp-white); fill: var(--pp-white); }
+.pp-green { color: var(--pp-green); fill: var(--pp-green); }
+.pp-dark-green { color: var(--pp-green-dark); fill: var(--pp-green-dark); }
+.pp-orange { color: var(--pp-orange); fill: var(--pp-orange); }
+
+.display-none, .d-none { display: none }
+
+.font-weight-bold { font-weight: bold; }
+
+.text-center { text-align: center; }
+
+.relative { position: relative; }
+
+#CostControlSidebar {
+    min-width: fit-content;
+    padding-left: 5px;
+}
+
+#CostControlSidebar ul li a {
+    transition: var(--transition-cost-control);
+    color: var(--pp-grey);
+}
+
+#CostControlSidebar ul li a:hover {
+    color: var(--pp-brown);
+}
+
+#CostControlSidebar ul li {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-left: 5px solid white;
+    border-bottom: 0;
+    font-size: .9em;
+    transition: var(--transition-cost-control);
+}
+
+#CostControlSidebar ul li:hover {
+    border-left: 5px solid #333333;
+}
+
+#CostControlSidebar ul li.active {
+    border-left: 5px solid var(--pp-brown);
+}
+
+#RateReminder {
+    top: 0;
+    bottom: initial;
+    right: 0;
+    position: absolute;
+    left: unset;
+    animation: fadeout 5s linear forwards;
+    animation-delay: 3s;
+    width: auto;
+    border: 2px solid;
+    font-style: italic;
+    padding: 5px 15px;
+    z-index: 0;
+}
+
+#PluginTop {
+    display: block;
+    right: 0;
+    position: relative;
+    float: right;
+    margin-top: 3px;
+    color: var(--pp-grey);
+}
+
+#PluginBottom {
+    display: block;
+    right: 0;
+    position: relative;
+    float: right;
+    margin-bottom: 4px;
+    color: var(--pp-grey);
+    margin-top: 3px;
+    margin-left: 5px;
+}
+
+.currency-filter {
+    display: block;
+    margin: 10px auto 25px auto;
+    text-align: center;
+}
+
+.currency-filter label {
+    display: inline;
+    position: absolute;
+    margin-top: 4px;
+    margin-left: 4px;
+}
+
+.currency-filter label svg {
+    vertical-align: text-bottom;
+    margin-right: 5px;
+    pointer-events: none;
+}
+
+.currency-filter input {
+    padding: 3px 3px 4px 3px;
+    font-size: 1em;
+    border: 2px solid var(--pp-brown);
+    width: 375px;
+    text-align: center;
+    box-shadow: 1px 1px 7px 0 #000000;
+}
+
+.cost-control-btn .currency-wallet-icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: bottom;
+    margin-bottom: 3px;
+}
+
+.cost-control-page-header {
+    margin: var(--page-margin-cost-control);
+}
+
+.cost-control-page-header h2, .cost-control-page-header-create h2, .cost-control-page-header-change h2, .cost-control-page-header-comment h2 {
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.cost-control-page-header-create h2, .cost-control-page-header-change h2, .cost-control-page-header-comment h2 {
+    margin-bottom: 20px;
+}
+
+.cost-control-page-header h2 span {
+    vertical-align: bottom;
+}
+
+.cost-control-page-header-comment h2 svg {
+    width: 1.1em;
+    height: 1.1em;
+    vertical-align: sub;
+}
+
+.cost-control-page-header-create, .cost-control-page-header-change, .cost-control-page-header-comment {
+    margin: var(--page-modal-cost-control);
+}
+
+.create-rate-comment label, .change-base-rate label, .edit-create-comment label {
+    font-weight: 600;
+}
+
+ul.currency-actions {
+    list-style-type: none;
+}
+
+ul.currency-actions li {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+ul.currency-actions li a, .bottom-detail-bar a.api-detail, .c-control-options-section a {
+    text-decoration: none;
+    transition: var(--transition-cost-control);
+    color: var(--color-primary);
+}
+
+ul.currency-actions li a:hover, .bottom-detail-bar a.api-detail:hover, .c-control-options-section a:hover {
+    color: var(--pp-brown);
+}
+
+fieldset.app-currencies {
+    width: fit-content;
+    margin: 25px auto 15px auto;
+    padding: 10px 25px 15px 25px;
+    border-color: var(--pp-brown);
+    border-radius: var(--border-radius-cost-control);
+}
+
+.app-currencies-wrapper {
+    margin: auto;
+    text-align: center;
+}
+
+fieldset.app-currencies legend {
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+.top-detail-bar .json-last-checked {
+    float: left;
+    margin-top: 9px;
+    padding: 2px 4px 1px 0;
+    font-weight: normal;
+    color: var(--pp-grey);
+    font-style: italic;
+}
+
+.top-detail-bar {
+    margin: auto 3px;
+}
+
+#CurrenciesTable {
+    margin: 5px auto;
+    border-collapse: separate;
+    border-spacing: 3px;
+}
+
+#CurrenciesTable tr.table-heading {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #FFFFFF;
+}
+
+#CurrenciesTable.table-striped tr.table-heading:hover {
+    background: initial !important;
+}
+
+#CurrenciesTable tr td {
+    vertical-align: middle;
+}
+
+table#CurrenciesTable > tbody > tr > td {
+    padding: .4em 3px;
+}
+
+#CurrenciesTable th, #CurrenciesTable td {
+    border: 1px solid var(--pp-brown);
+}
+
+.table-row-hover tr.rate-results td, .table-row-hover tr.rate-results td .live-rate-icon, .table-row-hover tr.rate-results td .manual-rate-icon, tr.rate-results td a {
+    transition: ease-in-out all .4s;
+}
+
+.table-row-hover tr.rate-results:hover td {
+    background-color: rgba(165, 42, 42, .3);
+}
+
+.table-row-hover tr.rate-results:hover td .live-rate-icon, .table-row-hover tr.rate-results:hover td .manual-rate-icon {
+    opacity: 1;
+}
+
+#CurrenciesTable > tbody > tr.table-heading > th:first-child {
+    border-top-left-radius: var(--border-radius-cost-control);
+}
+
+#CurrenciesTable > tbody > tr.table-heading > th:last-child {
+    border-top-right-radius: var(--border-radius-cost-control);
+}
+
+#CurrenciesTable > tbody > tr.rate-results:last-child > td:first-child {
+    border-bottom-left-radius: var(--border-radius-cost-control);
+}
+
+#CurrenciesTable > tbody > tr.rate-results:last-child > td:last-child {
+    border-bottom-right-radius: var(--border-radius-cost-control);
+}
+
+th.heading-code, th.heading-manual-rate, th.heading-last-modfied, th.heading-live-rate, th.heading-live-rate-updated {
+    text-align: center;
+    padding: 0 3px;
+    font-weight: 600;
+    background: rgba(165, 42, 42, .5);
+}
+
+th.heading-currency, th.heading-comment {
+    font-weight: 600;
+    padding-left: 10px;
+    background: rgba(165, 42, 42, .5);
+}
+
+td.row-code, td.row-manual-rate, td.row-manual-rate-last-modified, td.row-live-rate, td.row-live-rate-last-updated {
+    text-align: center;
+    padding: 0 3px;
+}
+
+table#CurrenciesTable > tbody > tr > td.row-currency, table#CurrenciesTable > tbody > tr > td.row-manual-rate-comment {
+    padding-left: 10px;
+}
+
+table#CurrenciesTable > tbody > tr > td.row-manual-rate-comment {
+    font-style: italic;
+}
+
+.row-live-rate .live-rate-icon {
+    float: left;
+    width: 22px;
+    height: 22px;
+    opacity: .6;
+    margin-top: -2px;
+}
+
+.row-manual-rate .manual-rate-icon {
+    opacity: .6;
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin-top: -2px;
+}
+
+td.row-live-rate {
+    font-weight: bold;
+}
+
+.base-currency-wrapper, .reference-currency-wrapper {
+    min-width: 150px;
+    display: inline-block;
+    height: 85px;
+    vertical-align: middle;
+    padding: 2px 5px;
+}
+
+.base-currency-title, .base-currency-code, .base-currency-value, .reference-currency-title, .reference-currency-code {
+    display: block;
+    text-align: center;
+}
+
+.base-currency-title, .reference-currency-title {
+    text-transform: uppercase;
+    font-size: .8em;
+    font-weight: 600;
+    color: var(--pp-grey);
+}
+
+.base-currency-wrapper {
+    margin-right: 10px;
+    border: 1px solid var(--pp-brown);
+    border-radius: var(--border-radius-cost-control);
+}
+
+.base-currency-code, .reference-currency-code {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.base-currency-value {
+    font-size: 1.3em;
+}
+
+.reference-currency-wrapper {
+    margin-left: 10px;
+    border: 1px solid var(--pp-brown);
+    border-radius: var(--border-radius-cost-control);
+}
+
+.manual-live-wrapper {
+    display: block;
+    text-align: center;
+}
+
+.reference-currency-manual-rate {
+    font-size: 1.3em;
+    color: var(--pp-grey);
+}
+
+.reference-currency-live-rate {
+    font-size: 1.3em;
+    font-weight: 600;
+    height: 30px;
+    display: inline-block;
+}
+
+.reference-currency-manual-rate .manual-rate-icon {
+    vertical-align: text-top;
+    width: 27px;
+    height: 27px;
+}
+
+.reference-currency-live-rate .live-rate-icon {
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+.add-reference-currency .reference-currency-icon {
+    display: block;
+    margin: 10px auto 0 auto;
+    width: 40px;
+}
+
+.add-reference-currency .add-reference-currency-link {
+    text-align: center;
+    display: block;
+    font-size: .9em;
+    margin-top: 2px;
+}
+
+.add-reference-currency-link a {
+    transition: var(--transition-cost-control);
+    text-decoration: none;
+}
+
+.edit-comment-btn {
+    padding: 0 5px 3px 5px;
+    border-radius: var(--border-radius-cost-control);
+    border: 1px solid var(--pp-brown);
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    opacity: .6;
+}
+
+.edit-comment-btn:hover {
+    border-color: var(--pp-brown);
+    opacity: 1;
+}
+
+.edit-comment-btn svg {
+    width: 18px;
+    height: 18px;
+    vertical-align: sub;
+    pointer-events: none;
+}
+
+.edit-comment-empty {
+    visibility: hidden;
+}
+
+tr.rate-results:hover .edit-comment-empty {
+    visibility: visible;
+}
+
+.api-detail, .last-update-detail, .next-update-detail {
+    display: block;
+    font-size: .9em;
+}
+
+.base-currency-value .base-rate-home-icon {
+    width: 28px;
+    height: 28px;
+    vertical-align: sub;
+}
+
+.spacer {
+    width: 25px;
+    display: inline-block;
+}
+
+.rate-results .currency-coins-icon {
+    margin-right: 3px;
+    margin-top: -2px;
+}
+
+#CreateRateModal h2 span.manual-rate-icon, #ChangeModal h2 span.base-rate-home-icon {
+    vertical-align: sub;
+}
+
+.create-rate-comment #form-rate, .create-rate-comment #form-comment {
+    display: inline-block;
+}
+
+.create-rate-comment .form-help, .create-rate-comment .form-errors, .edit-create-comment .form-help {
+    display: inline-block;
+    margin-left: 5px;
+    margin-bottom: 0;
+}
+
+#EditCommentModal form p.ml-0 {
+    margin-left: 0;
+}
+
+.create-rate-comment .form-errors {
+    color: red;
+}
+
+#form-currency, .change-base-rate #form-application_currency {
+    border-radius: var(--border-radius-cost-control);
+    border-width: 1px;
+    box-shadow: 0 2px 3px 0 #000000;
+    cursor: pointer;
+}
+
+.change-base-rate .form-help {
+    margin-bottom: 0;
+    margin-top: 5px;
+}
+
+#CostControlSettings h3 {
+    margin: 0;
+    font-weight: 600;
+}
+
+#CostControlSettings fieldset {
+    margin-top: 15px;
+}
+
+#CostControlSettings fieldset legend {
+    font-size: 1.1em;
+    color: var(--pp-brown);
+}
+
+#CostControlSettings h3 span.currency-wallet-icon {
+    vertical-align: sub;
+}
+
+.c-control-options-section .app-currency-label {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.c-control-options-intro {
+    margin-block: 5px;
+}
+
+.c-control-options-section #form-application_currency {
+    cursor: not-allowed;
+    color: var(--pp-grey) !important;
+}
+
+.c-control-options-section #form-application_currency, .c-control-options-section #form-cost_control_reference_currency {
+    width: 75px;
+    text-align: center;
+}
+
+section#config-section.sidebar-container div.sidebar-content form fieldset#CostControlSettings.panel.c-control-settings fieldset.c-control-options div.c-control-options-section-area div.c-control-options-section p.form-help {
+    display: inline-block;
+    margin-left: 10px;
+    margin-bottom: 0;
+}
+
+.c-control-radio-options label {
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.c-control-options-section span.reference-currency-icon {
+    vertical-align: sub;
+    margin-right: 5px;
+}
+
+.c-control-options-section a i.fa-edit {
+    margin-left: 5px;
+}
+
+.c-control-options-section {
+    display: inline-block;
+    width: 48%;
+}
+
+.c-control-options-section a, .cost-control-btn {
+    transition: var(--transition-cost-control);
+    text-decoration: none;
+}
+
+input[type="text"]#form-comment::placeholder, input[type="text"]#CurrencyCodeSearch::placeholder, input[type="text"]#form-rate::placeholder, input[type="number"]#form-rate::placeholder, input[type="text"]#form-cost_control_reference_currency::placeholder {
+    color: var(--pp-grey);
+}

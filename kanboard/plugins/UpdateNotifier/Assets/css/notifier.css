@@ -1,0 +1,23 @@
+.top-bar {
+    background: #28a745;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+}
+
+.top-bar a {
+    color: #fff;
+}
+
+.top-bar a:hover {
+    color: #ddd;
+}
+
+.filter-plugin { 
+    margin-top: 20px;
+}
+
+.filter-plugin p{
+    margin-bottom: 5px;
+    font-weight: bold;
+}

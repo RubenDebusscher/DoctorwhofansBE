@@ -1,5 +1,8 @@
 {% INCLUDECSS 'acp_dsgvo.css' %}
 {% include 'overall_header.html' %}
+
+{% set switch_type = TOGGLECTRL_TYPE ?? 'toggle' %}
+
 <h1>{{ lang('ACP_DSGVO_SETTINGS') }}</h1>
 <p>{{ lang('DSGVO_DESC', DSGVO_EXT_NAME, DSGVO_EXT_VER) }}</p>
 <br>
@@ -20,24 +23,36 @@
 	<fieldset>
 	<legend>{{ lang('ACP_DSGVO_DOWNLOAD_OPTIONS') }}</legend>
 	<dl>
-		<dt><label>{{ lang('ACP_DSGVO_POST_FORMAT') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_FORMAT_EXPLAIN') }}</span></dt>
-	<dd><label><input type="radio" class="radio" id="dsgvo_post_format" name="dsgvo_post_format" value="1"{% if DSGVO_POST_FORMAT %} checked="checked"{% endif %}/> {{ lang('DSGVO_ALL') }}</label>
-		<label><input type="radio" class="radio" name="dsgvo_post_format" value="0"{% if not DSGVO_POST_FORMAT %} checked="checked" {% endif %} /> {{ lang('DSGVO_META') }}</label></dd>
+		<dt>
+			<label>{{ lang('ACP_DSGVO_POST_FORMAT') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_FORMAT_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			{{ _self.switch('dsgvo_post_format', DSGVO_POST_FORMAT, switch_type) }}
+		</dd>
 	</dl>
 	<dl>
-		<dt><label>{{ lang('ACP_DSGVO_POST_READ') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_READ_EXPLAIN') }}</span></dt>
-		<dd><label><input type="radio" class="radio" name="dsgvo_post_read" value="0"{% if not DSGVO_POST_READ %} checked="checked" {% endif %}/> {{ lang('ALL_POSTS') }}</label>
-			<label><input type="radio" class="radio" id="dsgvo_post_read" name="dsgvo_post_read" value="1" {% if DSGVO_POST_READ %} checked="checked" {% endif %} /> {{ lang('DSGVO_READ') }}</label></dd>
+		<dt>
+			<label>{{ lang('ACP_DSGVO_POST_READ') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_READ_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			{{ _self.switch('dsgvo_post_read', DSGVO_POST_READ, switch_type) }}
+		</dd>
 	</dl>
 	<dl>
-		<dt><label>{{ lang('ACP_DSGVO_POST_UNAPPROVED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_UNAPPROVED_EXPLAIN') }}</span></dt>
-		<dd><label><input type="radio" class="radio" id="dsgvo_post_unapproved" name="dsgvo_post_unapproved" value="1"{% if DSGVO_POST_UNAPPROVED %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
-			<label><input type="radio" class="radio" name="dsgvo_post_unapproved" value="0"{% if not DSGVO_POST_UNAPPROVED %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+		<dt>
+			<label>{{ lang('ACP_DSGVO_POST_UNAPPROVED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_UNAPPROVED_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			{{ _self.switch('dsgvo_post_unapproved', DSGVO_POST_UNAPPROVED, switch_type) }}	
+		</dd>
 	</dl>
 	<dl>
-		<dt><label>{{ lang('ACP_DSGVO_POST_DELETED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_DELETED_EXPLAIN') }}</span></dt>
-		<dd><label><input type="radio" class="radio" id="dsgvo_post_deleted" name="dsgvo_post_deleted" value="1"{% if DSGVO_POST_DELETED %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
-			<label><input type="radio" class="radio" name="dsgvo_post_deleted" value="0"{% if not DSGVO_POST_DELETED %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+		<dt>
+			<label>{{ lang('ACP_DSGVO_POST_DELETED') ~ lang('COLON') }}</label><br /><span>{{ lang('ACP_DSGVO_POST_DELETED_EXPLAIN') }}</span>
+		</dt>
+		<dd>
+			{{ _self.switch('dsgvo_post_deleted', DSGVO_POST_DELETED, switch_type) }}
+		</dd>
 	</dl>
 	</fieldset>
 
@@ -54,3 +69,12 @@
 </form>
 
 {% include 'overall_footer.html' %}
+
+{% macro switch(name, checked = false, type = 'toggle') -%}
+	{% if type == 'toggle' || type == 'checkbox' -%}
+		<input type="checkbox"{{ type == 'toggle' ? ' class="toggle"' }} name="{{ name }}" value="1"{{ checked ? ' checked' }}>
+	{%- elseif type == 'radio' -%}
+		<label><input type="radio" class="radio" name="{{ name }}" value="1"{{ checked ? ' checked' }}> {{ lang('YES') }}</label>
+		<label><input type="radio" class="radio" name="{{ name }}" value="0"{{ !checked ? ' checked' }}> {{ lang('NO') }}</label>
+	{%- endif %}
+{%- endmacro %}

@@ -893,7 +893,7 @@ class chat
 			$row	 = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
 
-			if ($row['user_id'] != $this->user->data['user_id'])
+			if ((isset($row['user_id']))&&($row['user_id'] != $this->user->data['user_id']))
 			{
 				$sql_ary = [
 					'user_id'			 => $this->user->data['user_id'],

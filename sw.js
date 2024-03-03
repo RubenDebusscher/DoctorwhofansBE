@@ -1,7 +1,14 @@
-var version = "v2.0.3";
+var self, $, importScripts;
+var version = "v2.0.4";
 var swPath;
 var urlObject = new URL(location);
 var host;
+var workbox,caches,Promise;
+
+function showInstallPromotion() {
+    "use strict";
+    $('.installButton').show();
+}
 if (urlObject.searchParams.get("swPath")) {
     swPath = urlObject.searchParams.get("swPath");
 }
@@ -21,41 +28,53 @@ else {
     }
     swPath = host + version + "/sw.js";
 }
-importScripts(swPath);
-
-
-
-
-var CACHE_NAME = 'my-site-cache-v2';
+var CACHE_NAME = 'my-site-cache-v3';
 var urlsToCache = [
   'https://www.doctorwhofans.be/css',
   'https://www.doctorwhofans.be/js',
-  'https://www.doctorwhofans.be/images'//,
+  'https://www.doctorwhofans.be/images/',
   //'https://www.doctorwhofans.be/'
 ];
 // @ts-ignore
-let deferredPrompt;
+var deferredPrompt;
 
 self.addEventListener('beforeinstallprompt', function (event){
   event.preventDefault();
   deferredPrompt = event;
   showInstallPromotion();
 });
+//
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js');
 
-self.addEventListener('install', function (event) {
-  // Perform install steps
-  'use strict';
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function (cache) {
-        //console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
+
+
+
+self.addEventListener('beforeinstallprompt', function (event){
+  event.preventDefault();
+  deferredPrompt = event;
+  showInstallPromotion();
 });
-self.addEventListener('fetch', function (event) {
-  event.respondWith(
-    caches.match(event.request)
+//
+/* importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js');
+
+self.addEventListener('fetch', event => {
+  
+// This will trigger the importScripts() for workbox.strategies and its dependencies:
+workbox.loadModule('workbox-strategies');
+  if (event.request.url.endsWith('.png')) {
+    // Referencing workbox.strategies will now work as expected.
+    const cacheFirst = new workbox.strategies.CacheFirst();
+    event.respondWith(cacheFirst.handle({request: event.request}));
+  }
+  if (event.request.url.endsWith('.jpg')) {
+    // Referencing workbox.strategies will now work as expected.
+    const cacheFirst = new workbox.strategies.CacheFirst();
+    event.respondWith(cacheFirst.handle({request: event.request}));
+  }
+  if (event.request.url.contains('doctorwhofans.be')) {
+    // Referencing workbox.strategies will now work as expected.
+     event.respondWith(
+   caches.match(event.request)
       .then(function (response) {
       // Cache hit - return response
         if (response) {
@@ -70,12 +89,7 @@ self.addEventListener('fetch', function (event) {
           function (response) {
           // Check if we received a valid response
             if ((!response || response.status !== 200 || response.type !== 'basic') && response.url.indexOf('/php/') ==-1) {
-              return response;
-            }
-            // IMPORTANT: Clone the response. A response is a stream
-            // and because we want the browser to consume the response
-            // as well as the cache consuming the response, we need
-            // to clone it so we have two streams.
+              return response;}
             var responseToCache = response.clone();
 
             caches.open(CACHE_NAME)
@@ -85,9 +99,30 @@ self.addEventListener('fetch', function (event) {
                 }
               });
 
+            // IMPORTANT: Clone the response. A response is a stream
+            // and because we want the browser to consume the response
+            // as well as the cache consuming the response, we need
+            // to clone it so we have two streams.
+
             return response;
           }
         );
+      })
+  );
+  }
+}); */
+
+
+
+
+self.addEventListener('install', function (event) {
+  
+  // Perform install steps
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function (cache) {
+        //console.log('Opened cache');
+        return cache.addAll(urlsToCache);
       })
   );
 });
@@ -110,7 +145,4 @@ self.addEventListener('activate', function (event) {
 });
 
 
-function showInstallPromotion(){
-  $('.installButton').show();
-}
-
+importScripts("https://sdki.truepush.com/sdk/v2.0.4/sw.js");

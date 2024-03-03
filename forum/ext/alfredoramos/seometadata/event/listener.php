@@ -2,7 +2,7 @@
 
 /**
  * SEO Metadata extension for phpBB.
- * @author Alfredo Ramos <alfredo.ramos@yandex.com>
+ * @author Alfredo Ramos <alfredo.ramos@protonmail.com>
  * @copyright 2018 Alfredo Ramos
  * @license GPL-2.0-only
  */
@@ -109,7 +109,7 @@ class listener implements EventSubscriberInterface
 		{
 			$data['description'] = $this->helper->extract_description($first_post_id);
 		}
-		else
+		else if (!empty($event['rowset'][$first_post_id]['post_text']))
 		{
 			$data['description'] = $event['rowset'][$first_post_id]['post_text'];
 		}

@@ -65,6 +65,7 @@
 					if(stripos($menu,'Category')===false){
 						$stmt->close();
 						$page = 1603;
+						getTranslations($conn,$language,$antwoord);
 						getContent($conn,$page,$language,$antwoord);
 						getPath($conn,$page,$antwoord);
 						getEpisodeOfTheDay($conn,$antwoord);
@@ -75,6 +76,7 @@
 						$stmt->close();
 						$contents = explode(':', $menu);
 						$RawCategory = end($contents);
+						getTranslations($conn,$language,$antwoord);
 						getPagesForTag($conn,0,$RawCategory,$antwoord);
 						getEpisodeOfTheDay($conn,$antwoord);
 						getActorsOfTheDay($conn,$antwoord);
@@ -82,9 +84,11 @@
 					}
 				}else{
 					$antwoord['Page'] = $result->fetch_all(MYSQLI_ASSOC);
+					
 					processPageData($antwoord,$current_Page_Id,$prefix,$Page_Name);
 					$stmt->close();
 					$API_Item = $antwoord['Page'][0]['page_API_Item'];
+					getTranslations($conn,$language,$antwoord);
 					getRichContent($conn,$prefix,$API_Item,$antwoord);
 					getSubPages($conn,$current_Page_Id,$antwoord);
 					getPath($conn,$current_Page_Id,$antwoord);

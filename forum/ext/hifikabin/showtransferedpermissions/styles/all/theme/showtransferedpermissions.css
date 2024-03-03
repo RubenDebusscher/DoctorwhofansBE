@@ -1,4 +1,4 @@
-.permissions {
+.show_permissions {
 	background-image: -o-linear-gradient(
 		45deg, 
 		yellow 25%, 
@@ -30,7 +30,6 @@
 	color: red;
 }
 
-#permissions_center {
+#permissions_center  {
 	text-align: center;
 }
-

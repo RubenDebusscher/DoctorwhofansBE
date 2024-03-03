@@ -1,0 +1,378 @@
+/* KANBOARD PLUGIN - AUTOMATICACTIONUX CSS FILE */
+
+:root {
+    --pp-blue: #007AC9;
+    --pp-blue-alt: #00ADFF;
+    --pp-red: #B71234;
+    --pp-red-alt: #DA004C;
+    --pp-red-alt-2: #AE003D;
+    --pp-black: #000000;
+    --pp-light-grey: #8F8F8F;
+    --pp-grey: #4D4D4D;
+    --pp-white: #FFFFFF;
+    --pp-green: #2EA02E;
+    --pp-green-dark: #055D20;
+    --pp-orange: #FF6500;
+    --pp-orangered: #FF4500;
+    --blue-icon-dark: #034CA6;
+    --button-blue-gradient: linear-gradient(to bottom, #7892C2 80%, #476E9E 100%);
+    --button-blue-border-gradient-match: #476E9E;
+    --link-hover-red: #AE003D;
+    --link-hover-white: #EEEEEE;
+    --pp-blue-box: rgba(0, 122, 201, .6);
+    --box-shadow-aa: 1px 1px 1px 0 #000000;
+    --border-radius-aa: 3px;
+    --transition-aa: ease-in-out all .3s;
+}
+
+.page #main section #ActionPageHeader {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+#ActionPageHeader h2 {
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-size: 1.5em;
+}
+
+#ActionPageHeader {
+    font-size: small;
+}
+
+h2 > svg.aa-icon {
+    color: var(--pp-orangered);
+    vertical-align: sub;
+    width: 1.3em;
+    height: 1.3em;
+}
+
+.cell-bg svg.aa-icon {
+    color: var(--pp-orangered);
+    width: 1.6em;
+    height: auto;
+    vertical-align: middle;
+}
+
+#ActionPageHeader ul.data-bar {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.data-bar {
+    width: 100%;
+}
+
+.data-bar li .page-count-total {
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.data-bar li.float-right {
+    padding-right: 0;
+    margin-left: 15px;
+}
+
+.action-page-count {
+    border: 2px outset var(--button-blue-border-gradient-match);
+    text-align: center;
+    padding: 2px 0 2px 6px !important;
+    border-radius: var(--border-radius-aa);
+    margin-right: 15px;
+    cursor: context-menu;
+}
+
+.import-action-btn {
+    border: 1px solid var(--pp-green-dark);
+    padding: 3px 5px;
+    border-radius: var(--border-radius-aa);
+    transition: var(--transition-aa);
+}
+
+.add-action-btn {
+    border: 1px solid var(--pp-green-dark);
+    padding: 3px 5px;
+    border-radius: var(--border-radius-aa);
+    background-color: var(--pp-green-dark);
+    transition: var(--transition-aa);
+}
+
+.add-action-btn a {
+    color: var(--pp-white);
+    transition: var(--transition-aa);
+}
+
+.add-action-btn:hover a {
+    color: var(--pp-green-dark) !important;
+}
+
+.add-action-btn:hover {
+    background-color: var(--pp-white);
+}
+
+.p-right-5i {
+    padding-right: 5px !important;
+}
+
+#ActionTable {
+    border-collapse: unset;
+    border: 2px outset var(--button-blue-border-gradient-match);
+    border-radius: var(--border-radius-aa);
+}
+
+table#ActionTable > tbody > tr > th.cell-bg {
+    background-color: var(--alert-background-color-info);
+    padding: 4px 3px 4px 5px;
+}
+
+table#ActionTable > tbody > tr > td {
+    padding: 4px 3px 4px 5px;
+}
+
+.cell-bg-title {
+    background-color: var(--color-lighter);
+}
+
+#ActionTable > thead {
+    border-bottom: 0;
+}
+
+#ActionTable > tbody > tr > th, #ActionTable > tbody > tr > td, #ActionTable > thead > tr > th {
+    border-bottom: 0;
+}
+
+#ActionTable > tbody > tr > th:not(:first-child), #ActionTable > tbody > tr > td:not(:first-child), #ActionTable > thead > tr > th:not(:first-child), #ActionTable > thead > tr > td:not(:first-child) {
+    border-left: 0;
+}
+
+#ActionTable thead > tr > th, #ActionTable > tbody > tr > td, #ActionTable > tbody > tr > th {
+    padding-left: 3px;
+}
+
+#ActionTable thead > tr > th.pl-15 {
+    padding-left: 15px;
+}
+
+#ActionTable > tbody > tr > th:first-child, #ActionTable > thead > tr > th:first-child {
+    border-top-left-radius: unset;
+}
+
+#ActionTable > tbody > tr > th:last-child, #ActionTable > thead > tr > th:last-child {
+    border-top-right-radius: unset;
+}
+
+.line-no, .action-id {
+    vertical-align: middle;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.action-activity {
+    vertical-align: middle;
+    text-align: center;
+    color: var(--pp-grey);
+    position: relative;
+    background: 0;
+}
+
+.action-activity-icon {
+    font-size: 2em;
+}
+
+.action-activity-text {
+    font-size: small;
+    text-transform: uppercase;
+}
+
+.action-action {
+    vertical-align: middle;
+    text-align: center;
+    color: var(--pp-grey);
+    position: relative;
+    background: 0;
+}
+
+.action-action-icon {
+    font-size: 2em;
+}
+
+.action-action-text {
+    font-size: small;
+    text-transform: uppercase;
+}
+
+.action-relation {
+    vertical-align: middle;
+    font-size: 2em;
+    text-align: center;
+    color: var(--pp-grey);
+}
+
+.action-trigger {
+    vertical-align: middle;
+    font-size: 2em;
+    text-align: center;
+    color: var(--pp-grey);
+}
+
+.float-right {
+    float: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.action-dropdown:hover, a.board-action-link:hover {
+    color: var(--link-hover-red) !important;
+}
+
+#BoardActions {
+    padding-right: 5px;
+}
+
+#BoardActions .action-page-count {
+    border: 2px outset var(--button-blue-border-gradient-match);
+    text-align: center;
+    padding: 0 1px 1px 3px !important;
+    margin-right: 3px;
+    display: inline;
+    border-radius: var(--border-radius-aa);
+    cursor: context-menu;
+}
+
+#BoardActions .action-page-count:last-child {
+    padding-right: 4px !important;
+    margin-right: 5px;
+}
+
+#BoardActions .board-actions-title svg {
+    color: var(--pp-orangered);
+    vertical-align: sub;
+}
+
+/* FIX FOR KANBOARDCSS */
+ul#BoardViews li:first-of-type {
+    border-top-left-radius: var(--border-radius-aa) !important;
+    border-bottom-left-radius: var(--border-radius-aa) !important;
+}
+
+ul#BoardViews li:last-of-type {
+    border-top-right-radius: var(--border-radius-aa) !important;
+    border-bottom-right-radius: var(--border-radius-aa) !important;
+}
+
+.add-action-btn a > i {
+    transition: unset;
+}
+
+/* END OF FIX */
+
+.display-none { display: none; }
+
+.bl-0 {
+    border-left: 0 !important;
+}
+
+.board-actions-title {
+    display: inline-block;
+}
+
+.board-actions-counts {
+    float: right;
+}
+
+.not-set {
+    font-weight: normal;
+    margin-right: 10px;
+}
+
+.form-help-not-set, .form-warning {
+    display: inline-block;
+    margin: 0;
+    font-weight: normal;
+    font-size: .875em;
+    float: right;
+}
+
+.form-warning {
+    color: var(--pp-red-alt-2);
+}
+
+.action-details {
+    margin: auto 5px;
+}
+
+.action-details > span, .action-details > li > span.action-event-title {
+    color: var(--pp-green-dark);
+    font-weight: 600;
+}
+
+.action-details .action-event-title {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.action-details .action-options {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.action-details .action-event-name {
+    display: inline-block;
+    width: 100%;
+    margin: 0;
+}
+
+.action-details hr {
+    border-width: 1px;
+    border-color: var(--pp-grey);
+    border-radius: 2px;
+}
+
+.action-event-label {
+    float: right;
+    text-transform: uppercase;
+    color: var(--pp-light-grey);
+    font-weight: 600;
+}
+
+.action-event-value {
+    font-style: italic;
+}
+
+.action-event-title svg, .action-options svg {
+    color: var(--pp-green-dark);
+    width: 18px;
+}
+
+.action-event-title svg {
+    vertical-align: text-top;
+}
+
+.action-options svg {
+    vertical-align: bottom;
+}
+
+.action-options-value {
+    list-style: square;
+}
+
+.action-event-name::marker, .action-options-value::marker {
+    color: var(--pp-green-dark);
+}
+
+.options-arrow {
+    font-size: 2em;
+    vertical-align: middle;
+    color: var(--pp-green-dark);
+    line-height: 22px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.action-color-value {
+    border: 1px solid;
+    padding: 1px 4px;
+    border-radius: var(--border-radius-aa);
+}

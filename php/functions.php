@@ -346,9 +346,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 								}else{
 									$resultset['Serial']['Episodes'] = $result->fetch_all(MYSQLI_ASSOC);
 									$stmtEpisodes->close();
-									$stmtCharacters = $conn->prepare("select SC_Type,AC_Type,character_First_name,character_Last_name,actor_First_name,actor_Last_name,t1.Page_Link as Character_Link,t2.Page_Link as ActorLink,character_Page_Id,actor_Page_Id,CT_Name from api__serials_charactersActors inner join api__characters_actors on SC_CA_ID=api__characters_actors.AC_Id inner join api__characters on api__characters_actors.AC_Character_Id=api__characters.character_Id inner join api__actors on api__actors.actor_Id=api__characters_actors.AC_actor_Id  inner join api__character_Types on api__characters.character_Type=api__character_Types.CT_Id
-									inner join  management__pages t1 on t1.page_Id=character_Page_Id 
-									inner join management__pages t2 on t2.page_Id=actor_Page_Id where SC_Serial_Id=? order by SCA_Order;");
+									$stmtCharacters = $conn->prepare("SELECT SC_Type,AC_Type,character_First_name,character_Last_name,actor_First_name,actor_Last_name,t1.Page_Link AS Character_Link,t2.Page_Link AS ActorLink,character_Page_Id,actor_Page_Id,CT_Name FROM api__serials_charactersActors INNER JOIN api__characters_actors ON SC_CA_ID = api__characters_actors.AC_Id INNER JOIN api__characters ON api__characters_actors.AC_Character_Id = api__characters.character_Id INNER JOIN api__actors ON api__actors.actor_Id = api__characters_actors.AC_actor_Id INNER JOIN api__character_Types ON api__characters.character_Type = api__character_Types.CT_Id left outer JOIN management__pages t1 ON t1.page_Id = character_Page_Id left outer JOIN management__pages t2 ON t2.page_Id = actor_Page_Id WHERE SC_Serial_Id = ? ORDER BY SCA_Order");
 									if(!$stmtCharacters){
 										die("Statement prepare failed: " . $conn->connect_error);
 									}
@@ -597,8 +595,10 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 			}
 	}
 
+	
+
 	function getContent(&$conn,&$current_Page_Id,&$language,&$resultset){
-		$stmtContent = $conn->prepare('SELECT * FROM content_With_Lang where item_Page=? and language_Name=?');
+		$stmtContent = $conn->prepare('SELECT * FROM content_With_Lang where item_Page=? and language_Name=? and item_Active=1 order by item_level asc');
 			if(!$stmtContent){
 				die('Statement preparing failed: ' . $conn->error);
 			}
@@ -672,6 +672,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 								$galleries[$galleryId]['images'][] = [
 										'id' => $row['image_Id'],
 										'filename' => $row['image_File'],
+										'caption' => $row['image_Caption'],
 										'folder' => $row['image_Folder']
 								];
 						}
@@ -682,6 +683,29 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 			$resultset['Galleries']=$galleries;
 		
 	}
-	
+	function getTranslations(&$conn,&$language,&$resultset){
+		$resultset['Translations']="";
+		$stmtTranslations = $conn->prepare('SELECT string_Key,string_Value FROM `management__strings_languages` inner join management__languages on management__strings_languages.language_Id=management__languages.language_Id inner join management__strings on management__strings_languages.string_Id=management__strings.string_Id where language_Name=?');
+			if(!$stmtTranslations){
+				die('Statement preparing failed: ' . $conn->error);
+			}
+			if(!$stmtTranslations->bind_param("s",$language)){
+				die('Statement binding failed: ' . $conn->connect_error);
+			}
+			if(!$stmtTranslations->execute()){
+				die('Statement execution failed: ' . $stmtTranslations->error);
+			}else{
+				$resultTranslations = $stmtTranslations->get_result();
+				if($resultTranslations->num_rows === 0){
+					$resultset['Translations']="";
+				} else{
+					$resultset['Translations'] = $resultTranslations->fetch_all(MYSQLI_ASSOC);
+				}
+			}
+			$stmtTranslations->close();
+
+
+
+	}
 
 ?>

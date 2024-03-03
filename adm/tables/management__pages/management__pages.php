@@ -33,7 +33,7 @@
       $records = array();
       $rows = explode("\n", $data);
       foreach ( $rows as $row ){
-        list($page_name,$page_link,$page_parent_id,$page_active,$page_order) = explode(',', $row);
+        list($page_name,$page_link,$page_parent_id,$page_active,$page_order) = explode(';', $row);
         $record = new Dataface_Record('management__pages', array());
         $record->setValues($defaultValues);
         $record->setValues(
