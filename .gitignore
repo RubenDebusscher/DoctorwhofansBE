@@ -36,3 +36,5 @@ php.log
 templates_c
 uploads
 *.code-workspace
+kanboard/plugins/Moon
+kanboard/plugins/HighlightCodeSyntax
