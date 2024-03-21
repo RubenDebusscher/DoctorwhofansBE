@@ -38,3 +38,4 @@ uploads
 *.code-workspace
 kanboard/plugins/Moon
 kanboard/plugins/HighlightCodeSyntax
+QR/src/config/environment.php
