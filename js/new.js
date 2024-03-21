@@ -369,6 +369,7 @@ function GetContent(menu, id) {
     var settings = {
       "url": "/php/checkPage.php",
       "method": "POST",
+      "async": false,
       "timeout": 0,
       "dataType": 'json',
       "crossDomain":true,
