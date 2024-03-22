@@ -1,8 +1,8 @@
 <?php
 session_start();
 require_once 'config/config.php';
-require_once BASE_PATH.'/includes/auth_validate.php';
-require_once BASE_PATH . '/lib/DynamicQrcode/DynamicQrcode.php';
+require_once 'includes/auth_validate.php';
+require_once 'lib/DynamicQrcode/DynamicQrcode.php';
 
 $dynamic_qrcode_instance = new DynamicQrcode();
 
@@ -44,16 +44,16 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
 <html lang="en">
     <title>Qrcode Generator</title>
     <head>
-    <?php include './includes/head.php'; ?>
+    <?php include 'includes/head.php'; ?>
     </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
   <!-- Navbar -->
-  <?php include './includes/navbar.php'; ?>
+  <?php include 'includes/navbar.php'; ?>
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <?php include './includes/sidebar.php'; ?>
+  <?php include 'includes/sidebar.php'; ?>
   <!-- /.Main Sidebar Container -->
 
   <!-- Content Wrapper. Contains page content -->
@@ -72,7 +72,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
     <!-- /.content-header -->
     
     <!-- Flash messages -->
-    <?php include BASE_PATH.'/includes/flash_messages.php'; ?>
+    <?php include 'includes/flash_messages.php'; ?>
     <!-- /.Flash messages -->
 
     <!-- Main content -->
@@ -86,9 +86,9 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
                     <div class="card-body">
                         <?php
                             if($edit)
-                                include BASE_PATH.'/forms/form_dynamic_edit.php';
+                                include 'forms/form_dynamic_edit.php';
                             else
-                                include BASE_PATH . '/forms/form_dynamic_add.php';
+                                include 'forms/form_dynamic_add.php';
                         ?>
                     </div>
                     <div class="card-footer">
@@ -101,7 +101,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
   </div><!-- /.content-wrapper -->
 
 <!-- Footer and scripts -->
-<?php include './includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>
 
 <!-- Page script -->
 <script type="text/javascript">

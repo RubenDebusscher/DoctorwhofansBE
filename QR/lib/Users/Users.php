@@ -1,5 +1,5 @@
 <?php
-require_once 'config/config.php';
+require_once './config/config.php';
 
 class Users
 {
@@ -33,7 +33,8 @@ class Users
 
     public function getAllUsers() {
         $db = getDbInstance();
-        return $db->get(DATABASE_PREFIX.'users');
+        return $db->get('users');
+
     }
 
     public function getUser($id) {

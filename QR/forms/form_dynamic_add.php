@@ -106,11 +106,9 @@
                     <select name="id_owner" class="form-control">
                         <option value="" selected>All</option>
                         <?php
-
-                        require_once BASE_PATH . '/lib/Users/Users.php';
+                        require_once './lib/Users/Users.php';
                         $users_instance = new Users();
                         $users = $users_instance->getAllUsers();
-
                         foreach ($users as $user) {
                         ?>
                         <option value="<?php echo $user["id"];?>"><?php echo $user["username"];?></option>

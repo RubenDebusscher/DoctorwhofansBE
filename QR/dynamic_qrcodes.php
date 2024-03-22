@@ -1,15 +1,15 @@
 <?php
 session_start();
 require_once 'config/config.php';
-require_once BASE_PATH . '/includes/auth_validate.php';
-require_once BASE_PATH . '/lib/DynamicQrcode/DynamicQrcode.php';
+require_once 'includes/auth_validate.php';
+require_once 'lib/DynamicQrcode/DynamicQrcode.php';
 
 $db = getDbInstance();
 $dynamic_qrcode = new DynamicQrcode();
 
 $select = array('id', 'id_owner', 'filename', 'identifier', 'link', 'qrcode', 'scan', 'state', 'created_at', 'updated_at');
 $search_fields = array('filename', 'identifier', 'link');
-require_once BASE_PATH . '/includes/search_order.php';
+require_once 'includes/search_order.php';
 $page = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? 1;
 $db->pageLimit = 15;
 
@@ -19,6 +19,7 @@ if($_SESSION['type'] !==  'super') {
 }
 
 $rows = $db->arraybuilder()->paginate('dynamic_qrcodes', $page, $select);
+
 $total_pages = $db->totalPages;
 ?>
 
@@ -27,16 +28,16 @@ $total_pages = $db->totalPages;
 <html lang="en">
     <title>Qrcode Generator</title>
     <head>
-    <?php include './includes/head.php'; ?>
+    <?php include 'includes/head.php'; ?>
     </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
   <!-- Navbar -->
-  <?php include './includes/navbar.php'; ?>
+  <?php include 'includes/navbar.php'; ?>
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <?php include './includes/sidebar.php'; ?>
+  <?php include 'includes/sidebar.php'; ?>
     <!-- /.Main Sidebar Container -->
 
   <!-- Content Wrapper. Contains page content -->
@@ -62,12 +63,13 @@ $total_pages = $db->totalPages;
     </div><!-- /.content-header -->
     
     <!-- Flash message-->
-    <?php include BASE_PATH . '/includes/flash_messages.php'; ?>
+    <?php include 'includes/flash_messages.php'; ?>
     <!-- /.Flash message-->
             
     <!-- Filters -->
     <?php $options = $dynamic_qrcode->setOrderingValues();
-          include BASE_PATH . '/forms/filters.php'; ?>  
+
+          include 'forms/filters.php'; ?>  
     <!-- /.Filters-->
     
     <!-- Main content -->
@@ -75,7 +77,7 @@ $total_pages = $db->totalPages;
       <div class="container-fluid">
           
         <!-- Table -->
-        <?php include BASE_PATH . '/forms/table_dynamic.php'; ?>
+        <?php include 'forms/table_dynamic.php'; ?>
         <!-- /.Table -->
     
         </div><!-- /.container-fluid -->
@@ -83,7 +85,7 @@ $total_pages = $db->totalPages;
   </div><!-- /.content-wrapper -->
 
     <!-- Footer and scripts -->
-    <?php include './includes/footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>
     <!-- /.Footer and scripts -->
 </body>
 </html>

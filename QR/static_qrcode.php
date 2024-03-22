@@ -6,7 +6,7 @@ require_once BASE_PATH . '/lib/StaticQrcode/StaticQrcode.php';
 
 $static_qrcode_instance = new StaticQrcode();
 
-$edit = false;
+$edit = true;
 if($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["edit"]) && $_GET["edit"] == "true" && isset($_GET["id"])) {
     $edit = true;
     $static_qrcode = $static_qrcode_instance->getQrcode($_GET["id"]);
