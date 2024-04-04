@@ -598,7 +598,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 	
 
 	function getContent(&$conn,&$current_Page_Id,&$language,&$resultset){
-		$stmtContent = $conn->prepare('SELECT * FROM content_With_Lang where item_Page=? and language_Name=? and item_Active=1 order by item_level asc');
+		$stmtContent = $conn->prepare('SELECT * FROM content_With_Lang where item_Page=? and language_Name=? and (item_Active=1 or (item_Launch<NOW() and item_Active=2)) order by item_level asc');
 			if(!$stmtContent){
 				die('Statement preparing failed: ' . $conn->error);
 			}

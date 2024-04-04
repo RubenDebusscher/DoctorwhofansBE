@@ -4,7 +4,7 @@
     <span class="sr-only">Toggle Navigation</span>
     <span></span><span></span><span></span>
   </button>
-  <ol>
+  <ol style="display:none">
     <li id="logo"></li>
     <li>
       <h2><a href="../Home.html" class="toplink"><span data-text="Home">Home</span> <i class="fa fa-home"></i></a></h2>
@@ -325,8 +325,9 @@
   }
 
   .accessible-megamenu {
+    
     position: relative;
-    display: inline-block;
+    display: inline-block !important;
     box-sizing: border-box;
     list-style: none;
     margin: 0;
@@ -467,7 +468,7 @@
     visibility: visible;
     top: 3em;
     max-height: 600px;
-    opacity: 1;
+    opacity: 0.95;
     z-index: 1001;
     -webkit-transition: opacity 250ms ease, max-height .5s ease, visibility 0s linear 0s, top 0s linear 0s;
     -moz-transition: opacity 250ms ease, max-height .5s ease, visibility 0s linear 0s, top 0s linear 0s;

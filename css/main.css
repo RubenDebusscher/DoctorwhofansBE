@@ -10,13 +10,14 @@
 }
 
 :root {
-    --bg-color-darkBlue: #206090;
+    --bg-color-darkBlue: #192d3c;
     --bgcolor-darkBlue-gradient: #103045;
-    --bg-color-red: red;
+    --bg-color-red: #C16E70;
     --font-color-darkblue-white: white;
     --nav-hover-color: #EED06E;
     --height-for-main: 72vh;
-    --border-color: #DECE3E;
+    --border-color: ##DC9E82;
+    --body-color:#F4ECD6;
     font-family: 'Courier Prime', monospace;
     font-family: 'Hahmlet', serif;
     font-family: 'Inconsolata', monospace;
@@ -28,7 +29,9 @@
     font-family: "Comic Sans MS";
 
 }
-
+::marker{
+    color: var(--font-color-darkblue-white)
+}
 
 /* width */
 ::-webkit-scrollbar {
@@ -3051,7 +3054,9 @@ body {
     padding: 0;
     margin: 0;
     line-height: normal;
-    font-size: small
+    font-size: medium;
+    text-align: justify;
+    background-color:var(--body-color)
 }
 
 h1 {
@@ -3109,14 +3114,16 @@ h1 {
     max-width: 50%;
     padding: .4em;
     margin-top: 1em;
-    color: var(--border-color);
+    color: var(--font-color-darkblue-white);
     text-align: center;
 }
 
 #Inhoud ol {
     text-align: initial;
 }
-
+ .WikiPage p{
+    max-width: 80%;
+}
 section[id^='Wiki'] p {
     width: 50%;
     float: right;
@@ -3315,6 +3322,7 @@ span hr {
     display: block;
     clear: both;
     margin-top: 4em;
+    text-align: initial;
 }
 
 #WikiOrder div {

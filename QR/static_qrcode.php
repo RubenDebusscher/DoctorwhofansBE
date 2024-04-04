@@ -1,12 +1,13 @@
 <?php
 session_start();
 require_once 'config/config.php';
-require_once BASE_PATH.'/includes/auth_validate.php';
-require_once BASE_PATH . '/lib/StaticQrcode/StaticQrcode.php';
+require_once 'includes/auth_validate.php';
+require_once 'lib/StaticQrcode/StaticQrcode.php';
 
 $static_qrcode_instance = new StaticQrcode();
+$static_qrcode = new StaticQrcode();
 
-$edit = true;
+$edit = false;
 if($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["edit"]) && $_GET["edit"] == "true" && isset($_GET["id"])) {
     $edit = true;
     $static_qrcode = $static_qrcode_instance->getQrcode($_GET["id"]);
@@ -72,16 +73,16 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
 <html lang="en">
     <title>Qrcode Generator</title>
     <head>
-    <?php include './includes/head.php'; ?>
+    <?php include 'includes/head.php'; ?>
     </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
   <!-- Navbar -->
-  <?php include './includes/navbar.php'; ?>
+  <?php include 'includes/navbar.php'; ?>
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <?php include './includes/sidebar.php'; ?>
+  <?php include 'includes/sidebar.php'; ?>
   <!-- /.Main Sidebar Container -->
 
   <!-- Content Wrapper. Contains page content -->
@@ -100,7 +101,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
     <!-- /.content-header -->
     
     <!-- Flash messages -->
-    <?php include BASE_PATH.'/includes/flash_messages.php'; ?>
+    <?php include 'includes/flash_messages.php'; ?>
     <!-- /.Flash messages -->
 
     <!-- Main content -->
@@ -113,7 +114,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
                 <?php if($edit) {?>
                     <form class="form" action="" method="post" id="static_form" enctype="multipart/form-data">
                         <div class="card-body">
-                            <?php include BASE_PATH . '/forms/form_static_edit.php';?>
+                            <?php include 'forms/form_static_edit.php';?>
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -121,7 +122,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
                     </form>
                 <?php } else { ?>
                     <div class="card-body">
-                        <?php include BASE_PATH . '/forms/form_static_add.php'; ?>
+                        <?php include 'forms/form_static_add.php'; ?>
                     </div>
                 <?php } ?>
             </div>
@@ -130,7 +131,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && !isset($_POST["edit"])) {
   </div><!-- /.content-wrapper -->
 
 <!-- Footer and scripts -->
-<?php include './includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>
 
 <!-- Page script -->
 <script type="text/javascript">

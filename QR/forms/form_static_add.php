@@ -46,7 +46,7 @@
               <div class="card-body">
                 <div class="tab-content" >
                     <div class="tab-pane fade show active" id="text" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab">
-                        <?php include BASE_PATH . '/forms/static/text.php'; ?>      
+                        <?php include 'static/text.php'; ?>      
                     </div>
                     <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab">
                         <?php include BASE_PATH . '/forms/static/email.php'; ?>  

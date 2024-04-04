@@ -1,8 +1,8 @@
 <?php
 require_once 'config/config.php';
-require_once BASE_PATH . '/lib/ICS/ICS.php';
-require_once BASE_PATH . '/lib/vCard/vCard.php';
-require_once BASE_PATH . '/lib/Qrcode/Qrcode.php';
+require_once './lib/ICS/ICS.php';
+require_once './lib/vCard/vCard.php';
+require_once './lib/Qrcode/Qrcode.php';
 
 class StaticQrcode {
     private $sData;         // Data for the qr code
@@ -399,7 +399,7 @@ class StaticQrcode {
             if(!isset($qrcode["id_owner"]))
                 $this->failure("You cannot delete this qrcode");
 
-            require_once BASE_PATH . '/lib/Users/Users.php';
+            require_once './lib/Users/Users.php';
             $users = new Users();
             $user = $users->getUser($_SESSION['user_id']);
 

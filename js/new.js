@@ -639,8 +639,12 @@ function createList(parent, array) {
 function Content(Content) {
   //$('main article').append(Content);
   var ContentString = "";
+  var ClassString=" ";
   for (var item = 0; item < Content.length; item++) {
     ContentString += Content[item].item_Value;
+    if (Content[item].item_Class!==""){
+      $('main article').addClass(Content[item].item_Class);
+    }
   }
   if (ContentString.length <= 0) {
     ContentString="<div id='phasingIMG'></div><h1>Engines are phasing, or we are still building on this page.</h1>"

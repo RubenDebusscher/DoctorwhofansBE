@@ -41,7 +41,7 @@
             <label for="id_owner">Owner *</label>
             <select name="id_owner" class="form-control" required="required">
                 <?php
-                require_once BASE_PATH . '/lib/Users/Users.php';
+                require_once './lib/Users/Users.php';
                 $users_instance = new Users();
 
                 if(isset($dynamic_qrcode['id_owner'])) {

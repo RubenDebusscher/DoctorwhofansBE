@@ -126,12 +126,64 @@ $(document).ready(function(){
         //Colorpicker
         $('.my-colorpicker1').colorpicker()
         //color picker with addon
-        $('.my-colorpicker2').colorpicker()
+       // $('.my-colorpicker2').colorpicker({
+        //    inline: true,
+        //    format:'hex',
+      //container: true,  autoInputFallback: false
+       // });
 
         $('.my-colorpicker2').on('colorpickerChange', function(event) {
             $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
         });
 
+
+
+
+
+
+
+
+
+
+        $('.my-colorpicker2').colorpicker({
+          inline: true,
+          format:'rgba',
+          horizontal: true,
+          container: true,
+          template: '<div class="colorpicker">' +
+          '<div class="colorpicker-saturation"><i class="colorpicker-guide"></i></div>' +
+          '<div class="colorpicker-hue"><i class="colorpicker-guide"></i></div>' +
+          '<div class="colorpicker-alpha">' +
+          '   <div class="colorpicker-alpha-color"></div>' +
+          '   <i class="colorpicker-guide"></i>' +
+          '</div>' +
+          '<div class="colorpicker-bar">' +
+          '   <div class="input-group">' +
+          '       <input class="form-control input-block color-io" />' +
+          '   </div>' +
+          '</div>' +
+          '</div>'
+        })
+        .on('colorpickerCreate', function (e) {
+          // initialize the input on colorpicker creation
+          var io = e.colorpicker.element.find('.color-io');
+
+          io.val(e.color.string());
+
+          io.on('change keyup', function () {
+            e.colorpicker.setValue(io.val());
+          });
+        })
+        .on('colorpickerChange', function (e) {
+          var io = e.colorpicker.element.find('.color-io');
+
+          if (e.value === io.val() || !e.color || !e.color.isValid()) {
+            // do not replace the input value if the color is invalid or equals
+            return;
+          }
+
+          io.val(e.color.string());
+        });   
     })
 </script>
 </body>

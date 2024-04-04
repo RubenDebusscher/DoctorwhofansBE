@@ -39,3 +39,4 @@ uploads
 kanboard/plugins/Moon
 kanboard/plugins/HighlightCodeSyntax
 QR/src/config/environment.php
+QR/config/environment.php

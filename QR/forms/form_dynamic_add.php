@@ -8,7 +8,7 @@
                         <span class="input-group-text"><i class="fa fa-qrcode"></i></span>
                     </div>
                     
-                    <input type="text" class="form-control" id="foreground" name="foreground" value="#000000" required="required">
+                    <input type="hidden" class="form-control" id="foreground" name="foreground" value="#000000" required="required">
                 </div>
             </div>
                   
@@ -19,7 +19,7 @@
                         <span class="input-group-text"><i class="fa fa-qrcode"></i></span>
                     </div>
                     
-                    <input type="text" class="form-control" id="background" name="background" value="#ffffff" required="required">
+                    <input type="hidden" class="form-control" id="background" name="background" value="#ffffff" required="required">
                 </div>
             </div>
                   
