@@ -1,4 +1,4 @@
-connect.php
+sconnect.php
 dbConfig.php
 config.php
 conn.php
@@ -40,3 +40,6 @@ kanboard/plugins/Moon
 kanboard/plugins/HighlightCodeSyntax
 QR/src/config/environment.php
 QR/config/environment.php
+kanboard/plugins/Moon
+kanboard/plugins/HighlightCodeSyntax
+dash/PHP/connect.php
