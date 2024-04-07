@@ -5,7 +5,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 CKEDITOR.addTemplates('default', {
   imagesPath: CKEDITOR.getUrl(CKEDITOR.plugins.getPath('templates') + 'templates/images/'),
-  templates: [/* {
+  templates: [{
     title: 'Image and Title',
     image: 'template1.gif',
     description: 'One main image with a title and text that surround the image.',
@@ -20,7 +20,7 @@ CKEDITOR.addTemplates('default', {
     image: 'template3.gif',
     description: 'A title with some text and a table.',
     html: '<div style="width: 80%"><h3>Title goes here</h3><table style="width:150px;float: right" cellspacing="0" cellpadding="0" border="1"><caption style="border:solid 1px black"><strong>Table title</strong></caption></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table><p>Type the text here</p></div>'
-  }, */
+  },
   {
     title: 'Episode',
     image: 'template3.gif',
