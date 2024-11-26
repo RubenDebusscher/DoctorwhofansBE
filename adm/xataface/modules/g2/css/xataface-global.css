@@ -771,6 +771,7 @@ input.column-search-field {
 }
 .listing img {
     vertical-align: middle;
+		max-width: 8vw;
 }
 
 
@@ -1951,7 +1952,7 @@ ul.field_actions li a:hover {
 }
 
 td.Dataface_QuickForm-label-cell {
-	width: 25%;
+	width:0%;
 }
 
 

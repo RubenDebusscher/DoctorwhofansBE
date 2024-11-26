@@ -2074,7 +2074,7 @@ class PHPExcel_Calculation
 
         $this->workbook = $workbook;
         $this->cyclicReferenceStack = new PHPExcel_CalcEngine_CyclicReferenceStack();
-        $this->_debugLog = new PHPExcel_CalcEngine_Logger($this->cyclicReferenceStack);
+        //$this->_debugLog = new PHPExcel_CalcEngine_Logger($this->cyclicReferenceStack);
     }
 
 

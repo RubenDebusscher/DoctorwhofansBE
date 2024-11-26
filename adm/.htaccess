@@ -22,10 +22,12 @@ RewriteEngine On
 RewriteCond %{REQUEST_URI} ^/://:80
 RewriteRule ^/://:80(.*)$ https://adm.doctorwhofans.be/$1 [L,NC,R=301]
 
-#Header set Access-Control-Allow-Origin "https://www.doctorwhofans.be"
-#Header set Access-Control-Allow-Origin "https://doctorwhofans.be"
-#Header set Access-Control-Allow-Origin "https://dash.doctorwhofans.be"
-#Header set Access-Control-Allow-Origin "https://admin.doctorwhofans.be"
-#Header set Access-Control-Allow-Origin "https://API.doctorwhofans.be"
-#Header set Access-Control-Allow-Origin "https://wiki.doctorwhofans.be"
-#Header set Access-Control-Allow-Origin "https://adm.doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://www.doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://dash.doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://admin.doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://API.doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://wiki.doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://adm.doctorwhofans.be"
+Header set Access-Control-Allow-Origin "https://*.belgianwhovians.be"
+Header set Access-Control-Allow-Origin "https://belgianwhovians.be"

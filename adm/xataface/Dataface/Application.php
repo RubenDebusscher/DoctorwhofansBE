@@ -3050,7 +3050,7 @@ END
 	 *
 	 */
 	function getMessages(){
-		if ( trim(@$_SESSION['msg']) ){
+		if ( trim(@$_SESSION['msg']??'') ){
 			array_push($this->messages, $_SESSION['msg']);
 			unset($_SESSION['msg']);
 		}

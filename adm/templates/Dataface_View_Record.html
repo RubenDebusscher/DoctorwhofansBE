@@ -45,9 +45,10 @@
 						{if $rv->showLogo}
 							{if $rv->logos|@count>0}
 								{foreach from=$rv->logos item=logo}
-								<span>{$ENV.DATAFACE_SITE_URL}</span>
+								<!--<span>{$ENV.DATAFACE_SITE_URL}</span>-->
 									<div class="dataface-view-logo">
-										<img src="https://www.doctorwhofans.be/images/{$ENV.table}/{$record->val($logo.name)}" alt="{$record->val($logo.name)}" style="width:100%"/>
+										<img src="https://www.doctorwhofans.be/images/{$ENV.table}/{$record->val($logo.name)}" 
+										alt="{$record->val($logo.name)} Test" style="width:100%"/>
 									</div>
 								{/foreach}
 							{else}

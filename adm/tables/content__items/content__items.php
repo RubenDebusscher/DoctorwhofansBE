@@ -90,7 +90,7 @@ class tables_content__items {
               array(
                   'item_Page'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $ligne)->getValue(),
                   'item_Type'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(1, $ligne)->getValue(),
-                  'item_Value'=>(int)$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $ligne)->getValue(),
+                  'item_Value'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $ligne)->getValue(),
                   'item_Level'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $ligne)->getValue(),
                   'item_Active'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $ligne)->getValue(),
                   'item_Class'=>$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $ligne)->getValue(),
