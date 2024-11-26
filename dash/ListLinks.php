@@ -13,18 +13,18 @@
 	mysqli_set_charset($conn,'utf8');
 	
 	$verified=false;
-	$stmt5 = $conn->prepare("SELECT Replace(Replace(A_Pagina,')',''),'(','') as A_Pagina,Replace(Replace(A_Waarde,')',''),'(','') as A_Waarde from Content where A_Waarde like '%<a href%' and A_Actief=1");
-	if(!$stmt5){
+	$stmt1 = $conn->prepare("SELECT Replace(Replace(A_Pagina,')',''),'(','') as A_Pagina,Replace(Replace(A_Waarde,')',''),'(','') as A_Waarde from Content where A_Waarde like '%<a href%' and A_Actief=1");
+	if(!$stmt1){
 	    	    die("Statement preparing failed: " . $conn->error);
 
 	}
 	$menu =$_GET['menu'];
 	
-	if(!$stmt5->execute()){
-	    die("Statement execution failed: " . $stmt5->error);
+	if(!$stmt1->execute()){
+	    die("Statement execution failed: " . $stmt1->error);
 	}else{
 	    //return de json data
-	    $result = $stmt5->get_result();
+	    $result = $stmt1->get_result();
 	    if($result->num_rows === 0) exit('No rows');
         $antwoord['data'] = $result->fetch_all(MYSQLI_ASSOC);
         echo json_encode($antwoord, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS );
@@ -32,6 +32,6 @@
 	}
     
     
-    $stmt5->close();
+    $stmt1->close();
     $conn->close();
 ?>

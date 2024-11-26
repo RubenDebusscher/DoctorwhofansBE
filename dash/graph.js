@@ -71,7 +71,7 @@ function buildpage(){
             createTable('Second', "Pagina's zonder titel",resultaat['EmptyPages'],'True');
             createTable('Sixth','Talen per pagina',resultaat['LangPages'],'True');
             createTable('Third', "Tags per page",resultaat['Tags'],'True');
-            GetListLinks(resultaat['LinksInContent'],resultaat['AllLinks']);
+           // GetListLinks(resultaat['LinksInContent'],resultaat['AllLinks']);
         }).fail(function (response, statusText, xhr) {}).always(function () {});
 
 

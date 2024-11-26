@@ -18,7 +18,7 @@ if ($_SESSION["user"] == "") {
         <meta name="theme-color" content="#000090"/>
         <link rel="apple-touch-icon" href="images/logo/apple-icon.png">
         <script>
-            if ('serviceWorker' in navigator) {
+            /* if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('/sw.js').then(function(registration) {
                     // Registration was successful
@@ -28,7 +28,7 @@ if ($_SESSION["user"] == "") {
                     console.error('ServiceWorker registration failed: ', err);
                     });
                 });
-            }
+            } */
         </script>
   <link rel="stylesheet" type="text/css" href="opmaak.css" />
 
