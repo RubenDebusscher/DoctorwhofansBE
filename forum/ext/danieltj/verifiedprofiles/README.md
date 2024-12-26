@@ -1,17 +1,24 @@
-# Verified Profiles
+[![Verified Profiles](./.github/gh-verified-profiles.png)](https://www.phpbb.com/customise/db/extension/verified_profiles/)
 
-Adds a setting to verify profiles and show a verified mark.
+Add a verification badge to user profiles on your forum.
+
+## Features
+
+1. Adds a badge next to usernames of verified users.
+2. Verified users can choose to show or hide their badge.
+3. Verify groups to automatically verify all group members.
+
+## Feedback
+
+Please submit all feedback as an [issue on GitHub](https://github.com/danieltj27/verifiedprofiles/issues). Pull requests are welcome.
 
 ## Install
 
-Add the extension into the phpBB extension folder under `danieltj/verifiedprofiles`. Then go to ACP > Customise and enable the extension.
-
-Once the extension is activated, go to any user's profile in the ACP and select `Yes` next to the verify setting.
-
-## Contribute
-
-Feedback and bug reports are always welcome.
+1. Add the extension files into the `ext/danieltj/verifiedprofiles` directory.
+2. Log in to the Admin Control Panel and install the extension.
+3. Inside the ACP, edit a user and under *Profile* enable verification or;
+4. Edit the settings of a group and enable verficaition for the group.
 
 ## Licence
 
-GPL
+GPL v2

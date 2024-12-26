@@ -30,6 +30,13 @@ $lang = array_merge($lang, array(
 	'HEADERBANNER_PLACEHOLDER'						=> 'http://mysite.com/images/banner.jpg',
 	'HEADERBANNER_SELECT'							=> 'Do you wish to activate the Header Banner Extension?',
 
+	'HEADERBANNER_DESTINATION'						=> 'Do you wish the Banner to point to an alternative destination',
+	'HEADERBANNER_DESTINATION_NAME'					=> 'Name of the alternative site the banner points to',
+	'HEADERBANNER_URL'								=> 'Alternative Destination',
+	'HEADERBANNER_OPEN'								=> 'Do you want the link above to open in a new tab/window?',
+	'HEADERBANNER_URL_EXPLAIN'						=> 'Enter the FULL url of the alternative destination upon clicking the banner',
+	'HEADERBANNER_URL_PLACEHOLDER'					=> 'https://othersite.com',
+	
 	'HEADERBANNER_LOGO'								=> 'Do you wish to place Site Logo over the banner?',
 	
 	'HEADERBANNER_MOBILE'							=> 'Do you wish to have alternative banner for small screens?',
@@ -54,7 +61,4 @@ $lang = array_merge($lang, array(
 	'HEADERBANNER_SEARCH_HEADER_BOTTOM_MIDDLE'		=> 'Header bottom centre',
 	'HEADERBANNER_SEARCH_NAVBAR'					=> 'NavBar',
 	'HEADERBANNER_SEARCH_REMOVE'					=> 'Nowhere',
-
-	'HEADERBANNER_REQUIRE_3.1.0'					=> 'This Extension is for phpBB 3.1.x only. It will not work with phpBB 3.2.x',
-	'HEADERBANNER_REQUIRE_3.2.0'					=> 'This Extension is for phpBB 3.2.x only. It will not work with phpBB 3.1.x',
 ));

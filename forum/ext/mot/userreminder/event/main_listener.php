@@ -1,8 +1,8 @@
 <?php
 /**
 *
-* @package UserReminder v1.7.0
-* @copyright (c) 2019 - 2023 Mike-on-Tour
+* @package UserReminder v1.7.2
+* @copyright (c) 2019 - 2024 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
@@ -63,10 +63,10 @@ class main_listener implements EventSubscriberInterface
 	* Check whether a user to be deleted (no matter from where and by whomsoever) is part of the protected members array. If he is, delete this user from the array as well
 	*
 	* @param array	$event	containing:
-	*	@var string		mode				Mode of posts deletion (retain|delete)
-	*	@var array		user_ids			ID(s) of the user(s) bound to be deleted
-	*	@var bool		retain_username		True if username should be retained, false otherwise
-	*	@var array		user_rows			Array containing data of the user(s) bound to be deleted (since 3.2.4-RC1)
+	*	key	string		mode				Mode of posts deletion (retain|delete)
+	*	key	array		user_ids			ID(s) of the user(s) bound to be deleted
+	*	key	bool		retain_username		True if username should be retained, false otherwise
+	*	key	array		user_rows			Array containing data of the user(s) bound to be deleted (since 3.2.4-RC1)
 	*
 	*/
 	public function check_for_protected_member($event)
@@ -87,7 +87,7 @@ class main_listener implements EventSubscriberInterface
 	/**
 	* Set the reminding times to Zero every time a user logs into the forum in order to delete any reminders in case this user has been reminded and logs on again.
 	* In addition we set the value of "mot_last_login" to the timestamp the user logged in to make sure that there is no gap in which this "newborn" user gets reminded again.
-	* Check if this user is part of the reminder queue and if he is delete him from the queue since he logged in is no linger to be reminded
+	* Check if this user is part of the reminder queue and if he is delete him from the queue since he logged in is no longer to be reminded
 	* If in automatic mode check for users in need of being reminded or deleted
 	*
 	* @param session_data

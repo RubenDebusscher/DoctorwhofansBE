@@ -1,8 +1,8 @@
 <?php
 /**
 *
-* @package User Reminder v1.7.0
-* @copyright (c) 2019 - 2023 Mike-on-Tour
+* @package Userreminder v1.8.0
+* @copyright (c) 2019 - 2024 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
@@ -284,7 +284,7 @@ class ur_acp
 
 		foreach ($groups as $option)
 		{
-			$selected = in_array($option['group_id'], $protected_groups_arr) ? ' selected="selected"' : '';
+			$selected = in_array($option['group_id'], $protected_groups_arr) ? ' selected' : '';
 			$protected_groups .= '<option ' . (($option['group_type'] == GROUP_SPECIAL) ? ' class="sep"' : '') . ' value="' . $option['group_id'] . '"' . $selected . '>' . $this->group_helper->get_name($option['group_name']) . '</option>';
 		}
 
@@ -298,18 +298,18 @@ class ur_acp
 		$email_cc = $this->config['mot_ur_email_cc'];
 		$this->template->assign_vars([
 			'ACP_USERREMINDER_ROWS_PER_PAGE'			=> $this->config['mot_ur_rows_per_page'],
-			'ACP_USERREMINDER_EXPERT_MODE'				=> $this->config['mot_ur_expert_mode'] ? true : false,
+			'ACP_USERREMINDER_EXPERT_MODE'				=> (bool) $this->config['mot_ur_expert_mode'],
 			'ACP_USERREMINDER_INACTIVE_DAYS'			=> $this->config['mot_ur_inactive_days'],
 			'ACP_USERREMINDER_DAYS_REMINDED'			=> $this->config['mot_ur_days_reminded'],
-			'ACP_USERREMINDER_AUTOREMIND'				=> $this->config['mot_ur_autoremind'] ? true : false,
+			'ACP_USERREMINDER_AUTOREMIND'				=> (bool) $this->config['mot_ur_autoremind'],
 			'ACP_USERREMINDER_DAYS_UNTIL_DELETED'		=> $this->config['mot_ur_days_until_deleted'],
-			'ACP_USERREMINDER_AUTODELETE'				=> $this->config['mot_ur_autodelete'] ? true : false,
-			'ACP_USERREMINDER_REMIND_SLEEPER'			=> $this->config['mot_ur_remind_sleeper'] ? true : false,
+			'ACP_USERREMINDER_AUTODELETE'				=> (bool) $this->config['mot_ur_autodelete'],
+			'ACP_USERREMINDER_REMIND_SLEEPER'			=> (bool) $this->config['mot_ur_remind_sleeper'],
 			'ACP_USERREMINDER_SLEEPER_INACTIVE_DAYS'	=> $this->config['mot_ur_sleeper_inactive_days'],
-			'ACP_USERREMINDER_SLEEPER_AUTOREMIND'		=> $this->config['mot_ur_sleeper_autoremind'] ? true : false,
-			'ACP_USERREMINDER_AUTODELETE_SLEEPER'		=> $this->config['mot_ur_sleeper_autodelete'] ? true : false,
+			'ACP_USERREMINDER_SLEEPER_AUTOREMIND'		=> (bool) $this->config['mot_ur_sleeper_autoremind'],
+			'ACP_USERREMINDER_AUTODELETE_SLEEPER'		=> (bool) $this->config['mot_ur_sleeper_autodelete'],
 			'ACP_USERREMINDER_SLEEPER_DELETETIME'		=> $this->config['mot_ur_sleeper_deletetime'],
-			'ACP_USERREMINDER_REMIND_ZEROPOSTER'		=> $this->config['mot_ur_remind_zeroposter'] ? true : false,
+			'ACP_USERREMINDER_REMIND_ZEROPOSTER'		=> (bool) $this->config['mot_ur_remind_zeroposter'],
 			'ACP_USERREMINDER_ZP_INACTIVE_DAYS'			=> $this->config['mot_ur_zp_inactive_days'],
 			'ACP_USERREMINDER_ZP_DAYS_REMINDED'			=> $this->config['mot_ur_zp_days_reminded'],
 			'ACP_USERREMINDER_ZP_AUTOREMIND'			=> $this->config['mot_ur_zp_autoremind'],
@@ -320,7 +320,7 @@ class ur_acp
 			'ACP_USERREMINDER_PROTECTED_GROUPS'			=> $protected_groups,
 			'ACP_USERREMINDER_MAIL_LIMIT_NUMBER'		=> $this->config['mot_ur_mail_limit_number'],
 			'ACP_USERREMINDER_MAIL_LIMIT_TIME'			=> $this->config['mot_ur_mail_limit_time_gc'],
-			'ACP_USERREMINDER_LAST_CRON_RUN'			=> $this->config['mot_ur_mail_limit_time_last_gc'] > 0 ? $this->user->format_date($this->config['mot_ur_mail_limit_time_last_gc']) : '-',
+			'ACP_USERREMINDER_LAST_CRON_RUN'			=> $this->config['mot_ur_mail_limit_time_last_gc'] ? $this->user->format_date($this->config['mot_ur_mail_limit_time_last_gc']) : '-',
 			'ACP_USERREMINDER_AVAILABLE_MAIL_CHUNK'		=> $this->config['mot_ur_mail_available'],
 			'ACP_USERREMINDER_MAILS_WAITING'			=> $total_mails,
 			'ACP_USERREMINDER_EMAIL_BCC'				=> $email_bcc,
@@ -343,21 +343,14 @@ class ur_acp
 	public function reminder()
 	{
 		$now = time();
-		$day_limit = $now - (self::SECS_PER_DAY * $this->config['mot_ur_inactive_days']);
+		$day_limit = $now - (self::SECS_PER_DAY * (int) $this->config['mot_ur_inactive_days']);
 
 		// set parameter for pagination
 		$limit = $this->config['mot_ur_rows_per_page'];	// max lines per page
 
-		// get sort variables from template (if we are in a loop of the pagination). At first call there are no variables from the (so far uncalled) template
-		$sort_key = $this->request->variable('sort_key', '');
-		$sort_dir = $this->request->variable('sort_dir', '');
-
-		// First call of this script, we don't get any variables back from the template -> we have to set initial parameters for sorting
-		if (empty($sort_key) && empty($sort_dir))
-		{
-			$sort_key = 'mot_last_login';
-			$sort_dir = 'ASC';
-		}
+		// get sort variables from template (if we are in a loop of the pagination). At first call there are no variables from the (so far uncalled) template -> we have to set initial parameters for sorting
+		$sort_key = $this->request->is_set('sort_key') ? $this->request->variable('sort_key', '') : 'mot_last_login';
+		$sort_dir = $this->request->is_set('sort_dir') ? $this->request->variable('sort_dir', '') : 'ASC';
 
 		$enable_sort_one = $enable_sort_two = false;
 
@@ -382,11 +375,11 @@ class ur_acp
 			if (count($marked) > 0)
 			{
 				$this->common->remind_users($marked);
-				trigger_error($this->language->lang('USER_REMINDED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
+				trigger_error($this->language->lang('ACP_USERREMINDER_USER_REMINDED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
 			}
 			else
 			{
-				trigger_error($this->language->lang('NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
+				trigger_error($this->language->lang('ACP_USERREMINDER_NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 		}
 
@@ -399,11 +392,11 @@ class ur_acp
 				if (confirm_box(true))
 				{
 					$this->common->delete_users($marked);
-					trigger_error($this->language->lang('USER_DELETED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
+					trigger_error($this->language->lang('ACP_USERREMINDER_USER_DELETED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
 				}
 				else
 				{
-					confirm_box(false, '<p>'.$this->language->lang('CONFIRM_USER_DELETE', count($marked)).'</p>', build_hidden_fields([
+					confirm_box(false, '<p>' . $this->language->lang('ACP_USERREMINDER_CONFIRM_USER_DELETE', count($marked)) . '</p>', build_hidden_fields([
 						'delmarked'		=> $deletemark,
 						'mark_delete'	=> $marked,
 						'sk'			=> $sort_key,
@@ -414,7 +407,7 @@ class ur_acp
 			}
 			else
 			{
-				trigger_error($this->language->lang('NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
+				trigger_error($this->language->lang('ACP_USERREMINDER_NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 		}
 
@@ -465,7 +458,7 @@ class ur_acp
 			if ($remind_all && (count($reminder_ids) > 0))
 			{
 				$this->common->remind_users($reminder_ids);
-				trigger_error($this->language->lang('USER_REMINDED', count($reminder_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
+				trigger_error($this->language->lang('ACP_USERREMINDER_USER_REMINDED', count($reminder_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
 			}
 
 			if ($delete_all && (count($reminder_ids) > 0))
@@ -473,11 +466,11 @@ class ur_acp
 				if (confirm_box(true))
 				{
 					$this->common->delete_users($reminder_ids);
-					trigger_error($this->language->lang('USER_DELETED', count($reminder_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
+					trigger_error($this->language->lang('ACP_USERREMINDER_USER_DELETED', count($reminder_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
 				}
 				else
 				{
-					confirm_box(false, '<p>' . $this->language->lang('CONFIRM_USER_DELETE', count($reminder_ids)) . '</p>', build_hidden_fields([
+					confirm_box(false, '<p>' . $this->language->lang('ACP_USERREMINDER_CONFIRM_USER_DELETE', count($reminder_ids)) . '</p>', build_hidden_fields([
 						'delete_all'	=> true,
 						'sk'			=> $sort_key,
 						'sd'			=> $sort_dir,
@@ -541,6 +534,7 @@ class ur_acp
 			'ENABLE_DELETE'					=> $delete_enabled,
 			'SHOW_EXPERT_MODE'				=> $this->config['mot_ur_expert_mode'],
 			'USERREMINDER_VERSION'			=> $this->language->lang('ACP_USERREMINDER_VERSION', $this->userreminder_version, date('Y')),
+			'ACP_MOT_UR_REMIND_COUNT'		=> $count_reminders,
 		]);
 	}
 
@@ -554,16 +548,9 @@ class ur_acp
 		// set parameter for pagination
 		$limit = $this->config['mot_ur_rows_per_page'];	// max lines per page
 
-		// get sort variables from template (if we are in a loop of the pagination). At first call there are no variables from the (so far uncalled) template
-		$sort_key = $this->request->variable('sort_key', '');
-		$sort_dir = $this->request->variable('sort_dir', '');
-
-		// First call of this script, we don't get any variables back from the template -> we have to set initial parameters for sorting
-		if (empty($sort_key) && empty($sort_dir))
-		{
-			$sort_key = 'user_regdate';
-			$sort_dir = 'ASC';
-		}
+		// get sort variables from template (if we are in a loop of the pagination). At first call there are no variables from the (so far uncalled) template -> we have to set initial parameters for sorting
+		$sort_key = $this->request->is_set('sort_key') ? $this->request->variable('sort_key', '') : 'user_regdate';
+		$sort_dir = $this->request->is_set('sort_dir') ? $this->request->variable('sort_dir', '') : 'ASC';
 
 		if ($this->request->is_set_post('rem_marked'))
 		{
@@ -571,11 +558,11 @@ class ur_acp
 			if (count($marked) > 0)
 			{
 				$this->common->remind_sleepers($marked);
-				trigger_error($this->language->lang('USER_REMINDED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
+				trigger_error($this->language->lang('ACP_USERREMINDER_USER_REMINDED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
 			}
 			else
 			{
-				trigger_error($this->language->lang('NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
+				trigger_error($this->language->lang('ACP_USERREMINDER_NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 		}
 
@@ -588,11 +575,11 @@ class ur_acp
 				if (confirm_box(true))
 				{
 					$this->common->delete_users($marked);
-					trigger_error($this->language->lang('USER_DELETED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
+					trigger_error($this->language->lang('ACP_USERREMINDER_USER_DELETED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
 				}
 				else
 				{
-					confirm_box(false, $this->language->lang('CONFIRM_USER_DELETE', count($marked)), build_hidden_fields([
+					confirm_box(false, $this->language->lang('ACP_USERREMINDER_CONFIRM_USER_DELETE', count($marked)), build_hidden_fields([
 						'delmarked'		=> $deletemark,
 						'mark_delete'	=> $marked,
 						'sd'			=> $sort_dir,
@@ -602,7 +589,7 @@ class ur_acp
 			}
 			else
 			{
-				trigger_error($this->language->lang('NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
+				trigger_error($this->language->lang('ACP_USERREMINDER_NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 		}
 
@@ -671,7 +658,7 @@ class ur_acp
 			if ($remind_all && (count($rem_sleeper_ids) > 0))
 			{
 				$this->common->remind_sleepers($rem_sleeper_ids);
-				trigger_error($this->language->lang('USER_REMINDED', count($rem_sleeper_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
+				trigger_error($this->language->lang('ACP_USERREMINDER_USER_REMINDED', count($rem_sleeper_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
 			}
 
 			if ($delete_all && (count($del_sleeper_ids) > 0))
@@ -679,11 +666,11 @@ class ur_acp
 				if (confirm_box(true))
 				{
 					$this->common->delete_users($del_sleeper_ids);
-					trigger_error($this->language->lang('USER_DELETED', count($del_sleeper_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
+					trigger_error($this->language->lang('ACP_USERREMINDER_USER_DELETED', count($del_sleeper_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
 				}
 				else
 				{
-					confirm_box(false, '<p>' . $this->language->lang('CONFIRM_USER_DELETE', count($del_sleeper_ids)) . '</p>', build_hidden_fields([
+					confirm_box(false, '<p>' . $this->language->lang('ACP_USERREMINDER_CONFIRM_USER_DELETE', count($del_sleeper_ids)) . '</p>', build_hidden_fields([
 						'delete_all'	=> true,
 						'sk'			=> $sort_key,
 						'sd'			=> $sort_dir,
@@ -740,6 +727,7 @@ class ur_acp
 			'ENABLE_DELETE'				=> $delete_enabled,
 			'SHOW_EXPERT_MODE'			=> $this->config['mot_ur_expert_mode'],
 			'USERREMINDER_VERSION'		=> $this->language->lang('ACP_USERREMINDER_VERSION', $this->userreminder_version, date('Y')),
+			'ACP_MOT_UR_SLEEPER_COUNT'	=> $count_sleepers,
 		]);
 	}
 
@@ -747,21 +735,14 @@ class ur_acp
 	public function zeroposter()
 	{
 		$now = time();
-		$day_limit = $now - (self::SECS_PER_DAY * $this->config['mot_ur_zp_inactive_days']);
+		$day_limit = $now - (self::SECS_PER_DAY * (int) $this->config['mot_ur_zp_inactive_days']);
 
 		// set parameter for pagination
 		$limit = $this->config['mot_ur_rows_per_page'];	// max lines per page
 
-		// get sort variables from template (if we are in a loop of the pagination). At first call there are no variables from the (so far uncalled) template
-		$sort_key = $this->request->variable('sort_key', '');
-		$sort_dir = $this->request->variable('sort_dir', '');
-
-		// First call of this script, we don't get any variables back from the template -> we have to set initial parameters for sorting
-		if (empty($sort_key) && empty($sort_dir))
-		{
-			$sort_key = 'mot_last_login';
-			$sort_dir = 'ASC';
-		}
+		// get sort variables from template (if we are in a loop of the pagination). At first call there are no variables from the (so far uncalled) template -> we have to set initial parameters for sorting
+		$sort_key = $this->request->is_set('sort_key') ? $this->request->variable('sort_key', '') : 'mot_last_login';
+		$sort_dir = $this->request->is_set('sort_dir') ? $this->request->variable('sort_dir', '') : 'ASC';
 
 		$enable_sort_one = $enable_sort_two = false;
 
@@ -773,11 +754,11 @@ class ur_acp
 			if (count($marked) > 0)
 			{
 				$this->common->remind_users($marked, true);
-				trigger_error($this->language->lang('USER_REMINDED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
+				trigger_error($this->language->lang('ACP_USERREMINDER_USER_REMINDED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
 			}
 			else
 			{
-				trigger_error($this->language->lang('NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
+				trigger_error($this->language->lang('ACP_USERREMINDER_NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 		}
 
@@ -790,11 +771,11 @@ class ur_acp
 				if (confirm_box(true))
 				{
 					$this->common->delete_users($marked);
-					trigger_error($this->language->lang('USER_DELETED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
+					trigger_error($this->language->lang('ACP_USERREMINDER_USER_DELETED', count($marked)) . adm_back_link($this->u_action), E_USER_NOTICE);
 				}
 				else
 				{
-					confirm_box(false, '<p>' . $this->language->lang('CONFIRM_USER_DELETE', count($marked)) . '</p>', build_hidden_fields([
+					confirm_box(false, '<p>' . $this->language->lang('ACP_USERREMINDER_CONFIRM_USER_DELETE', count($marked)) . '</p>', build_hidden_fields([
 						'delmarked'		=> $deletemark,
 						'mark_delete'	=> $marked,
 						'sk'			=> $sort_key,
@@ -805,7 +786,7 @@ class ur_acp
 			}
 			else
 			{
-				trigger_error($this->language->lang('NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
+				trigger_error($this->language->lang('ACP_USERREMINDER_NO_USER_SELECTED') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 		}
 
@@ -871,7 +852,7 @@ class ur_acp
 			if ($remind_all && (count($rem_zero_poster_ids) > 0))
 			{
 				$this->common->remind_users($rem_zero_poster_ids, true);
-				trigger_error($this->language->lang('USER_REMINDED', count($rem_zero_poster_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
+				trigger_error($this->language->lang('ACP_USERREMINDER_USER_REMINDED', count($rem_zero_poster_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
 			}
 
 			if ($delete_all && (count($del_zero_poster_ids) > 0))
@@ -879,11 +860,11 @@ class ur_acp
 				if (confirm_box(true))
 				{
 					$this->common->delete_users($del_zero_poster_ids);
-					trigger_error($this->language->lang('USER_DELETED', count($del_zero_poster_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
+					trigger_error($this->language->lang('ACP_USERREMINDER_USER_DELETED', count($del_zero_poster_ids)) . adm_back_link($this->u_action), E_USER_NOTICE);
 				}
 				else
 				{
-					confirm_box(false, '<p>' . $this->language->lang('CONFIRM_USER_DELETE', count($del_zero_poster_ids)) . '</p>', build_hidden_fields([
+					confirm_box(false, '<p>' . $this->language->lang('ACP_USERREMINDER_CONFIRM_USER_DELETE', count($del_zero_poster_ids)) . '</p>', build_hidden_fields([
 						'delete_all'	=> true,
 						'sk'			=> $sort_key,
 						'sd'			=> $sort_dir,
@@ -941,7 +922,7 @@ class ur_acp
 		$this->template->assign_vars([
 			'SORT_KEY'						=> $sort_key,
 			'SORT_DIR'						=> $sort_dir,
-			'REMIND_ZEROPOSTERS'			=> $this->config['mot_ur_remind_zeroposter'] ? true : false,
+			'REMIND_ZEROPOSTERS'			=> (bool) $this->config['mot_ur_remind_zeroposter'],
 			'SORT_ONE_ABLE'					=> $enable_sort_one,
 			'SORT_TWO_ABLE'					=> $enable_sort_two,
 			'ENABLE_REMIND'					=> $enable_remind,
@@ -949,6 +930,7 @@ class ur_acp
 			'SHOW_EXPERT_MODE'				=> $this->config['mot_ur_expert_mode'],
 			'USERREMINDER_VERSION'			=> $this->language->lang('ACP_USERREMINDER_VERSION', $this->userreminder_version, date('Y')),
 			'U_ACTION'						=> $this->u_action,
+			'ACP_MOT_UR_ZP_COUNT'			=> $count_zeroposters,
 		]);
 	}
 

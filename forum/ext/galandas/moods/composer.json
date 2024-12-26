@@ -1,11 +1,11 @@
 {
     "name": "galandas/moods",
     "type": "phpbb-extension",
-    "description": "This Extension Adds the ability for users to set their current mood which is then displayed in profile.",
+    "description": "User moods extension for phpBB.",
     "homepage": "http://phpbb3world.altervista.org",
-    "version": "1.0.0",
-    "time": "2017-06-15",
-    "license": "GPL-2.0",
+    "version": "1.0.1",
+    "time": "2024-07-05",
+    "license": "GPL-2.0-only",
     "authors": [
         {
             "name": "Galandas",
@@ -15,18 +15,20 @@
         }
     ],
     "require": {
-        "php": ">=5.3,<5.4",
-        "phpbb/phpbb": ">=3.1.10,<3.2.0"
+        "php": ">=7.1",
+        "phpbb/phpbb": ">=3.3.0",
+        "composer/installers": "~1.0.0"
     },
     "extra": {
         "display-name": "Moods",
         "soft-require": {
-            "phpbb/phpbb": ">=3.1.10,<3.2.0"
+            "phpbb/phpbb": ">=3.3.12"
         },
         "version-check": {
             "host": "www.phpbb.com",
             "directory": "/customise/db/extension/moods",
-            "filename": "version_check"
+            "filename": "version_check",
+            "ssl": true
         }
     }
 }

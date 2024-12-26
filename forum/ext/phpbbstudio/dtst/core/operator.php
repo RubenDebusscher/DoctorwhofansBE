@@ -731,10 +731,20 @@ class operator
 		$rowen = $this->db->sql_fetchrow($resulten);
 		$this->db->sql_freeresult($resulten);
 
-		$dtst_rank_title	= ($row['dtst_rank_title']) ? $row['dtst_rank_title'] : $rowen['dtst_rank_title'];
-		$dtst_rank_desc		= ($row['dtst_rank_desc']) ? $row['dtst_rank_desc'] : $rowen['dtst_rank_desc'];
-		$dtst_rank_bckg		= ($row['dtst_rank_bckg']) ? $row['dtst_rank_bckg'] : $rowen['dtst_rank_bckg'];
-		$dtst_rank_text		= ($row['dtst_rank_text']) ? $row['dtst_rank_text'] : $rowen['dtst_rank_text'];
+		$dtst_rank_title = "";
+		$dtst_rank_desc = "";
+		$dtst_rank_bckg	= "";
+		$dtst_rank_text	= "";
+
+			if($row!==false){
+				$dtst_rank_title	= ($row['dtst_rank_title']) ? $row['dtst_rank_title'] : $rowen['dtst_rank_title'];
+				$dtst_rank_desc		= ($row['dtst_rank_desc']) ? $row['dtst_rank_desc'] : $rowen['dtst_rank_desc'];
+				$dtst_rank_bckg		= ($row['dtst_rank_bckg']) ? $row['dtst_rank_bckg'] : $rowen['dtst_rank_bckg'];
+				$dtst_rank_text		= ($row['dtst_rank_text']) ? $row['dtst_rank_text'] : $rowen['dtst_rank_text'];}
+			
+		
+
+		
 
 		return array($dtst_rank_title, $dtst_rank_desc, $dtst_rank_bckg, $dtst_rank_text);
 	}

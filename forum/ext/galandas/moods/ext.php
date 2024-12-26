@@ -16,15 +16,10 @@ namespace galandas\moods;
 */
 class ext extends \phpbb\extension\base
 {
-	/**
-	* Enable extension if phpBB version requirement is met
-	*
-	* @return bool
-	* @access public
-	*/
 	public function is_enableable()
 	{
+		// Verifica della compatibilità della versione di phpBB
 		$config = $this->container->get('config');
-		return version_compare($config['version'], '3.1.10', '>=');
+		return version_compare($config['version'], '3.3.12', '>=');
 	}
 }

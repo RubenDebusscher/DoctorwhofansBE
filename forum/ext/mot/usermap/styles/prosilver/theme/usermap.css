@@ -1,5 +1,5 @@
 #map_container {
-	height: 600px;
+	height: calc(100vh - 50px);	/* Set map height to screen height minus 50 pixels */
 	width: 100%;
 	padding: 0; margin: 0;
 }
@@ -159,8 +159,6 @@ dt label {
 /* Input div's paragraphs */
 .input-p  {
 	font-size: x-small;
-	voice-family: "\"}\"";
-	voice-family: inherit;
 	margin-bottom: 0.7em;
 	line-height: 1.30em;
 }

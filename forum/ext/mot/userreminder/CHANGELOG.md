@@ -4,6 +4,57 @@ All changes to `Userreminder for phpBB` will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.1] - 2024-06-24
+
+### Added
+  
+### Changed
+  
+### Fixed
+-	A bug which could lead to a fatal error if the reminder mails were not edited by the admin (`common.php`)
+  
+### Removed
+  
+  
+## [1.8.0] - 2024-06-13
+
+### Added
+-	Displaying the number of items listed in the Reminder, Sleepers and Zeroposter tables at the top right of those tables
+-	A migration file `migrations/ur_v_1_8_0.php` to set the cron job variable to dynamic
+  
+### Changed
+-	Some code optimizations in `controller/ur_acp.php`
+-	Improved some language variables in the `language/en/info_acp_mot_userreminder.php` file
+-	The minimum PHP version to 7.4.0 and the maximum PHP version to 8.3.x
+-	The minimum phpBB version to 3.3.0
+-	Updated the requirements within the `composer.json` file
+  
+### Fixed
+-	A duplicate language key in the `language/xx/info_acp_mot_userreminder.php` and `adm/style/acp_ur_sleeper.html` files
+-	A missing ` alt=""` within the language key `ACP_USERREMINDER_VERSION` in the `language/xx/info_acp_mot_userreminder.php` files
+-	A problem reported in conjunction with the cron job not running properly because the config variable holding the time stamp of the last run was not dynamic
+-	A bug which could lead to a fatal error if the reminder mails were not edited by the admin (`common.php`)
+  
+### Removed
+  
+  
+## [1.7.1] - 2024-03-06
+
+### Added
+  
+### Changed
+-	The usage of either toggles, checkboxes or radio buttons according to a general template variable called `TOGGLECTRL_TYPE` which is implemented with the
+	`lukewcs/togglectrl` extension, default is still 'toggles'
+-	Some code optimizations
+-	A number of language variables still had no extension prefix which in at least one case collided with phpBB itself and another extension (LFWWH)
+  
+### Fixed
+-	Usernames were not logged if queue was full and newly reminded members did not get an instant e-mail but were stored in the queue
+  
+### Removed
+-	All XHTML remnants
+  
+  
 ## [1.7.0] - 2023-03-08
 
 ### Added
@@ -13,6 +64,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -	Some code optimizations (e.g. exchanging if-clauses with ternary operators)
   
 ### Fixed
+-	Some typos in the German language packs
   
 ### Removed
   

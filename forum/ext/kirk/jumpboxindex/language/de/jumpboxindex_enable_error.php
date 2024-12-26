@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension - Jumpbox on Index
-* @copyright (c) 2020 - 2023 Kirk https://reyno41.bplaced.net/phpbb
+* @copyright (c) 2020 - 2024 Kirk https://reyno41.bplaced.net/phpbb
 * @license GNU General Public License, version 2 (GPL-2.0-only)
 *
 */
@@ -33,8 +33,9 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, [
-	'JUMPBOXINDEX'							=> 'Jumpbox on Index',
-	'ERROR_JB_EXTENSION_NOT_ENABLEABLE'		=> 'Die Erweiterung „%s“ kann nicht aktiviert werden. Bitte prüfe die Voraussetzungen, die für die Erweiterung notwendig sind.',
-	'ERROR_JB_MSG_PHPBB_WRONG_VERSION'		=> 'Minimum phpBB %1$s aber kleiner als %2$s',
-	'ERROR_JB_MSG_PHP_WRONG_VERSION'		=> 'Minimum PHP %1$s aber kleiner als %2$s',
+	// Checking the requirements
+	'JUMPBOXINDEX'					=> 'Jumpbox on Index',
+	'JB_EXTENSION_NOT_ENABLEABLE'	=> 'Die Erweiterung <em>„%s“</em> kann nicht aktiviert werden. Bitte prüfe die Voraussetzungen, die für die Erweiterung notwendig sind.',
+	'JB_MSG_PHPBB_WRONG_VERSION'	=> '<em>Minimum phpBB %1$s aber kleiner als %2$s</em>',
+	'JB_MSG_PHP_WRONG_VERSION'		=> '<em>Minimum PHP %1$s aber kleiner als %2$s</em>',
 ]);

@@ -4,9 +4,9 @@
 
 .headerbar .header-banner {
 	display: block;
-	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
 	max-width: 100%;
-	max-height: 100%;
 }
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
@@ -16,16 +16,21 @@
 }
 
 .banner-header #headerbanner_logo {
-	float: left;
+	float: right;
 	width: auto;
 	padding: 10px 13px 0 10px;
-	position:absolute;
-	z-index:1;
+	position: absolute;
+	z-index: 1;
+}
+
+.rtl .banner-header #headerbanner_logo {
+	float: right;
+	padding: 10px 10px 0 13px;
 }
 
 .banner-header #hidden {
-	position:absolute; 
-	z-index:-100;
+	position: absolute; 
+	z-index: -100;
 }
 
 .headerbanner-search-1 {
@@ -73,7 +78,7 @@
 	padding: 5px;
 }
 .rtl .navbar #search-box {
-	float:left;
+	float: left;
 }
 
 .navbar .button-search-end {

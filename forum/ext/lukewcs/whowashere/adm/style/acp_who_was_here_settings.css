@@ -3,10 +3,29 @@
 .lfwwh_footer {
 	margin-top: 1em;
 	text-align: center;
-	font-size: .75em;
+	font-size: 0.75em;
 }
 
 /* SETTINGS */
+
+legend.legend_sub {
+	border: 0;
+	margin: 1em 0;
+	padding: 0;
+	display: flex;
+	white-space: nowrap;
+}
+
+legend.legend_sub:after {
+	content: "";
+	border-bottom: 1px solid #cccccc;
+	width: 100%;
+	margin: 0 0 0.5em 1em;
+}
+
+.simple_permissions dd {
+	line-height: 2em;
+}
 
 input[type=button][name*="lfwwh_"],
 .lfwwh_form_buttons input[type=submit],
@@ -114,15 +133,15 @@ dt a:visited {
 div[id$="_confirmbox"] {
 	max-width: 450px;
 	border: 2px solid skyblue;
-	margin: .75em .5em;
-	padding: .25em .5em;
+	margin: 0.75em 0.5em;
+	padding: 0.25em 0.5em;
 	border-radius: 5px;
 	-webkit-box-shadow: 2px 2px 10px 1px rgba(121, 162, 179, 0.5);
 	box-shadow: 2px 2px 10px 1px rgba(121, 162, 179, 0.5);
 }
 
 div[id$="_confirmbox"] h2 {
-	margin: 0 0 .25em 0;
+	margin: 0 0 0.25em 0;
 }
 
 div[id$="_confirmbox"] p:nth-of-type(2) {
@@ -138,7 +157,7 @@ div[id$="_confirmbox"] input[type="button"] {
 input[type="submit"]:disabled,
 input[type="button"]:disabled,
 input.confirmbox_active {
-	opacity: .5;
+	opacity: 0.5;
 	cursor: not-allowed;
 }
 
@@ -151,6 +170,6 @@ input.confirmbox_active {
 	}
 
 	#lfwwh_form dd {
-		margin-top: .5em;
+		margin-top: 0.5em;
 	}
 }

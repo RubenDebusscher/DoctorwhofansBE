@@ -430,11 +430,11 @@ class acp_main
 		// Version check
 		$user->add_lang('install');
 
-		if ($auth->acl_get('a_server') && version_compare(PHP_VERSION, '7.1.3', '<'))
+		if ($auth->acl_get('a_server') && version_compare(PHP_VERSION, '7.2.0', '<'))
 		{
 			$template->assign_vars(array(
 				'S_PHP_VERSION_OLD'	=> true,
-				'L_PHP_VERSION_OLD'	=> sprintf($user->lang['PHP_VERSION_OLD'], PHP_VERSION, '7.1.3', '<a href="https://www.phpbb.com/support/docs/en/3.3/ug/quickstart/requirements">', '</a>'),
+				'L_PHP_VERSION_OLD'	=> sprintf($user->lang['PHP_VERSION_OLD'], PHP_VERSION, '7.2.0', '<a href="https://www.phpbb.com/support/docs/en/3.3/ug/quickstart/requirements">', '</a>'),
 			));
 		}
 
@@ -454,6 +454,7 @@ class acp_main
 				$template->assign_vars(array(
 					'S_VERSION_UP_TO_DATE'		=> empty($updates_available),
 					'S_VERSION_UPGRADEABLE'		=> !empty($upgrades_available),
+					'S_VERSIONCHECK_FORCE'		=> (bool) $recheck,
 					'UPGRADE_INSTRUCTIONS'		=> !empty($upgrades_available) ? $user->lang('UPGRADE_INSTRUCTIONS', $upgrades_available['current'], $upgrades_available['announcement']) : false,
 				));
 			}

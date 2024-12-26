@@ -19,4 +19,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ACP_HEADERBANNER'						=> 'Header Banner',
 	'ACP_HEADERBANNER_CONFIG'				=> 'Header Banner',
+
+	'ACP_HEADERBANNER_SAVED'				=> 'Header Banner Settings Saved',
 ));

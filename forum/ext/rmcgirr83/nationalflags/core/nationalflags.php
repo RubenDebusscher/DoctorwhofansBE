@@ -11,22 +11,18 @@ namespace rmcgirr83\nationalflags\core;
 
 use phpbb\config\config;
 use phpbb\controller\helper;
-use phpbb\cache\service as cache_service;
+use phpbb\cache\service as cache;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\language\language;
 use phpbb\template\template;
 use phpbb\user;
 use phpbb\extension\manager;
 use phpbb\path_helper;
+use phpbb\collapsiblecategories\operator\operator as cc_operator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class nationalflags
 {
-
-	/**
-	 * Target flag_is_set
-	 */
-	protected $flag_is_set = false;
 
 	/** @var config $config */
 	protected $config;
@@ -65,6 +61,9 @@ class nationalflags
 	/** @var array */
 	protected $flag_constants;
 
+	/** @var cc_operator */
+	protected $cc_operator;
+
 	/**
 	 * Constructor
 	 *
@@ -78,12 +77,13 @@ class nationalflags
 	 * @param string					$flags_table		Name of the table used to store flag data
 	 * @param ext_manager				$ext_manager		Extension manager object
 	 * @param path_helper				$path_helper		Path helper object
-	 * @param array						$flag_constants			Constants used by the extension
+	 * @param array						$flag_constants		Constants used by the extension
+	 * @param cc_operator				$cc_operator
 	 */
 	public function __construct(
 			config $config,
 			helper $helper,
-			cache_service $cache,
+			cache $cache,
 			db $db,
 			language $language,
 			template $template,
@@ -92,7 +92,7 @@ class nationalflags
 			manager $ext_manager,
 			path_helper $path_helper,
 			array $flag_constants,
-			\phpbb\collapsiblecategories\operator\operator $operator = null)
+			cc_operator $cc_operator = null)
 	{
 		$this->config = $config;
 		$this->helper = $helper;
@@ -105,7 +105,7 @@ class nationalflags
 		$this->ext_manager	 = $ext_manager;
 		$this->path_helper	 = $path_helper;
 		$this->flag_constants = $flag_constants;
-		$this->operator = $operator;
+		$this->cc_operator = $cc_operator;
 
 		$this->ext_path = $this->ext_manager->get_extension_path('rmcgirr83/nationalflags', true);
 		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
@@ -174,6 +174,8 @@ class nationalflags
 
 	public function list_flags($flag_id = false)
 	{
+		$flag_is_set = false;
+
 		$sql = 'SELECT *
 			FROM ' . $this->flags_table . '
 		ORDER BY flag_name';
@@ -182,12 +184,12 @@ class nationalflags
 		$flag_options = '<option value="0">' . $this->language->lang('FLAG_EXPLAIN') . '</option>';
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$selected = ($row['flag_id'] == $flag_id && !$this->flag_is_set) ? ' selected="selected"' : '';
+			$selected = ($row['flag_id'] == $flag_id && !$flag_is_set) ? ' selected="selected"' : '';
 			if (!empty($selected))
 			{
-				$this->flag_is_set = true;
+				$flag_is_set = true;
 			}
-			else if ($row['flag_default'] && !$this->flag_is_set)
+			else if ($row['flag_default'] && !$flag_is_set)
 			{
 				$selected = ' selected="selected"';
 			}
@@ -254,28 +256,28 @@ class nationalflags
 				++$count;
 				if (!empty($cached_flags[$i]['user_count']))
 				{
-					$this->template->assign_block_vars('flag', array(
+					$this->template->assign_block_vars('flag', [
 						'FLAG' 			=> $this->get_user_flag($cached_flags[$i]['flag_id']),
 						'FLAG_USERS'	=> $this->user->lang('FLAG_USERS', (int) $cached_flags[$i]['user_count']),
-						'U_FLAG'		=> $this->helper->route('rmcgirr83_nationalflags_getflags', array('flag_id' => $cached_flags[$i]['flag_id'])),
-					));
+						'U_FLAG'		=> $this->helper->route('rmcgirr83_nationalflags_getflags', ['flag_id' => $cached_flags[$i]['flag_id']]),
+					]);
 				}
 			}
 
 			if ($count)
 			{
-				if ($this->operator !== null)
+				if ($this->cc_operator !== null)
 				{
 					$fid = 'nationalflags'; // can be any unique string to identify your extension's collapsible element, must have version 2.0.0 of collapsible categories for this to work
-					$this->template->assign_vars(array(
-						'S_NATIONALFLAGS_HIDDEN' => $this->operator->is_collapsed($fid),
-						'U_NATIONALFLAGS_COLLAPSE_URL' => $this->operator->get_collapsible_link($fid),
-					));
+					$this->template->assign_vars([
+						'S_NATIONALFLAGS_HIDDEN' => $this->cc_operator->is_collapsed($fid),
+						'U_NATIONALFLAGS_COLLAPSE_URL' => $this->cc_operator->get_collapsible_link($fid),
+					]);
 				}
-				$this->template->assign_vars(array(
+				$this->template->assign_vars([
 					'U_FLAGS'		=> $this->helper->route('rmcgirr83_nationalflags_display'),
 					'S_FLAGS'		=> true
-				));
+				]);
 			}
 		}
 	}
@@ -306,7 +308,7 @@ class nationalflags
 			else
 			{
 				return new JsonResponse([
-					'error' => $this->language->lang('NO_SUCH_FLAG'),
+					'error' => $this->language->lang('FLAG_NOT_EXIST'),
 				]);
 			}
 		}
@@ -356,7 +358,7 @@ class nationalflags
 		}
 		if (!$this->config['flags_display_to_guests'])
 		{
-			$check_display = ($this->user->data['user_id'] == ANONYMOUS || $this->user->data['is_bot']) ? false : true;
+			$check_display = ($this->user->data['user_id'] == ANONYMOUS || !empty($this->user->data['is_bot'])) ? false : true;
 			return $check_display;
 		}
 
@@ -392,7 +394,7 @@ class nationalflags
 		{
 			$sql = 'SELECT user_id, user_flag
 				FROM ' . USERS_TABLE . '
-			WHERE user_flag > 0';
+				WHERE user_flag > 0';
 			$result = $this->db->sql_query($sql);
 
 			$users_and_flags = [];
@@ -446,6 +448,15 @@ class nationalflags
 	{
 		$flags = $this->get_flag_cache();
 
+		foreach ($flags as $id => $data)
+		{
+			$flags_id[] = $id;
+		}
+
+		if (!in_array($user_flag, $flags_id))
+		{
+			$user_flag = 0;
+		}
 		$flag_name = $flag_image = '';
 
 		foreach ($flags as $key => $value)
@@ -471,7 +482,6 @@ class nationalflags
 			'FLAG_IMAGE'		=> ($flag_image) ? $this->ext_path . 'flags/' . $flag_image : '',
 			'FLAG_NAME'			=> $flag_name,
 			'S_FLAG_OPTIONS'	=> $s_flag_options,
-			'S_FLAGS'			=> true,
 			'S_FLAG_REQUIRED'	=> ($this->config['flags_required']) ? true : false,
 			'AJAX_FLAG_INFO' 	=> $this->helper->route('rmcgirr83_nationalflags_getflag', ['flag_id' => $user_flag]),
 		]);

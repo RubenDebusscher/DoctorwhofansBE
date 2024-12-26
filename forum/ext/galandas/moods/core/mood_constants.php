@@ -16,7 +16,7 @@ class mood_constants
 // aggiungi o sottrai per soddisfare le tue esigenze.
 	public static function getMoodChoices()
 	{
-		return array(
+		return [
 			'MOOD_NONE'	=> 0,
 			'EM-BIGGRIN' => 1,
 			'EM-CONFUSED' => 2,
@@ -38,6 +38,6 @@ class mood_constants
 			'EM-TWISTED' => 18,
 			'EM-UGEEK' => 19,
 			'EM-WINK' => 20,			
-		);
+		];
 	}
 }

@@ -20,13 +20,13 @@ class user_data extends \phpbb\db\migration\migration
 
 	static public function depends_on()
 	{
-		return array('\galandas\moods\migrations\user_schema');
+		return ['\galandas\moods\migrations\user_schema'];
 	}
 
 	public function update_data()
 	{
-		return array(
-			array('config.add', array('mood_version', '1.0.0')),
-		);
+		return [
+			['config.add', ['mood_version', '1.0.0']],
+		];
 	}
 }

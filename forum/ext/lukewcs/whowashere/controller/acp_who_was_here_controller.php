@@ -59,12 +59,21 @@ class acp_who_was_here_controller
 			$this->common->check_form_key_error('lukewcs_whowashere');
 
 			$delete_cache = ($this->request->variable('lfwwh_sort_by', 0) != $this->config['lfwwh_sort_by']);
+
 			// LFWWH_SECTION_PERMISSIONS
 			$this->config->set('lfwwh_admin_mode'				, $this->request->variable('lfwwh_admin_mode', 0));
 			$this->config->set('lfwwh_use_permissions'			, $this->request->variable('lfwwh_use_permissions', 0));
-			$this->config->set('lfwwh_perm_for_guests'			, $this->request->variable('lfwwh_perm_for_guests', 0));
-			$this->config->set('lfwwh_perm_for_bots'			, $this->request->variable('lfwwh_perm_for_bots', 0));
-			$this->config->set('lfwwh_perm_bots_only_admin'		, $this->request->variable('lfwwh_perm_bots_only_admin', 0));
+			$perm_for_guests =	$this->request->variable('lfwwh_perm_for_guests_stats', 0)	? 1 : 0;
+			$perm_for_guests +=	$this->request->variable('lfwwh_perm_for_guests_record', 0)	? 2 : 0;
+			$perm_for_guests +=	$this->request->variable('lfwwh_perm_for_guests_users', 0)	? 4 : 0;
+			$perm_for_guests +=	$this->request->variable('lfwwh_perm_for_guests_bots', 0)	? 8 : 0;
+			$this->config->set('lfwwh_perm_for_guests'			, $perm_for_guests);
+			$perm_for_bots =	$this->request->variable('lfwwh_perm_for_bots_stats', 0)	? 1 : 0;
+			$perm_for_bots +=	$this->request->variable('lfwwh_perm_for_bots_record', 0)	? 2 : 0;
+			$perm_for_bots +=	$this->request->variable('lfwwh_perm_for_bots_users', 0)	? 4 : 0;
+			$perm_for_bots +=	$this->request->variable('lfwwh_perm_for_bots_bots', 0)		? 8 : 0;
+			$this->config->set('lfwwh_perm_for_bots'			, $perm_for_bots);
+
 			// LFWWH_SECTION_DISP_1
 			$this->config->set('lfwwh_disp_reg_users'			, $this->request->variable('lfwwh_disp_reg_users', 0));
 			$this->config->set('lfwwh_disp_hidden'				, $this->request->variable('lfwwh_disp_hidden', 0));
@@ -74,6 +83,7 @@ class acp_who_was_here_controller
 			$this->config->set('lfwwh_disp_time_bots'			, $this->request->variable('lfwwh_disp_time_bots', 0));
 			$this->config->set('lfwwh_disp_time_format'			, $this->request->variable('lfwwh_disp_time_format', ''));
 			$this->config->set('lfwwh_disp_ip'					, $this->request->variable('lfwwh_disp_ip', 0));
+
 			// LFWWH_SECTION_DISP_2
 			$this->config->set('lfwwh_time_mode'				, $this->request->variable('lfwwh_time_mode', 0));
 			$this->config->set('lfwwh_period_of_time_h'			, $this->request->variable('lfwwh_period_of_time_h', 0));
@@ -83,15 +93,18 @@ class acp_who_was_here_controller
 			$this->config->set('lfwwh_record'					, $this->request->variable('lfwwh_record', 0));
 			$this->config->set('lfwwh_record_time_format'		, $this->request->variable('lfwwh_record_time_format', ''));
 			$this->config->set('lfwwh_template_pos'				, $this->request->variable('lfwwh_template_pos', 0));
+
 			// LFWWH_SECTION_OTHERS
 			$this->config->set('lfwwh_api_mode'					, $this->request->variable('lfwwh_api_mode', 0));
 			$this->config->set('lfwwh_clear_up'					, $this->request->variable('lfwwh_clear_up', 0));
 			$this->config->set('lfwwh_template_pos_all'			, $this->request->variable('lfwwh_template_pos_all', 0));
 			$this->config->set('lfwwh_create_hidden_info'		, $this->request->variable('lfwwh_create_hidden_info', 0));
+
 			// LFWWH_SECTION_LOAD_SETTINGS
 			$this->config->set('lfwwh_use_cache'				, $this->request->variable('lfwwh_use_cache', 0));
 			$this->config->set('lfwwh_use_online_time'			, $this->request->variable('lfwwh_use_online_time', 0));
 			$this->config->set('lfwwh_cache_time'				, $this->request->variable('lfwwh_cache_time', 0));
+
 			// LFWWH_SECTION_RESET
 			if ($this->request->variable('lfwwh_record_reset'	, 0) > 0)
 			{
@@ -99,8 +112,8 @@ class acp_who_was_here_controller
 				$this->config->set('lfwwh_record_time', time());
 				$this->config->set('lfwwh_record_reset_time', time());
 			}
-			// config end
 
+			// config end
 			if ($this->config['lfwwh_use_cache'] && $delete_cache)
 			{
 				$this->cache->destroy("_lf_who_was_here");
@@ -126,20 +139,7 @@ class acp_who_was_here_controller
 			'LFWWH_ADMIN_MODE'						=> $this->config['lfwwh_admin_mode'],
 			'LFWWH_USE_PERMISSIONS'					=> $this->config['lfwwh_use_permissions'],
 			'LFWWH_PERM_FOR_GUESTS'					=> $this->config['lfwwh_perm_for_guests'],
-			'LFWWH_PERM_FOR_GUESTS_OPTIONS' => [
-				'LFWWH_PERM_STATS_USERS'			=> '3',
-				'LFWWH_PERM_USERS'					=> '2',
-				'LFWWH_PERM_STATS'					=> '1',
-				'LFWWH_PERM_NOTHING'				=> '0',
-			],
 			'LFWWH_PERM_FOR_BOTS'					=> $this->config['lfwwh_perm_for_bots'],
-			'LFWWH_PERM_FOR_BOTS_OPTIONS' => [
-				'LFWWH_PERM_STATS_USERS'			=> '3',
-				'LFWWH_PERM_USERS'					=> '2',
-				'LFWWH_PERM_STATS'					=> '1',
-				'LFWWH_PERM_NOTHING'				=> '0',
-			],
-			'LFWWH_PERM_BOTS_ONLY_ADMIN'			=> $this->config['lfwwh_perm_bots_only_admin'],
 			// LFWWH_SECTION_DISP_1
 			'LFWWH_DISP_REG_USERS'					=> $this->config['lfwwh_disp_reg_users'],
 			'LFWWH_DISP_HIDDEN'						=> $this->config['lfwwh_disp_hidden'],

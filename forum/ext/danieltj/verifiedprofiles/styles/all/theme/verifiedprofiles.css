@@ -12,11 +12,11 @@
 
 	width: 16px;
 	height: 16px;
-	margin: 0 4px;
+	margin: 0;
 	display: inline-block;
 
 	font-size: 0;
 
-	vertical-align: bottom;
+	vertical-align: text-bottom;
 
 }

@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension - Jumpbox on Index
-* @copyright (c) 2020 - 2023 Kirk https://reyno41.bplaced.net/phpbb
+* @copyright (c) 2020 - 2024 Kirk https://reyno41.bplaced.net/phpbb
 * @license GNU General Public License, version 2 (GPL-2.0-only)
 *
 */
@@ -20,10 +20,10 @@ class ext extends \phpbb\extension\base
 	*/
 	public function is_enableable()
 	{
-		$phpbb_min_ver		= '3.2.6';
+		$phpbb_min_ver		= '3.3.0';
 		$phpbb_below_ver	= '3.4.0-dev';
-		$php_min_ver		= '7.0.0';
-		$php_below_ver		= '8.3.0-dev';
+		$php_min_ver		= '7.1.3';
+		$php_below_ver		= '8.4.0-dev';
 
 		if (phpbb_version_compare(PHPBB_VERSION, '3.2.0-dev', '<'))
 		{
@@ -35,16 +35,16 @@ class ext extends \phpbb\extension\base
 			$lang = $this->container->get('language');
 			$lang->add_lang('jumpboxindex_enable_error', 'kirk/jumpboxindex');
 		}
-		$error_message	= [$lang->lang('ERROR_JB_EXTENSION_NOT_ENABLEABLE', $lang->lang('JUMPBOXINDEX'))];
+		$error_message	= [$lang->lang('JB_EXTENSION_NOT_ENABLEABLE', $lang->lang('JUMPBOXINDEX'))];
 
 		if ((phpbb_version_compare(PHPBB_VERSION, $phpbb_min_ver, '<') || phpbb_version_compare(PHPBB_VERSION, $phpbb_below_ver, '>=')))
 		{
-			$error_message[] = $lang->lang('ERROR_JB_MSG_PHPBB_WRONG_VERSION', $phpbb_min_ver, $phpbb_below_ver);
+			$error_message[] = $lang->lang('JB_MSG_PHPBB_WRONG_VERSION', $phpbb_min_ver, $phpbb_below_ver);
 		}
 
 		if ((phpbb_version_compare(PHP_VERSION, $php_min_ver, '<') || phpbb_version_compare(PHP_VERSION, $php_below_ver, '>=')))
 		{
-			$error_message[] = $lang->lang('ERROR_JB_MSG_PHP_WRONG_VERSION', $php_min_ver, $php_below_ver);
+			$error_message[] = $lang->lang('JB_MSG_PHP_WRONG_VERSION', $php_min_ver, $php_below_ver);
 		}
 
 		if (phpbb_version_compare(PHPBB_VERSION, '3.3.0-dev', '<') && count($error_message) > 1)

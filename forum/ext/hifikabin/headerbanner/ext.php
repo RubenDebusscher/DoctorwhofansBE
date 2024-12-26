@@ -6,6 +6,7 @@
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
+
 namespace hifikabin\headerbanner;
 
 /**
@@ -19,16 +20,9 @@ class ext extends \phpbb\extension\base
 	* @return bool
 	* @access public
 	*/
+
 	public function is_enableable()
 	{
-		$enableable = phpbb_version_compare(PHPBB_VERSION, '3.2.0@dev', '>=');
-		if (!$enableable)
-		{
-			$user = $this->container->get('user');
-			$user->add_lang_ext('hifikabin/headerbanner', 'common');
-			trigger_error($user->lang('HEADERBANNER_REQUIRE_3.2.0'), E_USER_WARNING);
-		}
-
-		return true;
+		return phpbb_version_compare(PHPBB_VERSION, '3.2.0@dev', '>=');
 	}
 }

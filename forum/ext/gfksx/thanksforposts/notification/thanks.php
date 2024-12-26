@@ -106,7 +106,7 @@ class thanks extends \phpbb\notification\type\base
 		], $options);
 
 		$users = [(int) $thanks_data['poster_id']];
-		return $this->check_user_notification_options($users, $options);
+		return $this->get_authorised_recipients($users, $thanks_data['forum_id'], $options, true);
 	}
 
 	/**
@@ -268,11 +268,17 @@ class thanks extends \phpbb\notification\type\base
 	*/
 	public function create_insert_array($thanks_data, $pre_create_data = [])
 	{
-		$thankers = (isset($thanks_data['thankers'])) ? $thanks_data['thankers'] : [];
-		$thankers = array_merge(
-			[['user_id' => $thanks_data['user_id']]],
-			$thankers
-		);
+		$thankers = $thanks_data['thankers'] ?? [];
+
+		// Do not add thanker data again if it already exists on notification update
+		$thanker_ids = array_column($thankers, 'user_id');
+		if (array_search($thanks_data['user_id'], $thanker_ids) === false)
+		{
+			$thankers = array_merge(
+				[['user_id' => $thanks_data['user_id']]],
+				$thankers
+			);
+		}
 		$this->set_data('thankers', $thankers);
 
 		$this->set_data('post_id', $thanks_data['post_id']);

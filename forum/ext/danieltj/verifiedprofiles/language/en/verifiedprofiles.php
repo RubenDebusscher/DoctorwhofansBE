@@ -2,7 +2,7 @@
 
 /**
  * @package Verified Profiles
- * @copyright (c) 2021 Daniel James
+ * @copyright (c) 2023 Daniel James
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
@@ -20,7 +20,9 @@ if ( empty( $lang ) || ! is_array( $lang ) ) {
 
 $lang = array_merge( $lang, [
 	'VERIFIED' => 'Verified',
-	'VERIFIED_TIP' => 'User is verified',
-	'VERIFIED_LABEL' => 'Verify',
-	'VERIFIED_EXPLAIN' => 'Set as yes to verify this user\'s profile.',
+	'VERIFIED_TOOLTIP' => 'User is verified',
+	'VERIFIED_LABEL' => 'Verification',
+	'VERIFIED_SETTING_YES' => 'Enable',
+	'VERIFIED_SETTING_NO' => 'Disable',
+	'VERIFIED_EXPLAIN' => 'Enable to display a verified badge next to the username.',
 ] );

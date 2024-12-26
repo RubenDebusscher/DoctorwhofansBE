@@ -39,7 +39,7 @@ $lang = array_merge($lang, array(
 
 	'USER_FONT_SIZE_105'	=> '105%',
 	'USER_FONT_SIZE_110'	=> '110%',
-	'USER_FONT_SIZE_115'	=> '120%',
+	'USER_FONT_SIZE_120'	=> '120%',
 	'USER_FONT_SIZE_130'	=> '130%',
 	'USER_FONT_SIZE_150'	=> '150%',
 	'USER_FONT_SIZE_200'	=> '200%',

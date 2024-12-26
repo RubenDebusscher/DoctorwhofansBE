@@ -511,7 +511,7 @@ class main_listener implements EventSubscriberInterface
 
 		$post_row = array_merge($post_row, array(
 			'ANSWER_POST_ID'	=> (int) $topic_data['answer_post_id'],
-			'POSTER_ANSWERS'	=> $user_poster_data['poster_answers'],
+			'POSTER_ANSWERS'	=> array_key_exists('poster_answers', $user_poster_data) ? $user_poster_data['poster_answers'] : null,
 
 			'U_ANSWER'			=> append_sid("{$this->root_path}viewtopic.{$this->php_ext}", 'p=' . (int) $topic_data['answer_post_id'] . '#p' . (int) $topic_data['answer_post_id']),
 			'U_MARK_ANSWER'		=> $topic_data['enable_answer'] ? $this->helper->route('kinerity_bestanswer_controller', array('action' => 'mark_answer', 'p' => (int) $row['post_id'])) : '',

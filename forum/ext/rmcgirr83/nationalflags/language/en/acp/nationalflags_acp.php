@@ -52,7 +52,7 @@ $lang = array_merge($lang, [
 	'FLAG_UPLOAD_NOTICE'				=> 'Uploading an image will overwrite an image file already located on the server if one exists.  The image file <strong>is</strong> case sensitive.',
 	'FLAG_UPLOAD_NO_OVERWRITE'			=> 'You will not be able to overwrite an already existing image with the same name and extension as shown below.',
 	'FLAG_FOUND'						=> 'Flag found',
-	'IMAGES_ON_SERVER'					=> 'Image names on server',
+	'IMAGES_ON_SERVER'					=> '%d Image names on server',
 
 	//Settings
 	'FLAGS_REQUIRED'					=> 'Required field',
@@ -117,7 +117,7 @@ $lang = array_merge($lang, [
 	'FLAG_IMAGE_URL_NOT_FOUND'				=> 'The file cannot be found.',
 	'FLAG_IMAGE_WRONG_FILESIZE'				=> 'The flag size must be between 0 and %1d %2s.',
 	'FLAG_IMAGE_WRONG_SIZE'					=> 'The flag must be exactly %3$s wide and %4$s high. The submitted image is %5$s wide and %6$s high.',
-	'FLAGS_REQUIRE_540'			=> 'This extension requires at least PHP version 7.1 and phpBB version 3.2.0 or higher.  Please update your PHP version and/or your phpBB version in order to use the extension.',
+	'FLAGS_REQUIRE_540'			=> 'This extension requires at least PHP version 7.2 and phpBB version 3.3.4 or higher.  Please update your PHP version and/or your phpBB version in order to use the extension.',
 
 	// end comment
 	'TOO_SMALL_FLAGS_NUM_DISPLAY'	=> 'The number chosen for the number of flags to display is too small',

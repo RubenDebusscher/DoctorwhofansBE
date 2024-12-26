@@ -11,9 +11,6 @@
 
 namespace galandas\moods\event;
 
-/**
-* @ignore
-*/
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use galandas\moods\core\mood_constants;
 
@@ -38,12 +35,18 @@ class listener implements EventSubscriberInterface
 	/** @var string phpEx */
 	protected $php_ext;
 
-	public function __construct(
-		\phpbb\request\request $request,
-		\phpbb\template\template $template,
-		\phpbb\user $user,
-		$phpbb_root_path,
-		$php_ext)
+	/**
+	* Constructor
+	*
+	* @param \phpbb\request\request      $request            Request object
+	* @param \phpbb\template\template    $template           Template object
+	* @param \phpbb\user                 $user               User object
+	* @param phpbb_root_path             $phpbb_root_path    phpBB root path
+	* @param php_ext                     $php_ext            phpEx
+	* @return \galandas\moods\event\listener
+	* @access public
+	*/
+	public function __construct(\phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
 	{
 		$this->request = $request;
 		$this->template = $template;
@@ -53,6 +56,7 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
+	* Assign functions defined in this class to event listeners in the core
 	*
 	* @return array
 	* @static
@@ -60,13 +64,13 @@ class listener implements EventSubscriberInterface
 	*/
 	static public function getSubscribedEvents()
 	{
-		return array(
-			'core.ucp_profile_modify_profile_info'		=> 'user_mood_profile',
-			'core.ucp_profile_validate_profile_info'	=> 'user_mood_profile_validate',
-			'core.ucp_profile_info_modify_sql_ary'		=> 'user_mood_profile_sql',
+		return [
+			'core.ucp_profile_modify_profile_info'			=> 'user_mood_profile',
+			'core.ucp_profile_validate_profile_info'		=> 'user_mood_profile_validate',
+			'core.ucp_profile_info_modify_sql_ary'			=> 'user_mood_profile_sql',
 			'core.acp_users_modify_profile'				=> 'user_mood_profile',
 			'core.acp_users_profile_validate'			=> 'user_mood_profile_validate',
-			'core.acp_users_profile_modify_sql_ary'		=> 'user_mood_profile_sql',
+			'core.acp_users_profile_modify_sql_ary'			=> 'user_mood_profile_sql',
 			'core.viewtopic_cache_user_data'			=> 'viewtopic_cache_user_data',
 			'core.viewtopic_cache_guest_data'			=> 'viewtopic_cache_guest_data',
 			'core.viewtopic_modify_post_row'			=> 'viewtopic_modify_post_row',
@@ -76,7 +80,7 @@ class listener implements EventSubscriberInterface
 			'core.ucp_register_data_before'				=> 'user_mood_profile',
 			'core.ucp_register_data_after'				=> 'user_mood_profile_validate',
 			'core.ucp_register_user_row_after'			=> 'user_mood_registration_sql',
-		);
+		];
 	}
 
 	/**
@@ -96,9 +100,9 @@ class listener implements EventSubscriberInterface
 			$user_mood = $this->user->data['user_mood'];
 		}
 		// Request the user option vars and add them to the data array
-		$event['data'] = array_merge($event['data'], array(
+		$event['data'] = array_merge($event['data'], [
 			'user_mood'	=> $this->request->variable('user_mood', $user_mood),
-		));
+		]);
 
 		$this->user->add_lang_ext('galandas/moods', 'moods');
 
@@ -112,10 +116,10 @@ class listener implements EventSubscriberInterface
 			$mood_image .= ($user_mood == $value) ? strtolower($key) : '';
 		}
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'USER_MOOD'			=> $mood_image,
 			'S_MOOD_OPTIONS'	=> $mood_options,
-		));
+		]);
 	}
 
 	/**
@@ -132,9 +136,9 @@ class listener implements EventSubscriberInterface
 			{
 				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
 			}
-			$validate_array = array(
+			$validate_array = [
 				'user_mood'	=> array('num', true, 0, 99),
-			);
+			];
 			$error = validate_data($event['data'], $validate_array);
 			$event['error'] = array_merge($array, $error);
 	}
@@ -147,9 +151,9 @@ class listener implements EventSubscriberInterface
 	*/
 	public function user_mood_profile_sql($event)
 	{
-		$event['sql_ary'] = array_merge($event['sql_ary'], array(
+		$event['sql_ary'] = array_merge($event['sql_ary'], [
 				'user_mood' => $event['data']['user_mood'],
-		));
+		]);
 	}
 
 	/**
@@ -192,9 +196,9 @@ class listener implements EventSubscriberInterface
 			$mood = $this->display_user_mood($event['user_poster_data']['user_mood']);
 		}
 
-		$event['post_row'] = array_merge($event['post_row'],array(
+		$event['post_row'] = array_merge($event['post_row'],[
 			'USER_MOOD' => $mood,
-		));
+		]);
 	}
 
 	/**
@@ -211,9 +215,9 @@ class listener implements EventSubscriberInterface
 			$mood = $this->display_user_mood($event['member']['user_mood']);
 		}
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'USER_MOOD'	=> $mood,
-		));
+		]);
 	}
 
 	/**
@@ -248,9 +252,9 @@ class listener implements EventSubscriberInterface
 		{
 			$mood = $this->display_user_mood($event['row']['user_mood']);
 		}
-		$array = array_merge($array, array(
+		$array = array_merge($array, [
 			'USER_MOOD'	=> $mood,
-		));
+		]);
 
 		$event['tpl_ary'] = $array;
 	}
@@ -263,9 +267,9 @@ class listener implements EventSubscriberInterface
 	*/
 	public function user_mood_registration_sql($event)
 	{
-		$event['user_row'] = array_merge($event['user_row'], array(
+		$event['user_row'] = array_merge($event['user_row'], [
 				'user_mood' => $this->request->variable('user_mood', 0),
-		));
+		]);
 	}
 
 	/**

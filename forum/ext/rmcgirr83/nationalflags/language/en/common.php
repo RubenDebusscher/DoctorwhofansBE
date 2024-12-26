@@ -16,7 +16,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -33,25 +33,24 @@ if (empty($lang) || !is_array($lang))
 // Some characters you may want to copy&paste:
 // ’ » “ ” …
 
-$lang = array_merge($lang, array(
-	'FLAGS'				=> array(
+$lang = array_merge($lang, [
+	'FLAGS'				=> [
 		1 => '%s flag',
 		2 => '%s flags',
-	),
+	],
 	'USER_FLAG'			=> 'Flag',
 	'USER_FLAG_EXPLAIN'	=> 'The board default flag is being displayed.',
 	'NATIONAL_FLAGS'	=> 'Flags',
 	'FLAG_EXPLAIN'		=> 'Choose your flag',
 	'USER_NEEDS_FLAG'	=> 'Please take a moment and %svisit your profile%s to choose a flag.',
 	'FLAGS_VIEWONLINE'	=> 'Viewing flags',
-	'FLAG_USERS'		=>  array(
+	'FLAG_USERS'		=>  [
 		1 => '%s User',
 		2 => '%s Users',
-	),
-	'MUST_CHOOSE_FLAG'	=> '<span class="error">You must choose a flag.</span>',
-	'NO_SUCH_FLAG'		=> '<span class="error">Flag doesn’t exist</span>',
+	],
+	'MUST_CHOOSE_FLAG'	=> '<span class="error">You must choose a flag</span>',
 	'NO_USER_HAS_FLAG'	=> 'No user has this flag',
-	'FLAG_NOT_EXIST'	=> 'Flag does not exist',
+	'FLAG_NOT_EXIST'	=> 'Flag doesn’t exist',
 // uncomment and translate the following line for languages for the flags other than what is in the ACP
 // if a flag name in the ACP has a space, you must use _  in it's place below (hint: see "AMERICAN_SAMOA")
 // see above for Unicode characters to use
@@ -80,10 +79,12 @@ $lang = array_merge($lang, array(
 	'BERMUDA' => 'Bermuda',
 	'BHUTAN' => 'Bhutan',
 	'BOLIVIA' => 'Bolivia',
-	'BONAIRE' => 'Bonaire',
+	'BONAIRE_SINT_EUSTATIUS_&AMP;_SABA' => 'Bonaire Sint Eustatius &amp; Saba',
 	'BOSNIA_&AMP;_HERZEGOVINA' => 'Bosnia &amp; Herzegovina',
 	'BOTSWANA' => 'Botswana',
+	'BOUVET_ISLAND'	=> 'Bouvet Island',
 	'BRAZIL' => 'Brazil',
+	'BRITISH_INDIAN_OCEAN_TERRITORY' => 'British Indian Ocean Territory',
 	'BRUNEI' => 'Brunei',
 	'BULGARIA' => 'Bulgaria',
 	'BURKINA_FASO' => 'Burkina Faso',
@@ -97,7 +98,7 @@ $lang = array_merge($lang, array(
 	'CHAD' => 'Chad',
 	'CHILE' => 'Chile',
 	'CHINA' => 'China',
-	'COLUMBIA' => 'Columbia',
+	'COLUMBIA' => 'Colombia',
 	'COMOROS' => 'Comoros',
 	'CONGO' => 'Congo',
 	'CONGO_DEMOCRATIC_REPUBLIC' => 'Congo Democratic Republic',
@@ -115,6 +116,7 @@ $lang = array_merge($lang, array(
 	'ECUADOR' => 'Ecuador',
 	'EGYPT' => 'Egypt',
 	'EL_SALVADOR' => 'El Salvador',
+	'ENGLAND' => 'England',
 	'EQUATORIAL_GUINEA' => 'Equatorial Guinea',
 	'ERITREA' => 'Eritrea',
 	'ESTONIA' => 'Estonia',
@@ -124,12 +126,14 @@ $lang = array_merge($lang, array(
 	'FIJI' => 'Fiji',
 	'FINLAND' => 'Finland',
 	'FRANCE' => 'France',
+	'FRENCH_GUIANA' => 'French Guiana',
 	'GABON' => 'Gabon',
 	'GAMBIA' => 'Gambia',
 	'GEORGIA' => 'Georgia',
 	'GERMANY' => 'Germany',
 	'GHANA' => 'Ghana',
 	'GREAT_BRITAIN' => 'Great Britain',
+	'GUADELOUPE' => 'Guadeloupe',
 	'GREECE' => 'Greece',
 	'GREENLAND' => 'Greenland',
 	'GRENADA' => 'Grenada',
@@ -139,6 +143,7 @@ $lang = array_merge($lang, array(
 	'GUINEA_BISSAU' => 'Guinea Bissau',
 	'GUYANA' => 'Guyana',
 	'HAITI' => 'Haiti',
+	'HEARD_&AMP;_MCDONALD_ISLANDS' => 'Heard &amp; McDonald Islands',
 	'HONDURAS' => 'Honduras',
 	'HONG_KONG' => 'Hong Kong',
 	'HUNGARY' => 'Hungary',
@@ -187,6 +192,7 @@ $lang = array_merge($lang, array(
 	'MONACO' => 'Monaco',
 	'MONGOLIA' => 'Mongolia',
 	'MONTSERRAT' => 'Montserrat',
+	'MONTENEGRO' => 'Montenegro',
 	'MOROCCO' => 'Morocco',
 	'MOZAMBIQUE' => 'Mozambique',
 	'MYANMAR' => 'Myanmar',
@@ -200,6 +206,7 @@ $lang = array_merge($lang, array(
 	'NIGER' => 'Niger',
 	'NIGERIA' => 'Nigeria',
 	'NORFOLK_ISLAND' => 'Norfolk Island',
+	'NORTHERN_IRELAND' => 'Northern Ireland',
 	'NORWAY' => 'Norway',
 	'OMAN' => 'Oman',
 	'PAKISTAN' => 'Pakistan',
@@ -215,17 +222,23 @@ $lang = array_merge($lang, array(
 	'PORTUGAL' => 'Portugal',
 	'PUERTO_RICO' => 'Puerto Rico',
 	'QATAR' => 'Qatar',
+	'REUNION' => 'Reunion',
 	'ROMANIA' => 'Romania',
 	'RUSSIA' => 'Russia',
 	'RWANDA' => 'Rwanda',
+	'SAINT_PIERRE_&AMP;_MIQUELON' => 'Saint Pierre &amp; Miquelon',
 	'SAMOA' => 'Samoa',
 	'SAN_MARINO' => 'San Marino',
 	'SAO_TOME_&AMP;_PRINCIPE' => 'Sao Tome &amp; Principe',
 	'SAUDI_ARABIA' => 'Saudi Arabia',
+	'SERBIA' => 'Serbia',
+	'SVALBARD_$AMP;_JAN_MAYEN' => 'Svalbard and Jan Mayen',
+	'SCOTLAND'	=> 'Scotland',
 	'SENEGAL' => 'Senegal',
 	'SEYCHELLES' => 'Seychelles',
 	'SIERRA_LEONE' => 'Sierra Leone',
 	'SINGAPORE' => 'Singapore',
+	'SINT_MAARTEN_(DUTCH_PART)' => 'Sint Maarten (Dutch Part)',
 	'SLOVAKIA' => 'Slovakia',
 	'SLOVENIA' => 'Slovenia',
 	'SOLOMON_ISLANDS' => 'Solomon Islands',
@@ -258,6 +271,7 @@ $lang = array_merge($lang, array(
 	'UGANDA' => 'Uganda',
 	'UKRAINE' => 'Ukraine',
 	'UNITED_ARAB_EMIRATES' => 'United Arab Emirates',
+	'UNITED_STATE_MINOR_OUTLYING_ISLANDS' => 'United States Minor Outlying islands',
 	'UNITED_STATES_OF_AMERICA' => 'United States of America',
 	'URUGUAY' => 'Uruguay',
 	'UZBEKISTAN' => 'Uzbekistan',
@@ -286,5 +300,12 @@ $lang = array_merge($lang, array(
 	'TOKELAU' => 'Tokelau',
 	'WALLIS_AND_FUTUNA_ISLANDS' => 'Wallis and Futuna Islands',
 	'MAYOTTE' => 'Mayotte',
-	'SERBIA' => 'Serbia',
-));
+	'ANTARCTICA' => 'Antarctica',
+	'ALAND_ISLANDS' => 'Åland Islands',
+	'GUERNSEY' => 'Guernsey',
+	'SOUTH_GEORGIA_&AMP;_THE_SOUTH_SANDWICH_ISLANDS' => 'South Georgia &amp; the South Sandwich Islands',
+	'JERSEY' => 'Jersey',
+	'NORTHERN_MARIANA_ISLANDS' => 'Northern Mariana Islands',
+	'HOLY_SEE' => 'Holy See',
+	'SAINT_BARTHELEMY' => 'Saint Barthélemy',
+]);

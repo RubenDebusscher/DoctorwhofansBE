@@ -1,5 +1,9 @@
-{% if JUMPBOX_INDEX_UCP && JUMPBOX_POSITION == 1 %}
-	<li data-skip-responsive="true" class="{% if JUMPBOX_RIGHT %}right{% else %}left{% endif %}side jumpbox-navbar-top">
-		{% include '@kirk_jumpboxindex/jumpbox_modern.html' %}
+{% if JUMPBOX_POSITION == 1 %}
+	<li data-skip-responsive="true" class="{{ JUMPBOX_RIGHT ? 'right' : 'left' }}side jumpbox-navbar-{{ JUMPBOX_DEFAULT ? 'default-top' : 'modern-top' }}">
+		{% if JUMPBOX_DEFAULT %}
+			{% include '@kirk_jumpboxindex/jumpbox_default.html' %}
+		{% else %}
+			{% include '@kirk_jumpboxindex/jumpbox_modern.html' %}
+		{% endif %}
 	</li>
 {% endif %}

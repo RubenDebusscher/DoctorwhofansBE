@@ -155,7 +155,11 @@ class admin_controller
 
 			$tag = $this->request->variable('prefix_tag', '', true);
 			$prefix = $this->manager->add_prefix($tag, $this->forum_id);
-			$this->log($prefix['prefix_tag'], 'ACP_LOG_PREFIX_ADDED');
+
+			if ($prefix)
+			{
+				$this->log($prefix['prefix_tag'], 'ACP_LOG_PREFIX_ADDED');
+			}
 		}
 	}
 
@@ -175,11 +179,17 @@ class admin_controller
 		try
 		{
 			$prefix = $this->manager->get_prefix($prefix_id);
-			$this->manager->update_prefix($prefix['prefix_id'], ['prefix_enabled' => !$prefix['prefix_enabled']]);
+			$this->manager->update_prefix(!$prefix ?: $prefix['prefix_id'], !$prefix ? [] : ['prefix_enabled' => !$prefix['prefix_enabled']]);
 		}
 		catch (\OutOfBoundsException $e)
 		{
 			$this->trigger_message($e->getMessage(), E_USER_WARNING);
+		}
+
+		if ($this->request->is_ajax())
+		{
+			$json_response = new \phpbb\json_response;
+			$json_response->send(['success' => true]);
 		}
 	}
 
@@ -196,7 +206,7 @@ class admin_controller
 			try
 			{
 				$prefix = $this->manager->get_prefix($prefix_id);
-				$this->manager->delete_prefix($prefix['prefix_id']);
+				$this->manager->delete_prefix(!$prefix ?: $prefix['prefix_id']);
 				$this->log($prefix['prefix_tag'], 'ACP_LOG_PREFIX_DELETED');
 			}
 			catch (\OutOfBoundsException $e)

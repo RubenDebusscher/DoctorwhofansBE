@@ -4,6 +4,121 @@ All changes to `Usermap for phpBB` will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.5] - 2024-06-17
+
+### Added
+
+### Changed
+-	Maximum PHP version raised to 8.3.x
+-	Some code improvements
+
+### Fixed
+-	A problem with selecting the visibility of a POI in the ACP "POI handling" tab
+
+### Removed
+  
+  
+## [1.2.4] - 2024-01-05
+
+### Added
+
+### Changed
+-	The usage of either toggles, checkboxes or radio buttons according to a general template variable called `TOGGLECTRL_TYPE` which is implemented with the
+	`lukewcs/togglectrl` extension, default is still 'toggles'
+
+### Fixed
+-	A missing marker for the location BBCode
+
+### Removed
+-	All language packs except en, de and de_x_sie
+-	All remnants of XHTML
+  
+  
+## [1.2.3] - 2023-10-21
+
+### Added
+-	A check for the maximum PHP version allowed in the `ext.php` file
+-	A link in the breadcrumbs line
+-	A check for enabled PHP option `allow_url_fopen` in the `controller/mot_usermap_acp.php` file including an error box to be displayed in the
+	`adm/style/acp_mot_usermap_settings.html` file if this option is disabled
+
+### Changed
+
+### Fixed
+-	Permissions for displaying the link to a user in his profile in order that a user who is not on the Usermap can not see the link
+
+### Removed
+  
+  
+## [1.2.2] - 2022-11-28
+
+### Added
+
+### Changed
+-	The Yes/No radio buttons in the ACP settings, POI and layer pages to a toggle
+
+### Fixed
+-	Two missing lines in `controller/mot_usermap_acp.php` which prevented the database tab from selecting entries for editing and deleting
+
+### Removed
+  
+  
+## [1.2.1] - 2022-09-27
+
+### Added
+-	A check for unwanted characters in POI names in `controller/main.php`, `controller/mod_poi.php` and `controller/mot_usermap_acp.php`
+	including the definition of those characters in `includes/functions_usermap.php`
+-	A new migration file `migrations/v_1_2_1.php` to change the length of the "name" field in the `USERMAP_POI_TABLE` from 50 to 60 characters and to change
+	all existing POI names to a storage format using the `generate_text_for_storage()` function to prevent errors with old formats while using the BBCode to
+	link to a POI
+
+### Changed
+-	Leaflet back to version 1.7.1 due to a bug (?) resulting in just moving the map while opening the popup of a POI
+
+### Fixed
+-	A type mismatch while looking for a POI name to display the POI via BBCode
+
+### Removed
+  
+  
+## [1.2.0] - 2022-07-20
+
+### Added
+-	The leaflet.markercluster class in order to enable clustering the markers if selected in the layer tab. A new settings option has been added to the layer
+	tab to individually cluster markers for each layer.
+	Affected files are `acp/layer_module.php`, `adm/style/acp_usermap_layer.html`, `adm/style/admin_mot_usermap.js`, `controller/main.php`,
+	`styles/all/template/mot_usermap.js`, `styles/prosilver/template/usermap_main.html` and all `info_acp_mot_usermap.php` language files.
+-	A new migration file `migrations/v_1_2_0_0.php` to add the new columns to the `usermap_layers` table for marker clusters, more layer types, layer_positions
+	within the individual layer types and groups permitted to see the individual layers
+-	Code to handle actions initialised by BBCodes to show a user, a POI or a location on Usermap
+-	To the layers the ability within the individual layer types to have a position and to change those positions in the ACP in order to show them to the users
+	in the sequence preferred by the admin
+-	The property of groups permitted to see individual layers in order to enable admins to control what user groups can see individual layers if the group
+	permissions permit seeing the map (members) and/or POIs
+-	An overlay selection field to reduce the number of listed POIs to one or all overlays.
+-	A copyright in the overall footer if Usermap is displayed
+-	A loading image to be displayed in the searches
+-	A Dutch language pack
+
+### Changed
+-	The minimum PHP version required to run Usermap is now set to PHP 7.2
+-	The map div height from fixed 600px to the screen height minus 50 pixels in order to use the full screen height for the map
+-	The ACP modules to one ACP module and one info file for it in order to enable a new controller file (`controller/mot_usermap_acp.php`), this made
+	necessary two new migration files (`migrations/v_1_2_0_1.php` and `migrations/v_1_2_0_2.php`) to remove the old modules and insert the new modules
+-	The names of ACP HTML files to a common prefix of `acp_mot_usermap_` followed by the mode name
+-	The options in the 'Internal database', 'POI handling' and 'Map overlays' tabs from words to icons
+-	The `ext.php` file to output error messages and to be compatible with 'Extension Manager Plus', including a new language file to hold the error messages
+-	Inactive overlays will be displayed on an orange background in the respective ACP table
+-	Code improvements within the ACP POI table
+-	Leaflet to new version 1.8.0
+
+### Fixed
+-	The assignment of permissions to admin, moderator and user roles in the `migrations/v_0_10_0_0.php` migration file to check whether those roles really
+	exist
+
+### Removed
+  
+  
 ## [1.1.3] - 2021-12-28
 
 ### Added

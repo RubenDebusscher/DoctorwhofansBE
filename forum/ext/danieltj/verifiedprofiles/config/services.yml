@@ -2,10 +2,16 @@ services:
     danieltj.verifiedprofiles.listener:
         class: danieltj\verifiedprofiles\event\listener
         arguments:
-            - '@controller.helper'
-            - '@language'
+            - '@auth'
             - '@request'
             - '@template'
-            - '@user'
+            - '@language'
+            - '@danieltj.verifiedprofiles.includes.functions'
         tags:
             - { name: event.listener }
+
+    danieltj.verifiedprofiles.includes.functions:
+        class: danieltj\verifiedprofiles\includes\functions
+        arguments:
+            - '@auth'
+            - '@dbal.conn'

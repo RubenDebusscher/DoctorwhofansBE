@@ -2,13 +2,13 @@
     "name": "phpbb/topicprefixes",
     "type": "phpbb-extension",
     "description": "An official phpBB extension for topic prefixes.",
-    "homepage": "https://www.phpbb.com",
-    "version": "1.0.0",
+    "homepage": "https://www.phpbb.com/customise/db/extension/topicprefixes/",
+    "version": "1.0.1",
     "license": "GPL-2.0-only",
     "authors": [
         {
             "name": "Matt Friedman",
-            "homepage": "http://vsephpbb.github.io",
+            "homepage": "https://imattpro.github.io",
             "role": "Extensions Development Team Lead"
         },
         {
@@ -33,7 +33,8 @@
         "version-check": {
             "host": "www.phpbb.com",
             "directory": "/customise/db/extension/topicprefixes",
-            "filename": "version_check"
+            "filename": "version_check",
+            "ssl": true
         }
     }
 }

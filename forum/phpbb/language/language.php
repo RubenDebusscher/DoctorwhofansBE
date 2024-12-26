@@ -241,7 +241,7 @@ class language
 	{
 		$args = func_get_args();
 		$key = array_shift($args);
-
+		//var_dump($args);
 		return $this->lang_array($key, $args);
 	}
 

@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension - Jumpbox on Index
-* @copyright (c) 2020 - 2023 Kirk https://reyno41.bplaced.net/phpbb
+* @copyright (c) 2020 - 2024 Kirk https://reyno41.bplaced.net/phpbb
 * @license GNU General Public License, version 2 (GPL-2.0-only)
 *
 */
@@ -33,15 +33,16 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, [
-	// Page titel
+	// Jumpbox Page titel
 	'JUMPBOXINDEX'						=> 'Jumpbox on Index',
 	'JUMPBOXINDEX_EXPLAIN'				=> 'Hier können diverse Einstellungen (z. B. die Position der Jumpbox) vorgenommen werden.',
 
 	// Jumpbox Toggle Activated
 	'JUMPBOX_TOGGLE_ACTIVATE'			=> 'Toggle Switch aktivieren',
 	'JUMPBOX_TOGGLE_ACTIVATE_EXPLAIN'	=> 'Wenn aktiviert, werden die Radio Buttons Ja/Nein durch ein Toggle Switch ersetzt.',
+	'JUMPBOX_TOGGLECTRL_ACTIVATED'		=> 'Toggle Control ist aktiviert, dieser Schalter hat aktuell keine Bedeutung!',
 
-	// Jumpbox design
+	// Jumpbox default
 	'JUMPBOX_DEFAULT'					=> 'Anzeige der Jumpbox im Standard-Design',
 	'JUMPBOX_DEFAULT_EXPLAIN'			=> 'Wenn deaktiviert, wird die Jumpbox in Form eines Font Awesome Symbols angezeigt.',
 
@@ -50,14 +51,12 @@ $lang = array_merge($lang, [
 	'JUMPBOX_UCP_EXPLAIN'				=> 'Wenn aktiviert, wird die Jumpbox zusätzlich im Persönlichen Bereich angezeigt.',
 
 	// Jumpbox left right
-	'JUMPBOX_LEFT_RIGHT'				=> 'Anzeige der Jumpbox Rechts',
-	'JUMPBOX_LEFT_RIGHT_EXPLAIN'		=> 'Hier kannst du einstellen auf welcher Seite die Jumpbox angezeigt werden soll.',
+	'JUMPBOX_LEFT_RIGHT'				=> 'Anzeige der Jumpbox Links oder Rechts',
+	'JUMPBOX_LEFT_RIGHT_EXPLAIN'		=> 'Wenn aktiviert, wird die Jumpbox auf der rechten Seite angezeigt.',
 
 	// Jumpbox position
-	'JUMPBOXINDEX_POSITION'				=> 'Position der Jumpbox in der Foren-Übersicht',
-	'JUMPBOXINDEX_POSITION_EXPLAIN'		=> 'Hier kann eingestellt werden an welcher Position die Jumpbox in der Foren-Übersicht angezeigt werden soll.<br>Die Auswahl der Positionen <strong>"In der oberen Navbar"</strong> oder <strong>"In der unteren Navbar"</strong> verwendet <strong>ausschließlich</strong> das Font Awesome-Symbol.',
 	'JUMPBOX_POSITION'					=> 'Position der Jumpbox',
-	'JUMPBOX_POSITION_EXPLAIN'			=> 'Hier kann eingestellt werden an welcher Position die Jumpbox angezeigt werden soll.<br>Die Auswahl der Positionen <strong>"In der oberen Navbar"</strong> oder <strong>"In der unteren Navbar"</strong> verwendet <strong>ausschließlich</strong> das Font Awesome-Symbol.',
+	'JUMPBOX_POSITION_EXPLAIN'			=> 'Hier kann eingestellt werden an welcher Position die Jumpbox angezeigt werden soll.',
 	'JUMPBOX_NAVBAR_TOP'				=> 'In der oberen Navbar',
 	'JUMPBOX_FORUMLIST_BEFORE'			=> 'Oberhalb der Forumlist',
 	'JUMPBOX_STATISTICS_AFTER'			=> 'Unterhalb der Statistik',
@@ -70,5 +69,5 @@ $lang = array_merge($lang, [
 	// Notes
 	'JUMPBOX_DISPLAY_DEACTIVATED'		=> 'Die Einstellung <strong>"Anzeige der Jumpbox"</strong> ist unter <a href="%1$s">Serverlast</a> deaktiviert!',
 	'JUMPBOX_SETTINGS_UPDATED'			=> '%1$s%2$s %3$s',
-	'JUMPBOXINDEX_VERSION_COPY'			=> 'phpBB Extension - %1$s- Version %2$s - Powered by <a href="https://reyno41.bplaced.net/phpbb">Kirk</a>',
+	'JUMPBOXINDEX_VERSION_COPY'			=> 'phpBB Extension - %1$s- Version %2$s - &copy; <a href="https://reyno41.bplaced.net/phpbb">Kirk</a>',
 ]);

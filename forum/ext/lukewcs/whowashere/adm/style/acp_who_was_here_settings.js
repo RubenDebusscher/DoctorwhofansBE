@@ -15,7 +15,7 @@
 
 class LukeWCSphpBBConfirmBox {
 /*
-* phpBB ConfirmBox class for checkboxes and yes/no radio buttons - v1.4.2
+* phpBB ConfirmBox class for checkboxes and yes/no radio buttons - v1.4.3
 * @copyright (c) 2023, LukeWCS, https://www.wcsaga.org
 * @license GNU General Public License, version 2 (GPL-2.0-only)
 */
@@ -47,15 +47,15 @@ class LukeWCSphpBBConfirmBox {
 		const elementName		= e.target.name.replace(/_confirm_.*/, '');
 		const $elementObject	= $('input[name="' + elementName + '"]');
 		const $confirmBoxObject	= $('div[id="' + elementName + '_confirmbox"]');
+		const elementType		= $elementObject.attr('type');
 
 		if (e.target.name.endsWith('_confirm_no')) {
-			if ($elementObject.attr('type') == 'checkbox') {
+			if (elementType == 'checkbox') {
 				$elementObject.prop('checked', $confirmBoxObject.attr('data-default'));
-			} else if ($elementObject.attr('type') == 'radio') {
+			} else if (elementType == 'radio') {
 				$elementObject.filter('[value="' + ($confirmBoxObject.attr('data-default') ? '1' : '0') + '"]').prop('checked', true);
 			}
 		}
-
 		this.#changeBoxState($elementObject, $confirmBoxObject, null);
 	}
 
@@ -75,11 +75,6 @@ class LukeWCSphpBBConfirmBox {
 }
 
 const constants = Object.freeze({
-	PermNothing		: 0,
-	PermStats		: 1,
-	PermUsers		: 2,
-	PermStatsUsers	: 3,
-
 	BotsDisabled	: 0,
 	BotsWithUsers	: 1,
 	BotsOwnLine		: 2,
@@ -114,19 +109,11 @@ function setState() {
 	dimOptionGroup('lfwwh_use_permissions',
 		$('[name="lfwwh_admin_mode"]').prop('checked')
 	);
-	dimOptionGroup('lfwwh_perm_for_guests',
+	$('.simple_permissions').css('opacity',
 		$('[name="lfwwh_admin_mode"]').prop('checked')
 		|| $('[name="lfwwh_use_permissions"]').prop('checked')
+		? c.OpacityDisabled : c.OpacityEnabled
 	);
-	dimOptionGroup('lfwwh_perm_for_bots',
-		$('[name="lfwwh_admin_mode"]').prop('checked')
-		|| $('[name="lfwwh_use_permissions"]').prop('checked')
-	);
-	dimOptionGroup('lfwwh_perm_bots_only_admin',
-		$('[name="lfwwh_admin_mode"]').prop('checked')
-		|| $('[name="lfwwh_disp_bots"]').prop('value') == c.BotsDisabled
-	);
-
 	// LFWWH_SECTION_DISP_1
 	dimOptionGroup('lfwwh_disp_time_bots',
 		$('[name="lfwwh_disp_bots"]').prop('value') == c.BotsDisabled
@@ -138,7 +125,6 @@ function setState() {
 		)
 		&& $('[name="lfwwh_disp_time_users"]').prop('value') == c.DispDisabled
 	);
-
 	// LFWWH_SECTION_DISP_2
 	dimOptionGroup('lfwwh_period_of_time_h',
 		$('[name="lfwwh_time_mode"]').prop('value') != c.TimeModePeriod
@@ -149,14 +135,12 @@ function setState() {
 	dimOptionGroup('lfwwh_template_pos',
 		$('[name="lfwwh_template_pos_all"]').prop('checked')
 	);
-
 	// LFWWH_SECTION_OTHERS
 	dimOptionGroup('lfwwh_create_hidden_info',
 		$('[name="lfwwh_disp_time_users"]').prop('value') != c.DispAsTooltip
 		&& $('[name="lfwwh_disp_time_bots"]').prop('value') != c.DispAsTooltip
 		&& $('[name="lfwwh_disp_ip"]').prop('value') != c.DispAsTooltip
 	);
-
 	// LFWWH_SECTION_LOAD_SETTINGS
 	dimOptionGroup('lfwwh_use_online_time',
 		!$('[name="lfwwh_use_cache"]').prop('checked')
@@ -179,9 +163,15 @@ function setDefaults() {
 	// LFWWH_SECTION_PERMISSIONS
 	setSwitch('input[name="lfwwh_admin_mode"]',							false);
 	setSwitch('input[name="lfwwh_use_permissions"]',					false);
-	$(        'select[name="lfwwh_perm_for_guests"]').prop('value',		c.PermStats);
-	$(        'select[name="lfwwh_perm_for_bots"]').prop('value',		c.PermNothing);
-	setSwitch('input[name="lfwwh_perm_bots_only_admin"]',				false);
+	setSwitch('input[name="lfwwh_perm_for_guests_stats"]',				true);
+	setSwitch('input[name="lfwwh_perm_for_guests_record"]',				true);
+	setSwitch('input[name="lfwwh_perm_for_guests_users"]',				false);
+	setSwitch('input[name="lfwwh_perm_for_guests_bots"]',				false);
+	setSwitch('input[name="lfwwh_perm_for_bots_stats"]',				false);
+	setSwitch('input[name="lfwwh_perm_for_bots_record"]',				false);
+	setSwitch('input[name="lfwwh_perm_for_bots_users"]',				false);
+	setSwitch('input[name="lfwwh_perm_for_bots_bots"]',					false);
+
 	// LFWWH_SECTION_DISP_1
 	setSwitch('input[name="lfwwh_disp_reg_users"]',						true);
 	setSwitch('input[name="lfwwh_disp_hidden"]',						true);
@@ -191,6 +181,7 @@ function setDefaults() {
 	$(        'select[name="lfwwh_disp_time_bots"]').prop('value',		c.DispBehindName);
 	$(        'input[name="lfwwh_disp_time_format"]').prop('value',		'$1 G:i');
 	$(        'select[name="lfwwh_disp_ip"]').prop('value',				c.DispBehindName);
+
 	// LFWWH_SECTION_DISP_2
 	$(        'select[name="lfwwh_time_mode"]').prop('value',			c.TimeModeToday);
 	$(        'input[name="lfwwh_period_of_time_h"]').prop('value',		24);
@@ -200,11 +191,13 @@ function setDefaults() {
 	setSwitch('input[name="lfwwh_record"]',								true);
 	$(        'input[name="lfwwh_record_time_format"]').prop('value',	'D j. M Y');
 	$(        'select[name="lfwwh_template_pos"]').prop('value',		c.PosTop);
+
 	// LFWWH_SECTION_OTHERS
 	setSwitch('input[name="lfwwh_api_mode"]',							false);
 	setSwitch('input[name="lfwwh_clear_up"]',							true);
 	setSwitch('input[name="lfwwh_template_pos_all"]',					false);
 	setSwitch('input[name="lfwwh_create_hidden_info"]',					true);
+
 	// LFWWH_SECTION_LOAD_SETTINGS
 	setSwitch('input[name="lfwwh_use_cache"]',							true);
 	setSwitch('input[name="lfwwh_use_online_time"]',					true);
@@ -214,11 +207,12 @@ function setDefaults() {
 };
 
 function setSwitch(selector, checked) {
-	const $elementObject = $(selector);
+	const $elementObject	= $(selector);
+	const elementType		= $elementObject.attr('type');
 
-	if ($elementObject.attr('type') == 'checkbox') {
+	if (elementType == 'checkbox') {
 		$elementObject.prop('checked', checked);
-	} else if ($elementObject.attr('type') == 'radio') {
+	} else if (elementType == 'radio') {
 		$elementObject.filter('[value="' + (checked ? 1 : 0) + '"]').prop('checked', true);
 	}
 };
@@ -229,7 +223,7 @@ function customFormReset() {
 	});
 };
 
-$(window).ready(function() {
+$(function() {
 	$('input[name="lfwwh_admin_mode"]'			).on('change'	, setState);
 	$('input[name="lfwwh_use_permissions"]'		).on('change'	, setState);
 	$('select[name="lfwwh_disp_bots"]'			).on('change'	, setState);

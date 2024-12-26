@@ -75,7 +75,7 @@ class listener implements EventSubscriberInterface
 	 * @param \phpbb\language\language             $language              Language object
 	 * @param string                               $phpbb_root_path       phpbb_root_path
 	 * @param string                               $php_ext               phpEx
-	 * @param rxu\PostsMerging\core\helper         $helper                The extension helper object
+	 * @param rxu\thanksforposts\core\helper       $helper                The extension helper object
 	 * @access public
 	 */
 	public function __construct(
@@ -131,7 +131,7 @@ class listener implements EventSubscriberInterface
 	public function get_thanks_list($event)
 	{
 		// Generate thankslist if required
-		$thanks_list = '';
+		$thanks_list = [];
 		$ex_fid_ary = array_keys($this->auth->acl_getf('!f_read', true));
 		$ex_fid_ary = (count($ex_fid_ary)) ? $ex_fid_ary : [0];
 		if ($this->config['thanks_top_number'])
@@ -139,10 +139,11 @@ class listener implements EventSubscriberInterface
 			$thanks_list = $this->helper->get_toplist_index($ex_fid_ary);
 		}
 		$this->template->assign_vars([
-			'THANKS_LIST'		=> ($thanks_list != '') ? $thanks_list : false,
-			'S_THANKS_LIST'		=> $this->config['thanks_top_number'] && $thanks_list != '',
+			'S_THANKS_LIST'		=> $this->config['thanks_top_number'] && !empty($thanks_list),
 			'L_TOP_THANKS_LIST'	=> $this->config['thanks_top_number'] ? $this->language->lang('REPUT_TOPLIST', (int) $this->config['thanks_top_number']) : false,
 		]);
+
+		$this->template->assign_block_vars_array('toplist', $thanks_list);
 	}
 
 	public function memberlist_viewprofile($event)
@@ -198,12 +199,12 @@ class listener implements EventSubscriberInterface
 
 		if ($this->request->is_set('thanks') && !$this->request->is_set('rthanks'))
 		{
-			$this->helper->insert_thanks($this->request->variable('thanks', 0), $this->user->data['user_id'], $forum_id);
+			$this->helper->insert_thanks($this->request->variable('thanks', 0), $this->user->data['user_id'], $forum_id, $post_list);
 		}
 
 		if ($this->request->is_set('rthanks') && !$this->request->is_set('thanks'))
 		{
-			$this->helper->delete_thanks($this->request->variable('rthanks', 0), $forum_id);
+			$this->helper->delete_thanks($this->request->variable('rthanks', 0), $forum_id, $post_list);
 		}
 
 		if ($this->request->is_set('list_thanks'))
@@ -263,8 +264,8 @@ class listener implements EventSubscriberInterface
 
 	public function add_header_quicklinks($event)
 	{
-		$u_thankslist = $this->controller_helper->route('gfksx_thanksforposts_thankslist_controller', ['tslash' => '']);
-		$u_toplist = $this->controller_helper->route('gfksx_thanksforposts_toplist_controller', ['tslash' => '']);
+		$u_thankslist = $this->controller_helper->route('gfksx_thanksforposts_thankslist_controller');
+		$u_toplist = $this->controller_helper->route('gfksx_thanksforposts_toplist_controller');
 		$this->template->assign_vars([
 			'U_THANKS_LIST'			=> $u_thankslist,
 			'U_REPUT_TOPLIST'		=> $u_toplist,
@@ -272,6 +273,7 @@ class listener implements EventSubscriberInterface
 			'S_DISPLAY_TOPLIST'		=> $this->auth->acl_get('u_viewtoplist') && ($this->config['thanks_post_reput_view'] || $this->config['thanks_topic_reput_view'] || $this->config['thanks_forum_reput_view']),
 			'MINI_THANKS_IMG'		=> $this->user->img('icon_mini_thanks', $this->language->lang('GRATITUDES')),
 			'MINI_TOPLIST_IMG'		=> $this->user->img('icon_mini_toplist', $this->language->lang('TOPLIST')),
+			'S_AJAX_ENABLED'		=> (bool) $this->config['thanks_ajax_enabled'],
 		]);
 	}
 

@@ -7,7 +7,7 @@
 	box-shadow: 2px 3px 5px #BB9F6A;
 }
 
-.jumpbox-notebox p {
+.jumpbox-notebox {
 	font-size: 1em;
 	font-weight: bold;
 }
@@ -20,13 +20,18 @@
 	text-decoration: underline;
 }
 
-h1.jumpbox-page-title {
-	font-size: 1.4em;
-}
-
 fieldset {
 	border-radius: 10px;
 	box-shadow: 2px 3px 0 #B9B6B1;
+}
+
+.jumpbox-toggle-explain-note {
+	color: #BC2A4D;
+}
+
+.jumpbox-togglectrl-activated,
+.jumpbox-display-deactivated {
+	opacity: .35;
 }
 
 legend {
@@ -43,24 +48,30 @@ label {
 	cursor: inherit;
 }
 
-dd label input {
+dd label input[type="radio"] {
 	margin: 2px 0 0 0;
 }
 
+select[name="jumpbox_position"] {
+	border-radius: 3px;
+}
+
+@-moz-document url-prefix() {
+	select[name="jumpbox_position"] {
+		padding-left: 4px;
+	}
+}
+
+input[type="submit"]:disabled,
 input[type="submit"]:disabled {
 	opacity: .35;
 	cursor: url("./images/not_allowed.png"), auto;
 }
 
-.copy-jumpboxindex {
+.jumpbox-version-copy {
 	margin-top: 1em;
 	font-size: 1em;
 	text-align: center;
-}
-
-select[name="jumpbox_position"] {
-	padding-left: 4px;
-	border-radius: 3px;
 }
 
 #jumpbox_font_icon a {
@@ -69,6 +80,7 @@ select[name="jumpbox_position"] {
 }
 
 #fa-icon-preview {
+	display: inline-block;
 	font-size: 14px;
 	vertical-align: middle;
 	margin-left: 4px;

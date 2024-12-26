@@ -484,16 +484,16 @@ class main_listener implements EventSubscriberInterface
 			return;
 		}
 
-		$dtst_location			= $event['data']['dtst_location'];
-		$dtst_loc_custom		= $event['data']['dtst_loc_custom'];
-		$dtst_host 				= $event['data']['dtst_host'];
-		$dtst_date 				= $event['data']['dtst_date'];
-		$dtst_date_unix 		= $event['data']['dtst_date_unix'];
-		$dtst_event_type		= $event['data']['dtst_event_type'];
-		$dtst_age_min			= $event['data']['dtst_age_min'];
-		$dtst_age_max			= $event['data']['dtst_age_max'];
-		$dtst_participants		= $event['data']['dtst_participants'];
-		$dtst_participants_unl	= $event['data']['dtst_participants_unl'];
+		$dtst_location			= isset($event['data']['dtst_location']) ? $event['data']['dtst_location']: 'Default';
+		$dtst_loc_custom		= isset($event['data']['dtst_loc_custom']) ? $event['data']['dtst_loc_custom']: 'Default';
+		$dtst_host 				= isset($event['data']['dtst_host']) ? $event['data']['dtst_host']: 'Default';
+		$dtst_date 				= isset($event['data']['dtst_date']) ? $event['data']['dtst_date']: 'Default';
+		$dtst_date_unix 		= isset($event['data']['dtst_date_unix']) ? $event['data']['dtst_date_unix']: 'Default';
+		$dtst_event_type		= isset($event['data']['dtst_event_type']) ? $event['data']['dtst_event_type']: 'Default';
+		$dtst_age_min			= isset($event['data']['dtst_age_min']) ? $event['data']['dtst_age_min']: 'Default';
+		$dtst_age_max			= isset($event['data']['dtst_age_max']) ? $event['data']['dtst_age_max']: 'Default';
+		$dtst_participants		= isset($event['data']['dtst_participants']) ? $event['data']['dtst_participants']: 'Default';
+		$dtst_participants_unl	= isset($event['data']['dtst_participants_unl']) ? $event['data']['dtst_participants_unl']: 'Default';
 
 		$data_sql = $event['sql_data'];
 
