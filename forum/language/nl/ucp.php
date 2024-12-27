@@ -38,22 +38,22 @@ if (empty($lang) || !is_array($lang))
 
 // Privacy policy and T&C
 $lang = array_merge($lang, array(
-	'TERMS_OF_USE_CONTENT'	=> 'Door het bezoeken van “%1$s” (hierna genoemd “wij”, “ons”, “onze”, “%1$s”, “%2$s”), ga je automatisch akkoord met de voorwaarden. Als je niet akkoord gaat met deze voorwaarden, bezoek of gebruik “%1$s” dan niet langer. We hebben het recht om de voorwaarden op ieder moment te wijzigen en zullen ons best doen om je hiervan tijdig op de hoogte te brengen, het is echter aan te raden om zelf de voorwaarden regelmatig te controleren op wijzigingen. Ga je niet akkoord met deze wijzigingen, maak dan niet langer gebruik van “%1$s”. Blijf je gebruik maken van “%1$s”, dan ga je automatisch akkoord met de wijzigingen en of toevoegingen.<br />
-	<br />
-	Dit forum draait op phpBB. phpBB is een bulletinboardoplossing die is uitgebracht onder de “<a href="http://opensource.org/licenses/gpl-2.0.php">GNU General Public License v2</a>” (hierna “GPL”) en kan gedownload worden via <a href="https://www.phpbb.com/">www.phpbb.com</a> en via de Nederlandstalige website <a href="http://www.phpbb.nl">www.phpbb.nl</a>. De phpBB-software maakt internetgebaseerde discussies mogelijk. phpBB Limited is niet verantwoordelijk voor wat wordt toegestaan of juist geweigerd als toelaatbare inhoud en/of gedrag. Meer informatie over phpBB kun je vinden op <a href="https://www.phpbb.com/">https://www.phpbb.com/</a> of de Nederlandstalige website <a href="https://www.phpbb.nl">www.phpbb.nl</a>.<br />
-	<br />
+	'TERMS_OF_USE_CONTENT'	=> 'Door het bezoeken van “%1$s” (hierna genoemd “wij”, “ons”, “onze”, “%1$s”, “%2$s”), ga je automatisch akkoord met de voorwaarden. Als je niet akkoord gaat met deze voorwaarden, bezoek of gebruik “%1$s” dan niet langer. We hebben het recht om de voorwaarden op ieder moment te wijzigen en zullen ons best doen om je hiervan tijdig op de hoogte te brengen, het is echter aan te raden om zelf de voorwaarden regelmatig te controleren op wijzigingen. Ga je niet akkoord met deze wijzigingen, maak dan niet langer gebruik van “%1$s”. Blijf je gebruik maken van “%1$s”, dan ga je automatisch akkoord met de wijzigingen en of toevoegingen.
+	<br><br>
+	Dit forum draait op phpBB. phpBB is een bulletinboardoplossing die is uitgebracht onder de “<a href="http://opensource.org/licenses/gpl-2.0.php">GNU General Public License v2</a>” (hierna “GPL”) en kan gedownload worden via <a href="https://www.phpbb.com/">www.phpbb.com</a> en via de Nederlandstalige website <a href="http://www.phpbb.nl">www.phpbb.nl</a>. De phpBB-software maakt internetgebaseerde discussies mogelijk. phpBB Limited is niet verantwoordelijk voor wat wordt toegestaan of juist geweigerd als toelaatbare inhoud en/of gedrag. Meer informatie over phpBB kun je vinden op <a href="https://www.phpbb.com/">https://www.phpbb.com/</a> of de Nederlandstalige website <a href="https://www.phpbb.nl">www.phpbb.nl</a>.
+	<br><br>
 	Je verklaart geen berichten te plaatsen die kwetsend, obsceen, vulgair, lasterlijk, haatdragend, dreigend, seksueel georiënteerd of enig ander materiaal bevat die de wetten van je eigen land, het land waar “%1$s” is gehost of internationale wetgeving kunnen schenden. Het plaatsen van dergelijke berichten kan ertoe leiden dat je met onmiddellijke ingang en permanent wordt verbannen van dit forum. Tevens kan je provider worden ingelicht. De IP-adressen van alle berichten worden opgeslagen om deze voorwaarden te kunnen waarborgen. Je gaat er mee akkoord dat “%1$s” het recht heeft om ieder onderwerp te verwijderen, te wijzigen, te sluiten of te verplaatsen wanneer zij dit nodig achten. Als gebruiker ga je ermee akkoord, dat de informatie die je bij ons invoert wordt opgeslagen in een database. Hoewel deze informatie niet aan een derde partij zal worden verstrekt zónder je toestemming, kan “%1$s” nóch phpBB verantwoordelijk worden gehouden voor een hackpoging die ertoe kan leiden dat de gegevens vrijkomen.
 	',
 
-	'PRIVACY_POLICY'		=> 'Dit beleid legt in detail uit hoe “%1$s” samen met zijn verbonden diensten en bedrijven (hierna “wij”, “ons”, “onze”, “%1$s”, “%2$s”) en phpBB (hierna “zij”, “hun”, “zijn”, “phpBB-software”, “www.phpbb.com”, “phpBB Limited”, “phpBB-teams”) de informatie die wordt verzameld gedurende een bezoek aan dit forum, wordt gebruikt (hierna “je informatie”).<br />
-	<br />
-	Je informatie wordt op twee manieren verzameld. De eerste manier is door het gebruik van zogenaamde cookies. De phpBB-software maakt meerdere cookies aan (kleine tekstbestanden die naar de tijdelijke internetbestanden van je computer worden gedownload). De eerste twee cookies bevatten een indentificatienummer (hierna “user-id”) en een anoniem sessienummer (hierna “session-id”). Deze twee nummers worden automatisch door de phpBB-software aan je toegewezen. Een derde cookie zal worden aangemaakt wanneer je onderwerpen hebt gelezen op “%1$s”. Deze cookie wordt gebruikt om op te slaan welke onderwerpen gelezen zijn en verbetert daarmee je gebruikerservaring.<br />
-	<br />
-	Wij kunnen ook buiten de phpBB-software cookies aanmaken wanneer je “%1$s” bezoekt, hoewel dit document daarop niet van toepassing is. Deze tekst heeft betrekking op de pagina’s die worden aangemaakt door de phpBB-software. De tweede manier is waarin wij je informatie verzamelen door wat je aan ons verstuurt. Dit is onder andere het plaatsen als een anonieme gebruiker (hierna “anonieme berichten”), registreren op “%1$s” (hierna “je account”) en berichten die verstuurd zijn na je registratie en wanneer je bent aangemeld (hierna “je berichten”).<br />
-	<br />
-	Je account bevat minstens een unieke identificeerbare naam (hierna “je gebruikersnaam”), een persoonlijk wachtwoord om te kunnen aanmelden op je account (hierna “je wachtwoord”) en een persoonlijk, geldig e-mailadres (hierna “je e-mail”). Je informatie voor je account op “%1$s” is beveiligd door de privacywetgeving die geldt in het land waar dit forum gehost wordt. Alle informatie naast je gebruikersnaam, je wachtwoord en je e-mailadres die vereist is bij het registratieproces op “%1$s” is verplicht of optioneel, dat is een keuze van “%1$s”. Je hebt altijd zelf de mogelijkheid te bepalen welke informatie van je account openbaar wordt weergegeven. Verder heb je ook de mogelijkheid om in te stellen of je de e-mails die automatisch worden gemaakt door de phpBB-software wil ontvangen.<br />
-	<br />
-	Je wachtwoord is versleuteld (en kan niet worden ontsleuteld) waardoor het op een veilige manier is opgeslagen. Toch is het niet aan te raden dat je hetzelfde wachtwoord gebruikt op meerdere websites. Je wachtwoord is het middel waarmee je op je account op “%1$s” kan aanmelden, bewaar het dus veilig en geef het nooit aan iemand van %1$s”, phpBB of een andere derde partij. Als je het wachtwoord van je account bent vergeten, kun je de “Ik ben mijn wachtwoord vergeten”-optie gebruiken bij het aanmeldvenster. Dit proces vereist dat je gebruikersnaam en e-mailadres opgeeft van je gebruikersaccount, waarna de phpBB-software een nieuw wachtwoord zal genereren en zal opsturen naar het e-mailadres, zodat je je opnieuw kunt aanmelden.<br />
+	'PRIVACY_POLICY'		=> 'Dit beleid legt in detail uit hoe “%1$s” samen met zijn verbonden diensten en bedrijven (hierna “wij”, “ons”, “onze”, “%1$s”, “%2$s”) en phpBB (hierna “zij”, “hun”, “zijn”, “phpBB-software”, “www.phpbb.com”, “phpBB Limited”, “phpBB-teams”) de informatie die wordt verzameld gedurende een bezoek aan dit forum, wordt gebruikt (hierna “je informatie”).
+	<br><br>
+	Je informatie wordt op twee manieren verzameld. De eerste manier is door het gebruik van zogenaamde cookies. De phpBB-software maakt meerdere cookies aan (kleine tekstbestanden die naar de tijdelijke internetbestanden van je computer worden gedownload). De eerste twee cookies bevatten een indentificatienummer (hierna “user-id”) en een anoniem sessienummer (hierna “session-id”). Deze twee nummers worden automatisch door de phpBB-software aan je toegewezen. Een derde cookie zal worden aangemaakt wanneer je onderwerpen hebt gelezen op “%1$s”. Deze cookie wordt gebruikt om op te slaan welke onderwerpen gelezen zijn en verbetert daarmee je gebruikerservaring.
+	<br><br>
+	Wij kunnen ook buiten de phpBB-software cookies aanmaken wanneer je “%1$s” bezoekt, hoewel dit document daarop niet van toepassing is. Deze tekst heeft betrekking op de pagina’s die worden aangemaakt door de phpBB-software. De tweede manier is waarin wij je informatie verzamelen door wat je aan ons verstuurt. Dit is onder andere het plaatsen als een anonieme gebruiker (hierna “anonieme berichten”), registreren op “%1$s” (hierna “je account”) en berichten die verstuurd zijn na je registratie en wanneer je bent aangemeld (hierna “je berichten”).
+	<br><br>
+	Je account bevat minstens een unieke identificeerbare naam (hierna “je gebruikersnaam”), een persoonlijk wachtwoord om te kunnen aanmelden op je account (hierna “je wachtwoord”) en een persoonlijk, geldig e-mailadres (hierna “je e-mail”). Je informatie voor je account op “%1$s” is beveiligd door de privacywetgeving die geldt in het land waar dit forum gehost wordt. Alle informatie naast je gebruikersnaam, je wachtwoord en je e-mailadres die vereist is bij het registratieproces op “%1$s” is verplicht of optioneel, dat is een keuze van “%1$s”. Je hebt altijd zelf de mogelijkheid te bepalen welke informatie van je account openbaar wordt weergegeven. Verder heb je ook de mogelijkheid om in te stellen of je de e-mails die automatisch worden gemaakt door de phpBB-software wil ontvangen.
+	<br><br>
+	Je wachtwoord is versleuteld (en kan niet worden ontsleuteld) waardoor het op een veilige manier is opgeslagen. Toch is het niet aan te raden dat je hetzelfde wachtwoord gebruikt op meerdere websites. Je wachtwoord is het middel waarmee je op je account op “%1$s” kan aanmelden, bewaar het dus veilig en geef het nooit aan iemand van %1$s”, phpBB of een andere derde partij. Als je het wachtwoord van je account bent vergeten, kun je de “Ik ben mijn wachtwoord vergeten”-optie gebruiken bij het aanmeldvenster. Dit proces vereist dat je gebruikersnaam en e-mailadres opgeeft van je gebruikersaccount, waarna de phpBB-software een nieuw wachtwoord zal genereren en zal opsturen naar het e-mailadres, zodat je je opnieuw kunt aanmelden.
 	',
 ));
 
@@ -62,7 +62,7 @@ $lang = array_merge($lang, array(
 	'ACCOUNT_ACTIVE'				=> 'Je account is nu geactiveerd. Bedankt voor het registreren.',
 	'ACCOUNT_ACTIVE_ADMIN'			=> 'Het account is nu geactiveerd.',
 	'ACCOUNT_ACTIVE_PROFILE'		=> 'Je account is met succes opnieuw geactiveerd.',
-	'ACCOUNT_ADDED'					=> 'Bedankt voor het registreren, je account is aangemaakt. Je kunt je nu aanmelden met je gebruikersnaam en wachtwoord.',
+	'ACCOUNT_ADDED'					=> 'Bedankt voor het registreren, je account is aangemaakt.',
 	'ACCOUNT_COPPA'					=> 'Je account is aangemaakt, maar moet nog goedgekeurd worden. Controleer je e-mail voor meer informatie.',
 	'ACCOUNT_EMAIL_CHANGED'			=> 'Je account is bijgewerkt. Dit forum vereist echter heractivatie van je account bij verandering van een e-mailadres. Er is een activatiesleutel verstuurd naar het nieuwe e-mailadres dat je hebt opgegeven. Controleer je e-mail voor meer informatie.',
 	'ACCOUNT_EMAIL_CHANGED_ADMIN'	=> 'Je account is bijgewerkt. Dit forum vereist echter heractivatie van je account account door een beheerder bij verandering van een e-mailadres. Er is een e-mail verstuurd naar de beheerders en je zal geïnformeerd worden wanneer je account is geheractiveerd.',
@@ -88,6 +88,7 @@ $lang = array_merge($lang, array(
 	'ALREADY_ACTIVATED'				=> 'Je hebt je account al geactiveerd.',
 	'ATTACHMENTS_EXPLAIN'			=> 'Dit is een lijst van bijlagen die je geplaatst hebt in berichten op dit forum.',
 	'ATTACHMENTS_DELETED'			=> 'Bijlagen succesvol verwijderd.',
+	'ATTACHMENT_LOCKED'				=> 'Dit onderwerp is gesloten, je kan daarom deze bijlage niet verwijderen.',
 	'ATTACHMENT_DELETED'			=> 'Bijlage succesvol verwijderd.',
 	'AUTOLOGIN_SESSION_KEYS_DELETED'=> 'De geselecteerde "Onthoud mij"-aanmeldsleutels zijn succesvol verwijderd.',
 	'AVATAR_CATEGORY'				=> 'Categorie',
@@ -115,7 +116,7 @@ $lang = array_merge($lang, array(
 	'BIRTHDAY'					=> 'Verjaardag',
 	'BIRTHDAY_EXPLAIN'			=> 'Het instellen van een jaartal zal je leeftijd weergeven als je jarig bent.',
 	'BOARD_DATE_FORMAT'			=> 'Mijn datumnotatie',
-	'BOARD_DATE_FORMAT_EXPLAIN'	=> 'De syntaxis die gebruikt wordt is identiek aan de <a href="http://www.php.net/date">date()</a>-functie van PHP.',
+	'BOARD_DATE_FORMAT_EXPLAIN'	=> 'De syntaxis die gebruikt wordt is identiek aan de <a href="https://secure.php.net/manual/function.date.php">date()</a>-functie van PHP.',
 	'BOARD_LANGUAGE'			=> 'Mijn taal',
 	'BOARD_STYLE'				=> 'Mijn forumstijl',
 	'BOARD_TIMEZONE'			=> 'Mijn tijdzone',
@@ -141,7 +142,7 @@ $lang = array_merge($lang, array(
 
 	'CONFIRM_PASSWORD'			=> 'Bevestig wachtwoord',
 	'CONFIRM_PASSWORD_EXPLAIN'	=> 'Je hoeft alleen je wachtwoord te bevestigen als je deze hierboven hebt veranderd.',
-	'COPPA_BIRTHDAY'			=> 'Vertel ons wanneer je bent geboren om door te gaan met de registratieprocedure.',
+	'COPPA_BIRTHDAY'			=> 'Vertel ons waar je bent geboren om door te gaan met de registratieprocedure.',
 	'COPPA_COMPLIANCE'			=> 'COPPA-toestemming',
 	'COPPA_EXPLAIN'				=> 'Let op: met het versturen van dit formulier wordt je account aangemaakt. Dit account kan echter niet geactiveerd worden totdat een ouder of voogd je registratie goedkeurt. Je zult een kopie van de benodigde formulieren toegestuurd krijgen via e-mail met daarin de details waarheen je deze moet sturen.',
 	'CREATE_FOLDER'				=> 'Map toevoegen…',
@@ -178,7 +179,6 @@ $lang = array_merge($lang, array(
 	'DEMOTE_SELECTED'			=> 'Degradeer geselecteerde',
 	'DISABLE_CENSORS'			=> 'Woordcensuur inschakelen',
 	'DISPLAY_GALLERY'			=> 'Galerij weergeven',
-	'DOMAIN_NO_MX_RECORD_EMAIL'	=> 'Het ingevoerde e-maildomein heeft geen geldig MX-record.',
 	'DOWNLOADS'					=> 'Downloads',
 	'DRAFTS_DELETED'			=> 'Alle geselecteerde concepten zijn succesvol verwijderd.',
 	'DRAFTS_EXPLAIN'			=> 'Hier kun je je opgeslagen concepten bekijken, wijzigen en verwijderen.',
@@ -229,8 +229,8 @@ $lang = array_merge($lang, array(
 	'FOES_UPDATED'				=> 'Je vijandenlijst is succesvol bijgewerkt.',
 	'FOLDER_ADDED'				=> 'Map succesvol toegevoegd.',
 	'FOLDER_MESSAGE_STATUS'		=> array(
-		1	=> '%2$d van %1$s bericht opgeslagen',
-		2	=> '%2$d van %1$s berichten opgeslagen',
+		1	=> '%2$d van %1$s opgeslagen',
+		2	=> '%2$d van %1$s opgeslagen',
 	),
 	'FOLDER_NAME_EMPTY'			=> 'Je moet een naam invoeren voor deze map.',
 	'FOLDER_NAME_EXIST'			=> 'Map <strong>%s</strong> bestaat al.',
@@ -238,8 +238,8 @@ $lang = array_merge($lang, array(
 	'FOLDER_RENAMED'			=> 'Map succesvol hernoemd.',
 	'FOLDER_REMOVED'			=> 'Map succesvol verwijderd.',
 	'FOLDER_STATUS_MSG'			=> array(
-		1	=> '%2$d van de %1$s opgeslagen',
-		2	=> '%2$d van de %1$s opgeslagen',
+		1	=> 'Map is %3$d%% vol (%2$d van %1$s opgeslagen)',
+		2	=> 'Map is %3$d%% vol (%2$d van %1$s opgeslagen)',
 	),
 	'FORWARD_PM'				=> 'PB doorsturen',
 	'FORCE_PASSWORD_EXPLAIN'	=> 'Voordat je door kunt gaan met het bezoeken van het forum, moet je je wachtwoord veranderen.',
@@ -272,6 +272,7 @@ $lang = array_merge($lang, array(
 	'IMPORTANT_NEWS'			=> 'Belangrijke mededelingen',
 	'INVALID_USER_BIRTHDAY'		=> 'De ingevoerde verjaardag is geen geldige datum.',
 	'INVALID_CHARS_USERNAME'	=> 'De gebruikersnaam bevat verboden tekens.',
+	'INVALID_EMOJIS_USERNAME'	=> 'De gebruikersnaam bevat verboden tekens (Emoji).',
 	'INVALID_CHARS_NEW_PASSWORD'=> 'Het wachtwoord bevat niet de vereiste tekens.',
 	'ITEMS_REQUIRED'			=> 'De velden gemarkeerd met * zijn vereiste profielvelden en moeten ingevuld worden.',
 
@@ -302,6 +303,7 @@ $lang = array_merge($lang, array(
 	'MESSAGE_EDITED'				=> 'Bericht succesvol gewijzigd.',
 	'MESSAGE_HISTORY'				=> 'Berichtengeschiedenis',
 	'MESSAGE_REMOVED_FROM_OUTBOX'	=> 'Dit bericht is verwijderd door zijn auteur.',
+	'MESSAGE_REPORTED_MESSAGE'		=> 'Gemeld bericht',
 	'MESSAGE_SENT_ON'				=> 'op',
 	'MESSAGE_STORED'				=> 'Dit bericht is succesvol verstuurd.',
 	'MESSAGE_TO'					=> 'Aan',
@@ -334,12 +336,16 @@ $lang = array_merge($lang, array(
 	'NOTIFICATION_TYPE'									=> 'Notificatietype',
 	'NOTIFICATION_TYPE_BOOKMARK'						=> 'Iemand heeft gereageerd op een onderwerp dat je hebt gemarkeerd als favoriet',
 	'NOTIFICATION_TYPE_GROUP_REQUEST'					=> 'Iemand heeft lidmaatschap aangevraagd voor een groep die je leidt',
+	'NOTIFICATION_TYPE_FORUM'							=> 'Iemand reageert op een onderwerp in een forum waarop jij geabonneerd bent',
 	'NOTIFICATION_TYPE_IN_MODERATION_QUEUE'				=> 'Een bericht of onderwerp heeft goedkeuring nodig',
 	'NOTIFICATION_TYPE_MODERATION_QUEUE'				=> 'Je onderwerpen/berichten zijn goedgekeurd door een moderator',
 	'NOTIFICATION_TYPE_PM'								=> 'Iemand heeft een privébericht verzonden naar je',
 	'NOTIFICATION_TYPE_POST'							=> 'Iemand heeft gereageerd op een onderwerp waarop je bent geabonneerd',
 	'NOTIFICATION_TYPE_QUOTE'							=> 'Iemand heeft je geciteerd in een bericht',
 	'NOTIFICATION_TYPE_REPORT'							=> 'Iemand heeft een bericht gemeld',
+	'NOTIFICATION_TYPE_REPORT_CLOSED'					=> 'Jouw melding van een bericht gesloten is door een moderator',
+	'NOTIFICATION_TYPE_REPORT_PM'						=> 'Iemand een privébericht meldt',
+	'NOTIFICATION_TYPE_REPORT_PM_CLOSED'				=> 'Jouw melding van een privébericht gesloten is door een moderator',
 	'NOTIFICATION_TYPE_TOPIC'							=> 'Iemand heeft een onderwerp aangemaakt in een forum waarop je bent geabonneerd',
 	'NOTIFICATION_TYPE_ADMIN_ACTIVATE_USER'				=> 'Gebruiker moet geactiveerd worden',
 
@@ -399,6 +405,7 @@ $lang = array_merge($lang, array(
 	'NO_OLDER_PM'				=> 'Geen oudere berichten.',
 	'NO_PASSWORD_SUPPLIED'		=> 'Je kunt niet aanmelden zonder wachtwoord.',
 	'NO_RECIPIENT'				=> 'Geen ontvanger opgegeven.',
+	'NO_RESET_TOKEN'			=> 'Je hebt geen hersteltoken voor je wachtwoord opgegeven.',
 	'NO_RULES_DEFINED'			=> 'Geen regels opgegeven.',
 	'NO_SAVED_DRAFTS'			=> 'Geen concepten opgeslagen.',
 	'NO_TO_RECIPIENT'			=> 'Geen',
@@ -406,13 +413,14 @@ $lang = array_merge($lang, array(
 	'NO_WATCHED_SELECTED'		=> 'Je hebt geen geabonneerde onderwerpen of forums geselecteerd.',
 	'NO_WATCHED_TOPICS'			=> 'Je bent niet geabonneerd op een onderwerp.',
 
-	'PASS_TYPE_ALPHA_EXPLAIN'	=> 'Wachtwoord moet tussen %1$s en %2$s tekens lang zijn en moet gewone letters, hoofdletters en nummers bevatten.',
-	'PASS_TYPE_ANY_EXPLAIN'		=> 'Moet tussen %1$s en %2$s zijn.',
-	'PASS_TYPE_CASE_EXPLAIN'	=> 'Wachtwoord moet tussen de %1$s en %2$s tekens lang zijn en moet gewone en hoofdletters bevatten.',
-	'PASS_TYPE_SYMBOL_EXPLAIN'	=> 'Wachtwoord moet tussen de %1$s en %2$s tekens lang zijn en moet gewone letters, hoofdletters, nummers en symbolen bevatten.',
+	'PASS_TYPE_ALPHA_EXPLAIN'	=> 'Wachtwoord moet minimaal %1$s tekens lang zijn en moet gewone letters, hoofdletters en nummers bevatten.',
+	'PASS_TYPE_ANY_EXPLAIN'		=> 'Moet minimaal %1$s lang zijn.',
+	'PASS_TYPE_CASE_EXPLAIN'	=> 'Wachtwoord moet minimaal %1$s tekens lang zijn en moet gewone en hoofdletters bevatten.',
+	'PASS_TYPE_SYMBOL_EXPLAIN'	=> 'Wachtwoord moet minimaal %1$s tekens lang zijn en moet gewone letters, hoofdletters, nummers en symbolen bevatten.',
 	'PASSWORD'					=> 'Wachtwoord',
 	'PASSWORD_ACTIVATED'		=> 'Je nieuwe wachtwoord is geactiveerd.',
-	'PASSWORD_UPDATED_IF_EXISTED'	=> 'Indien je account bestaat is er nu een e-mail gestuurd met jouw nieuwe wachtwoord. Mocht je deze e-mail niet ontvangen dan kan het zijn dat je account verbannen is, nog niet geactiveerd is of dat de e-mail in je Ongewenste E-mail map terecht gekomen is. Ook kan het zo zijn dat het niet toegestaan is je wachtwoord te wijzigen. Neem in dit geval contact op met de beheerder(s).',
+	'PASSWORD_RESET'			=> 'Je wachtwoord is sucessvol gewijzigd.',
+	'PASSWORD_RESET_LINK_SENT'	=> 'Als dit account bekend bij ons is hebben wij een e-mail gestuurd met hierin een wachtwoord herstellink. Als je geen e-mail hebt ontvangen, kan het zijn dat je bent verbannen, je account niet geactiveerd is, je te vaak geprobeerd hebt je wachtwoord te herstellen, of je geen rechten hebt om je wachtwoord te veranderen. Controleer ook je spamfilter om te controleren dat de e-mail daar niet terecht is gekomen. Neem contact op met een beheerder wanneer deze redenen niet van toepassing zijn.',
 	'PERMISSIONS_RESTORED'		=> 'Originele permissies zijn succesvol hersteld.',
 	'PERMISSIONS_TRANSFERRED'	=> 'Rechten van <strong>%s</strong> succesvol overgebracht, je kunt nu het forum bezoeken met deze gebruikerspermissies.<br />Let op dat beheerderspermissies niet zijn overgebracht. Je kunt op ieder moment je permissies terugzetten.',
 	'PM_DISABLED'				=> 'Privéberichten zijn uitgeschakeld op dit forum.',
@@ -447,6 +455,7 @@ $lang = array_merge($lang, array(
 	'RECIPIENT'							=> 'Ontvanger',
 	'RECIPIENTS'						=> 'Ontvangers',
 	'REGISTRATION'						=> 'Registratie',
+	'OAUTH_REGISTRATION'				=> 'Registratie met gebruik van externe services',
 	'RELEASE_MESSAGES'					=> '%sMaak alle teruggehouden berichten vrij%s… ze zullen gesorteerd worden in de bijbehorende map als er genoeg ruimte beschikbaar is.',
 	'REMOVE_ADDRESS'					=> 'Verwijder adres',
 	'REMOVE_SELECTED_BOOKMARKS'			=> 'Verwijder geselecteerde favorieten',
@@ -459,6 +468,8 @@ $lang = array_merge($lang, array(
 	'REPLIED_MESSAGE'					=> 'Gereageerd op bericht',
 	'REPLY_TO_ALL'						=> 'Reageer op verzender en alle ontvangers.',
 	'REPORT_PM'							=> 'Meld privébericht',
+	'RESET_PASSWORD'					=> 'Herstel wachtwoord',
+	'RESET_TOKEN_EXPIRED_OR_INVALID'	=> 'De hersteltoken van je wachtwoord die je hebt opgegeven is niet geldig of verlopen.',
 	'RESIGN_SELECTED'					=> 'Zeg geselecteerde op',
 	'RETURN_FOLDER'						=> '%1$sTerug naar vorige map%2$s',
 	'RETURN_UCP'						=> '%sTerug naar gebruikerspaneel%s',
@@ -474,7 +485,6 @@ $lang = array_merge($lang, array(
 
 	'SAME_PASSWORD_ERROR'		=> 'Het nieuwe wachtwoord dat je hebt ingevoerd, is hetzelfde als je huidige wachtwoord.',
 	'SEARCH_YOUR_POSTS'			=> 'Je berichten weergeven',
-	'SEND_PASSWORD'				=> 'Wachtwoord versturen',
 	'SENT_AT'					=> 'Verstuurd op',			// Used before dates in private messages
 	'SHOW_EMAIL'				=> 'Gebruikers kunnen contact met mij opnemen via e-mail',
 	'SIGNATURE_EXPLAIN'			=> 'Dit is een blok tekst dat toegevoegd kan worden aan de berichten die je maakt. Er is limiet van %d tekens.',
@@ -559,7 +569,6 @@ $lang = array_merge($lang, array(
 
 	'UCP_PASSWORD_RESET_DISABLED'	=> 'De “wachtwoord herstel”-functionaliteit is uitgeschakeld. Als je hulp nodig hebt om toegang te krijgen tot je account, neem dan contact op met de %sbeheerder%s',
 	'UCP_REGISTER_DISABLE'			=> 'Het aanmaken van een nieuw account is momenteel niet mogelijk.',
-	'UCP_REMIND'					=> 'Verstuur wachtwoord',
 	'UCP_RESEND'					=> 'Verstuur activatie-e-mail',
 	'UCP_WELCOME'					=> 'Welkom in het gebruikerspaneel. Hier kun je je profiel, voorkeuren, geabonneerde fora en onderwerpen controleren, bekijken en bijwerken. Je kunt ook berichten naar andere gebruikers versturen (indien toegestaan). Zorg er voor dat je iedere aankondiging leest voordat je doorgaat.',
 	'UCP_ZEBRA'						=> 'Vrienden en vijanden',

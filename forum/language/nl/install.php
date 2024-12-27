@@ -70,7 +70,7 @@ $lang = array_merge($lang, array(
 
 		<p>phpBB3 ondersteunt de volgende databases:</p>
 		<ul>
-			<li>MySQL 3.23 of hoger (MySQLi-ondersteuning)</li>
+			<li>MySQL 4.1.3 of hoger (MySQLi-ondersteuning)</li>
 			<li>PostgreSQL 8.3+</li>
 			<li>SQLite 3.6.15+</li>
 			<li>MS SQL Server 2000 of hoger (direct of met ODBC)</li>
@@ -105,13 +105,15 @@ $lang = array_merge($lang, array(
 
 	// Server requirements
 	'PHP_VERSION_REQD'					=> 'PHP-versie',
-	'PHP_VERSION_REQD_EXPLAIN'			=> 'phpBB vereist PHP versie 5.4.0 of hoger.',
+	'PHP_VERSION_REQD_EXPLAIN'			=> 'phpBB vereist PHP versie 7.1.3 of hoger.',
 	'PHP_GETIMAGESIZE_SUPPORT'			=> 'PHP-functie getimagesize() is beschikbaar',
 	'PHP_GETIMAGESIZE_SUPPORT_EXPLAIN'	=> '<strong>Vereist</strong> - Om phpBB correct te laten functioneren, zal de getimagesize-functie beschikbaar moeten zijn.',
 	'PCRE_UTF_SUPPORT'				=> 'Ondersteuning voor PCRE UTF-8',
 	'PCRE_UTF_SUPPORT_EXPLAIN'		=> 'phpBB zal <strong>niet</strong> werken als je PHP-installatie niet is gecompileerd met UTF-8-ondersteuning in de PCRE-extensie.',
 	'PHP_JSON_SUPPORT'				=> 'Ondersteuning voor PHP-JSON',
 	'PHP_JSON_SUPPORT_EXPLAIN'		=> '<strong>Verplicht</strong> - Om phpBB correct te laten functioneren, zal de PHP-JSON-extensie beschikbaar moeten zijn.',
+	'PHP_MBSTRING_SUPPORT'				=> 'PHP mbstring-ondersteuning',
+	'PHP_MBSTRING_SUPPORT_EXPLAIN'		=> 'Om phpBB correct te laten functioneren, zal de PHP mbstring-extensie beschikbaar moeten zijn.',
 	'PHP_XML_SUPPORT'					=> 'Ondersteuning PHP XML/DOM',
 	'PHP_XML_SUPPORT_EXPLAIN'			=> 'Om phpBB correct te laten functioneren, zal de PHP XML/DOM-extensie beschikbaar moeten zijn.',
 	'PHP_SUPPORTED_DB'				=> 'Ondersteunde databases',
@@ -186,14 +188,13 @@ $lang = array_merge($lang, array(
 	// Database options
 	'DB_OPTION_MSSQL_ODBC'	=> 'MSSQL Server 2000+ via ODBC',
 	'DB_OPTION_MSSQLNATIVE'	=> 'MSSQL Server 2005+ [ Native ]',
-	'DB_OPTION_MYSQL'		=> 'MySQL',
 	'DB_OPTION_MYSQLI'		=> 'MySQL met MySQLi Extensie',
 	'DB_OPTION_ORACLE'		=> 'Oracle',
 	'DB_OPTION_POSTGRES'	=> 'PostgreSQL',
 	'DB_OPTION_SQLITE3'		=> 'SQLite 3',
 
 	// Errors
-	'INST_ERR_DB'					=> 'Database installatie fout',
+	'INST_ERR_DB'					=> 'Database-installatiefout',
 	'INST_ERR_NO_DB'				=> 'De PHP-module kon niet worden geladen voor het geselecteerde databasetype.',
 	'INST_ERR_DB_INVALID_PREFIX'	=> 'De prefix die je hebt ingevoerd is onjuist. Het moet starten met een letter en mag alleen letters, getallen en onderstrepingen bevatten.',
 	'INST_ERR_PREFIX_TOO_LONG'		=> 'De tabelprefix dat je hebt ingevoerd is te lang. De maximale lengte is %d tekens.',
@@ -238,7 +239,7 @@ $lang = array_merge($lang, array(
 	'CONFIG_SITE_DESC'				=> 'Een korte beschrijving van je forum',
 	'CONFIG_SITENAME'				=> 'jedomein.nl',
 
-	'DEFAULT_INSTALL_POST'			=> 'Dit is een voorbeeldbericht van je phpBB3-installatie. Alles lijkt te werken. Je mag dit bericht verwijderen als je wil en verdergaan met het instellen van je forum. Tijdens het installatieproces zijn je eerste categorie en je eerste forum ingesteld met de juiste permissies voor de voorgeïnstalleerde gebruikersgroepen beheerders, zoekrobots, algemene moderators, gasten, geregistreerde gebruikers en geregistreerde COPPA-gebruikers. Als je je eerste categorie en je eerste forum wil verwijderen, vergeet dan niet voor al deze gebruikersgroepen voor alle nieuwe categorieën en forums die je hebt aangemaakt de permissies in te stellen. Het is aan te bevelen om je eerste categorie en je eerste forum te hernoemen en de permissies hiervan te kopiëren wanneer je nieuwe categorieën en forums aanmaakt. Veel plezier!',
+	'DEFAULT_INSTALL_POST'			=> '<t>Dit is een voorbeeldbericht van je phpBB3-installatie. Alles lijkt te werken. Je mag dit bericht verwijderen als je wil en verdergaan met het instellen van je forum. Tijdens het installatieproces zijn je eerste categorie en je eerste forum ingesteld met de juiste permissies voor de voorgeïnstalleerde gebruikersgroepen beheerders, zoekrobots, algemene moderators, gasten, geregistreerde gebruikers en geregistreerde COPPA-gebruikers. Als je je eerste categorie en je eerste forum wil verwijderen, vergeet dan niet voor al deze gebruikersgroepen voor alle nieuwe categorieën en forums die je hebt aangemaakt de permissies in te stellen. Het is aan te bevelen om je eerste categorie en je eerste forum te hernoemen en de permissies hiervan te kopiëren wanneer je nieuwe categorieën en forums aanmaakt. Veel plezier!</t>',
 
 	'FORUMS_FIRST_CATEGORY'			=> 'Je eerste categorie',
 	'FORUMS_TEST_FORUM_DESC'		=> 'Beschrijving van je eerste forum.',
@@ -346,7 +347,7 @@ $lang = array_merge($lang, array(
 // Common updater messages
 $lang = array_merge($lang, array(
 	'UPDATE_INSTALLATION'			=> 'phpBB-installatie bijwerken',
-	'UPDATE_INSTALLATION_EXPLAIN'	=> 'Met deze optie is het mogelijk om je phpBB-installatie bij te werken naar de laatste versie.<br />Tijdens het proces zullen alle bestanden gecontroleerd worden op hun integriteit. Je kunt ook alle verschillen bekijken van de bestanden voordat je gaat bijwerken.<br /><br />De bestandsupdate kun je op twee manieren doen.</p><h2>Handmatige update</h2><p>Met deze update download je alleen je persoonlijke set van gewijzigde bestanden om er zeker van te zijn dat je geen extensies kwijt raakt die je hebt geïnstalleerd. Nadat je dit pakket hebt gedownload, zul je de bestanden handmatig moeten uploaden naar hun correcte plaats in je phpBB-hoofdmap (root), dus waar je het bestand config.php, memberlist etc. kunt terugvinden. Wanneer je dat hebt gedaan, kun je opnieuw een bestandscontrole doen om te zien of de bestanden correct zijn geüpload naar de juiste locatie.</p><h2>Automatische update met de FTP</h2><p>Deze methode is bijna hetzelfde als de eerste maar met deze methode hoef je niet de gewijzigde bestanden te downloaden naar je eigen computer. Dit wordt namelijk gedaan voor je. Om deze methode te gebruiken heb je de FTP-aanmeldgegevens nodig wanneer er naar wordt gevraagd. Wanneer dit klaar is, zul je worden doorgestuurd naar de bestandscontrolemethode die controleert of alles correct is bijgewerkt.<br /><br />',
+	'UPDATE_INSTALLATION_EXPLAIN'	=> 'Met deze optie is het mogelijk om je phpBB-installatie bij te werken naar de laatste versie.<br />Tijdens het proces zullen alle bestanden gecontroleerd worden op hun integriteit. Je kunt ook alle verschillen bekijken van de bestanden voordat je gaat bijwerken.<br /><br />De bestandsupdate kun je op twee manieren doen.</p><h2>Handmatige update</h2><p>Met deze update download je alleen je persoonlijke set van gewijzigde bestanden om er zeker van te zijn dat je geen extensies kwijt raakt die je hebt geïnstalleerd. Nadat je dit pakket hebt gedownload, zul je de bestanden handmatig moeten uploaden naar hun correcte plaats in je phpBB-hoofdmap (root), dus waar je het bestand config.php, memberlist etc. kunt terugvinden. Wanneer je dat hebt gedaan, kun je opnieuw een bestandscontrole doen om te zien of de bestanden correct zijn geüpload naar de juiste locatie.</p><h2>Geavanceerde update met de FTP</h2><p>Deze methode is bijna hetzelfde als de eerste maar met deze methode hoef je niet de gewijzigde bestanden te downloaden naar je eigen computer. Dit wordt namelijk gedaan voor je. Om deze methode te gebruiken heb je de FTP-aanmeldgegevens nodig wanneer er naar wordt gevraagd. Wanneer dit klaar is, zul je worden doorgestuurd naar de bestandscontrolemethode die controleert of alles correct is bijgewerkt.<br /><br />',
 	'UPDATE_INSTRUCTIONS'			=> '
 
 		<h1>Versiemededeling</h1>
@@ -356,19 +357,19 @@ $lang = array_merge($lang, array(
 		<br />
 		<h1>Hoe kan ik mijn forum updaten met het volledige pakket?</h1>
 
-		<p>De aanbevolen manier van updaten is gebruik maken van het volledige pakket. Indien je basisbestanden van phpBB aangepast hebt kun je ervoor kiezen om het Automatische update-pakket te gebruiken om deze aanpassingen niet kwijt te raken. Je kunt je forum ook updaten met de methodes die beschreven zijn in het <a href="../docs/INSTALL.html">INSTALL.html</a> document. De stappen om phpBB te updaten met het volledige pakket zijn als volgt:</p>
+		<p>De aanbevolen manier van updaten is gebruik maken van het volledige pakket. Indien je basisbestanden van phpBB aangepast hebt kun je ervoor kiezen om het Automatische update-pakket te gebruiken om deze aanpassingen niet kwijt te raken. Je kunt je forum ook updaten met de methodes die beschreven zijn in het <a href="../docs/INSTALL.html">INSTALL.html</a>-document. De stappen om phpBB te updaten met het volledige pakket zijn als volgt:</p>
 
 		<ol style="margin-left: 20px; font-size: 1.1em;">
 			<li><strong class="error">Maak een back-up van alle bestanden en de database.</strong></li>
 			<li>Ga naar <a href="https://www.phpbb.nl/downloads" title="https://www.phpbb.nl/downloads">phpBB.nl</a> en download het laatste "Volledige pakket".</li>
 			<li>Pak het archiefbestand uit.</li>
-			<li>Verwijder het <code class="inline">config.php</code> bestand en de mappen <code class="inline">/images</code>, <code class="inline">/store</code> en <code class="inline">/files</code> <em>van het gedownloade pakket</em> (NIET van je website).</li>
+			<li>Verwijder het <code class="inline">config.php</code>-bestand en de mappen <code class="inline">/images</code>, <code class="inline">/store</code> en <code class="inline">/files</code> <em>van het gedownloade pakket</em> (NIET van je website).</li>
 			<li>Ga naar het beheerderspaneel, Foruminstellingen en zorg dat prosilver ingesteld is als standaard stijl.</li>
-			<li>Verwijder de map <code class="inline">/vendor</code> en <code class="inline">/cache</code> uit de root map van je forum bij je host.</li>
-			<li>Upload via FTP of SSH de overgebleven bestanden en mappen (d.w.z. de overgebleven INHOUD van de phpBB3 map) naar de root map van je forum op de server, daarbij de bestaande bestanden overschrijvend. (Let op: zorg dat je geen eventueel aanwezige extensies in de <code class="inline">/ext</code> map overschrijft tijdens het uploaden.)</li>
+			<li>Verwijder de map <code class="inline">/vendor</code> en <code class="inline">/cache</code> uit de root-map van je forum bij je host.</li>
+			<li>Upload via FTP of SSH de overgebleven bestanden en mappen (d.w.z. de overgebleven INHOUD van de phpBB3-map) naar de root map van je forum op de server, daarbij de bestaande bestanden overschrijvend. (Let op: zorg dat je geen eventueel aanwezige extensies in de <code class="inline">/ext</code>-map overschrijft tijdens het uploaden.)</li>
 			<li><strong><a href="%1$s" title="%1$s">Start nu het updateproces door met je browser naar de install map te gaan</a>.</strong></li>
 			<li>Volg de stappen op het scherm om de database bij te werken, zorg dit proces volledig voltooid.</li>
-			<li>Verwijder via FTP of SSH de <code class="inline">/install</code> map uit de root map van je forum bij je host.<br><br></li>
+			<li>Verwijder via FTP of SSH de <code class="inline">/install</code> map uit de root-map van je forum bij je host.<br><br></li>
 		</ol>
 		
 		<p>Je hebt nu een nieuw en bijgewerkt forum met alle gebruikers en berichten. De volgende taken:</p>
@@ -377,12 +378,12 @@ $lang = array_merge($lang, array(
 			<li>Werk je stijl bij<br><br></li>
 		</ul>
 		
-		<h1>Hoe kan ik mijn forum updaten met het Automatische update-pakket?</h1>
+		<h1>Hoe kan ik mijn forum updaten met het Geavanceerde update-pakket?</h1>
 
-		<p>Het Automatische update-pakket os alleen aanbevolen indien de basisbestanden op je forum zijn aangepast. Je kunt je forum ook updaten met de methodes die beschreven zijn in het <a href="../docs/INSTALL.html">INSTALL.html</a> document. De stappen om phpBB3 automatisch te updaten zijn als volgt:</p>
+		<p>Het Geavanceerde update-pakket is alleen aanbevolen indien de basisbestanden op je forum zijn aangepast. Je kunt je forum ook updaten met de methodes die beschreven zijn in het <a href="../docs/INSTALL.html">INSTALL.html</a>-document. De stappen om phpBB3 automatisch te updaten zijn als volgt:</p>
 
 		<ul style="margin-left: 20px; font-size: 1.1em;">
-			<li>Ga naar de downloadspagina van <a href="https://www.phpbb.nl/downloads/" title="http://www.phpbb.nl/downloads/">phpBB.nl</a> en download het "Automatisch update-pakket".</li>
+			<li>Ga naar de downloadspagina van <a href="https://www.phpbb.nl/downloads/" title="http://www.phpbb.nl/downloads/">phpBB.nl</a> en download het "Geavandceerde update-pakket".</li>
 			<li>Pak het archiefbestand uit.</li>
 			<li>Upload de uitgepakte "install"- en "vendor"-mappen naar je phpBB-hoofdmap (waar je config.php staat).<br /><br /></li>
 		</ul>
@@ -564,7 +565,7 @@ $lang = array_merge($lang, array(
 
 	// Finish conversion
 	'CONVERT_COMPLETE'			=> 'Conversie compleet',
-	'CONVERT_COMPLETE_EXPLAIN'	=> 'Je hebt succesvol je forum geconverteerd naar phpBB 3.2. Je kunt je nu <a href="../">aanmelden op je forum</a>. Voordat je de install-map verwijderd en je forum ingeschakeld, controleer of alle instellingen correct zijn overgezet. Online hulp is beschikbaar via de volgende Nederlandstalige support-website <a href="http://www.phpbb.nl/">phpBB.nl</a>.',
+	'CONVERT_COMPLETE_EXPLAIN'	=> 'Je hebt succesvol je forum geconverteerd naar phpBB 3.3. Je kunt je nu <a href="../">aanmelden op je forum</a>. Voordat je de install-map verwijderd en je forum ingeschakeld, controleer of alle instellingen correct zijn overgezet. Online hulp is beschikbaar via de volgende Nederlandstalige support-website <a href="http://www.phpbb.nl/">phpBB.nl</a>.',
 
 	'CONV_ERROR_ATTACH_FTP_DIR'			=> 'FTP-upload voor bijlagen is ingeschakeld op het oude forum. Schakel de FTP-uploadoptie uit en zorg ervoor dat je een geldige uploadmap opgeeft, kopieer daarna alle bijlagenbestanden naar de nieuwe web toegankelijke map. Wanneer je dit hebt gedaan, herstart je de convertor.',
 	'CONV_ERROR_CONFIG_EMPTY'			=> 'Er is geen configuratie-informatie beschikbaar voor de conversie.',

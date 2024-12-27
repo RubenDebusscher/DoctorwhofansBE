@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 	'ADD_POLL'					=> 'Peiling aanmaken',
 	'ADD_POLL_EXPLAIN'			=> 'Als je geen peiling wil toevoegen aan je onderwerp, laat dan de velden leeg.',
 	'ALREADY_DELETED'			=> 'Sorry, dit bericht is al verwijderd.',
+	'ATTACH_COMMENT_NO_EMOJIS'	=> 'De bijlagetoelichting bevat niet ondersteunde karakters (Emoji).',
 	'ATTACH_DISK_FULL'			=> 'Er is niet genoeg vrije schijfruimte om deze bijlage te plaatsen.',
 	'ATTACH_QUOTA_REACHED'		=> 'Sorry, het bijlagenlimiet van het forum is bereikt.',
 	'ATTACH_SIG'				=> 'Onderschrift toevoegen (onderschriften kunnen gewijzigd worden via het gebruikerspaneel)',
@@ -145,10 +146,12 @@ $lang = array_merge($lang, array(
 	'LOAD_DRAFT_EXPLAIN'		=> 'Hier kun je het concept selecteren waarmee je verder wil schrijven. Je bestaande bericht zal worden geannuleerd, alle bestaande berichtinhoud zal worden verwijderd. Bekijk, wijzig en verwijder concepten in het gebruikerspaneel.',
 	'LOGIN_EXPLAIN_BUMP'		=> 'Je moet aangemeld zijn om onderwerpen in dit forum omhoog te kunnen halen.',
 	'LOGIN_EXPLAIN_DELETE'		=> 'Je moet aangemeld zijn om berichten in dit forum te kunnen verwijderen.',
+	'LOGIN_EXPLAIN_SOFT_DELETE'	=> 'Je moet aangemeld zijn om berichten in dit forum tijdelijk te kunnen verwijderen.',
 	'LOGIN_EXPLAIN_POST'		=> 'Je moet aangemeld zijn om berichten in dit forum te kunnen plaatsen.',
 	'LOGIN_EXPLAIN_QUOTE'		=> 'Je moet aangemeld zijn om berichten in dit forum te kunnen citeren.',
 	'LOGIN_EXPLAIN_REPLY'		=> 'Je moet aangemeld zijn om reacties op onderwerpen in dit forum te kunnen schrijven.',
 
+	'MAX_ATTACHMENT_FILESIZE'	=> 'Maximale bestandsgrote per bijlage: %s.',
 	'MAX_FONT_SIZE_EXCEEDED'	=> 'Je mag alleen gebruik maken van lettergroottes tot %d.',
 	'MAX_FLASH_HEIGHT_EXCEEDED'	=> array(
 		1	=> 'Je flash-bestanden mogen tot %d pixel hoog zijn.',
@@ -256,7 +259,7 @@ $lang = array_merge($lang, array(
 	'TOO_MANY_CHARS'			=> 'Je bericht bevat te veel tekens.',
 	'TOO_MANY_CHARS_LIMIT'		=> array(
 		2	=> 'Het maximaal aantal tekens dat is toegestaan is %1$d.',
- 	),
+	),
 	'TOO_MANY_POLL_OPTIONS'		=> 'Je hebt geprobeerd te veel peilingopties in te voeren.',
 	'TOO_MANY_SMILIES'			=> 'Je bericht bevat te veel smilies. Een maximum van %d smilies zijn toegestaan.',
 	'TOO_MANY_URLS'				=> 'Je bericht bevat te veel URL’s. Een maximum van %d URL’s zijn toegestaan.',
@@ -264,7 +267,6 @@ $lang = array_merge($lang, array(
 	'TOPIC_BUMPED'				=> 'Onderwerp is succesvol omhoog gehaald.',
 
 	'UNAUTHORISED_BBCODE'		=> 'Je kunt de volgende BBCodes niet gebruiken: %s.',
-	'UNGLOBALISE_EXPLAIN'		=> 'Om dit onderwerp terug te zetten van algemeen naar normaal onderwerp, moet je het forum selecteren waarin dit onderwerp geplaatst zal worden.',
 	'UNSUPPORTED_CHARACTERS_MESSAGE' => 'Je bericht bevat de volgende tekens die niet worden ondersteund:<br />%s',
 	'UNSUPPORTED_CHARACTERS_SUBJECT' => 'Je onderwerp bevat de volgende tekens die niet worden ondersteund:<br />%s',
 	'UPDATE_COMMENT'			=> 'Werk reactie bij',

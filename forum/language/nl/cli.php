@@ -35,6 +35,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+	'CLI_APCU_CACHE_NOTICE'				=> 'APCu buffer moet via het Beheerderspaneel worden geleegd.',
 	'CLI_CONFIG_CANNOT_CACHED'			=> 'Stel deze optie in als de configuratie opties te vaak veranderen om efficiënt te worden gecached.',
 	'CLI_CONFIG_CURRENT'				=> 'Bestaande configuratiewaarde, gebruik 0 en 1 om booleanwaardes te specificeren.',
 	'CLI_CONFIG_DELETE_SUCCESS'			=> 'Config %s succesvol verwijderd.',
@@ -47,7 +48,7 @@ $lang = array_merge($lang, array(
 	'CLI_CONFIG_SET_FAILURE'		 	=> 'Kan config %s niet instellen',
 	'CLI_CONFIG_SET_SUCCESS'			=> 'Config %s succesvol ingesteld',
 
-	'CLI_DESCRIPTION_CRON_LIST'					=> 'Geeft een lijst weer van cronjobs die klaar en niet klaar zijn.',
+	'CLI_DESCRIPTION_CRON_LIST'					=> 'Geeft een lijst weer van voltooide en openstaande cronjobs.',
 	'CLI_DESCRIPTION_CRON_RUN'					=> 'Draait al cronjobs die klaar zijn.',
 	'CLI_DESCRIPTION_CRON_RUN_ARGUMENT_1'		=> 'Naam van de taak die moet worden uitgevoerd',
 	'CLI_DESCRIPTION_DB_LIST'					=> 'Geef alle geïnstalleerde en beschikbare migraties weer.',
@@ -77,8 +78,6 @@ $lang = array_merge($lang, array(
 	'CLI_DESCRIPTION_REPARSER_REPARSE_OPT_RANGE_MAX'	=> 'Hoogste record ID om te verwerken',
 	'CLI_DESCRIPTION_REPARSER_REPARSE_OPT_RANGE_SIZE'	=> 'Geschat aantal records om per keer te verwerken',
 	'CLI_DESCRIPTION_REPARSER_REPARSE_OPT_RESUME'		=> 'Start opnieuw parsen op het punt dat de vorige operatie stopte.',
-
-	'CLI_DESCRIPTION_RECALCULATE_EMAIL_HASH'	=> 'Herberekend de “user_email_hash”-kolom van de “users”-tabel.',
 
 	'CLI_DESCRIPTION_SET_ATOMIC_CONFIG'			=> 'Stelt een configuratie-optie waarde alleen in, als de oude waarde overeenkomt met de nieuwe waarde.',
 	'CLI_DESCRIPTION_SET_CONFIG'				=> 'Stelt een configuratie-optie waarde in',
@@ -130,7 +129,6 @@ $lang = array_merge($lang, array(
 	'CLI_EXTENSIONS_ENABLED'			=> 'Ingeschakeld',
 
 	'CLI_FIXUP_FIX_LEFT_RIGHT_IDS_SUCCESS'		=> 'Structuur van forums en modules succesvol gerepareerd.',
-	'CLI_FIXUP_RECALCULATE_EMAIL_HASH_SUCCESS'	=> 'Alle “email-hashes” succesvol herberekend.',
 	'CLI_FIXUP_UPDATE_HASH_BCRYPT_SUCCESS'		=> 'Verouderde hashes van wachtwoorden succesvol bijgewerkt naar bcrypt.',
 
 	'CLI_MIGRATION_NAME'					=> 'Migratienaam, inclusief namespace (gebruik slash (/) in plaats van backslash om problemen te voorkomen).',

@@ -41,13 +41,14 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'TRANSLATION_INFO'	=> 'Nederlandse vertaling door <a href="https://www.phpbb.nl/">phpBB.nl</a>.',
 	'DIRECTION'			=> 'ltr',
 	'DATE_FORMAT'		=> '|d M Y|',	// 01 Jan 2007 (with Relative days enabled)
 	'DATETIME_FORMAT'	=> '|d M Y, H:i|',	// 01 Jan 2007, 13:37 (with Relative days enabled)
 	'USER_LANG'			=> 'nl-nl',
 
 	// You can define different rules for the determination of plural forms here.
-	// See https://area51.phpbb.com/docs/dev/32x/language/plurals.html for more information
+	// See https://area51.phpbb.com/docs/dev/3.3.x/language/plurals.html for more information
 	// or ask the translation manager for help.
 	'PLURAL_RULE'		=> 1,
 
@@ -90,8 +91,11 @@ $lang = array_merge($lang, array(
 	'ATTACHED_IMAGE_NOT_IMAGE'		=> 'De afbeelding die je probeert bij te voegen is ongeldig.',
 	'AUTHOR'						=> 'Auteur',
 	'AUTH_NO_PROFILE_CREATED'		=> 'Het aanmaken van een gebruikersprofiel is mislukt.',
+	'AUTH_PROVIDER_OAUTH_ERROR_ALREADY_LINKED'				=> 'Deze externe dienst is al geassocieerd met een ander gebruikersaccount.',
 	'AUTH_PROVIDER_OAUTH_ERROR_INVALID_ENTRY'				=> 'Ongeldige databasevermelding.',
 	'AUTH_PROVIDER_OAUTH_ERROR_INVALID_SERVICE_TYPE'		=> 'Ongeldig servicetype opgegeven voor OAuth service handler.',
+    'AUTH_PROVIDER_OAUTH_ERROR_REQUEST'						=> 'Er ging helaas iets fout bij het afhandelen van je OAuth request.',
+	'AUTH_PROVIDER_OAUTH_RETURN_ERROR'						=> 'De externe service gaf een ongeldige waarde terug en daardoor kon je verzoek niet worden verwerkt.',
 	'AUTH_PROVIDER_OAUTH_ERROR_SERVICE_NOT_CREATED'			=> 'OAuth-service niet aangemaakt',
 	'AUTH_PROVIDER_OAUTH_SERVICE_BITLY'						=> 'Bitly',
 	'AUTH_PROVIDER_OAUTH_SERVICE_FACEBOOK'					=> 'Facebook',
@@ -107,6 +111,8 @@ $lang = array_merge($lang, array(
 	'AVATAR_NOT_UPLOADED'			=> 'Avatar kon niet worden geüpload.',
 	'AVATAR_NO_TEMP_DIR'			=> 'Tijdelijke map kan niet gevonden worden of is niet schrijfbaar.',
 	'AVATAR_NO_SIZE'				=> 'De breedte of hoogte van de gekoppelde avatar kon niet worden vastgesteld. Vul ze hier handmatig in.',
+	'AVATAR_NO_UPLOAD_DIR'			=> 'Avataropslaglocatie bestaat niet of is niet schrijfbaar.',
+	'AVATAR_NO_UPLOAD_PATH'			=> 'Het uploaden van avatars is ingeschakeld maar er is op geen opslaglocatie voor avatars ingesteld.',
 	'AVATAR_PARTIAL_UPLOAD'			=> 'Het opgegeven bestand is maar gedeeltelijk geüpload.',
 	'AVATAR_PHP_SIZE_NA'			=> 'De bestandsgrootte van de avatar is te groot.<br />De maximum bestandsgrootte, ingesteld in php.ini, kon niet vastgesteld worden.',
 	'AVATAR_PHP_SIZE_OVERRUN'		=> 'De bestandsgrootte van de avatar is te groot. De maximum bestandsgrootte is %1$d %2$s.<br />Let op: dit is ingesteld in php.ini en kan niet worden omzeild.',
@@ -165,6 +171,7 @@ $lang = array_merge($lang, array(
 	),
 	'COLLAPSE_VIEW'			=> 'Weergave inklappen',
 	'CLOSE_WINDOW'			=> 'Sluit venster',
+	'CODE'				=> 'Code',
 	'COLOUR_SWATCH'			=> 'Kleurenpalet',
 	'COLON'					=> ':',
 	'COMMA_SEPARATOR'		=> ', ',	// Comma used to join lists into a single string, use localised comma if appropriate, eg: Ideographic or Arabic
@@ -183,7 +190,7 @@ $lang = array_merge($lang, array(
 	'COOKIE_CONSENT_INFO'	=> 'Meer informatie',
 	'COOKIE_CONSENT_MSG'	=> 'Deze website maakt gebruik van cookies om de beste surfervaring te kunnen bieden.',
 	'COOKIE_CONSENT_OK'		=> 'Begrepen!',
-	'COOKIE_CONSENT_HREF'	=> 'http://cookiesandyou.com',
+	'COOKIE_CONSENT_HREF'	=> 'https://cookiesandyou.com',
 	'COOKIES_DELETED'		=> 'Alle forumcookies succesvol verwijderd.',
 	'CURRENT_TIME'			=> 'Het is momenteel %s',
 
@@ -202,6 +209,7 @@ $lang = array_merge($lang, array(
 	'DISPLAY_MESSAGES'		=> 'Toon berichten van afgelopen',
 	'DISPLAY_POSTS'			=> 'Toon berichten van afgelopen',
 	'DISPLAY_TOPICS'		=> 'Toon onderwerpen van afgelopen',
+	'DOMAIN_NO_MX_RECORD_EMAIL'	=> 'Het ingevoerde e-mailadres heeft geen valide MX record.',
 	'DOWNLOADED'			=> 'Gedownload',
 	'DOWNLOADING_FILE'		=> 'Bestand wordt gedownload',
 	'DOWNLOAD_COUNTS'		=> array(
@@ -265,6 +273,17 @@ $lang = array_merge($lang, array(
 	'FSOCK_DISABLED'		=> 'De operatie kon niet voltooid worden omdat de <var>fsockopen</var>-functie is uitgeschakeld of de server die werd gezocht niet gevonden kon worden.',
 	'FSOCK_TIMEOUT'			=> 'Er is een time-out opgetreden tijdens het lezen van de netwerkstream.',
 
+	'FILESYSTEM_CANNOT_CHANGE_FILE_GROUP'			=> 'Kan bestandsgroep niet veranderen',
+	'FILESYSTEM_CANNOT_CHANGE_FILE_PERMISSIONS'	=> 'Kan bestandspermissies niet veranderen',
+	'FILESYSTEM_CANNOT_COPY_FILES'					=> 'Kan bestanden niet kopieren',
+	'FILESYSTEM_CANNOT_CREATE_SYMLINK'				=> 'Kan geen symlink aanmaken',
+	'FILESYSTEM_CANNOT_CREATE_DIRECTORY'		=> 'Kan geen map aanmaken',
+	'FILESYSTEM_CANNOT_DELETE_FILES'				=> 'Kan geen bestanden verwijderen van het systeem',
+	'FILESYSTEM_CANNOT_DUMP_FILE'					=> 'Kan het bestand niet opslaan',
+	'FILESYSTEM_CANNOT_MIRROR_DIRECTORY'			=> 'Kan geen kopie van de map maken',
+	'FILESYSTEM_CANNOT_RENAME_FILE'				=> 'Kan een bestand van het systeem niet hernoemen',
+	'FILESYSTEM_CANNOT_TOUCH_FILES'				=> 'Kan niet vaststellen of het bestand bestaat',
+
 	'FTP_FSOCK_HOST'				=> 'FTP-host',
 	'FTP_FSOCK_HOST_EXPLAIN'		=> 'FTP-server die gebruikt wordt om te verbinden met je site.',
 	'FTP_FSOCK_PASSWORD'			=> 'FTP-wachtwoord',
@@ -295,7 +314,6 @@ $lang = array_merge($lang, array(
 	'GB'						=> 'GB',
 	'GIB'						=> 'GiB',
 	'GO'						=> 'Ga',
-	'GOOGLEPLUS'				=> 'Google+',
 	'GOTO_FIRST_POST'			=> 'Ga naar eerste bericht',
 	'GOTO_LAST_POST'			=> 'Ga naar laatste bericht',
 	'GOTO_PAGE'					=> 'Ga naar pagina',
@@ -414,6 +432,7 @@ $lang = array_merge($lang, array(
 	'MESSAGE'				=> 'Bericht',
 	'MESSAGES'				=> 'Berichten',
 	'MESSAGES_COUNT'		=> array(
+		0	=> 'onbeperkte berichten',
 		1	=> '%d bericht',
 		2	=> '%d berichten',
 	),
@@ -476,6 +495,7 @@ $lang = array_merge($lang, array(
 	'NOTIFICATION_REFERENCE'			=> '"%1$s"',
 	'NOTIFICATION_REASON'				=> '<em>Reden:</em> %1$s.',
 	'NOTIFICATION_REPORT_PM'			=> '<strong>Privébericht gemeld</strong> door %1$s:',
+	'NOTIFICATION_REPORT_PM_CLOSED'		=> '<strong>Melding privébericht gesloten</strong> door %1$s:',
 	'NOTIFICATION_REPORT_POST'			=> '<strong>Bericht gemeld</strong> door %1$s:',
 	'NOTIFICATION_REPORT_CLOSED'		=> '<strong>Melding gesloten</strong> door %1$s vanwege:',
 	'NOTIFICATION_TOPIC'				=> '<strong>Nieuw onderwerp</strong> door %1$s:',
@@ -519,7 +539,8 @@ $lang = array_merge($lang, array(
 	'NO_POSTS_TIME_FRAME'		=> 'Er zijn in dit onderwerp in de gekozen periode geen berichten geplaatst.',
 	'NO_FEED_ENABLED'			=> 'Feeds zijn niet beschikbaar op dit forum.',
 	'NO_FEED'					=> 'De opgevraagde feed is niet beschikbaar.',
-	'NO_STYLE_DATA'				=> 'Kan geen stijldata vinden.',
+	'NO_STYLE_DATA'				=> 'Kan geen stijldata vinden voor user_style %s en user_id %s.',
+	'NO_STYLE_CFG'				=> 'Kan geen stijlconfiguratiebestand (CFG) vinden voor: %s',
 	'NO_SUBJECT'				=> 'Geen onderwerp opgegeven',								// Used for posts having no subject defined but displayed within management pages.
 	'NO_SUCH_SEARCH_MODULE'		=> 'De opgegeven zoekmodule bestaat niet.',
 	'NO_SUPPORTED_AUTH_METHODS'	=> 'Geen ondersteunde authenticatiemethodes.',
@@ -586,7 +607,7 @@ $lang = array_merge($lang, array(
 	'POSTS_UNAPPROVED_FORUM'=> 'Tenminste één bericht in dit forum is nog niet goedgekeurd.',
 	'POST_BY_AUTHOR'		=> 'door',
 	'POST_BY_FOE'			=> '<strong>%1$s</strong>, die momenteel op je negeerlijst staat, heeft dit bericht geschreven.',
-	'POST_DISPLAY'			=> '%1$sDit bericht weergeven%2$s.',
+	'POST_DISPLAY'			=> 'Dit bericht weergeven.',
 	'POST_DAY'				=> '%.2f berichten per dag',
 	'POST_DELETED_ACTION'	=> 'Verwijderd bericht:',
 	'POST_DELETED'			=> 'Dit bericht is verwijderd.',
@@ -604,7 +625,11 @@ $lang = array_merge($lang, array(
 	'POST_TOPIC'			=> 'Plaats een nieuw onderwerp',
 	'POST_UNAPPROVED_ACTION'=> 'Bericht wacht op goedkeuring:',
 	'POST_UNAPPROVED'		=> 'Dit bericht is nog niet goedgekeurd.',
-	'POWERED_BY'			=> 'Powered by %s',
+    'POST_UNAPPROVED_EXPLAIN'	=> 'Dit bericht is niet zichtbaar voor andere gebruikers totdat het is goedgekeurd door een moderator.',
+   	'POWERED_BY'			=> 'Powered by %s',
+	
+	'QUOTE'					=> 'Citeer',
+	
 	'PREVIEW'				=> 'Voorbeeld',
 	'PREVIOUS'				=> 'Vorige',		// Used in pagination
 	'PREVIOUS_STEP'			=> 'Vorige',
@@ -657,6 +682,9 @@ $lang = array_merge($lang, array(
 	'RETURN_TO'					=> 'Terug naar “%s”',
 	'RETURN_TO_INDEX'			=> 'Terug naar het forumoverzicht',
 
+	'ROUTE_NOT_FOUND'				=> 'De opgrevraagde route “%s” kon niet worden gevonden.',
+	'ROUTE_INVALID_MISSING_PARAMS'	=> 'Ongeldige or missende parameters doorgegeven voor route “%s”.',
+	
 	'FEED'						=> 'Feed',
 	'FEED_NEWS'					=> 'Nieuws',
 	'FEED_TOPICS_ACTIVE'		=> 'Actieve onderwerpen',
@@ -783,6 +811,10 @@ $lang = array_merge($lang, array(
 	'TOPIC_REVIEW'		=> 'Voorafgaande berichten',
 	'TOPIC_TITLE'		=> 'Onderwerptitel',
 	'TOPIC_UNAPPROVED'	=> 'Dit onderwerp is nog niet goedgekeurd.',
+	'TOPIC_UNAPPROVED_FORUM'	=> array(
+		1	=> 'Onderwerp nog niet goedgekeurd',
+		2	=> 'Onderwerpen nog niet goedgekeurd',
+	),
 	'TOPIC_DELETED'		=> 'Dit onderwerp is verwijderd.',
 	'TOTAL_ATTACHMENTS'	=> 'Bijlage(n)',
 	'TOTAL_LOGS'		=> array(
@@ -835,7 +867,7 @@ $lang = array_merge($lang, array(
 		2	=> '%d berichten',
 	),
 	'USERS'					=> 'Gebruikers',
-	'USE_PERMISSIONS'		=> 'Gebruikerspermissies testen',
+	'USE_PERMISSIONS'		=> 'Test gebruikerspermissies',
 
 	'USER_NEW_PERMISSION_DISALLOWED'	=> 'Je hebt geen permissies om deze functie te gebruiken. Het kan zijn dat je pas bent geregistreerd en dat je meer berichten moet plaatsen op het forum om deze functie te kunnen gebruiken.',
 

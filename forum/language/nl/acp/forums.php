@@ -97,6 +97,7 @@ $lang = array_merge($lang, array(
 	'FORUM_LINK_TRACK_EXPLAIN'			=> 'Slaat op hoeveel keer er op een forumlink is geklikt.',
 	'FORUM_NAME'						=> 'Forumnaam',
 	'FORUM_NAME_EMPTY'					=> 'Je moet een naam invoeren voor dit forum.',
+	'FORUM_NAME_EMOJI'					=> 'De ingevoerde forumnaam is ongeldig. <br>De volgende gebruikte karakters worden niet ondersteund:<br>%s',
 	'FORUM_PARENT'						=> 'Hoofdforum',
 	'FORUM_PASSWORD'					=> 'Forumwachtwoord',
 	'FORUM_PASSWORD_CONFIRM'			=> 'Bevestig forumwachtwoord',
@@ -128,6 +129,8 @@ $lang = array_merge($lang, array(
 	'GENERAL_FORUM_SETTINGS'	=> 'Algemene foruminstellingen',
 
 	'LINK'						=> 'Link',
+	'LIMIT_SUBFORUMS'			=> 'Limiteer de legenda tot subforums direct onder dit forum',
+	'LIMIT_SUBFORUMS_EXPLAIN'	=> 'Limiteer de weergegeven subforums onder dit forum tot diegene die alleen directe kinderen zijn van dit forum. Wanneer je dit uitschakelt zullen alle subforums onder dit forum weergegeven worden, onafhankelijk van hun diepte.',
 	'LIST_INDEX'				=> 'Toon subforum in hoofdforum legenda',
 	'LIST_INDEX_EXPLAIN'		=> 'Geef dit forum weer op de indexpagina en op andere plaatsen, als een link in de legenda van hoofdforums, als de optie “Toon subforums in legenda” ingeschakeld is.',
 	'LIST_SUBFORUMS'			=> 'Toon subforums in legenda',

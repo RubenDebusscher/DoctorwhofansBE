@@ -49,6 +49,8 @@ $lang = array_merge($lang, array(
 	'CONTINUE_INDEXING_EXPLAIN'				=> 'Een indexproces is gestart. Om toegang te krijgen tot de zoekindexpagina zul je dit moeten voltooien of afbreken.',
 	'CREATE_INDEX'							=> 'Index aanmaken',
 
+	'DEFAULT_SEARCH_RETURN_CHARS'			=> 'Standaardaantal getoonde karakters',
+	'DEFAULT_SEARCH_RETURN_CHARS_EXPLAIN'		=> 'Het standaardaantal karakters dat bij het zoeken van een bericht getoond zal worden. Bij een waarde van 0 zal altijd het volledige bericht getoond worden.',
 	'DELETE_INDEX'							=> 'Index verwijderen',
 	'DELETING_INDEX_IN_PROGRESS'			=> 'Het verwijderen van de index is bezig',
 	'DELETING_INDEX_IN_PROGRESS_EXPLAIN'	=> 'De zoektechniek is momenteel zijn index aan het opschonen. Dit kan enkele minuten duren.',
@@ -119,7 +121,7 @@ $lang = array_merge($lang, array(
 		2	=> 'Alle berichten tot berichten-ID %2$d zijn verwijderd van de zoekindex, waarvan %1$d in deze stap.<br /><br />',
 	),
 	'SEARCH_INDEX_DELETE_REDIRECT_RATE'		=> array(
-		2	=> 'Het huidige tempa van verwijderen is ongeveer %1$.1f berichten per seconde.<br />Verwijderen is nog bezig…',
+		2	=> 'Het huidige tempo van verwijderen is ongeveer %1$.1f berichten per seconde.<br />Verwijderen is nog bezig…',
 	),
 	'SEARCH_INDEX_CREATED'					=> 'Alle berichten in de database succesvol geïndexeerd.',
 	'SEARCH_INDEX_REMOVED'					=> 'De zoekindex voor deze techniek succesvol verwijderd.',

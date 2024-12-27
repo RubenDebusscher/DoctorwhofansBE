@@ -21,7 +21,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -36,7 +36,7 @@ if (empty($lang) || !is_array($lang))
 // equally where a string contains only two placeholders which are used to wrap text
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'ACP_STYLES_EXPLAIN'	=> 'Hier kun je de beschikbare stijlen van je forum beheren. Je kunt bestaande stijlen wijzigen, verwijderen, deactiveren, heractiveren en nieuwe stijlen installeren. Je kunt hier ook zien hoe je stijl eruit ziet door de voorbeeldfunctie te gebruiken. Hier wordt ook het aantal gebruikers weergegeven die de stijl gebruiken, let op: het overschrijven van de gebruikersstijl zal hier niet worden weergegeven.',
 	
 	'CANNOT_BE_INSTALLED'			=> 'Kan niet worden geïnstalleerd',
@@ -80,11 +80,12 @@ $lang = array_merge($lang, array(
 	'STYLE_UNINSTALL'			=> 'Verwijderen',
 	'STYLE_UNINSTALL_DEPENDENT'	=> 'De stijl "%s" kan niet worden verwijderd omdat één of meer stijlen deze stijl nodig hebben om goed te kunnen functioneren.',
 	'STYLE_UNINSTALLED'			=> 'De stijl "%s" is succesvol verwijderd.',
-	'STYLE_PHPBB_VERSION'		=> 'phpBB versie',
+	'STYLE_PHPBB_VERSION'		=> 'phpBB-versie',
 	'STYLE_USED_BY'				=> 'Gebruikt door (inclusief robots)',
 	'STYLE_VERSION'				=> 'Stijlversie',
 
 	'UNINSTALL_DEFAULT'		=> 'Je kan de standaard stijl niet verwijderen.',
+	'UNINSTALL_PROSILVER'						=> 'Je kan de stijl “prosilver” niet verwijderen.',
 
 	'BROWSE_STYLES_DATABASE'	=> 'Blader door de stijlendatabase',
-));
+]);

@@ -225,18 +225,8 @@ $lang = array_merge($lang, array(
 	'ADM_LOGGED_OUT'		=> 'Succesvol afgemeld van het beheerderspaneel',
 
 	'BACK'					=> 'Terug',
-	
-	'CANNOT_CHANGE_FILE_GROUP'			=> 'Kan bestandsgroep niet veranderen',
-	'CANNOT_CHANGE_FILE_PERMISSIONS'	=> 'Kan bestandspermissies niet veranderen',
-	'CANNOT_COPY_FILES'					=> 'Kan bestanden niet kopieren',
-	'CANNOT_CREATE_SYMLINK'				=> 'Kan geen symlink aanmaken',
-	'CANNOT_DELETE_FILES'				=> 'Kan geen bestanden verwijderen van het systeem',
-	'CANNOT_DUMP_FILE'					=> 'Kan het bestand niet opslaan',
-	'CANNOT_MIRROR_DIRECTORY'			=> 'Kan geen kopie van de map maken',
-	'CANNOT_RENAME_FILE'				=> 'Kan een bestand van het systeem niet hernoemen',
-	'CANNOT_TOUCH_FILES'				=> 'Kan niet vaststellen of het bestand bestaat',
 
-	'CONTAINER_EXCEPTION'=> 'phpBB is een foutmelding tegengekomen tijdens het bouwen van de container, veroorzaakt door een geïnstalleerde extensie. Om deze reden zijn alle extensies tijdelijk uitgeschakeld. Probeer de cache van je forum te legen. Alle extensies worden automatische ingeschakeld als de foutmelding is opgelost. Als deze foutmelding zich blijft voordoen, bezoek dan ons support forum via <a href="http://www.phpbb.nl/forums/index.php">phpbb.nl</a>.',
+	'CONTAINER_EXCEPTION'=> 'phpBB is een foutmelding tegengekomen tijdens het bouwen van de container, veroorzaakt door een geïnstalleerde extensie. Om deze reden zijn alle extensies tijdelijk uitgeschakeld. Probeer de cache van je forum te legen. Alle extensies worden automatische ingeschakeld als de foutmelding is opgelost. Als deze foutmelding zich blijft voordoen, bezoek dan ons support forum via <a href="https://www.phpbb.nl/forums/index.php">phpbb.nl</a>.',
 	'EXCEPTION'=> 'Uitzondering',
 
 	'COLOUR_SWATCH'			=> 'Webveilig kleurenpalet',
@@ -245,6 +235,7 @@ $lang = array_merge($lang, array(
 	'CRON_NO_SUCH_TASK'		=> 'Kan crontaak “%s” niet vinden.',
 	'CRON_NO_TASK'			=> 'Er hoeven geen crontaken te worden uitgevoerd.',
 	'CRON_NO_TASKS'			=> 'Er kunnen geen crontaken worden gevonden.',
+	'CSV_INVALID'			=> 'De ingevoerde komma-onderbrekingsinstelling “%1$s” is ongeldig. De waarden moeten alleen door kommatekens onderbroken worden, daar hoort niks voor of achter te staan.',
 	'CURRENT_VERSION'		=> 'Huidige versie',
 
 	'DEACTIVATE'				=> 'Deactiveer',
@@ -320,11 +311,13 @@ $lang = array_merge($lang, array(
 
 	'SHOW_ALL_OPERATIONS'	=> 'Toon alle activiteiten',
 
-	'TASKS_NOT_READY'		=> 'Geen taken die klaar zijn:',
-	'TASKS_READY'			=> 'Taken die klaar zijn:',
+	'TASKS_NOT_READY'		=> 'Openstaande taken:',
+	'TASKS_READY'			=> 'Voltooide taken:',
 	'TOTAL_SIZE'	 		=> 'Totale grootte',
 
 	'UCP'					=> 'Gebruikerspaneel',
+	'URL_INVALID'			=> 'De ingevoerde URL voor de “%1$s” instelling is ongeldig.',
+	'URL_SCHEME_INVALID'	=> 'Het schema “%2$s” in de komma-onderbroken instelling “%1$s” is ongeldig. Het schema dient te starten met een latin karakter gevolgd door alfanumerieke karakters, liggende streepjes of punten.',
 	'USERNAMES_EXPLAIN'		=> 'Plaats iedere gebruikersnaam op een aparte regel.',
 	'USER_CONTROL_PANEL'	=> 'Gebruikerspaneel',
 	'UPDATE_NEEDED'			=> 'Je installatie is niet actueel.',
@@ -377,10 +370,12 @@ $lang = array_merge($lang, array(
 	'ERROR_MBSTRING_ENCODING_TRANSLATION'			=> 'Codering transparante tekens is niet goed ingesteld',
 	'ERROR_MBSTRING_ENCODING_TRANSLATION_EXPLAIN'	=> '<var>mbstring.encoding_translation</var> moet ingesteld zijn op 0. Je kunt de huidige waarde controleren op de <samp>PHP-informatiepagina</samp>.',
 	'ERROR_MBSTRING_HTTP_INPUT'						=> 'Conversie HTTP-invoertekens is niet goed ingesteld',
-	'ERROR_MBSTRING_HTTP_INPUT_EXPLAIN'				=> '<var>mbstring.http_input</var> moet ingesteld zijn op <samp>pass</samp>. Je kunt de huidige waarde controleren op de <samp>PHP-informatiepagina</samp>.',
+	'ERROR_MBSTRING_HTTP_INPUT_EXPLAIN'				=> '<var>mbstring.http_input</var> moet leeg worden gelaten. Je kunt de huidige waarde controleren op de <samp>PHP-informatiepagina</samp>.',
 	'ERROR_MBSTRING_HTTP_OUTPUT'					=> 'Conversie HTTP-uitvoertekens is niet goed ingesteld',
-	'ERROR_MBSTRING_HTTP_OUTPUT_EXPLAIN'			=> '<var>mbstring.http_output</var> moet ingesteld zijn op <samp>pass</samp>. Je kunt de huidige waarde controleren op de <samp>PHP-informatiepagina</samp>.',
-
+	'ERROR_MBSTRING_HTTP_OUTPUT_EXPLAIN'			=> '<var>mbstring.http_output</var>moet leeg worden gelaten. Je kunt de huidige waarde controleren op de <samp>PHP-informatiepagina</samp>.',
+	'ERROR_DEFAULT_CHARSET'							=> 'De standaard encoding is incorrect geconfigureerd',
+	'ERROR_DEFAULT_CHARSET_EXPLAIN'					=> '<var>default_charset</var> moet worden ingesteld op <samp>UTF-8</samp>. Je kunt de huidige waarde controleren op de <samp>PHP-informatiepagina</samp>.',
+	
 	'FILES_PER_DAY'		=> 'Bijlagen per dag',
 	'FORUM_STATS'		=> 'Forumstatistieken',
 
@@ -454,7 +449,7 @@ $lang = array_merge($lang, array(
 	'VIEW_INACTIVE_USERS'		=> 'Bekijk inactieve gebruikers',
 
 	'WELCOME_PHPBB'			=> 'Welkom bij phpBB',
-	'WRITABLE_CONFIG'		=> 'Je config-bestand (config.php) is momenteel wereldwijd-schrijfbaar. We raden sterk aan om de permissies te veranderen naar 640 of minstens naar 644 (bijvoorbeeld: <a href="http://en.wikipedia.org/wiki/Chmod" rel="external">chmod</a> 640 config.php).',
+	'WRITABLE_CONFIG'		=> 'Je config-bestand (config.php) is momenteel wereldwijd-schrijfbaar. We raden sterk aan om de permissies te veranderen naar 640 of minstens naar 644 (bijvoorbeeld: <a href="https://en.wikipedia.org/wiki/Chmod" rel="external">chmod</a> 640 config.php).',
 ));
 
 // Inactive Users
@@ -508,13 +503,13 @@ $lang = array_merge($lang, array(
 	'LOG_ACL_ADD_ADMIN_GLOBAL_A_'		=> '<strong>Beheerders toegevoegd of gewijzigd</strong><br />» %s',
 	'LOG_ACL_ADD_MOD_GLOBAL_M_'			=> '<strong>Globale moderators toegevoegd of gewijzigd</strong><br />» %s',
 
-	'LOG_ACL_ADD_USER_LOCAL_F_'			=> '<strong>Forumtoegang van gebruikers toegevoegd of gewijzigd</strong> van %1$s<br />» %2$s',
-	'LOG_ACL_ADD_USER_LOCAL_M_'			=> '<strong>Forummoderatortoegang van gebruikers toegevoegd of gewijzigd</strong> van %1$s<br />» %2$s',
-	'LOG_ACL_ADD_GROUP_LOCAL_F_'		=> '<strong>Forumtoegang van groepen toegevoegd of gewijzigd</strong> van %1$s<br />» %2$s',
-	'LOG_ACL_ADD_GROUP_LOCAL_M_'		=> '<strong>Forummoderatortoegang van groepen toegevoegd of gewijzigd</strong> van %1$s<br />» %2$s',
+	'LOG_ACL_ADD_USER_LOCAL_F_'			=> '<strong>Forumtoegang van gebruikers toegevoegd of gewijzigd</strong> naar %1$s<br />» %2$s',
+	'LOG_ACL_ADD_USER_LOCAL_M_'			=> '<strong>Forummoderatortoegang van gebruikers toegevoegd of gewijzigd</strong> naar %1$s<br />» %2$s',
+	'LOG_ACL_ADD_GROUP_LOCAL_F_'		=> '<strong>Forumtoegang van groepen toegevoegd of gewijzigd</strong> naar %1$s<br />» %2$s',
+	'LOG_ACL_ADD_GROUP_LOCAL_M_'		=> '<strong>Forummoderatortoegang van groepen toegevoegd of gewijzigd</strong> naar %1$s<br />» %2$s',
 
-	'LOG_ACL_ADD_MOD_LOCAL_M_'			=> '<strong>Moderators toegevoegd of gewijzigd</strong> van %1$s<br />» %2$s',
-	'LOG_ACL_ADD_FORUM_LOCAL_F_'		=> '<strong>Forumpermissies toegevoegd of gewijzigd</strong> van %1$s<br />» %2$s',
+	'LOG_ACL_ADD_MOD_LOCAL_M_'			=> '<strong>Moderators toegevoegd of gewijzigd</strong> naar %1$s<br />» %2$s',
+	'LOG_ACL_ADD_FORUM_LOCAL_F_'		=> '<strong>Forumpermissies toegevoegd of gewijzigd</strong> naar %1$s<br />» %2$s',
 
 	'LOG_ACL_DEL_ADMIN_GLOBAL_A_'		=> '<strong>Beheerders verwijderd</strong><br />» %s',
 	'LOG_ACL_DEL_MOD_GLOBAL_M_'			=> '<strong>Globale moderators verwijderd</strong><br />» %s',
@@ -742,6 +737,10 @@ $lang = array_merge($lang, array(
 	'LOG_SEARCH_INDEX_CREATED'	=> '<strong>Zoekindex aangemaakt voor</strong><br />» %s',
 	'LOG_SEARCH_INDEX_REMOVED'	=> '<strong>Zoekindex verwijderd voor</strong><br />» %s',
 	'LOG_SPHINX_ERROR'			=> '<strong>Sphinx-fout</strong><br />» %s',
+	
+	'LOG_SPAMHAUS_OPEN_RESOLVER'		=> 'Spamhaus staat het niet toe om bevragen te doen via een open resolver. De blacklist controle is hierom uitgeschakt. Zie voor meer informatie https://www.spamhaus.com/product/help-for-spamhaus-public-mirror-users/.',
+	'LOG_SPAMHAUS_VOLUME_LIMIT'		=> 'Spamhaus querie limiet is overschreden. De blacklist controle is hierom uitgeschakeld. Zie voor meer informatie https://www.spamhaus.com/product/help-for-spamhaus-public-mirror-users/.',
+
 	'LOG_STYLE_ADD'				=> '<strong>Nieuwe stijl toegevoegd</strong><br />» %s',
 	'LOG_STYLE_DELETE'			=> '<strong>Stijl verwijderd</strong><br />» %s',
 	'LOG_STYLE_EDIT_DETAILS'	=> '<strong>Stijl gewijzigd</strong><br />» %s',

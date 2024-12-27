@@ -134,7 +134,7 @@ $lang = array_merge($lang, array(
 
 	'USERNAME_BEGINS_WITH'	=> 'Gebruikersnaam begint met',
 	'USER_ADMIN'			=> 'Beheer gebruiker',
-	'USER_BAN'				=> 'Verbannen',
+	'USER_BAN'				=> 'Verban gebruiker',
 	'USER_FORUM'			=> 'Gebruikersstatistieken',
 	'USER_LAST_REMINDED'	=> array(
 		0		=> 'Nog geen herinnering verstuurd',
@@ -150,5 +150,4 @@ $lang = array_merge($lang, array(
 	'VIEW_SKYPE_PROFILE'			=> 'Bekijk Skype-profiel',
 	'VIEW_TWITTER_PROFILE'		=> 'Bekijk Twitter-profiel',
 	'VIEW_YOUTUBE_CHANNEL'			=> 'Bekijk YouTube-kanaal',
-	'VIEW_GOOGLEPLUS_PROFILE'		=> 'Bekijk Google+-profiel'
 ));

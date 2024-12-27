@@ -93,7 +93,6 @@ $lang = array_merge($lang, array(
 	'FIELD_DESCRIPTION'			=> 'Veldbeschrijving',
 	'FIELD_DESCRIPTION_EXPLAIN'	=> 'De uitleg voor dit veld wat weergegeven wordt aan de gebruiker.',
 	'FIELD_DROPDOWN'			=> 'Dropdown box',
-	'FIELD_GOOGLEPLUS'		 => 'Google+',
 	'FIELD_IDENT'				=> 'Veldidentificatie',
 	'FIELD_IDENT_ALREADY_EXIST'	=> 'De gekozen veldidentificatie bestaat al. Kies een andere naam.',
 	'FIELD_IDENT_EXPLAIN'		=> 'De veldidentificatie is een naam om het profielveld te identificeren in de database en in de template.',
@@ -111,7 +110,7 @@ $lang = array_merge($lang, array(
 	'FIRST_OPTION'				=> 'Eerste optie',
 
 	'HIDE_PROFILE_FIELD'			=> 'Verberg profielveld',
-	'HIDE_PROFILE_FIELD_EXPLAIN'	=> 'Verberg het profielveld voor alle gebruikers behalve de gebruiker zelf, de beheerders en moderators die dit veld nog steeds kunnen zien. Als de “Weergeven in gebruikerspaneel”-optie is uitgeschakeld zal de gebruiker dit veld niet kunnen zien of wijzigen, het veld kan dan alleen gewijzigd worden door beheerders.',
+	'HIDE_PROFILE_FIELD_EXPLAIN'	=> 'Verberg het profielveld voor alle gebruikers behalve de beheerders en moderators, die dit veld nog steeds kunnen zien. Als de “Weergeven in gebruikerspaneel”-optie is uitgeschakeld zal de gebruiker dit veld niet kunnen zien of wijzigen, het veld kan dan alleen gewijzigd worden door beheerders.',
 
 	'INVALID_CHARS_FIELD_IDENT'	=> 'Veldidentificatie kan alleen kleine letters a-z en _ bevatten',
 	'INVALID_FIELD_IDENT_LEN'	=> 'Veldidentificatie kan alleen 17 tekens lang zijn',

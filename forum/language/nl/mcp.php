@@ -309,10 +309,10 @@ $lang = array_merge($lang, array(
 	'REPORT_DELETED_SUCCESS'	=> 'De geselecteerde melding is succesvol verwijderd.',
 	'REPORT_DETAILS'			=> 'Meldingdetails',
 	'REPORT_MESSAGE'			=> 'Meld dit bericht',
-	'REPORT_MESSAGE_EXPLAIN'	=> 'Gebruik dit formulier om het geselecteerde privébericht te melden. Het melden moet over het algemeen alleen gebruikt worden als het bericht de forumregels overtreed. <strong>Het melden van een privébericht zal de inhoud leesbaar maken voor de moderators.</strong>',
+	'REPORT_MESSAGE_EXPLAIN'	=> 'Gebruik dit formulier om het geselecteerde privébericht te melden. Het melden moet over het algemeen alleen gebruikt worden als het bericht de forumregels overtreedt. <strong>Het melden van een privébericht zal de inhoud leesbaar maken voor de moderators.</strong>',
 	'REPORT_NOTIFY'				=> 'Notificeer mij',
 	'REPORT_NOTIFY_EXPLAIN'		=> 'Informeert je wanneer je melding in behandeling is genomen.',
-	'REPORT_POST_EXPLAIN'		=> 'Gebruik dit formulier om het geselecteerde bericht te melden aan de forum moderators en beheerders. Het melden moet over het algemeen alleen gebruikt worden als het bericht de forumregels overtreed.',
+	'REPORT_POST_EXPLAIN'		=> 'Gebruik dit formulier om het geselecteerde bericht te melden aan de forum moderators en beheerders. Het melden moet over het algemeen alleen gebruikt worden als het bericht de forumregels overtreedt.',
 	'REPORT_REASON'				=> 'Meldingsreden',
 	'REPORT_TIME'				=> 'Meldingstijd',
 	'RESTORE'					=> 'Terugzetten',
@@ -410,8 +410,8 @@ $lang = array_merge($lang, array(
 
 	'WARNED_USERS'			=> 'Gewaarschuwde gebruikers',
 	'WARNED_USERS_EXPLAIN'	=> 'Dit is een lijst van alle gebruikers met een nog niet verlopen waarschuwing.',
-	'WARNING_PM_BODY'		=> 'Het volgende is een waarschuwing welke is gegeven naar je door een beheerder of moderator van deze site.[quote]%s[/quote]',
-	'WARNING_PM_SUBJECT'	=> 'Forumwaarschuwing uitgevaardigd',
+	'WARNING_PM_BODY'		=> 'Dit is een waarschuwing die je ontvangen hebt van een beheerder of moderator van dit forum.[quote]%s[/quote]',
+	'WARNING_PM_SUBJECT'	=> 'Forumwaarschuwing ontvangen',
 	'WARNING_POST_DEFAULT'	=> 'Dit is een waarschuwing vanwege het volgende bericht dat je hebt geplaatst: %s .',
 	'NO_WARNINGS'	=> 'Er zijn geen waarschuwingen.',
 
