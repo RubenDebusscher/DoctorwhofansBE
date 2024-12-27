@@ -36,12 +36,8 @@ php.log
 templates_c
 uploads
 *.code-workspace
-kanboard/plugins/Moon
-kanboard/plugins/HighlightCodeSyntax
 QR/src/config/environment.php
 QR/config/environment.php
-kanboard/plugins/Moon
-kanboard/plugins/HighlightCodeSyntax
 dash/PHP/connect.php
 images/content__gallery__images
 images/api__serials
