@@ -147,7 +147,7 @@ $(document).ready(function(){
 
         $('.my-colorpicker2').colorpicker({
           inline: true,
-          format:'rgba',
+          format:'hex',
           horizontal: true,
           container: true,
           template: '<div class="colorpicker">' +
