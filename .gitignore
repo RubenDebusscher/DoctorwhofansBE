@@ -45,4 +45,4 @@ kanboard/plugins/HighlightCodeSyntax
 dash/PHP/connect.php
 images/content__gallery__images
 images/api__serials
-node_modules
+**/node_modules
