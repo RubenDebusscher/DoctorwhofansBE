@@ -62,6 +62,7 @@
 				// ? if there is no existing page, and it is not a category, return false (Javascript will redirect this to 404)
 
 				if ($result->num_rows === 0){
+					$antwoord['Err']=$menu;
 					if(stripos($menu,'Category')===false){
 						$stmt->close();
 						$page = 1603;
@@ -74,12 +75,14 @@
 
 					}else{
 						$stmt->close();
+						$menu=$_POST['menu'];
 						$contents = explode(':', $menu);
 						$RawCategory = end($contents);
-						getTranslations($conn,$language,$antwoord);
-						getPagesForTag($conn,0,$RawCategory,$antwoord);
-						getEpisodeOfTheDay($conn,$antwoord);
-						getActorsOfTheDay($conn,$antwoord);
+						//getTranslations($conn,$language,$antwoord);
+						//getPagesForTag($conn,0,$menu,$antwoord);
+						//getEpisodeOfTheDay($conn,$antwoord);
+						//getActorsOfTheDay($conn,$antwoord);
+						
 						//echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
 					}
 				}else{

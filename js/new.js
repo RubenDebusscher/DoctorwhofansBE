@@ -178,7 +178,7 @@ $(window).resize(function () {
 });
 jQuery(document).ready(function () {
 
-  HideNotificationButton();
+  //HideNotificationButton();
   getAvailableLangcodes();
   footerAlign();
   buildLogo('#logo', '#ffff00');
@@ -228,8 +228,8 @@ function setCookie(cname, cvalue, exdays) {
   var d = new Date();
   d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
   var expires = "expires=" + d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:doctorwhofans.be";
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:belgianwhovians.be";
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:doctorwhofans.be; Secure; SameSite=Lax";
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:belgianwhovians.be; Secure; SameSite=Lax";
   //document.cookie = "lang=nl;expires=Fri, 08 Mar 2024 19:42:10 GMT;path=/;domain.belgianwhovians.be";
   if (cname == "lang") {
     $('meta[name=language]').attr('content', cvalue.replace('_', '-'));
@@ -292,7 +292,7 @@ function checkLangCookie() {
   if (lang == "") {
     if ((AvailableLangCodes.length<0)&&(AvailableLangCodes.data.language_Name.includes(navigator.language) === true)) {
       setCookie("lang", navigator.language, 30);
-      lang=navigator.language
+      lang=navigator.language;
     } else {
       setCookie("lang", "nl", 30);
       lang="nl";
@@ -313,7 +313,7 @@ function Search() {
   form.append('search', searchString.toString());
   form.append("content-type", "application/json");
   var settings = {
-    "url": "https://www.doctorwhofans.be/php/search.php",
+    "url": "/php/search.php",
     "method": "POST",
     "timeout": 0,
     "dataType": 'json',
@@ -324,7 +324,7 @@ function Search() {
     },
     "mimeType": "multipart/form-data",
     "contentType": false,
-    "data": form
+    "data": form,cache:false
   };
   // @ts-ignore
   $.ajax(settings).done(function (response) {
@@ -367,19 +367,20 @@ function GetContent(menu, id) {
     form.append("content-type", "application/json");
 
     var settings = {
-      "url": "/php/checkPage.php",
-      "method": "POST",
-      "async": false,
-      "timeout": 0,
-      "dataType": 'json',
-      "crossDomain":true,
-      "xhrFields": {
-        "withCredentials": true
+      url: "/php/checkPage.php",
+      method: "POST",
+      async: false,
+      timeout: 0,
+      dataType: 'json',
+      crossDomain:true,
+      xhrFields: {
+        withCredentials: true
       },
-      "processData": false,
-      "mimeType": "multipart/form-data",
-      "contentType": false,
-      "data": form
+      processData: false,
+      mimeType: "multipart/form-data",
+      contentType: false,
+      data: form,
+      cache:false
     };
 
     // @ts-ignore
@@ -445,6 +446,11 @@ function GetContent(menu, id) {
             AddMainVideoToDom(response.MainVideo,".MainVideo","replace");
             AddVideoSelectionToDom(response.Videos);
             break;
+          case "ComicOverview":
+            AddComicLineToDom(response.ComicLine);
+            AddIssuesToDom(response.IssueList,"#Issues")
+          case "Comic":
+            Comic(response.ComicIssue,response.PrevComicIssue,response.NextComicIssue)
           default:
             // code block
         }
@@ -468,7 +474,30 @@ function GetContent(menu, id) {
     });
   }
 }
+function AddComicLineToDom(Line){
+  CreateWikiDetails();
+  var ComicLineKeys = ['Name',"NrIssues"];
+  var ComicLineStrings = ['Naam',"Aantal Issues"];
+  PopulateWikiDetailsStatic(ComicLineKeys, ComicLineStrings,"");
+  console.log(Line);
+  WikiImage(Line[0].line_Image, 'api__comicLine');
+  $('#WikiName p').html(Line[0].Line_Name);
 
+}
+
+function AddIssuesToDom(Issues,ParentElem){
+  let Issueselection = "";
+  if(Issues.length >0){
+    for (var i = 0; i < Issues.length; i++) {
+      Issueselection += " <a class='tile bordered' href='" + window.location.origin + "/"+Issues[i].page_Link + ".html'>";
+      Issueselection += "<img src='" +  window.location.origin + "/images/api__comicIssue/"+Issues[i].issue_Image+"'/>";
+      Issueselection += Issues[i].issue_Name + "</a>";
+    }
+    $(ParentElem).html(Issueselection);
+    $('#WikiNrIssues p').html(Issues.length);
+
+  }
+}
 
 function AddMainQuoteToDom(mainQuote,Parentelem,replace){
   var MainQuoteElem = "";
@@ -653,6 +682,31 @@ function Content(Content) {
   buildLogo('#phasingIMG', '#306090');
 }
 
+function Comic(Issue,PrevComicIssue,NextComicIssue,){
+  CreateWikiDetails();
+  var ComicKeys = ['Name','Release',"Order"];
+  var ComicStrings = ['Name','Release date',"Order"];
+  PopulateWikiDetailsStatic(ComicKeys, ComicStrings,"");
+  WikiImage(Issue[0].issue_Image, 'api__comicIssue');
+  $('#WikiName p').html(Issue[0].issue_Name);
+  $('#WikiRelease p').html(Issue[0].issue_Release);
+
+  if(PrevComicIssue.length>0){
+    $('#Previous p').html(PreviousNextLink(PrevComicIssue[0].issue_Name, PrevComicIssue[0].page_Link));
+
+  }else{
+    $('#Previous p').html(PreviousNextLink("",null));
+  }
+
+  if(NextComicIssue.length>0){
+    $('#Next p').html(PreviousNextLink(NextComicIssue[0].issue_Name, NextComicIssue[0].page_Link));
+
+  }else{
+    $('#Next p').html(PreviousNextLink("",null));
+  }
+  
+}
+
 function Doctor(DoctorData) {
   //$('main article h1').html(DoctorData.Doctor[0].doctor_Incarnation);
   CreateWikiDetails();
@@ -702,6 +756,12 @@ function Magazine(MagazineData){
 
 
 function Serial(EpisodeData) {
+    var langFormat;
+  if (getCookie("lang").indexOf('_') > -1) {
+    langFormat = getCookie("lang").replace('_', '-');
+  } else {
+    langFormat = getCookie("lang");
+  }
   //$('main article h1').html(EpisodeData.Serial[0].serial_Title);
   CreateWikiDetails();
   var episodeKeys = ['Overall_Story_Number','Doctors', 'Companions', 'First_Aired_On', 'Last_Aired_On', 'Total_Runtime','Average_UK','Average_AI','Production_code', 'Order', ];
@@ -727,7 +787,7 @@ function Serial(EpisodeData) {
   $('#WikiProduction_code p').html(EpisodeData.Serial[0].serial_Production_code);
   $('#WikiTotal_Runtime p').html(EpisodeData.Serial[0]["Total Runtime"].substring(0, EpisodeData.Serial[0]["Total Runtime"].indexOf('.')));
   if(EpisodeData.Serial[0]["average UK viewership"]!=null) {
-    $('#WikiAverage_UK p').html(new Intl.NumberFormat(getCookie('lang')).format(EpisodeData.Serial[0]["average UK viewership"]));
+    $('#WikiAverage_UK p').html(new Intl.NumberFormat(langFormat).format(EpisodeData.Serial[0]["average UK viewership"]));
   }
   if(EpisodeData.Serial[0]["average AI"]!=null) {
     $('#WikiAverage_AI p').html(EpisodeData.Serial[0]["average AI"].substring(0, EpisodeData.Serial[0]["average AI"].indexOf('.')));
@@ -917,7 +977,7 @@ function LocalDate(original) {
   if (getCookie("lang").indexOf('_') > -1) {
     langFormat = getCookie("lang").replace('_', '-');
   } else {
-    langFormat = 'default';
+    langFormat = getCookie("lang");
   }
   var newDate = rawDate.toLocaleString(langFormat, {
     month: 'long',
@@ -925,7 +985,7 @@ function LocalDate(original) {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
+    second: '2-digit'  ,
     timeZoneName: 'short'
   });
   if((rawDate.getHours()==1||rawDate.getHours()==0)&&rawDate.getMinutes()==0 && rawDate.getSeconds()==0){
@@ -951,6 +1011,12 @@ function PreviousNextLink(EpisodeText, EpisodeLink) {
 }
 
 function Episodes(episodes) {
+    var langFormat;
+  if (getCookie("lang").indexOf('_') > -1) {
+    langFormat = getCookie("lang").replace('_', '-');
+  } else {
+    langFormat = getCookie("lang");
+  }
   var tableRow;
   var tableData ="";
   for (var i = 0; i < episodes.length; i++) {
@@ -965,7 +1031,7 @@ function Episodes(episodes) {
     tableRow += '<td>' + episodes[i].Runtime + '</td>';
     tableRow += '<td>' + LocalDate(episodes[i].episode_Original_airdate) + '</td>';
     tableRow += '<td>' + episodes[i].episode_Original_Network + '</td>';
-    tableRow += '<td>' + new Intl.NumberFormat(getCookie('lang')).format(episodes[i].episode_UK_viewers) + '</td>';
+    tableRow += '<td>' + new Intl.NumberFormat(langFormat).format(episodes[i].episode_UK_viewers) + '</td>';
     tableRow += '<td>' + episodes[i].episode_Appreciation_index + '</td>';
     var statesObject = JSON.parse(episodes[i].state);
     statesObject = statesObject.toString().split(",");
@@ -991,7 +1057,6 @@ function buildLogo(element, color) {
 
 
 
-let deferredPrompt;
 
 /* Listening for the beforeinstallprompt event. When the event is fired, it prevents the default
 behavior (which is to show the mini-info bar) and stores the event in a variable so it can be
@@ -1035,24 +1100,17 @@ window.addEventListener('DOMContentLoaded', () => {
   let displayMode = 'browser tab';
   if (navigator.standalone) {
     displayMode = 'standalone-ios';
+    $(".installButton").css("display","none");
   }
   if (window.matchMedia('(display-mode: standalone)').matches) {
     displayMode = 'standalone';
+    $(".installButton").css("display","none");
   }
   // Log launch display mode to analytics
-  //console.log('DISPLAY_MODE_LAUNCH:', displayMode);
+  console.log('DISPLAY_MODE_LAUNCH:', displayMode);
 });
 
-window.addEventListener('DOMContentLoaded', () => {
-  window.matchMedia('(display-mode: standalone)').addListener((evt) => {
-    let displayMode = 'browser tab';
-    if (evt.matches) {
-      displayMode = 'standalone';
-    }
-    // Log display mode change to analytics
-    //console.log('DISPLAY_MODE_CHANGED', displayMode);
-  });
-});
+
 
 
 /**
@@ -1117,11 +1175,46 @@ function GetSecondsForEpisodes(dataURL) {
   });
 }
 
+function iOS() {
+  return [
+    'iPad Simulator',
+    'iPhone Simulator',
+    'iPod Simulator',
+    'iPad',
+    'iPhone',
+    'iPod'
+  ].includes(navigator.platform)
+  // iPad on iOS 13 detection
+  || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+}
+
 function HideNotificationButton() {
-  if (Notification.permission === "granted") {
+    if (iOS()===false){
+        if (Notification.permission === "granted") {
     $('.custom-button').hide();
 
   }
+        
+    }else{
+         try {
+        Notification.requestPermission()
+            .then(() => doSomething())                                                                                                                                               
+    } catch (error) {
+        // Safari doesn't return a promise for requestPermissions and it                                                                                                                                       
+        // throws a TypeError. It takes a callback as the first argument                                                                                                                                       
+        // instead.
+        if (error instanceof TypeError) {
+            Notification.requestPermission(() => {                                                                                                                                                             
+                 $('.custom-button').hide();
+            });
+        } else {
+            throw error;                                                                                                                                                                                       
+        }                                                                                                                                                                                                      
+    }  
+        
+        
+    }
+  
 }
 
 window.addEventListener("afterprint", ClosePrint);
@@ -1307,7 +1400,7 @@ function GalleriesForPage(Galleries){
     }
     Gallery+= "</div></div>";
     $("#Gallery_"+value.id).html(Gallery);
-    baguetteBox.run('#gal_'+value.id,{async:true,titleTag:true});
+    baguetteBox.run('#Gallery_'+value.id,{async:true,titleTag:true});
   }
 }
 

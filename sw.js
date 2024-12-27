@@ -36,24 +36,13 @@ var urlsToCache = [
   //'https://www.doctorwhofans.be/'
 ];
 // @ts-ignore
-var deferredPrompt;
 
-self.addEventListener('beforeinstallprompt', function (event){
-  event.preventDefault();
-  deferredPrompt = event;
-  showInstallPromotion();
-});
 //
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js');
+//importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js');
 
 
 
 
-self.addEventListener('beforeinstallprompt', function (event){
-  event.preventDefault();
-  deferredPrompt = event;
-  showInstallPromotion();
-});
 //
 /* importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js');
 
@@ -145,4 +134,4 @@ self.addEventListener('activate', function (event) {
 });
 
 
-importScripts("https://sdki.truepush.com/sdk/v2.0.4/sw.js");
+//importScripts("https://sdki.truepush.com/sdk/v2.0.4/sw.js");

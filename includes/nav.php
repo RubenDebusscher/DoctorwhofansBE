@@ -7,25 +7,25 @@
   <ol style="display:none">
     <li id="logo"></li>
     <li>
-      <h2><a href="../Home.html" class="toplink"><span data-text="Home">Home</span> <i class="fa fa-home"></i></a></h2>
+      <h2><a href="../Home.html" class="toplink"><span data-text="Home"><?php echo $langArray['Home'] ?></span> <i class="fa fa-home"></i></a></h2>
       <div class="cols-0">
       </div>
     </li>
     <li>
-      <h2><a href="#whoIsWho">who is Who <i class="fa fa-arrow-down" aria-hidden="false"></i></a></h2>
+      <h2><a href="#whoIsWho"><?php echo $langArray['whoIsWho'] ?> <i class="fa fa-arrow-down" aria-hidden="false"></i></a></h2>
       <div class="cols-4c">
         <ol>
           <li class="accessible-megamenu-panel-group">
-            <h3><a href="../Characters/The_Doctor.html">The Doctor</a></h3>
+            <h3><a href="../Characters/The_Doctor.html"><?php echo $langArray['TheDoctor'] ?></a></h3>
             <ol>
-              <li><a href="../Characters/The_Doctor/First_Doctor.html">First Doctor</a></li>
-              <li><a href="../Characters/The_Doctor/Second_Doctor.html">Second Doctor</a></li>
-              <li><a href="../Characters/The_Doctor/Third_Doctor.html">Third Doctor</a></li>
-              <li><a href="../Characters/The_Doctor/Fourth_Doctor.html">Fourth Doctor</a></li>
-              <li><a href="../Characters/The_Doctor/Fifth_Doctor.html">Fifth Doctor</a></li>
-              <li><a href="../Characters/The_Doctor/Sixth_Doctor.html">Sixth Doctor</a></li>
-              <li><a href="../Characters/The_Doctor/Seventh_Doctor.html">Seventh Doctor</a></li>
-              <li><a href="../Characters/The_Doctor/Eighth_Doctor.html">Eighth Doctor</a></li>
+              <li><a href="../Characters/The_Doctor/First_Doctor.html"><?php echo $langArray['FirstDoctor'] ?></a></li>
+              <li><a href="../Characters/The_Doctor/Second_Doctor.html"><?php echo $langArray['SecondDoctor'] ?></a></li>
+              <li><a href="../Characters/The_Doctor/Third_Doctor.html"><?php echo $langArray['ThirdDoctor'] ?></a></li>
+              <li><a href="../Characters/The_Doctor/Fourth_Doctor.html"><?php echo $langArray['FourthDoctor'] ?></a></li>
+              <li><a href="../Characters/The_Doctor/Fifth_Doctor.html"><?php echo $langArray['FifthDoctor'] ?></a></li>
+              <li><a href="../Characters/The_Doctor/Sixth_Doctor.html"><?php echo $langArray['SixthDoctor'] ?></a></li>
+              <li><a href="../Characters/The_Doctor/Seventh_Doctor.html"><?php echo $langArray['SeventhDoctor'] ?></a></li>
+              <li><a href="../Characters/The_Doctor/Eighth_Doctor.html"><?php echo $langArray['EighthDoctor'] ?></a></li>
               <hr>
               <li><a href="../Characters/The_Doctor/War_Doctor.html">The War Doctor</a></li>
               <li><a href="../Characters/The_Doctor/Ninth_Doctor.html">Ninth Doctor</a></li>
@@ -45,17 +45,16 @@
                     class="fa fa-female"></i>
                 </a>
               </li>
-              <li><a href="Characters/Villains.html">Villains</a></li>
+              <li><a href="../Category:Villains.html">Villains</a></li>
               <li><a href="Characters/Allies.html">Allies</a></li>
             </ol>
             <hr>
             <h2>Spin-off</h2>
             <ol>
               <li><a href="../Torchwood.html"><img class="lazyload" src="../images/Torchwood.png"
-                    alt="Torchwood logo" />Torchwood</a></li>
+                    alt="Torchwood logo" style="width: 1.5vw;margin-right: 1vw;"/>Torchwood</a></li>
               <li><a href="../Sarah_Jane_Adventures.html"><img class="lazyload" src="../images/SJA.png"
-                    alt="Sarah Jane Adventures logo" /> Sarah Jane
-                  Adventures</a></li>
+                    alt="Sarah Jane Adventures logo" style="    width: 4vw;margin-right: 0vw;margin-left: -1vw;"/> Sarah Jane Adventures</a></li>
               <li><a href="../Class.html"><img class="lazyload" src="../images/Class.png" alt="Class logo" /> Class</a>
               </li>
             </ol>
@@ -63,8 +62,8 @@
           <li class="accessible-megamenu-panel-group">
             <h3>Concepts</h3>
             <ol>
-              <li><a href="../TARDIS.html"><img class="lazyload" src="../images/tardis.png"
-                    alt="TARDIS logo" />T.A.R.D.I.S</a></li>
+              <li><a href="../TARDIS.html"><img class="lazyload" src="../images/tardis.svg"
+                    alt="TARDIS logo" style="width: 1.5vw;margin-right: 1vw;"/>T.A.R.D.I.S</a>
               <li><a href="../Sonic_Screwdriver.html">Sonic Screwdriver</a>
               </li>
               <li><a href="../UNIT.html"><img class="lazyload" src="../images/UNIT.png" alt="UNIT logo" />
@@ -136,8 +135,7 @@
             <hr>
             <h3>To learn</h3>
             <ol>
-              <li><a href="../Questions.html"><i class="fa fa-question" aria-hidden="false"></i>
-                  Questions</a></li>
+              <li><a href="../Questions.html"><i class="fa fa-question" aria-hidden="false"></i> Questions</a></li>
             </ol>
           </li>
           <li class="accessible-megamenu-panel-group">
@@ -148,8 +146,7 @@
               <li><a href="../Fanclubs.html"><i class="fa fa-users" aria-hidden="false"></i> Fanclubs</a>
               </li>
               <li><a href="../Links.html"><i class="fa fa-link" aria-hidden="false"></i> Links</a></li>
-              <li><a href="../Cosplay.html"><i class="fa fa-user-secret" aria-hidden="false"></i>
-                  Cosplay</a></li>
+              <li><a href="../Cosplay.html"><i class="fa fa-user-secret" aria-hidden="false"></i> Cosplay</a></li>
               <li><a href="../DIY.html"><i class="fa fa-wrench" aria-hidden="false"></i> DIY</a></li>
             </ol>
           </li>
@@ -163,14 +160,13 @@
       </div>
     </li>
     <li>
-      <h2><a href="../Belgian_Whovians_United.html" class="toplink">Belgian Whovian United <i class="fa fa-group" aria-hidden="false"></i></a>
+      <h2><a href="../Belgian_Whovians_United.html" class="toplink">Belgian Whovians United <i class="fa fa-group" aria-hidden="false"></i></a>
       </h2>
       <div class="cols-0">
       </div>
     </li>
     <li>
-      <h2><a href="https://forum.doctorwhofans.be" class="toplink">Forum <i class="fa fa-comments-o"
-            aria-hidden="false"></i></a></h2>
+      <h2><a href="https://forum.doctorwhofans.be" class="toplink">Forum <i class="fa fa-comments-o" aria-hidden="false"></i></a></h2>
       <div class="cols-0">
       </div>
     </li>
@@ -181,7 +177,7 @@
       </div>
     </li>
     <li id="search" class="rightItem">
-      <h2><a href="#Search"><?php echo $langArray['zoeken'] ?> <i class="fa fa-search" aria-hidden="false" title="Zoeken"></i></a></h2>
+      <h2><a href="#Search"><span class="addText"><?php echo $langArray['zoeken'] ?></span> <i class="fa fa-search" aria-hidden="false" title="Zoeken"></i></a></h2>
       <div class="cols-4d2 rightBox">
         <ol>
           <form method="post" class="zoekformulier">
@@ -196,30 +192,18 @@
       </div>
     </li>
     <li class="rightItem">
-      <h2><a href="#Search">Settings <i class="fa fa-gear" aria-hidden="false" title="Settings"></i></a></h2>
+      <h2><a href="#Settings"><span class="addText"><?php echo $langArray['instellingen'] ?></span> <i class="fa fa-gear" aria-hidden="false" title="Settings"></i></a></h2>
       <div class="cols-4d2 rightBox">
-        <h3>Settings</h3>
+        <h3><?php echo $langArray['instellingen'] ?></h3>
         <ol>
           <form>
             <div class="optin-types optin-customization">
               <a href="../Sitemap.html"><i class="fa fa-sitemap"></i> Sitemap</a><br>
               <a href="https://adm.doctorwhofans.be" class="toplink">Admin Panel <i class="fa fa-comments-o"
                 aria-hidden="false"></i></a>            </div>
-              <!--TODO: #57 Re-enable the existing settings, improve and add on functionality-->
-            <!--  <fieldset>
-                                <legend>Accessibility</legend>
-                                <button class=toegang id=toegang onclick="toggleAccess()" type="button">Toegankelijkheid
-                                    verhogen</button>
-
-                                <button class="RemoveImages" id="RemoveImages" type="button"
-                                    onclick="ToggleImg()">Toggle
-                                    Afbeeldingen</button>
-                                        /
-                                <!-- TODO: #40 Allow for different fonts, so user can change the font to one that works best for him/her-->
-            <!-- </fieldset>-->
-            <button id="print" type="button" onclick="window.print()"><i class="fa fa-print"></i>Print</button>
+            <button id="print" type="button" onclick="window.print()"><i class="fa fa-print"></i> <?php echo $langArray['printen'] ?></button>
             <button type="button" role="button" onclick="ToggleNightMode()" id="NightMode"><i class="fa fa-moon-o"
-              aria-hidden="false"></i> Day/Night mode</button>
+              aria-hidden="false"></i> <?php echo $langArray['DayNight'] ?></button>
               <select id='font-select'>
                 <option value='Open Sans'>Open Sans</option>
                 <option value='Courier Prime'>Courier Prime</option>
@@ -242,7 +226,7 @@
       </div>
     </li>
     <li class="rightItem installButton" onclick="A2HS()">
-      <h2><a href="#" class="toplink">Install <i class="fa fa-plus-circle" aria-hidden="false"></i></a>
+      <h2><a href="#" class="toplink"><span class="addText"><?php echo $langArray['installeren'] ?></span> <i class="fa fa-plus-circle" aria-hidden="false"></i></a>
       </h2>
       <div class="cols-0">
       </div>
@@ -250,6 +234,24 @@
   </ol>
 </nav>
 <style>
+
+
+.rightBox {
+  position: fixed !important;
+    right: 0 !important;
+    left: 79vw !important;
+    }
+.addText {
+  display:inline-block; /* inline-block so we can set a width */
+  width:0;
+  white-space:nowrap; /* keep text one line */
+  direction:rtl; /* change direction so the text overflow on the left */
+  color: rgba(255,255,255,0);
+  transition: .5s;
+  transform: translateX(20px); /* put the value you want here */
+  pointer-events:none; /* to avoid the hover on the text, remove to see the difference */
+
+}
   #logo {
     width: 4em;
     background-size: 2.5em;
@@ -391,8 +393,18 @@
   .accessible-megamenu>.accessible-megamenu-top-nav-item a[aria-expanded]:hover {
     color: var(--nav-hover-color) !important;
     text-decoration: underline;
-    outline-offset: -1px
+    outline-offset: -1px;
   }
+
+  .accessible-megamenu>.accessible-megamenu-top-nav-item a[aria-expanded]:focus .addText,
+  .accessible-megamenu>.accessible-megamenu-top-nav-item a[aria-expanded]:hover .addText {
+    color: var(--nav-hover-color) !important;
+    text-decoration: underline;
+    outline-offset: -1px;
+    transform: translateX(0);
+    width:fit-content
+  }
+
 
   .accessible-megamenu>.accessible-megamenu-top-nav-item .dark-mode a[aria-expanded]:focus,
   .accessible-megamenu>.accessible-megamenu-top-nav-item .dark-mode a[aria-expanded]:hover {
@@ -750,6 +762,18 @@
   }
 
   @media (max-width:773px) {
+    
+    .rightBox {top:53vh !important;}
+
+    .addText{
+
+      display: initial !important;
+    width: 0;
+    transition:0;transform:none;
+    white-space: nowrap;
+    color:var(--font-color-darkblue-white) !important;
+   
+    }
     .accessible-megamenu-toggle {
       display: block;
       z-index: 3
@@ -808,6 +832,8 @@
       margin-right: 0 !important
     }
   }
+
+  
 
   @media (max-width:452px) {
 
@@ -4736,9 +4762,12 @@
     }(jQuery, window, document), jQuery && function (e) {
       "use strict";
       e(document).ready(function () {
-        e(".megamenu").accessibleMegaMenu(), e(".installButton").hide(), setTimeout(function () {
+        e(".megamenu").accessibleMegaMenu(), setTimeout(function () {
           e("body").removeClass("init")
         }, 500)
+
+        
       })
     }(jQuery)
+    
 </script>

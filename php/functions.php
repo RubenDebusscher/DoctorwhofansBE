@@ -41,6 +41,14 @@ function getRichContent(&$conn,&$prefix,&$API_Item,&$antwoord){
 		case "Video":
 			getVideos($conn,$id,$antwoord);
 			break;
+		case "ComicOverview":
+			getComicLine($conn,$API_Item,$antwoord);
+			getComicIssueList($conn,$API_Item,$antwoord);
+			break;
+		case "Comic":
+			getComicIssue($conn,$API_Item,$antwoord);
+			getNextComicIssue($conn,$API_Item,$antwoord);
+			getPrevComicIssue($conn,$API_Item,$antwoord);
 
 		
 	}
@@ -68,8 +76,128 @@ function getMagazine(&$conn,&$API_Item,&$resultset){
 }
 
 
+function getComicLine(&$conn,&$API_Item,&$resultset){
+
+	$stmtComicLine = $conn->prepare('select Line_Name,line_Image from api__comicLine where Line_Id=?');
+	if(!$stmtComicLine){
+		die('Statement preparing failed: ' . $conn->error);
+	}
+	if(!$stmtComicLine->bind_param("i",$API_Item)){
+		die('Statement binding failed: ' . $conn->connect_error);
+	}
+	if(!$stmtComicLine->execute()){
+		die('Statement execution failed: ' . $stmtComicLine->error);
+	}else{
+		$result = $stmtComicLine->get_result();
+		if($result->num_rows === 0){
+			$resultset['ComicLine']= $API_Item;
+		} else{
+			$resultset['ComicLine'] = $result->fetch_all(MYSQLI_ASSOC);
+		}
+	}
 
 
+}
+
+function getComicIssue(&$conn,&$API_Item,&$resultset){
+
+	$stmtComicIssue = $conn->prepare('select * from api__comicIssue where Issue_Id=?');
+	if(!$stmtComicIssue){
+		die('Statement preparing failed: ' . $conn->error);
+	}
+	if(!$stmtComicIssue->bind_param("i",$API_Item)){
+		die('Statement binding failed: ' . $conn->connect_error);
+	}
+	if(!$stmtComicIssue->execute()){
+		die('Statement execution failed: ' . $stmtComicIssue->error);
+	}else{
+		$result = $stmtComicIssue->get_result();
+		if($result->num_rows === 0){
+			$resultset['ComicIssue']= $API_Item;
+		} else{
+			$resultset['ComicIssue'] = $result->fetch_all(MYSQLI_ASSOC);
+		}
+	}
+
+
+}
+
+
+
+function getNextComicIssue(&$conn,&$API_Item,&$resultset){
+
+	$stmtComicIssue = $conn->prepare('select issue_Name,management__pages.page_Link from api__comicIssue inner join management__pages on issue_Page_Id=management__pages.page_Id where Line_Id=(select Line_Id from api__comicIssue where Issue_Id=?) and issue_Order>(select issue_Order from api__comicIssue where Issue_Id=?) order by issue_Order desc limit 1;');
+	if(!$stmtComicIssue){
+		die('Statement preparing failed: ' . $conn->error);
+	}
+	if(!$stmtComicIssue->bind_param("ii",$API_Item,$API_Item)){
+		die('Statement binding failed: ' . $conn->connect_error);
+	}
+	if(!$stmtComicIssue->execute()){
+		die('Statement execution failed: ' . $stmtComicIssue->error);
+	}else{
+		$result = $stmtComicIssue->get_result();
+		if($result->num_rows === 0){
+			$resultset['NextComicIssue']= "";
+		} else{
+			$resultset['NextComicIssue'] = $result->fetch_all(MYSQLI_ASSOC);
+		}
+	}
+
+
+}
+
+
+
+
+function getPrevComicIssue(&$conn,&$API_Item,&$resultset){
+
+	$stmtComicIssue = $conn->prepare('select issue_Name,management__pages.page_Link from api__comicIssue inner join management__pages on issue_Page_Id=management__pages.page_Id where Line_Id=(select Line_Id from api__comicIssue where Issue_Id=?) and issue_Order<(select issue_Order from api__comicIssue where Issue_Id=?) order by issue_Order asc limit 1;');
+	if(!$stmtComicIssue){
+		die('Statement preparing failed: ' . $conn->error);
+	}
+	if(!$stmtComicIssue->bind_param("ii",$API_Item,$API_Item)){
+		die('Statement binding failed: ' . $conn->connect_error);
+	}
+	if(!$stmtComicIssue->execute()){
+		die('Statement execution failed: ' . $stmtComicIssue->error);
+	}else{
+		$result = $stmtComicIssue->get_result();
+		if($result->num_rows === 0){
+			$resultset['PrevComicIssue']= "";
+		} else{
+			$resultset['PrevComicIssue'] = $result->fetch_all(MYSQLI_ASSOC);
+		}
+	}
+
+
+}
+
+
+
+
+function getComicIssueList(&$conn,&$API_Item,&$resultset){
+
+	$stmtIssueList = $conn->prepare('select issue_Image,issue_Name,management__pages.page_Link from api__comicIssue inner join management__pages on issue_Page_Id=management__pages.page_Id where Line_Id=? and ((management__pages.page_Active=1));');
+	if(!$stmtIssueList){
+		die('Statement preparing failed: ' . $conn->error);
+	}
+	if(!$stmtIssueList->bind_param("i",$API_Item)){
+		die('Statement binding failed: ' . $conn->connect_error);
+	}
+	if(!$stmtIssueList->execute()){
+		die('Statement execution failed: ' . $stmtComicLine->error);
+	}else{
+		$result = $stmtIssueList->get_result();
+		if($result->num_rows === 0){
+			$resultset['IssueList']= $API_Item;
+		} else{
+			$resultset['IssueList'] = $result->fetch_all(MYSQLI_ASSOC);
+		}
+	}
+
+
+}
 
 
 function getCharacter(&$conn,&$API_Item,&$resultset){
@@ -549,7 +677,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 
 
 
-function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
+function getPagesForTag(&$conn,&$current_Page_Id,$RawCategory,&$resultset){
 	$stmtPagesByTags = $conn->prepare('select page_Link,page_Name, management__categories.category_Name from management__pages inner join management__pages_categories on page_Id = Pc_Page_Id 
 	inner join management__categories on management__categories.category_Id=management__pages_categories.PC_category_Id
 	where (PC_Category_Id=? or category_Name=?) and Page_Active=1;');
@@ -557,6 +685,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 		die('Statement preparing failed: ' . $conn->error);
 	}
 	$cat=str_replace("_", " ", $RawCategory);
+	
 	if(!$stmtPagesByTags->bind_param("is",$current_Page_Id,$cat)){
 		die('Statement binding failed: ' . $conn->connect_error);
 	}
@@ -565,7 +694,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 	}else{
 		$rsltPagesByTag = $stmtPagesByTags->get_result();
 		if($rsltPagesByTag->num_rows === 0){
-			$resultset['PagesForTag']='';
+			$resultset['PagesForTag']="Test ".$RawCategory;
 		} else{
 			$resultset['PagesForTag'] = $rsltPagesByTag->fetch_all(MYSQLI_ASSOC);
 		}
@@ -640,7 +769,7 @@ function getPagesForTag($conn,$current_Page_Id,$RawCategory,&$resultset){
 	}
 	function getGalleries(&$conn,&$current_Page_Id,&$resultset) {
 		$resultset['Galleries']="";
-		$stmtGalleries = $conn->prepare('select * from content__gallery left join content__event on Event_Id = Gallery_Event left join content__gallery__images ON content__gallery.CG_Id=content__gallery__images.Gallery_Id where CG_Page=?');
+		$stmtGalleries = $conn->prepare('select * from content__gallery left join content__event on Event_Id = Gallery_Event left join content__gallery__images ON content__gallery.CG_Id=content__gallery__images.Gallery_Id where CG_Page=? and image_active=1');
 			if(!$stmtGalleries){
 				die('Statement preparing failed: ' . $conn->error);
 			}

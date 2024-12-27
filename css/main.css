@@ -3063,6 +3063,155 @@ h1 {
     max-width: 50%;
 }
 
+
+.cke_show_borders,main {
+    z-index: 5;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    min-height: var(--height-for-main);
+    overflow: hidden;
+  }
+
+  .main__path,#tags {
+    z-index: 1;
+    top:4em;
+    color: var(--font-color-darkblue-white);
+    background-color: var(--bg-color-darkBlue);
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-left: 1em;
+    margin-bottom: 1.5em;
+    display: none;
+    width: fit-content;
+    margin-top: 1em;
+  }
+  .main__path a,
+  #WikiDetails a,
+  #Inhoud a,
+  #tags a,
+  .MainQuote a,
+  .VideoChoice a,
+  .footer__EpisodesOfTheDay a,
+  .footer__ActorsOfTheDay a,.DarkBlueBackground a,.Tiles a{
+    color: var(--font-color-darkblue-white);
+    
+  }
+  .main__path a:focus,
+  .main__path a:hover,
+  #WikiDetails a:hover,
+  #WikiDetails a:focus,
+  #Inhoud a:hover,
+  #Inhoud a:focus,
+  #tags a:hover,
+  #tags a:focus,
+  .MainQuote a:hover,
+  .MainQuote a:focus,
+  .VideoChoice a:hover,
+  .VideoChoice a:focus,s
+  .footer__EpisodesOfTheDay a:hover,.footer__EpisodesOfTheDay a:focus,.footer__ActorsOfTheDay a:hover,.footer__ActorsOfTheDay a:focus,.DarkBlueBackground a:hover,.DarkBlueBackground a:focus,.Tiles a:hover,.Tiles a:focus {
+    text-decoration: none;
+    color:var(--nav-hover-color);
+  }
+
+.wide{width: 95%;margin:0 auto}
+
+.square_rounded{
+ 
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+  object-position: initial;
+  min-width: 46px;
+  min-height: 46px;
+aspect-ratio: 1/1;
+  max-width: 80px;
+  max-height: 80px;
+  object-fit: cover;
+  margin-right:1em
+    
+}
+
+.square {
+  position: relative;
+}
+
+.square::after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+.square img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.Tile{height: auto;
+  line-height: 10vh;
+  vertical-align: middle;
+margin-bottom: 1em;}
+ 
+
+
+
+  .Tiles a:hover,.Tiles a:focus {
+    animation: shake 1s;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+
+  .cke_show_borders h1,main h1 {
+
+    z-index: 1;
+    top: 4em;
+    color: var(--font-color-darkblue-white);
+    background-color: var(--bg-color-darkBlue);
+    padding: 0.5em;
+    border-radius: 5px;
+    margin-bottom: 1em;
+    width: fit-content;display: inline-block;
+  }
+  article{padding-left: 4vw;padding-right: 4vw;}
+
+  @media only screen and (max-width: 600px) {
+    .cke_show_borders,main {
+      padding: 0;
+    }
+
+    .cke_show_borders h1,main h1 {
+      position: initial;
+      top: 1;
+      width: 92%;
+      float: none;
+      margin-bottom: 0;
+      margin-right: auto;
+      margin-top: 0.2em;
+
+    }
+
+    .main__path,.footer__EpisodesOfTheDay {
+      position:initial;
+      top:1;width: 92%;float: none;margin-bottom: 0;
+      margin-right: auto;margin-left: auto;margin-top: 0.2em;
+  
+    }
+  }
 #phasingIMG {
     width: 100%;
     background-size: 29em;
@@ -3089,6 +3238,8 @@ h1 {
     padding: 1%;
     /*border: 5px solid var(--border-color);
     border-radius: 3%;*/
+        margin-left: 2em;
+
     color: var(--font-color-darkblue-white);
     margin-right:-4em;
 }
@@ -3121,9 +3272,7 @@ h1 {
 #Inhoud ol {
     text-align: initial;
 }
- .WikiPage p{
-    max-width: 80%;
-}
+
 section[id^='Wiki'] p {
     width: 50%;
     float: right;
@@ -3151,7 +3300,7 @@ section[id^='Wiki'] hr {
 table,
 th,
 td {
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--bg-color-darkBlue);
     border-collapse: collapse;
     padding-left: 1em;
     padding-right: 1em;
@@ -3163,7 +3312,7 @@ td {
 }
 
 table {
-    border: 5px inset var(--border-color);
+    border: 5px inset var(--bg-color-darkBlue);
     border-radius: 5em;
 }
 
@@ -3195,6 +3344,24 @@ table tr {
     padding: 1em;
     margin-top: 0.5em;
     color: var(--font-color-darkblue-white)
+}
+
+
+#Issues {
+    display: inline-flex;
+    width: 19%;
+    text-align: center;
+    margin-left: 9em;
+    margin-right: 3em;
+    min-width: 10em;
+    gap:1em;
+
+}
+#Issues a{
+    padding:1em;
+    background-color: var(--bg-color-darkBlue);
+    color: var(--font-color-darkblue-white)
+
 }
 
 .Overzicht a {
@@ -3501,7 +3668,8 @@ main article a:focus {
     bottom: 0;
     right: 0;
     width: 100%;
-    height: 100%;
+    max-height: 100%;
+    min-height: 50%;s
   }
   .thumbnail{
     width: 19vw;

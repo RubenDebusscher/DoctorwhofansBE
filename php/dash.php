@@ -14,6 +14,7 @@
 	// * set cors and make connection
 	error_reporting(E_ALL ^ E_WARNING);
 	$antwoord = [];
+	$image_list=[];
 	require("cors.php");
 	require("connect.php");
 
@@ -114,7 +115,8 @@
 			else{
 				$result = $stmt4->get_result();	    //return de json data
 				if($result->num_rows === 0) {$antwoord['Tags']='No rows';}else{
-					$antwoord['Tags'] = $result->fetch_all(MYSQLI_ASSOC);}
+					$antwoord['Tags'] = $result->fetch_all(MYSQLI_ASSOC);
+			}
 
 		}
 			$stmt4->close();    //sluit de query en de connectie a  
@@ -122,9 +124,9 @@
     
     
     
+   
     
-    
-    $stmt5 = $conn->prepare("SELECT Replace(Replace(management__pages.page_Link,')',''),'(','') as A_Pagina,Replace(Replace(item_Value,')',''),'(','') as A_Waarde from content__items inner join management__pages on management__pages.page_Id=content__items.item_Page where item_Value like '%<a href%' and item_Active=1;");
+    $stmt5 = $conn->prepare("SELECT Replace(Replace(management__pages.page_Link,')',''),'(','') as A_Pagina, item_Value as A_Waarde from content__items inner join management__pages on management__pages.page_Id=content__items.item_Page where item_Value like '%<a href%' and item_Active=1;");
 	if(!$stmt5){
 	    	    die("Statement preparing failed: " . $conn->error);
 
@@ -137,7 +139,14 @@
 	    //return de json data
 	    $result = $stmt5->get_result();
 	    if($result->num_rows === 0) {$antwoord['LinksInContent']='No rows';}else{
-        $antwoord['LinksInContent'] = $result->fetch_all(MYSQLI_ASSOC);
+
+				while ($row=mysqli_fetch_array($result))
+{
+    $text = $row['A_Waarde'];
+    preg_match_all('/(\b(https?|ftp|file|http):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/is', $text, $matches);
+    $img_list=array_merge($image_list,$matches[0]);  // append to array       
+}
+       $antwoord['LinksInContent'] = $img_list;
 			}
    
 	}
@@ -158,7 +167,7 @@
 				//return de json data
 				$result = $stmt6->get_result();
 				if($result->num_rows === 0) {$antwoord['AllLinks']='No rows';}else{
-					$antwoord['AllLinks'] = $result->fetch_all(MYSQLI_ASSOC);
+				//	$antwoord['AllLinks'] = $result->fetch_all(MYSQLI_ASSOC);
 				}
 		 
 		}
