@@ -1,0 +1,10 @@
+* subscription payment receipt 3.0 for Dolibarr 19, 2024-03-15 :
+- Fix : New php restriction : php - static methods should declared static
+- Fix : New php restriction : php - classes should be created with __construct method
+- Fix : Put magnifying glass in the right of the document name as in the case of all other documents in Dolibarr
+- New options to print emitter and customer details
+-----------------------
+* subscription payment receipt 2.0 for Dolibarr 17.0.1, 2023-06-02 :
+-Fix subscriber address
+-----------------------
+* subscription payment receipt 1.0 for Dolibarr 12.0.1, 2020-09-27 :

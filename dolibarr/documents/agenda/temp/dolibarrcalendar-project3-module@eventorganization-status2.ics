@@ -1,0 +1,8 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+METHOD:PUBLISH
+PRODID:-//DOLIBARR 19.0.1
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Dolibarr actions Belgian Whovians United
+X-WR-CALDESC:Gebeurtenissenlijst (Belgian Whovians United - built by Dolibarr)
+END:VCALENDAR

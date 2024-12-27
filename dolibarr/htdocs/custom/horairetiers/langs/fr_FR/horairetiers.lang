@@ -1,0 +1,107 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Générique
+#
+
+# Module label 'ModuleHorairetiersName'
+ModuleHorairetiersName = Horaire Tiers
+# Module description 'ModuleHorairetiersDesc'
+ModuleHorairetiersDesc = Permet de renseigner les horaires d'ouverture d'un tiers.
+
+#
+# Page d'administration
+#
+HorairetiersSetup = Configuration du module Horairetiers
+Settings = Réglages
+HorairetiersSetupPage = Page de configuration du module Horairetiers
+
+#
+# Page À propos
+#
+About = À propos
+HorairetiersAbout = À propos de Horairetiers
+HorairetiersAboutPage = Page à propos de Horairetiers
+
+#
+# Page d'exemple
+#
+MyPageName = Nom de ma page
+
+#
+# v13.0.00
+#
+HoraireTiersDay = Jour
+HoraireTiersWork = Travaillé
+HoraireTiersStartWork = Heure de début
+HoraireTiersEndWork = Heure de fin
+HoraireTiersStartLunch = Début déjeuner
+HoraireTiersEndLunch = Fin déjeuner
+HoraireTiersModify = Modifier
+HoraireTiersCreate = Créer
+HoraireTiersSave = Sauvegarder
+HoraireTiersMonday = Lundi
+HoraireTiersTuesday = Mardi
+HoraireTiersWednesday = Mercredi
+HoraireTiersThursday = Jeudi
+HoraireTiersFriday = Vendredi
+HoraireTiersSaturday = Samedi
+HoraireTiersSunday = Dimanche
+HoraireTiersHours = <span class="fa fa-clock-o"></span> Horaires
+HoraireTiersContinueDay = Journée continue
+HoraireTiersEndClone = Cloner
+HoraireTiersNoTiers = Veuillez lier un tiers pour pouvoir paramétrer ses horaires d'ouvertures.
+HoraireTiersEdit = Editer
+HoraireTiersMigrationPageTitle = Gestion de migration
+HoraireTiersInfoClone = Les horaires renseignées seront copiées sur les jours travaillés (cochés)
+monday = Lundi
+tuesday = Mardi
+wednesday = Mercredi
+thursday = Jeudi
+friday = Vendredi
+saturday = Samedi
+sunday = Dimanche
+HoraireTiersCloneDay = Cloner les jours ?
+HoraireTiersDaysToBeClone = Les horaires vont être dupliquées sur
+HoraireTiersInvalidContinuousDay = L'heure de début de journée doit être inférieur à l'heure de fin de journée
+HoraireTiersInvalidHours = L'horaire de début de déjeuner doit être inférieur à l'horaire de fin de déjeuner
+HoraireTiersErrorSql = Aucune information n'a été trouvé
+HoraireTiersDelete = Supprimer
+HoraireTiersWizard = Informations : <br>  1. Activer les jours travaillés. <br>  2. Saisir les heures de début et heures de fin sur les jours travaillés.<br>  3. Pour renseigner les heures de pause déjeuner décocher <strong>"Journée continue"</strong>.
+HoraireTiersAdd = Ajouter
+HoraireTiersNoData = Il n'y a aucune information à afficher
+HoraireTiersStartDayHours = Le format à saisir doit être dans la plage horaire(00:00, 23:59) ex: 08:00
+HoraireTiersEndDayHours = Le format à saisir doit être dans la plage horaire(00:00, 23:59) ex: 17:30
+HoraireTiersStartLunchHours = Le format à saisir doit être dans la plage horaire(00:00, 23:59) ex: 12:30
+HoraireTiersEndLunchHours = Le format à saisir doit être dans la plage horaire(00:00, 23:59) ex: 14:00
+HoraireTiersDayInvalid = Le format des données envoyées est incorrecte, veuillez décoché la journée à travailler si vous ne saisissez pas d'horaires de début et de fin de journée.
+HoraireTiersInvalidHoursContinuousDay = Vous devez saisir des horaires début déjeuner et fin déjeuner quand vous décoché la case journée continue
+HoraireTiersNoH2End = Veuillez renseigner les champs heure début déjeuner et heure fin déjeuner lorsque vous décocher la case journée continue
+HoraireTiersh1StartNotInferiorh1end = L'heure de début de journée n'est pas inférieur à l'heure de fin de journée
+HoraireTiersh1StartNotInferiorh2Start = L'heure de début de journée n'est pas inférieur à l'heure de début de déjeuner
+HoraireTiersh2StartNotInferiorh2End = L'heure de début de déjeuner n'est pas inférieur à l'heure de fin de déjeuner
+HoraireTiersh2EndNotInferiorh1End = L'heure fin de déjeuner n'est pas inférieur à l'heure de fin de journée
+
+#
+# v14.0.02
+#
+InstallH2G2Module = Veuillez installer le module H2G2 pour utiliser le module Horaire Tiers
+H2G2MinimumVersionRequired = La version minimum du module H2G2 doit être la version %s
+
+#
+# v16.0.00
+#
+HoraireTiersModuleH2G2Missing = Le module<b> '%s' ne peut pas fonctionner sans le module 'H2G2'</b>. Ce module est fourni <b>gratuitement</b> par Code42 à l'adresse suivante : <b><a href='https://www.dolistore.com/fr/modules/1226-H2G2---CODE-42.html?search_query=H2G2&results=9'> Télécharger H2G2</a></b><br>Veuillez le télécharger, puis l'installer avant d'activer le module '%1$s'.

@@ -1,0 +1,296 @@
+# Dolibarr language file - Source file is en_GB - Staff
+# Copyright (C) 2017  AXeL
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Module Information
+#
+
+# Module label 'ModuleXXXName'
+# (where XXX is value of numeric property 'numero' of module)
+Module512000Name = Staff
+# Module description 'ModuleXXXDesc'
+# (where XXX is value of numeric property 'numero' of module)
+Module512000Desc = Staffing and timesheet management. Plan shifts (rosters) and allow users to submit timesheets for approval.
+
+# Permissions
+Permission512001 = Allowed to read his/her own timesheet
+Permission512008 = Allowed to read his/her own planned shift
+Permission512002 = Allowed to submit his/her own timesheet
+Permission512003 = Allowed to modify his/her own timesheet/planned shift
+Permission512004 = Allowed to delete his/her own timesheet
+Permission512005 = Allowed to clone his/her own timesheet/planned shift
+Permission512006 = Allowed to validate his/her own timesheet
+Permission512007 = Get access to admin-only features (without needing to be an administrator)
+
+#
+# Admin page
+#
+StaffSetup = Staff Setup
+Settings = Settings
+TimesheetsNumberingModels = Numbering Models
+TimesheetsSettings = Other Settings
+TimesheetDefaultView = Default view when selecting menu Timesheet/Rostered Shift
+EnableTimesheetQuickShortcut = Enable 'Create Timesheet' quick shortcut in the top right of the user screen
+PlannedShiftRefPrefix = Roster Reference Prefix
+TimesheetColor = Timesheet Colour
+PlannedShiftColor = Rostered Shift Colour
+HideSubMenuByDefault = Hide submenu by default
+UseMultiColors = Use multiple colours to differentiate between boxes in views
+AdminOnly = for admin only
+DisabledPleaseSwitchOffMultiColors = Disabled - please switch off multiple colours
+HourSuffix = Total Hours: <b>Hour</b> suffix (spaces allowed)
+MinSuffix = Total Hours: <b>Minute</b> suffix (spaces allowed)
+CalendarSettings = Calendar Settings
+ShowMoreDetails = Show more details in summary boxes
+DetailsList = total hours, user name, note
+ResetTimesheetsOnPaymentDelete = Reset Timesheets to <b>pending</b> status on payment delete
+ResetTimesheetsWarning = Do not enable this option if you use the main (non-module) payment form for payments other than timesheets
+
+#
+# About page
+#
+About = About
+StaffAbout = About Staff Module
+StaffAboutPageDesc = <a href="http://www.dolistore.com/fr/modules/831-Staff.html" target="_blank"><b>Staff</b></a> : A staff management module for Dolibarr<br/><br/>Developed by <a href="https://github.com/AXeL-dev" target="_blank">AXeL</a><br/><br/>For any question or feedback, contact me on <a href="mailto:contact.axel.dev@gmail.com">contact.axel.dev@gmail.com</a><br><br>Find my other modules on <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=axel-dev&submit_search=Rechercher" target="_blank">Dolistore</a>
+
+#
+# Create Page
+#
+ShowTimesheet = Summary
+StartTime = Start Time
+EndTime = End Time
+StartTimeMorning = Start Time (Morning)
+EndTimeMorning = End Time (Morning)
+StartTimeAfternoon = Start Time (Afternoon)
+EndTimeAfternoon = End Time (Afternoon)
+AddAfternoonTimeOnTimesheetCreation = Add afternoon time on timesheet creation form
+ValidateTimesheet = Validate timesheet
+TotalHours = Total Hours
+SubmitedBy = Submitted by
+Note = Note
+SubmitTimesheetSuccess = Your timesheet was successfully submitted and is waiting to be authorised
+ConfirmValidateTimesheet = Are you sure you want to authorise <b>%s</b> ?
+ConfirmReopenTimesheet = Are you sure you want to reopen <b>%s</b> ? <br>(Timesheet will be reset to pending status)
+ConfirmRefuseTimesheet = Are you sure you want to refuse <b>%s</b> ?
+ConfirmDeleteTimesheet = Are you sure you want to delete <b>%s</b> ? <br><br>(All data will be lost)
+ConfirmCloneTimesheet = Are you sure that you want to clone this timesheet ?
+SumOfTotalHours = TTL
+RecalculateTotalHoursSuccess = Total hours recalculated successfully
+ShowTotalHours = Total Hours
+Timesheets = Timesheets
+Staff = Staff Member
+TimesheetQuickShortcut = Submit Timesheet
+WaitingToSubmitPlannedShiftQuickShortcut = Waiting To Submit Shifts
+Reopen = Reopen
+DateMustBeInTheCurrentWeek = The date period must be within the current week
+Origin = Origin
+DeletePayment = Delete Payment
+ConfirmDeletePayment = Are you sure you want to delete the payment link associated for <b>%s</b> ? <br>Actual payment will not be deleted
+Clear = Clear
+Clone = Clone
+CloneDate = Date
+Refuse = Refuse
+
+#
+# Pay Salary
+#
+DateStartPeriod = Start Period
+DateEndPeriod = End Period
+AmountPerHour = Staff Hourly Rate
+ContinuePayment = Continue to payment
+StaffHourlyRate = Staff Hourly Rate
+StaffHourlyRateListField = Staff Hourly Rate
+AmountPerHourSummary = Choose a staff member to retrieve their hourly rate (if the hourly rate is not set for the staff member, this field will remain empty)
+Payment = Payment
+PaymentNotExists = No payment exists for this timesheet
+ShowSalaryPayment = Payment Reference
+Wages = Wages
+Payments = Payments
+
+#
+# Errors
+#
+YouHaveNoRightToSubmit = Submitting timesheets are not allowed
+YouHaveNoRightToModify = Modifying timesheets are not allowed
+YouCannotModifyUntilGetValidated = Timesheets must first be approved before you can make any changes
+ErrorStartTimeIsTheSameAsEndTime = Start time cannot be the same as the end time
+AccessDeniedToNonStaffUser = Access denied to non-staff users
+StartPeriodEqualEndPeriod = Start and end periods must not be the same
+StartPeriodBiggerThenEndPeriod = Start period is greater than the end period
+
+#
+# Log
+#
+StaffLogAction = <b>Action</b>
+StaffLogUser = <b>User</b>
+StaffLogDate = <b>Date</b>
+LogCreateAction = TIMESHEET CREATED
+LogCreateFromCloneAction = TIMESHEET CREATED FROM CLONE
+LogUpdateAction = TIMESHEET UPDATED
+LogChangeStatusAction = TIMESHEET STATUS CHANGED
+LogValidateAction = TIMESHEET AUTHORISED
+LogReopenAction = TIMESHEET REOPENED
+LogRefuseAction = TIMESHEET REFUSED
+LogPayedAction = TIMESHEET PAID
+LogDeletePaymentAction = TIMESHEET PAYMENT DELETED
+LogChangeStartTimeAction = START TIME CHANGED
+LogChangeEndTimeAction = END TIME CHANGED
+LogChangeNoteAction = NOTE UPDATED
+LogCreatePlannedShiftAction = ROSTERED SHIFT CREATED
+LogCreateFromClonePlannedShiftAction = ROSTERED SHIFT CREATED FROM CLONE
+LogUpdatePlannedShiftAction = ROSTERED SHIFT UPDATED
+LogChangePlannedShiftStatusAction = ROSTERED SHIFT STATUS CHANGED
+LogConfirmPlannedShiftAction = ROSTERED SHIFT CONFIRMED
+LogSubmitPlannedShiftAction = ROSTERED SHIFT SUBMITTED
+
+#
+# Timesheets Status
+#
+StatusPending = Pending
+StatusValidated = Authorised
+StatusPendingShort = Pending
+StatusValidatedShort = Authorised
+StatusRefused = Refused
+StatusRefusedShort = Refused
+StatusPaid = Paid
+StatusPaidShort = Paid
+StatusNotPaid = Not Paid
+StatusNotPaidShort = Not Paid
+
+#
+# Widget Box
+#
+BoxLastTimesheets = Recent Pending Timesheets
+BoxTitleLastTimesheets = Most Recent Pending Timesheets
+BoxLastPlannedShifts = Recent Waiting to Confirm Rostered Shifts
+BoxTitleLastPlannedShifts = Latest %s Waiting to Confirm Rostered Shifts
+NoRecordedTimesheets = No timesheets are pending
+NoRecordedPlannedShifts = No rostered shifts are waiting to confirm
+ReadPermissionNotAllowed = Read permission not allowed
+TimesheetsPendingApproval = See all timesheets pending approval
+BoxTodayPlannedShifts = Rostered Shifts for Today
+BoxTodayTimesheets = Timesheets for Today
+NoRecordedPlannedShiftsForToday = No rostered shifts are recorded for today
+NoRecordedTimesheetsForToday = No timesheets are recorded for today
+
+#
+# Menu
+#
+Timesheet = Timesheet
+SubmitTimesheet = Submit Timesheet
+Today = Today
+ThisWeek = This Week
+ThisMonth = This Month
+AllTimesheets = All Timesheets
+Statistics = Statistics
+SalaryStatistics = Salary Statistics
+PendingList = Pending Approval
+WaitingToSubmitList = Waiting to Submit
+PlannedShift = Roster
+NewPlannedShift = New Rostered Shift
+ClonePlannedShifts = Clone Rostered Shifts
+AllPlannedShifts = All Rostered Shifts
+WaitingToConfirmList = Waiting to Confirm
+PerUser = Per User
+StaffMenu = Staff
+NewStaff = New Staff
+StaffList = List
+PaySalary = Pay Wages
+
+#
+# User Tips
+#
+TimesheetCreateSummary = Complete the information below to submit your timesheet. All highlighted fields are required.<br><br>
+PaySalarySummary = Use this form to pay wages to staff members. Only authorised timesheets can be paid. All highlighted fields are required.<br><br>
+ClonePlannedShiftSummary = Use this form to copy one or multiple shifts to another for the same staff or from staff to staff.<br><br>
+
+#
+# Planned Shifts
+#
+PlannedShifts = Rostered Shifts
+PlannedShiftSummary = Use this form to plan staffing and resources for the week. All shifts will be set as <b>'Waiting to Confirm'</b> (by the staff member).  <br><br>Reminder: The relevant staff member <b>MUST</b> confirm their shifts.<br><br>
+PlannedShiftInstructions = Multiple shifts are allowed. <br>Once the staff have confirmed their shift(s), they will be marked as 'Waiting to Submit' and be converted to timesheets.  <br>Once the staff member has worked the shift (start/end time has passed) they can submit their timesheet for authorisation.<br>Rostered shifts cannot be changed (but can be deleted) until they have been confirmed (become timesheets).
+ShowPlannedShift = Summary
+ConfirmPlannedShift = Are you sure that you want to confirm <b>%s</b> ?
+ConfirmSubmitPlannedShift = Are you sure that you want to submit <b>%s</b> ?
+ConfirmDeletePlannedShift = Are you sure that you want to delete <b>%s</b> ? <br><br>(All data will be lost)
+ConfirmClonePlannedShift = Are you sure that you want to clone this plannedshift ?
+PreviousWeek = Last Week
+FollowingWeek = Next Week
+Print = Print
+Submit = Submit
+Reset = Reset
+InCol = in column '%s'
+InRow = in row '%s'
+Note = Note
+DayOff = NO STAFF
+ShowDayOff = Show <b>NO STAFF</b> label on free days
+PlannedshiftOnly = for rostered shifts only
+PsSubmitFormShiftsNumber = Number of shifts per day in 'Create Rostered Shift' form
+ShowPlannedShiftInstructions = Show rostered shift instructions on screen
+PlannedshiftQuickShortcut = Create Rostered Shift
+
+#
+# Planned Shifts Status
+#
+StatusWatingToConfirm = Waiting to Confirm
+StatusWatingToConfirmShort = Waiting to Confirm
+#StatusConfirmed = Confirmed
+#StatusConfirmedShort = Confirmed
+StatusWaitingToSubmit = Waiting to Submit
+StatusWaitingToSubmitShort = Waiting to Submit
+
+#
+# Send Email
+#
+# Template Documentation: You can use html tags and the following substitutions: __LOGIN__ , __EMAIL__ , __LASTNAME__ , __FIRSTNAME__ (of reciever if filled), __SIGNATURE__ (sender signature), __LINK__ (link of timesheet/planned shift, if filled), __REF__ (timesheet/plannedshift reference if filled)
+# Notes: Substitution values will be empty/blank if not filled.
+#
+SendEmail = Send Email
+SendByEmail = <b title="Where applicable, remember to refresh the filter first if used">Email</b>
+TestMailSubject = Test
+TestMailTemplate = Hello,<br><br>This is a <b>test</b> template.<br><br>__SIGNATURE__
+PlannedShiftMailSubject = New Planned Shifts
+PlannedShiftMailTemplate = ** PLEASE DO NOT REPLY TO THIS EMAIL**<br><br>Hello <br><br>This email is for the following user: <b>__LOGIN__</b>,<br><br>Please login and check your roster using the link below.<br><br>__LINK__<br><br>Thanks<br><br>__SIGNATURE__
+TimesheetMailSubject = Timesheet Notice
+TimesheetMailTemplate = ** PLEASE DO NOT REPLY TO THIS EMAIL**<br><br>Hello <br><br>This email is for the following user: <b>__LOGIN__</b><br><br>Please login and check your timesheet(s) using the link below.<br><br>__LINK__<br><br>Thanks<br><br>__SIGNATURE__
+
+#
+# Calendar
+#
+StaffViewCal = Monthly
+StaffViewDay = Daily
+StaffViewWeek = Weekly
+StaffViewPerUser = User
+StaffViewList = List
+VisibleDaysRange = Visible Days Range
+
+#
+# Clone Form
+#
+CloneStartPeriod = Start Period
+CloneEndPeriod = End Period
+StaffFrom = Staff Member From
+StaffTo = Staff Member To
+CloneOptions = Cloning Options
+MoreOptions = More Options
+IncludeOriginShifts = Include timesheets which originated as a <b>rostered shift</b>
+IgnorePaidShifts = Ignore any shifts which have been paid
+UseTheSameDates = Use the same dates
+CloneForNextWeek = Clone for the next week (this will increase all the dates between the start and the end period by one week)
+CloneForNextMonth = Clone for the next month (this will increase all the dates between the start and the end period by one month)
+CloneSuccess = %s shift(s) have been successfully copied and are ready to be confirmed by the staff member.
+CloneError = No shifts founded for the selected period & staff. Check to ensure that shifts already exist before trying to clone them.
