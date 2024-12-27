@@ -33,7 +33,7 @@ defined('LOG_DRIVER') or define('LOG_DRIVER', getenv('LOG_DRIVER') ?: 'system');
 defined('LOG_FILE') or define('LOG_FILE', getenv('LOG_FILE') ?: DATA_DIR.DIRECTORY_SEPARATOR.'debug.log');
 
 // Application version
-defined('APP_VERSION') or define('APP_VERSION', getenv('APP_VERSION') ?: build_app_version(' (tag: v1.2.33)', '065d6f3e6eab142a50f0b2dcf77f461fa6cf3637'));
+defined('APP_VERSION') or define('APP_VERSION', getenv('APP_VERSION') ?: build_app_version(' (tag: v1.2.35)', '034ad8031fd8be17829463f0b0c9f2f9f4744d7c'));
 
 // Run automatically database migrations
 defined('DB_RUN_MIGRATIONS') or define('DB_RUN_MIGRATIONS', getenv('DB_RUN_MIGRATIONS') ? strtolower(getenv('DB_RUN_MIGRATIONS')) === 'true' : true);
