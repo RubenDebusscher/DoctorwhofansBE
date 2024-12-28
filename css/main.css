@@ -3755,3 +3755,7 @@ background-color:#A64D4D !important;
     object-fit: cover; object-position: 100% 0;
     border-radius: 5em;
 }
+
+#st-3.st-hidden{
+    opacity: 1 !important;
+}
