@@ -3,7 +3,7 @@
 /**
  * @package Verified Profiles
  * @copyright (c) 2024 Daniel James
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license https://opensource.org/license/gpl-2-0
  */
 
 namespace danieltj\verifiedprofiles\event;
@@ -12,6 +12,7 @@ use phpbb\auth\auth;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\language\language;
+use phpbb\user;
 use danieltj\verifiedprofiles\includes\functions;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -38,6 +39,11 @@ class listener implements EventSubscriberInterface {
 	protected $language;
 
 	/**
+	 * @var user
+	 */
+	protected $user;
+
+	/**
 	 * @var functions
 	 */
 	protected $functions;
@@ -45,18 +51,19 @@ class listener implements EventSubscriberInterface {
 	/**
 	 * Constructor
 	 */
-	public function __construct( auth $auth, request $request, template $template, language $language, functions $functions ) {
+	public function __construct( auth $auth, request $request, template $template, language $language, user $user, functions $functions ) {
 
 		$this->auth = $auth;
 		$this->request = $request;
 		$this->template = $template;
 		$this->language = $language;
+		$this->user = $user;
 		$this->functions = $functions;
 
 	}
 
 	/**
-	 * Register events
+	 * Register Events
 	 */
 	static public function getSubscribedEvents() {
 
@@ -76,16 +83,16 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Add languages
+	 * Add Languages
 	 */
 	public function add_languages( $event ) {
 
-		$this->language->add_lang( [ 'common', 'permissions' ], 'danieltj/verifiedprofiles' );
+		$this->language->add_lang( [ 'acp', 'common', 'permissions', 'ucp' ], 'danieltj/verifiedprofiles' );
 
 	}
 
 	/**
-	 * Add permissions
+	 * Add Permissions
 	 */
 	public function add_permissions( $event ) {
 
@@ -94,25 +101,41 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Add verified badge to verified usernames
+	 * includes/functions_content:get_username_string
 	 */
 	public function update_username_string( $event ) {
+
+		$current_page = $this->user->page[ 'page_name' ];
 
 		// Modes to ignore
 		$bad_modes = [
 			'colour', 'username', 'profile'
 		];
 
-		if ( $this->functions->is_user_verified( $event[ 'user_id' ] ) && false === $this->functions->is_badge_hidden( $event[ 'user_id' ] ) && ! in_array( $event[ 'mode' ], $bad_modes, true ) ) {
+		// Check if the current page can show verification.
+		if ( $this->functions->is_location_enabled( $current_page ) ) {
 
-			$event[ 'username_string' ] .= ' <span class="vp-verified-badge" aria-label="' . $this->language->lang( 'VERIFIED_ARIA_LABEL' ) . '" title="' . $this->language->lang( 'VERIFIED' ) . '">' . $this->language->lang( 'VERIFIED' ) . '</span>';
+			if ( $this->functions->is_user_verified( $event[ 'user_id' ] ) && false === $this->functions->is_badge_hidden( $event[ 'user_id' ] ) && ! in_array( $event[ 'mode' ], $bad_modes, true ) ) {
+
+				$custom_badge = $this->functions->has_custom_badge( true );
+				$custom_badge_html = '';
+
+				if ( false !== $custom_badge ) {
+
+					$custom_badge_html = ' style="background-image: url(' . $custom_badge . ');"';
+
+				}
+
+				$event[ 'username_string' ] .= ' <span class="vp-verified-badge"' . $custom_badge_html . ' aria-label="' . $this->language->lang( 'VERIFIED_PROFILE_ARIA_LABEL' ) . '" title="' . $this->language->lang( 'VERIFIED_PROFILE_ARIA_LABEL' ) . '">' . $this->language->lang( 'VERIFIED_PROFILE' ) . '</span>';
+
+			}
 
 		}
 
 	}
 
 	/**
-	 * Add ACP template variables
+	 * includes/acp/acp_users:main
 	 */
 	public function acp_modify_profile( $event ) {
 
@@ -129,7 +152,7 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Add setting to SQL data
+	 * includes/acp/acp_users:main
 	 */
 	public function acp_user_sql_ary( $event ) {
 
@@ -140,7 +163,7 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Add group template variables
+	 * includes/acp/acp_groups:main
 	 */
 	public function add_group_verified_setting( $event ) {
 
@@ -151,7 +174,7 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Set verified setting
+	 * includes/acp/acp_groups:main
 	 */
 	public function initialise_group_verified_data( $event ) {
 
@@ -160,7 +183,7 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Save verified setting
+	 * includes/acp/acp_groups:main
 	 */
 	public function request_group_verified_data( $event ) {
 
@@ -169,13 +192,11 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Add UCP template variables
+	 * includes/ucp/ucp_prefs:main
 	 */
 	public function ucp_add_temp_vars( $event ) {
 
-		global $user;
-
-		$user_id = $user->data[ 'user_id' ];
+		$user_id = $this->user->data[ 'user_id' ];
 
 		$verified = $this->functions->is_user_verified( $user_id );
 		$hidden = $this->functions->is_badge_hidden( $user_id );
@@ -188,7 +209,7 @@ class listener implements EventSubscriberInterface {
 	}
 
 	/**
-	 * Update the user SQL data
+	 * includes/ucp/ucp_prefs:main
 	 */
 	public function ucp_update_user_sql( $event ) {
 

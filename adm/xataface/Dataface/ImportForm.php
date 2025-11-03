@@ -290,7 +290,10 @@ class Dataface_ImportForm extends HTML_QuickForm {
 	function loadImportTable(){
 
 
-		$dumpFile = $_SESSION['__dataface__import_data__'];
+		$dumpFile = $_SESSION['__dataface__import_data__'] ?? null;
+		if ( !$dumpFile ){
+			return PEAR::raiseError('No import data found in session.');
+		}
 		$importData = unserialize(file_get_contents($dumpFile));
 
 		$tablename = $this->_table->tablename;

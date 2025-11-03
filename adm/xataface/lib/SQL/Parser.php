@@ -1829,7 +1829,11 @@ class SQL_Parser
             	$this->all_tables=array();
                 $ret = $this->parseSelect();
                 if ( PEAR::isError($ret) ){
-                	trigger_error('Failed parsing SQL query on select: '.$string.' . The Error was '.$ret->getMessage(), E_USER_ERROR);
+                	//trigger_error('Failed parsing SQL query on select: '.$string.' . The Error was '.$ret->getMessage(), E_USER_ERROR);
+                    echo 'Failed parsing SQL query: ' . $string .' . The Error was '. $ret->getMessage();
+                    
+                    throw new Exception('Failed parsing SQL query: ' . $string .' . The Error was '. $ret->getMessage());
+
                 }	
                 $ret['all_tables'] = $this->all_tables;
                 return $ret;

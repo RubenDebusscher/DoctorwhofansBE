@@ -4,7 +4,8 @@ $_SESSION["EmailSent"]="";
 ?>
 <!Doctype html>
 <?php
-
+    $domain = getenv('APP_DOMAIN');
+    $short_domain = getenv('SHORT_DOMAIN');
     if(isset($_GET['menu'])){
         $menu=htmlentities($_GET['menu'], ENT_QUOTES | ENT_IGNORE, "UTF-8");
     }else if ($_SESSION["Menu"] !==""){
@@ -23,6 +24,12 @@ $_SESSION["EmailSent"]="";
     <title>
         Doctor Who Fans België
     </title>
+    <script>
+        window.APP_ENV = {
+            DOMAIN: "<?php echo htmlspecialchars($domain, ENT_QUOTES) ?>",
+            SHORT_DOMAIN: "<?php echo htmlspecialchars($short_domain, ENT_QUOTES) ?>"
+        };
+        </script>
     <meta name=author content="Ruben Debusscher" />
     <meta charset=UTF-8 />
     <meta http-equiv=X-UA-Compatible content="chrome=1, IE=edge">
@@ -57,18 +64,18 @@ $_SESSION["EmailSent"]="";
 <!--     <script>window.jQuery || document.write('<script src="https://www.doctorwhofans.be/trumbowyg/js/vendor/jquery-3.3.1.min.js"><\/script>')</script> -->
 
 
-    <script src="https://www.doctorwhofans.be/js/new.js"></script>
+    <script src="<?php echo getenv('APP_DOMAIN') ?>/js/new.js"></script>
     <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=5e66a481fb4445001239b600&product=inline-share-buttons' async='async'></script>
 
-    <link rel="stylesheet" href="https://www.doctorwhofans.be/css/main.css" />
+    <link rel="stylesheet" href="<?php echo getenv('APP_DOMAIN') ?>/css/main.css" />
 
 
         <link href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" rel="stylesheet" />
 <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
-<script src="https://www.doctorwhofans.be/js/baguetteBox.min.js"></script>
+<script src="<?php echo getenv('APP_DOMAIN') ?>/js/baguetteBox.min.js"></script>
 
 
-<link rel="stylesheet" href="https://www.doctorwhofans.be/css/baguetteBox.min.css" />
+<link rel="stylesheet" href=<?php echo getenv('APP_DOMAIN') ?>/css/baguetteBox.min.css" />
 <script type='application/javascript' type="module" async='async'>
 
 let deferredPrompt;
@@ -155,6 +162,7 @@ navigator.serviceWorker.register(
 <a href="#SiteContent" class="sr-only skip">Skip to content</a>
 
     <?php
+        var_dump($_COOKIE);
         $lang = substr($_COOKIE['lang'], 0, 2);
         include('translations/'. $lang . '.php');
         include_once 'includes/nav.php';
@@ -186,7 +194,7 @@ navigator.serviceWorker.register(
         //checkCookie()
     </script>
     
-    <script type="application/javascript" src="https://sdki.truepush.com/sdk/v2.0.4/app.js" async></script>
+   <!--  <script type="application/javascript" src="https://sdki.truepush.com/sdk/v2.0.4/app.js" async></script>
     <script>
     var truepush = window.truepush || [];
             
@@ -202,17 +210,4 @@ navigator.serviceWorker.register(
 
 
 <script>
- truepush.push({
-     operation: "add-tags",
-     data: [{ tagName: "LANGUAGE", tagType: "string", tagValue: getCookie("lang") }],
-     callback: function(error,response){
-                 console.log(error,response);
-         }
- })
- </script>
- <script defer src="https://www.gofundme.com/static/js/embed.js"></script>
-
-</body>
-
-</html>
-
+ truepush.p

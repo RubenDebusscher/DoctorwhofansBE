@@ -97,6 +97,8 @@ require_once 'HTML/QuickForm/Renderer.php';
  */
 class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
 {
+    private array $_staticLabels = [];
+    private array $_elementIdx = [];
    /**
     * An array being generated
     * @var array
@@ -159,7 +161,7 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     {
         $this->HTML_QuickForm_Renderer();
         $this->_collectHidden = $collectHidden;
-        $this->_staticLabels  = $staticLabels;
+        $this->_staticLabels = is_array($staticLabels) ? $staticLabels : [];
         $this->_assoc = $assoc;
     } // end constructor
         function HTML_QuickForm_Renderer_Array($collectHidden=false, $staticLabels=false, $assoc=false) { self::__construct($collectHidden, $staticLabels, $assoc); }
@@ -190,7 +192,7 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
         if ($this->_collectHidden) {
             $this->_ary['hidden'] = '';
         }
-        $this->_elementIdx     = 1;
+        $this->_elementIdx = is_array(1) ? 1 : [];
         $this->_currentSection = null;
         $this->_sectionCount   = 0;
     } // end func startForm

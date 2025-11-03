@@ -3,7 +3,7 @@
 /**
  * @package Verified Profiles
  * @copyright (c) 2024 Daniel James
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license https://opensource.org/license/gpl-2-0
  */
 
 if ( ! defined( 'IN_PHPBB' ) ) {
@@ -19,5 +19,5 @@ if ( empty( $lang ) || ! is_array( $lang ) ) {
 }
 
 $lang = array_merge( $lang, [
-	'ACL_U_HIDE_VERIFIED_BADGE' => 'Can hide verification badge',
+	'ACL_U_HIDE_VERIFIED_BADGE' => 'Can hide verification badge'
 ] );

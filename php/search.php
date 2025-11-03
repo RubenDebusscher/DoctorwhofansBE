@@ -25,7 +25,7 @@ if(!$stmt1->execute()){
     $antwoord['results'] = $result->fetch_all(MYSQLI_ASSOC);
 
   }
-  echo json_encode($antwoord, JSON_PRETTY_PRINT);
+  echo json_encode($antwoord,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
 }
 $stmt1->close();

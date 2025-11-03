@@ -2058,6 +2058,7 @@ class Dataface_Record
         }
 
         $out = null;
+        $fieldname = $fieldname ?? '';
         if (strpos($fieldname, ".") === false) {
             $delegate = &$this->_delegate;
 

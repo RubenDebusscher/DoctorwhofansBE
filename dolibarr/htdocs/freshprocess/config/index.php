@@ -1,3 +1,0 @@
-/*
- *	Module Freshprocess pour Dolibarr
- */

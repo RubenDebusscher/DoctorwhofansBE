@@ -10,7 +10,7 @@ function df_clone($object){
 }
 
 class HTML_QuickForm_grid extends HTML_QuickForm_input {
-
+    public ?string $name=null;
 
 	var $fields=array();
 	var $elements=array();

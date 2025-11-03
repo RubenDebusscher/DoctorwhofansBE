@@ -1,5 +1,8 @@
 <?php
     date_default_timezone_set("Europe/Brussels");
+    ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
 class conf_ApplicationDelegate {
 
@@ -79,6 +82,61 @@ class conf_ApplicationDelegate {
     }
 
 
+    function getPermission($action) {
+        if ($action === 'get_validation_type') {
+            return 'read'; // Ensures the action is accessible
+        }
+        return null; // Default behavior
+    }
+
+    function field__widgetType(&$record, $fieldname) {
+        // Only apply this for the field inside a grid
+        if (@$_GET['-widget'] === 'grid') {
+            
+            if ($fieldname == 'Value') {  // Change widget for the "Value" field
+                
+                $attributeID = $record->val('AttributeID'); 
+                
+                if (!$attributeID) {
+                    return 'text'; // Default if no attribute is selected
+                }
+
+                // Fetch the ValidationRuleID from V3__Attributes
+                $attributeRecord = df_get_record('V3__Attributes', ['AttributeID' => $attributeID]);
+                
+                if ($attributeRecord) {
+                    $validationRuleID = $attributeRecord->val('ValidationRuleID');
+
+                    // Fetch the actual validation rule from V3__ValidationRules
+                    $validationRuleRecord = df_get_record('V3__Validationrules', ['ValidationRuleID' => $validationRuleID]);
+
+                    if ($validationRuleRecord) {
+                        $ruleName = strtolower($validationRuleRecord->val('RuleName')); // Ensure lowercase matching
+
+                        switch ($ruleName) {
+                            case 'number':
+                                return 'number';
+                            
+                            case 'date':
+                                return 'date';
+                            
+                            case 'text':
+                                return 'textarea';
+
+                            default:
+                                return 'text'; // Default type
+                        }
+                    }
+                }
+            }
+        }
+        return null; // Use default widget otherwise
+    }
+
+
+
+
+    
 
     function getOwnUserId(){
         $auth =& Dataface_AuthenticationTool::getInstance();

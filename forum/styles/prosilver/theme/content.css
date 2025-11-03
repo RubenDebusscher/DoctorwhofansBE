@@ -27,11 +27,14 @@ ul.topiclist dl {
 	.header .topics {margin-left: -3vw;}
   }
 
-
+	dl.icon.icon.icon{ display: inline-flex;background-position-x: 1em;
+    background-position-y: 0.5em;}
 
 
 ul.topiclist li.row dl {
 	margin: 2px 0;
+	background-repeat: no-repeat;
+	background-size: 2vw;
 }
 
 ul.topiclist dt, ul.topiclist dd {

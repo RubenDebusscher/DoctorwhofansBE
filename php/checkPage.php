@@ -78,10 +78,10 @@
 						$menu=$_POST['menu'];
 						$contents = explode(':', $menu);
 						$RawCategory = end($contents);
-						//getTranslations($conn,$language,$antwoord);
-						//getPagesForTag($conn,0,$menu,$antwoord);
-						//getEpisodeOfTheDay($conn,$antwoord);
-						//getActorsOfTheDay($conn,$antwoord);
+						getTranslations($conn,$language,$antwoord);
+						getPagesForTag($conn,0,$menu,$antwoord);
+						getEpisodeOfTheDay($conn,$antwoord);
+						getActorsOfTheDay($conn,$antwoord);
 						
 						//echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
 					}
@@ -103,10 +103,9 @@
 					getDownloads($conn,$current_Page_Id,$antwoord);
 					getGalleries($conn,$current_Page_Id,$antwoord);
 				}
-
 				
-				echo json_encode($antwoord, JSON_UNESCAPED_UNICODE);
-				//$conn->close();
+				echo json_encode($antwoord,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+				$conn->close();
 			}
 
 		}

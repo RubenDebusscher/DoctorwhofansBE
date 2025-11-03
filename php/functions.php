@@ -348,7 +348,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 						}
 						$QuoteIdFromURL=rand(1,$MaxQuoteId[0]['max']);
 					}
-					$stmtMainQuote = $conn->prepare('select * from Quotes where quote_Id=?');
+					$stmtMainQuote = $conn->prepare('SELECT `quote_Id`, `quote_Item` as quote_Item, `quote_Image`, `Serial_Id`, `Episode_Link` as Episode_Link,`Character_Links` as Character_Links FROM `Quotes` where quote_Id=?');
 					if(!$stmtMainQuote){
 						die('Statement preparing failed: ' . $conn->error);
 					}
@@ -458,7 +458,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 						}else{
 							$resultset['Serial'] = $result->fetch_all(MYSQLI_ASSOC);
 							$stmtSerial->close();
-							$stmtEpisodes = $conn->prepare("select *,time_format(SEC_TO_TIME(episode_Runtime_in_seconds),'%T') as Runtime from Episodes_With_State where episode_Serial_Id=? order by episode_Order");
+							$stmtEpisodes = $conn->prepare("select `episode_Id`, `episode_Serial_Id`, `episode_Title`, `episode_Story`, `episode_Order`, `episode_Original_airdate`, `episode_Original_Network`, `episode_Runtime_in_seconds`, `episode_UK_viewers`, `episode_Appreciation_index`, `state`,time_format(SEC_TO_TIME(episode_Runtime_in_seconds),'%T') as Runtime from Episodes_With_State where episode_Serial_Id=? order by episode_Order");
 							if(!$stmtEpisodes){
 								die("Statement prepare failed: " . $conn->connect_error);
 							}
@@ -513,7 +513,7 @@ function getRegenerationForCharacter(&$conn, &$API_Item, &$resultset)
 								}
 							}
 						}
-						$stmtEpisodeQuote = $conn->prepare('select * from Quotes where Serial_Id=?');
+						$stmtEpisodeQuote = $conn->prepare('SELECT `quote_Id`, EscapeHTML(quote_Item) as quote_Item, `quote_Image`, `Serial_Id`, Episode_Link as Episode_Link, Character_Links as Character_Links FROM `Quotes` where Serial_Id=?');
 						if(!$stmtEpisodeQuote){
 							die('Statement preparing failed: ' . $conn->error);
 						}
@@ -727,7 +727,7 @@ function getPagesForTag(&$conn,&$current_Page_Id,$RawCategory,&$resultset){
 	
 
 	function getContent(&$conn,&$current_Page_Id,&$language,&$resultset){
-		$stmtContent = $conn->prepare('SELECT * FROM content_With_Lang where item_Page=? and language_Name=? and (item_Active=1 or (item_Launch<NOW() and item_Active=2)) order by item_level asc');
+		$stmtContent = $conn->prepare('SELECT `item_Id`, `item_Page`, `page_Name`, `page_Link`, `type_Name`, `type_Default_Level`, item_Value as item_Value, `item_Level`, `item_Active`, `item_Launch`, `item_Class`, `item_Belongs_To`, `language_Id`, `language_Name` FROM content_With_Lang where item_Page=? and language_Name=? and (item_Active=1 or (item_Launch<NOW() and item_Active=2)) order by item_level asc');
 			if(!$stmtContent){
 				die('Statement preparing failed: ' . $conn->error);
 			}
@@ -744,6 +744,7 @@ function getPagesForTag(&$conn,&$current_Page_Id,$RawCategory,&$resultset){
 					$resultset['Content'] = $resultContent->fetch_all(MYSQLI_ASSOC);
 				}
 			}
+			
 			$stmtContent->close();
 	}
 

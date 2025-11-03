@@ -41,6 +41,9 @@ function getDefaultLevel(Type){
 //require-css <jquery-ui/jquery-ui.css>
 
 
+
+
+
 jQuery(document).ready(function(){
   buildLogo('#xf-logo','#306090');
   buildLogo('.login-prompt-wrapper','#306090');

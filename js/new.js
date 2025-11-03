@@ -471,6 +471,12 @@ function GetContent(menu, id) {
         });
         $("#Inhoud").append(varlist);
       }
+    }).fail(function (response, statusText, xhr) {
+      console.log(response);
+      console.log(statusText);
+      console.log(xhr);
+
+
     });
   }
 }
@@ -499,6 +505,15 @@ function AddIssuesToDom(Issues,ParentElem){
   }
 }
 
+
+
+function encodeHTML(input){
+
+  //let item = new DOMParser().parseFromString(input, "text/html");
+  //return item.documentElement.textContent;
+  return input
+}
+
 function AddMainQuoteToDom(mainQuote,Parentelem,replace){
   var MainQuoteElem = "";
   var MainQuoteImage="";
@@ -506,17 +521,17 @@ function AddMainQuoteToDom(mainQuote,Parentelem,replace){
 
   if(replace=="replace"){
     MainQuoteImage="<img src='https://www.doctorwhofans.be/images/content__quotes/"+mainQuote[0].quote_Image+"'/>";
-    MainQuoteElem +="<h2>"+mainQuote[0].Episode_Link+"</h2>";
+    MainQuoteElem +="<h2>"+encodeHTML(mainQuote[0].Episode_Link)+"</h2>";
     MainQuoteElem += MainQuoteImage;
-    MainQuoteElem +="<p>"+mainQuote[0].quote_Item+"</p>";
-    MainQuoteElem += mainQuote[0].Character_Links;
+    MainQuoteElem +="<p>"+encodeHTML(mainQuote[0].quote_Item)+"</p>";
+    MainQuoteElem += encodeHTML(mainQuote[0].Character_Links);
     $(Parentelem).html(MainQuoteElem);
   }else{
     MainQuoteImage="<img src='https://www.doctorwhofans.be/images/content__quotes/"+mainQuote.quote_Image+"'/>";
-    MainQuoteElem +="<div class='MainQuote bordered DarkBlueBackground'><b>"+mainQuote.Episode_Link+"</b>";
+    MainQuoteElem +="<div class='MainQuote bordered DarkBlueBackground'><b>"+encodeHTML(mainQuote.Episode_Link)+"</b>";
     MainQuoteElem += MainQuoteImage;
-    MainQuoteElem +="<p>"+mainQuote.quote_Item+"</p>";
-    MainQuoteElem += mainQuote.Character_Links+"</div>";
+    MainQuoteElem +="<p>"+encodeHTML(mainQuote.quote_Item)+"</p>";
+    MainQuoteElem += encodeHTML(mainQuote.Character_Links)+"</div>";
     $(Parentelem).append(MainQuoteElem);
   }
 }
@@ -678,7 +693,11 @@ function Content(Content) {
   if (ContentString.length <= 0) {
     ContentString="<div id='phasingIMG'></div><h1>Engines are phasing, or we are still building on this page.</h1>"
   }
-  $('main article').append(ContentString);
+
+
+
+
+  $('main article').append(encodeHTML(ContentString));
   buildLogo('#phasingIMG', '#306090');
 }
 
@@ -846,7 +865,7 @@ function populateActorsOfTheDay(Actors) {
   if (Actors.length > 0) {
     for (var i = 0; i < Actors.length; i++) {
 
-      if (Actors[0].Type == "Birthday") {
+      if (Actors[i].Type == "Birthday") {
         Actorlist += "<li><a href='../"+Actors[i].page_Link +".html'>" + Actors[i].actor_First_name +" "+Actors[i].actor_Last_name + " (&deg;" + getYear(Actors[i].actor_Birthdate) + ")</a></li>";
       } else {
         Actorlist += "<li><a href='../"+Actors[i].page_Link +".html'>" + Actors[i].actor_First_name +" "+Actors[i].actor_Last_name + " (&#10013;" + getYear(Actors[i].actor_Deathdate) + ")</a></li>";

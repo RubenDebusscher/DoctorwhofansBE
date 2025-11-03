@@ -13,6 +13,7 @@ use parse_message;
 use phpbb\auth\auth;
 use phpbb\config\config;
 use phpbb\controller\helper;
+use phpbb\notification\manager;
 use phpbb\db\driver\driver_interface;
 use phpbb\request\request;
 use phpbb\template\template;
@@ -45,6 +46,9 @@ class points_transfer_user
 	/** @var helper */
 	protected $helper;
 
+	/** @var manager */
+	protected $notification_manager;
+
 	/** @var Container */
 	protected $phpbb_container;
 
@@ -74,6 +78,7 @@ class points_transfer_user
 	 * @param request $request
 	 * @param config $config
 	 * @param helper $helper
+	 * @param manager $notification_manager
 	 * @param Container $phpbb_container
 	 * @param string $php_ext
 	 * @param string $root_path
@@ -91,6 +96,7 @@ class points_transfer_user
 		request $request,
 		config $config,
 		helper $helper,
+		manager $notification_manager,
 		Container $phpbb_container,
 		$php_ext,
 		$root_path,
@@ -107,6 +113,7 @@ class points_transfer_user
 		$this->request = $request;
 		$this->config = $config;
 		$this->helper = $helper;
+		$this->notification_manager = $notification_manager;
 		$this->phpbb_container = $phpbb_container;
 		$this->php_ext = $php_ext;
 		$this->root_path = $root_path;
@@ -241,13 +248,28 @@ class points_transfer_user
 				]);
 			$this->db->sql_query($sql);
 
+			// Increase our notification sent counter
+			$this->config->increment('points_notification_id', 1);
+
+			// Store the notification data we will use in an array
+			$data = [
+				'points_notify_id' => (int) $this->config['points_notification_id'],
+				'points_notify_msg' => sprintf($this->user->lang['NOTIFICATION_TRANSFER_SUCCES'], $am, $this->config['points_name']),
+				'sender' => (int) $this->user->data['user_id'],
+				'receiver' => (int) $transfer_user['user_id'],
+				'mode' => 'transfer',
+			];
+
+			// Create the notification
+			$this->notification_manager->add_notifications('dmzx.ultimatepoints.notification.type.points', $data);
+
 			// Update mChat with good transfer
 			if ($this->phpbb_container->has('dmzx.mchat.settings') || $this->config['transfer_mchat_enable'])
 			{
 				$message = $this->user->lang['TRANSFER_MCHAT_GOOD'];
 				$name = $this->config['points_name'];
 
-				$this->functions_points->mchat_message($checked_user['user_id'], $this->functions_points->number_format_points($am), $message, $name);
+				$this->functions_points->mchat_message($transfer_user['user_id'], $this->functions_points->number_format_points($am), $message, $name);
 			}
 
 			// Send pm to receiver, if PM is enabled

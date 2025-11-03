@@ -1142,6 +1142,7 @@ class Dataface_Table {
 	 * @return string The relative name of the field.
 	 */
 	function relativeFieldName($fieldname){
+		$fieldname = $fieldname ?? '';
 		if ( strpos($fieldname,'.') !== false ){
 			$path = explode('.', $fieldname);
 			return $path[1];
@@ -2472,6 +2473,7 @@ class Dataface_Table {
 	 * @see fields()
 	 */
 	function &getField($fieldname){
+		$fieldname = $fieldname ?? ''; // Ensure it's a string
 		$path = explode('.', $fieldname);
 		if ( count($path)==1){
 			if ( !isset( $this->_fields[$fieldname]) ){
@@ -3156,7 +3158,7 @@ class Dataface_Table {
 		return $this->getPermissions($params);
 	}
 
-	function getGroupRecordRoles(Dataface_Record $record = null){
+	function getGroupRecordRoles(?Dataface_Record $record = null){
 	    if ( !isset($record) ){
 	        return null;
 	    }
@@ -4494,6 +4496,7 @@ class Dataface_Table {
 	 */
 	function &getTableTableForField($fieldname){
 
+		$fieldname = $fieldname ?? '';
 		if ( strpos($fieldname,'.') !== false ){
 			$path = explode('.', $fieldname);
 			$relationship =& $this->getRelationship($path[0]);

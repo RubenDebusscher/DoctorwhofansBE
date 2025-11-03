@@ -36,6 +36,8 @@
  
  
 class Dataface_Relationship {
+	public ?array $errors=null;
+	private array $_addExistingFilters = [];
 
 	/*
 	 * The name of the relationship.
@@ -1652,7 +1654,7 @@ class Dataface_Relationship {
 	}
 	
 	function getAddExistingFilters(){
-		$this->_addExistingFilters = null;
+		$this->_addExistingFilters = $someValue ?? [];
 		if ( !isset($this->_addExistingFilters) ){
 			$this->_addExistingFilters = array();
 			$fkeys = $this->getForeignKeyValues();

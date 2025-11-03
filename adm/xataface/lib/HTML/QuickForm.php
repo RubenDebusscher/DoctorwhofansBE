@@ -742,7 +742,7 @@ class HTML_QuickForm extends HTML_Common {
     function &addGroup($elements, $name=null, $groupLabel='', $separator=null, $appendName = true)
     {
         static $anonGroups = 1;
-
+        $name = $name ?? '';
         if (0 == strlen($name)) {
             $name       = 'qf_group_' . $anonGroups++;
             $appendName = false;

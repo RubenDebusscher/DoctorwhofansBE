@@ -31,24 +31,24 @@ if ($_SESSION["user"] == "") {
             } */
         </script>
   <link rel="stylesheet" type="text/css" href="opmaak.css" />
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" />
 
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
 
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
   <script src="https://cdn.jsdelivr.net/remarkable/1.7.1/remarkable.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" 
-        integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" 
-        crossorigin="anonymous">
+
 </script>
 <script src="fancyTable.min.js"></script>
 
   <script type="text/javascript" src="graph.js"></script>
+  <script type="text/javascript" src="admin.js"></script>
 </head>
 
 <body>
@@ -68,6 +68,7 @@ if ($_SESSION["user"] == "") {
           <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
           <li><a data-toggle="tab" href="#menu1">Menu</a></li>
           <li><a data-toggle="tab" href="#menu2">Menu</a></li>
+          <li><a data-toggle="tab" href="#menu3">API items</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li>
@@ -179,6 +180,20 @@ if ($_SESSION["user"] == "") {
         </div>
       </div>
     </div>
+    <div id="menu3" class="tab-pane fade">
+  <div class='row'>
+    <div class="col-6 col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          API Items
+        </div>
+        <div  id="API__Items">
+          <div>Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
   </div>
 </body>
 
