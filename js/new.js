@@ -225,19 +225,47 @@ function replaceRelativeLinks() {
 }
 
 function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  var expires = "expires=" + d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:doctorwhofans.be; Secure; SameSite=Lax";
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain:belgianwhovians.be; Secure; SameSite=Lax";
-  //document.cookie = "lang=nl;expires=Fri, 08 Mar 2024 19:42:10 GMT;path=/;domain.belgianwhovians.be";
-  if (cname == "lang") {
-    $('meta[name=language]').attr('content', cvalue.replace('_', '-'));
-    $('html').attr('lang', cvalue.replace('_', '-'));
-  }
+    if (cvalue === undefined || cvalue === null) cvalue = "";
 
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
 
+    var hostname = location.hostname;
+    var isLocalhost = hostname === "localhost" || hostname === "127.0.0.1" || hostname.endsWith(".local");
+    var isHTTPS = location.protocol === "https:";
+
+    // Gebruik APP_ENV.DOMAIN of default
+    var baseDomain = window.APP_ENV?.DOMAIN || "belgianwhovians.be";
+
+    // Cookie string
+    var cookieStr = cname + "=" + encodeURIComponent(cvalue) + ";" + expires + ";path=/";
+    console.log(isLocalhost);
+    if (isLocalhost) {
+        // Dev/localhost: geen domain, geen secure
+        cookieStr += "";
+    } else {
+        // Productie: voeg subdomein ondersteuning toe met leading dot
+        // .belgianwhovians.be zorgt dat cookie geldig is op alle subdomeinen
+        cookieStr += ";SameSite=Lax;domain=." + baseDomain;
+        if (isHTTPS) cookieStr += ";Secure";
+    }
+
+    document.cookie = cookieStr;
+
+    console.log("Cookie set:", cookieStr);
+    console.log("All cookies now:", document.cookie);
+
+    // Voor lang cookie: update meta tag en html lang
+    if (cname === "lang") {
+        var lang = cvalue.replace("_", "-");
+        $('meta[name=language]').attr('content', lang);
+        $('html').attr('lang', lang);
+    }
 }
+
+
+
 
 function getAvailableLangcodes() {
   $.ajax({
@@ -391,7 +419,7 @@ function GetContent(menu, id) {
         var myHeaders = new Headers(); // Currently empty
         //myHeaders.set('Status Code', '404');
         // @ts-ignore
-        window.location.href = "http://www.doctorwhofans.be/notfound.html";
+        //window.location.href = "http://www.doctorwhofans.be/notfound.html";
       }
       if(menu.startsWith('Category:')){
         console.log("This is a Category, WIP");
