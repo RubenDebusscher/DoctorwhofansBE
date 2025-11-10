@@ -1,36 +1,24 @@
-# Standaard startpagina
 DirectoryIndex index.php
-
-# Verberg directory indexes
 Options -Indexes
 
-# PHP fouten tonen (voor dev)
 php_flag display_errors On
 php_value error_reporting 32767
 
-# Routing naar index.php als bestand of map niet bestaat
 RewriteEngine On
+
+# Geen fysiek bestand of map
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.+)$ index.php?menu=$1 [L]
 
-RewriteCond %(REQUEST_FILENAME) !-f
-RewriteCond %(REQUEST_FILENAME) !-d
-RewriteRule ^Quotes/([0-9]+).html$ /index.php?menu=Quotes&id=$1 [L]
+# Algemene route (werkt met of zonder .html)
+RewriteRule ^(.+?)(\.html)?$ index.php?menu=$1 [L]
 
-RewriteCond %(REQUEST_FILENAME) !-f
-RewriteCond %(REQUEST_FILENAME) !-d
-RewriteRule ^Video/([0-9]+).html$ /index.php?menu=Video&id=$1 [L]
+# Specifieke routes
+RewriteRule ^Quotes/([0-9]+)\.html$ index.php?menu=Quotes&id=$1 [L]
+RewriteRule ^Video/([0-9]+)\.html$ index.php?menu=Video&id=$1 [L]
 
-RewriteCond %(REQUEST_FILENAME) !-f
-RewriteCond %(REQUEST_FILENAME) !-d
-RewriteRule ([^\.be][\(\)\:\-\_\/a-zA-z0-9]+)\/$ index.php?menu=$1 [L]
-RewriteRule ([^\.be][\(\)\:\-\_\/a-zA-z0-9]+).html$ index.php?menu=$1 [L]
-
-# Eventueel favicon
 RewriteRule ^favicon.ico$ favicon.ico [L]
 
-# Basis beveiliging
 <Files .htaccess>
     Require all denied
 </Files>

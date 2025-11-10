@@ -41,7 +41,7 @@ $_SESSION["EmailSent"]="";
 
     <?php
         
-        include('translations/'. $lang . '.php');
+        include 'translations/'. $lang . '.php';
         include_once 'includes/nav.php';
         include_once 'includes/main.html';
         include_once 'includes/overlays.html';

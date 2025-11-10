@@ -97,6 +97,7 @@ RewriteEngine On
 	RewriteRule (.*) https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
 
+RewriteRule ^(.+?)(\.html)?$ index.php?menu=$1 [L]
 
 RewriteCond %(REQUEST_FILENAME) !-f
 RewriteCond %(REQUEST_FILENAME) !-d
