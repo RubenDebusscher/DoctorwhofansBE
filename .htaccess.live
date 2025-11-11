@@ -1,12 +1,24 @@
+# ===============================
+# Basic Settings
+# ===============================
+
 DirectoryIndex index.php
 ErrorDocument 404 https://www.doctorwhofans.be/notfound.html
 
+# Disable directory listing
+Options -Indexes
 
+# Prevent access to sensitive files
+<FilesMatch "\.(htaccess|ini|psd|log|sh)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 
-# BROWSER CACHING USING EXPIRES HEADERS
+# ===============================
+# Browser caching
+# ===============================
 <IfModule mod_expires.c>
     ExpiresActive On
-  
     # Images
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
@@ -14,116 +26,72 @@ ErrorDocument 404 https://www.doctorwhofans.be/notfound.html
     ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType image/x-icon "access plus 1 year"
-  
     # Video
     ExpiresByType video/mp4 "access plus 1 year"
     ExpiresByType video/mpeg "access plus 1 year"
-
-    # CSS, JavaScript
+    # CSS
     ExpiresByType text/css "access plus 1 week"
-    ExpiresByType text/javascript "access plus 1 month"
+    # JS
     ExpiresByType application/javascript "access plus 1 month"
-
-    # Others
-    ExpiresByType application/pdf "access plus 1 month"
-    ExpiresByType application/x-shockwave-flash "access plus 1 month"
 </IfModule>
 
-# BROWSER CACHING USING CACHE-CONTROL HEADERS
-<ifModule mod_headers.c> 
+<IfModule mod_headers.c>
     Header set X-XSS-Protection "0; mode=block"
-    #Header always set X-Frame-Options "SAMEORIGIN"
     Header set X-Content-Type-Options nosniff
-   
 
-    # One year for image and video files
-    <filesMatch ".(flv|gif|ico|jpg|jpeg|mp4|mpeg|png|svg|swf|webp)$">
-        Header set Cache-Control "max-age=31536000, public"
-    </filesMatch>
-
-    # One month for JavaScript and PDF files
-    <filesMatch ".(js|pdf)$">
+    # Cache control for static files
+    <FilesMatch ".(js|css|pdf)$">
         Header set Cache-Control "max-age=2592000, public"
-    </filesMatch>
+    </FilesMatch>
+    <FilesMatch ".(flv|gif|ico|jpg|jpeg|mp4|mpeg|png|svg|swf|webp)$">
+        Header set Cache-Control "max-age=31536000, public"
+    </FilesMatch>
+</IfModule>
 
-    # One week for CSS files
-    <filesMatch ".(css)$">
-        Header set Cache-Control "max-age=604800, public"
-    </filesMatch>
-</ifModule>
-
-# Deny access to .htaccess
-<Files .htaccess>
-Order allow,deny
-Deny from all
-</Files>
-
-<FilesMatch "\.(ini|psd|log|sh)$">
-Order allow,deny
-Deny from all
-
-</FilesMatch>
-
+# ===============================
+# Force HTTPS
+# ===============================
 RewriteEngine On
 RewriteCond %{HTTPS} off
-rewriteRule ^(.*) https://www.doctorwhofans.be/ [R=301,L]
+RewriteRule ^(.*)$ https://www.doctorwhofans.be/$1 [R=301,L]
 
+# Add www if missing
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule (.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
-#Rewrite everything to https
-<FilesMatch "\.(ttf|otf|eot|woff|woff2|html|js|php|css|json)$">
-    <IfModule mod_headers.c>
-        Header set Access-Control-Allow-Origin "https://forum.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://dash.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://admin.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://adm.doctorwhofans.be"
-        #Header set Access-Control-Allow-Origin "https://API.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://wiki.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://new.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://*.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://www.doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://doctorwhofans.be"
-        Header set Access-Control-Allow-Origin "https://belgianwhovians.be"
-        Header set Access-Control-Allow-Origin "https://www.belgianwhovians.be"
-        Header set Access-Control-Allow-Origin "https://www.gofundme.com"
-        Header set Access-Control-Allow-Origin "*"
+# ===============================
+# Exclude static directories from rewrites
+# ===============================
+RewriteCond %{REQUEST_URI} ^/(js|css|images|fonts)/
+RewriteRule .* - [L]
 
-    </IfModule>
-</FilesMatch>
-RewriteEngine On
+# ===============================
+# Rewrite rules for pages
+# ===============================
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
+# Quotes
+RewriteRule ^Quotes/([0-9]+)\.html$ /index.php?menu=Quotes&id=$1 [L]
 
-<IfModule mod_rewrite.c>
-	RewriteCond %{HTTP_HOST} !^www\. [NC]
-	RewriteRule (.*) https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-</IfModule>
+# Video
+RewriteRule ^Video/([0-9]+)\.html$ /index.php?menu=Video&id=$1 [L]
 
-RewriteRule ^(.+?)(\.html)?$ index.php?menu=$1 [L]
+# Generic menu/page rewrite
+RewriteRule ^([^\.]+?)/?$ index.php?menu=$1 [L]
+RewriteRule ^([^\.]+)\.html$ index.php?menu=$1 [L]
 
-RewriteCond %(REQUEST_FILENAME) !-f
-RewriteCond %(REQUEST_FILENAME) !-d
-RewriteRule ^Quotes/([0-9]+).html$ /index.php?menu=Quotes&id=$1 [L]
+# ===============================
+# Favicon
+# ===============================
+RewriteRule ^favicon\.ico$ favicon.ico [NC,L]
 
-RewriteCond %(REQUEST_FILENAME) !-f
-RewriteCond %(REQUEST_FILENAME) !-d
-RewriteRule ^Video/([0-9]+).html$ /index.php?menu=Video&id=$1 [L]
-
-RewriteCond %(REQUEST_FILENAME) !-f
-RewriteCond %(REQUEST_FILENAME) !-d
-RewriteRule ([^\.be][\(\)\:\-\_\/a-zA-z0-9]+)\/$ index.php?menu=$1 [L]
-RewriteRule ([^\.be][\(\)\:\-\_\/a-zA-z0-9]+).html$ index.php?menu=$1 [L]
-
-<Files ~ "\.pdf$">
-  Header set X-Robots-Tag "noindex, nofollow"
+# ===============================
+# Prevent indexing of PDFs & SRTs
+# ===============================
+<Files ~ "\.(pdf|srt)$">
+    Header set X-Robots-Tag "noindex, nofollow"
 </Files>
-<Files ~ "\.srt$">
-  Header set X-Robots-Tag "noindex, nofollow"
-</Files>
-
-# DISABLE DIRECTORY INDEXES
-Options -Indexes
-
-AddType image/x-icon .ico
-RewriteRule ^favicon.ico favicon.ico [NC,L]
 
 
 RewriteEngine On

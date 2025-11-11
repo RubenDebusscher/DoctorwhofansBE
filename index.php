@@ -4,35 +4,45 @@ $_SESSION["EmailSent"]="";
 ?>
 <!Doctype html>
 <?php
+    require_once "vendor/autoload.php";
+    use Dotenv\Dotenv;
+    $dotenv = Dotenv::createImmutable(".");
+    $dotenv->load();
     require_once 'php/header_logic.php';
-    $lang = substr($_COOKIE['lang'], 0, 2);
+    $defaultLang = 'nl';
 
-?>
-<html lang="nl-BE">
-
-<head>
-    <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
-    <title>
-        Doctor Who Fans België
-    </title>
-    <script>
-        window.APP_ENV = {
-            DOMAIN: "<?php echo htmlspecialchars($_ENV['APP_DOMAIN'], ENT_QUOTES) ?>",
-            SHORT_DOMAIN: "<?php echo htmlspecialchars($_ENV['SHORT_DOMAIN'], ENT_QUOTES) ?>",
-            APP_ENV: "<?php echo htmlspecialchars($_ENV['APP_ENV'], ENT_QUOTES) ?>"
-        };
-        </script>
-    <meta name=author content="Ruben Debusscher" />
-    <meta charset=UTF-8 />
-    <meta http-equiv=X-UA-Compatible content="chrome=1, IE=edge">
-    <meta name="referrer" content="no-referrer-when-downgrade" />
-    <meta name=viewport content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#306090"/>
-    <link rel="apple-touch-icon" href="https://www.doctorwhofans.be/images/logo/apple-icon.png">
-    <?php
-        require_once 'includes/externals.php';
+    // Haal de cookie op, controleer dat het een string is en pak de eerste 2 tekens
+    $lang = 'nl';
+    if (!empty($_COOKIE['lang']) && is_string($_COOKIE['lang'])) {
+        $lang = substr($_COOKIE['lang'], 0, 2);}
 
     ?>
+    <html lang="nl-BE">
+
+    <head>
+        <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
+        <title>
+            Doctor Who Fans België
+        </title>
+        <script>
+            window.APP_ENV = {
+                DOMAIN: "<?php echo htmlspecialchars($_ENV['APP_DOMAIN'], ENT_QUOTES) ?>",
+                SHORT_DOMAIN: "<?php echo htmlspecialchars($_ENV['SHORT_DOMAIN'], ENT_QUOTES) ?>",
+                APP_ENV: "<?php echo htmlspecialchars($_ENV['APP_ENV'], ENT_QUOTES) ?>"
+            };
+            </script>
+        <meta name=author content="Ruben Debusscher" />
+        <meta charset=UTF-8 />
+        <meta http-equiv=X-UA-Compatible content="chrome=1, IE=edge">
+        <meta name="referrer" content="no-referrer-when-downgrade" />
+        <meta name=viewport content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#306090"/>
+        <link rel="apple-touch-icon" href="https://www.doctorwhofans.be/images/logo/apple-icon.png">
+        <?php
+        
+            require 'includes/externals.php';
+
+        ?>
     
 </head>
 
@@ -40,12 +50,11 @@ $_SESSION["EmailSent"]="";
 <a href="#SiteContent" class="sr-only skip">Skip to content</a>
 
     <?php
-        
-        include 'translations/'. $lang . '.php';
-        include_once 'includes/nav.php';
-        include_once 'includes/main.html';
-        include_once 'includes/overlays.html';
-        include_once 'includes/footer.html';
+        require 'translations/'. $lang . '.php';
+        require_once 'includes/nav.php';
+        require_once 'includes/main.html';
+        require_once 'includes/overlays.html';
+        require_once 'includes/footer.html';
 
         //TODO #66 add fist and lastepisode (both regular and departure/regeneration)
         //TODO #67 add books/magazines/comics to DB
@@ -100,4 +109,3 @@ $_SESSION["EmailSent"]="";
 </body>
 
 </html>
-
