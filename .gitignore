@@ -46,3 +46,5 @@ images/api__serials
 .htaccess.test
 .env.live
 .env.test
+documents
+dolibarr/documents

@@ -1,0 +1,19 @@
+# Dolibarr language file - en_US - Subscription Payment receipts documents
+CHARSET=UTF-8
+param_SUBSCRIPTIONRECEIPT = general parameters for Subscription payment receipt Module
+_SUBSCRIPTIONRECEIPT_PDFDONTDOWNLOAD_INFO_ABB_ = Open pdf Subscription payments receipts documents in the browser avoids having to download them for consultation and thus use the PDF Plugin browser. Warning: Documents generated when this setting is enabled are no longer visible in the edition pages of payments received when this parameter is unactivated. However, they will be visible but not accessible in other pages <br>. this parameter is very useful in local server installs, where the possibility to access  files in the site tree is not a safety problem. However,one should make a risk assessment when installed on a site hosting.
+sectionParametrage= Parameterizing Section
+loaddefaultparameters=Load default parameters
+Module161130Name=Payment receipt
+Module161130Desc=Management of Subscription Payment receipts documents
+subscriptionreceipt=Payment receipt
+PDForgeDescription= Basic Subscription payment receipt document model - A5 format
+Payment_receiptSetup=Subscription Payment receipt module configuration
+Reçudeversement=Subscription Payment receipt
+Montantverse=Paid amount 
+Montantverseenlettres=Paid amount in letters
+Modedepaiement=Payment mode
+Anciensolde=Old balance
+Noveausolde=New balance
+Cachetetsignature=Stamp and signature
+cesamePayment receipt
