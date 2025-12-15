@@ -1,0 +1,112 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleHorairetiersName'
+ModuleHorairetiersName = Horaire Tiers
+# Module description 'ModuleHorairetiersDesc'
+ModuleHorairetiersDesc = Allows you to enter the opening hours of a third party.
+
+#
+# Admin page
+#
+HorairetiersSetup = Horairetiers setup
+Settings = Settings
+HorairetiersSetupPage = Horairetiers setup page
+HORAIRETIERS_MYPARAM1 = My param 1
+HORAIRETIERS_MYPARAM1Tooltip = My param 1 tooltip
+HORAIRETIERS_MYPARAM2=My param 2
+HORAIRETIERS_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = About
+HorairetiersAbout = About Horairetiers
+HorairetiersAboutPage = Horairetiers about page
+
+#
+# Sample page
+#
+MyPageName = My page name
+
+#
+# v13.0.00
+#
+HoraireTiersDay = Day
+HoraireTiersWork = Work
+HoraireTiersStartWork = Start time
+HoraireTiersEndWork = End time
+HoraireTiersStartLunch = Start Lunch
+HoraireTiersEndLunch = End Lunch
+HoraireTiersModify = Modify
+HoraireTiersCreate = Create
+HoraireTiersSave = Save
+HoraireTiersMonday = Monday
+HoraireTiersTuesday = Tuesday
+HoraireTiersWednesday = Wednesday
+HoraireTiersThursday = Thursday
+HoraireTiersFriday = Friday
+HoraireTiersSaturday = Saturday
+HoraireTiersSunday = Sunday
+HoraireTiersHours = <span class="fa fa-clock-o"></span> Hours
+HoraireTiersContinueDay = Continuous day
+HoraireTiersEndClone = Clone
+HoraireTiersNoTiers = Please link a third party to be able to configure their opening hours.
+HoraireTiersEdit = Edit
+HoraireTiersMigrationPageTitle = Manage migration
+HoraireTiersInfoClone = The hours entered will be copied to the days worked (checked)
+monday = Monday
+tuesday = Tuesday
+wednesday = Wednesday
+thursday = Thursday
+friday = Friday
+saturday = Saturday
+sunday = Sunday
+HoraireTiersCloneDay = Clone the days?
+HoraireTiersDaysToBeClone = Schedules will be duplicated on
+HoraireTiersInvalidContinuousDay = The start time must be less than the end of day time
+HoraireTiersInvalidHours = The lunch start time must be less than the lunch end time
+HoraireTiersErrorSql = No informations was found
+HoraireTiersDelete = Delete
+HoraireTiersWizard = Information: <br> 1. Activate working days. <br> 2. Enter the start and end times on the days worked. <br> 3. To enter the lunch break times, uncheck <strong> "Continuous day" </strong>.
+HoraireTiersAdd = Add
+HoraireTiersNoData = There is no informations to display.
+HoraireTiersStartDayHours = The format to be entered must be in the time range (00:00, 23:59) eg: 08:00
+HoraireTiersEndDayHours = The format to be entered must be in the time range (00:00, 23:59) ex: 17:30
+HoraireTiersStartLunchHours = The format to be entered must be in the time range (00:00, 23:59) e.g. 12:30
+HoraireTiersEndLunchHours = The format to be entered must be in the time slot (00:00, 23:59) eg: 14:00
+HoraireTiersDayInvalid = The format of the data sent is incorrect, please uncheck the day to work if you do not enter start and end times.
+HoraireTiersInvalidHoursContinuousDay = You must enter times lunch start and lunch end when you uncheck the continuous day box
+HoraireTiersNoH2End = Please fill in the lunch start time and lunch end time when you uncheck the continuous day box
+HoraireTiersh1StartNotInferiorh1end = The start of day time is not less than the end of day time
+HoraireTiersh1StartNotInferiorh2Start = The start time of the day is not less than the start time of lunch
+HoraireTiersh2StartNotInferiorh2End = The lunch start time is not less than the lunch end time
+HoraireTiersh2EndNotInferiorh1End = The end of lunch time is not less than the end of the day time
+
+#
+# v14.0.02
+#
+InstallH2G2Module = Veuillez installer le module H2G2 pour utiliser le module Horaire Tiers
+H2G2MinimumVersionRequired = La version minimum du module H2G2 doit être la version %s
+
+#
+# v16.0.00
+#
+HoraireTiersH2G2Missing = The <b> '%s' module cannot work without the 'H2G2'</b> module. This module is provided <b>for free</b> by Code42 at the following address: <b><a href='https://www.dolistore.com/fr/modules/1226-H2G2---CODE- 42.html?search_query=H2G2&results=9'> Download H2G2</a></b><br>Please download and install before activating '%1$s' module.

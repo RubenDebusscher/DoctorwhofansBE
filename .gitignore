@@ -42,3 +42,9 @@ dash/PHP/connect.php
 images/content__gallery__images
 images/api__serials
 **/node_modules
+.htaccess.live
+.htaccess.test
+.env.live
+.env.test
+documents
+dolibarr/documents

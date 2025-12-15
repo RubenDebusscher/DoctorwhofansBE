@@ -1,0 +1,44 @@
+name: Deploy to Hosting
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Voer een dry-run uit (geen echte upload)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check of deploy wordt overgeslagen
+        if: "!contains(github.event.head_commit.message, '[skip deploy]')"
+        run: echo "✅ Deploy toegestaan – verdergaan met uitvoering."
+
+      - name: Deploy via SFTP
+        if: "!contains(github.event.head_commit.message, '[skip deploy]')"
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            echo "🚧 Dry-run actief – geen echte upload."
+            ./deploy.sh --dry-run
+          else
+            echo "🚀 Start echte deploy..."
+            ./deploy.sh
+          fi
+        env:
+          HOSTING_HOST: ${{ secrets.HOSTING_HOST }}
+          HOSTING_USER: ${{ secrets.HOSTING_USER }}
+          HOSTING_PASS: ${{ secrets.HOSTING_PASS }}
+          HOSTING_DIR: ${{ secrets.HOSTING_DIR }}
+          HOSTING_PORT: ${{ secrets.HOSTING_PORT }}
