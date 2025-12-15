@@ -25,10 +25,11 @@ done
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Start upload..." | tee "$LOG_FILE"
 
 # === Mirror options ===
-MIRROR_OPTS='--verbose=2 \
---only-newer \
+MIRROR_OPTS='--verbose=0 \
+--ignore-time --size-only \
 --no-perms \
 --no-umask \
+--parallel=4 \
 --exclude-glob "**/.env*" \
 --exclude-glob "**/.env.live" \
 --exclude-glob "**/.env.test" \
@@ -60,7 +61,6 @@ set net:max-retries 2
 
 echo "🌍 Verbonden met $HOSTING_HOST"
 echo "📂 Top-level remote directory:"
-cls -1 $HOSTING_DIR
 
 echo "⬆️ Start upload..."
 mirror -R "$LOCAL_DIR" "$HOSTING_DIR" $MIRROR_OPTS
